@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
-from .models import User
+from .models import City, CompanyProfile, Institute, Organization, Province, User
 # Register your models here.
 
 
@@ -40,3 +40,56 @@ class UserAdmin(admin.ModelAdmin):
 
     # Remove 'groups' from list_filter
     list_filter = ('is_active', 'is_staff', 'is_superuser')
+
+
+@admin.register(CompanyProfile)
+class CompanyAdmin(admin.ModelAdmin):
+    list_display = ['company_title', 'national_code',
+                    'manager_name', 'tech_field', 'insurance_list']
+
+    readonly_fields = ['id']
+
+    @admin.display(ordering='national_code')
+    def national_code(self, company_profile: CompanyProfile):
+        return company_profile.user.national_code
+    national_code.short_description = _("National Code")
+
+
+@admin.register(Organization)
+class OrganizationAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Institute)
+class InstituteAdmin(admin.ModelAdmin):
+    list_display = ['title', 'province']
+    autocomplete_fields = ['province']
+    search_fields = ['title']
+
+# Admin for Province
+
+
+class CityAdminInline(admin.StackedInline):
+    model = City
+    extra = 0
+    min_num = 0
+
+
+@admin.register(Province)
+class ProvinceAdmin(admin.ModelAdmin):
+    list_display = ['name']
+    search_fields = ['name']
+    inlines = [CityAdminInline]
+
+
+# Admin for City
+
+
+@admin.register(City)
+class CityAdmin(admin.ModelAdmin):
+    list_display = ['name', 'province_name']
+    search_fields = ['name']
+
+    def province_name(self, city: City):
+        return city.province.name
+    province_name.short_description = _("Province Name")

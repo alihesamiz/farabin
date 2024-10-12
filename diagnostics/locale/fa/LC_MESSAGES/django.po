@@ -1,0 +1,192 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-10-12 14:03+0330\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: diagnostics/admin.py:21
+msgid "Personal info"
+msgstr "اطلاعات  شخصی"
+
+#: diagnostics/admin.py:22
+msgid "Permissions"
+msgstr "اجازه‌ها"
+
+#: diagnostics/admin.py:24
+msgid "Important dates"
+msgstr "تاریخ‌های مهم"
+
+#: diagnostics/admin.py:53
+msgid "National Code"
+msgstr "شماره ثبت ملی"
+
+#: diagnostics/admin.py:93
+msgid "Province Name"
+msgstr "نام استان"
+
+#: diagnostics/models.py:66
+msgid "Newbie"
+msgstr "نوپا"
+
+#: diagnostics/models.py:67
+msgid "Innovative"
+msgstr "نوآور"
+
+#: diagnostics/models.py:68
+msgid "Technological"
+msgstr "فناور"
+
+#: diagnostics/models.py:72
+msgid "User"
+msgstr "کاربر"
+
+#: diagnostics/models.py:75
+msgid "Company Title"
+msgstr "نام شرکت"
+
+#: diagnostics/models.py:78
+msgid "Email"
+msgstr "ایمیل"
+
+#: diagnostics/models.py:81
+msgid "Social Code"
+msgstr "کد ملی مدیرعامل"
+
+#: diagnostics/models.py:84
+msgid "Manager Full Name"
+msgstr "نام کامل مدیرعامل"
+
+#: diagnostics/models.py:87
+msgid "License Type"
+msgstr "نوع مجوز"
+
+#: diagnostics/models.py:90
+msgid "Work Place"
+msgstr "محل استقرار"
+
+#: diagnostics/models.py:93
+msgid "Technical Field"
+msgstr "حوزه فناوری"
+
+#: diagnostics/models.py:96
+msgid "Insurance List"
+msgstr "تعداد لیست بیمه"
+
+#: diagnostics/models.py:99 diagnostics/models.py:125
+msgid "Organization"
+msgstr "نهاد"
+
+#: diagnostics/models.py:102
+msgid "Company Profile"
+msgstr "پروفایل شرکت"
+
+#: diagnostics/models.py:103
+msgid "Company Profiles"
+msgstr "پروفایل‌ شرکت‌ها"
+
+#: diagnostics/models.py:113
+msgid "Defend"
+msgstr "دفاع"
+
+#: diagnostics/models.py:116
+msgid "Organization Title"
+msgstr "نام نهاد"
+
+#: diagnostics/models.py:121
+msgid "Enter a custom organization title if none of the choices apply."
+msgstr "در صورتی که نهاد مورد نظر وجود ندارد آن را وارد کنید."
+
+#: diagnostics/models.py:121
+msgid "Other Organization Title"
+msgstr "سایر"
+
+#: diagnostics/models.py:126
+msgid "Organizations"
+msgstr "نهادها"
+
+#: diagnostics/models.py:134 diagnostics/models.py:150
+msgid "Name"
+msgstr "نام"
+
+#: diagnostics/models.py:137 diagnostics/models.py:156
+#: diagnostics/models.py:165
+msgid "Province"
+msgstr "استان"
+
+#: diagnostics/models.py:143
+msgid "City"
+msgstr "شهر"
+
+#: diagnostics/models.py:144
+msgid "Cities"
+msgstr "شهرها"
+
+#: diagnostics/models.py:157
+msgid "Provinces"
+msgstr "استان‌ها"
+
+#: diagnostics/models.py:162
+msgid "Title"
+msgstr "عنوان"
+
+#: diagnostics/models.py:171
+msgid "Institute"
+msgstr "موسسه"
+
+#: diagnostics/models.py:172
+msgid "Institutes"
+msgstr "موسسات"
+
+#: diagnostics/serializers.py:24
+msgid "A user with this national code already exists."
+msgstr "شرکت با این شماره ثبت ملی وجود دارد/"
+
+#: diagnostics/serializers.py:31
+msgid "A user with this phone number already exists."
+msgstr "کاربر با این شماره تلفن وجود دارد"
+
+#: diagnostics/serializers.py:57 diagnostics/serializers.py:78
+msgid "Phone number must contain only digits."
+msgstr "تلفن همراه فقط شامل اعداد است."
+
+#: diagnostics/serializers.py:63 diagnostics/serializers.py:84
+msgid "Phone number must be 11 digits long."
+msgstr "طول شماره تلفن همراه باید ۱۱ رقم باشد."
+
+#: diagnostics/serializers.py:93
+msgid "OTP code must contain only digits."
+msgstr "کد ارسال شده تنها شامل اعداد است."
+
+#: diagnostics/serializers.py:99
+msgid "OTP code must be 6 digits long."
+msgstr "طول کد ارسال شده برابر با ۶ است."
+
+#: diagnostics/serializers.py:119 diagnostics/serializers.py:148
+msgid "A company with this email already exists."
+msgstr "شرکتی با این عنوان وجود دارد."
+
+#: diagnostics/serializers.py:128 diagnostics/serializers.py:157
+msgid "A company with this social code already exists."
+msgstr "شرکتی با این شماره ثبت ملی وجود دارد."
+
+#: diagnostics/validators.py:6
+msgid "Phone number must be in 09XXXXXXXXX format."
+msgstr "صورت صحیح تلفن همراه 09XXXXXXXXX میباشد."
+
+#: diagnostics/validators.py:7
+msgid "Invalid_phone_number"
+msgstr "شماره تلفن نامعتبر"

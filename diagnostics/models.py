@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from uuid import uuid4
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser as BaseUser
-
+from .validators import phone_number_validator
 
 from .managers import UserManager
 # Create your models here.
@@ -13,7 +13,8 @@ from .managers import UserManager
 
 class User(BaseUser):
 
-    phone_number = models.CharField(max_length=13, unique=True)
+    phone_number = models.CharField(
+        max_length=11, unique=True, validators=[phone_number_validator])
     national_code = models.CharField(max_length=20, unique=True)
     otp = models.CharField(max_length=6)
 
@@ -74,7 +75,7 @@ class CompanyProfile(models.Model):
         max_length=255, verbose_name=_("Company Title"))
 
     email = models.EmailField(
-        max_length=255, unique=True, verbose_name=_("EMail"))
+        max_length=255, unique=True, verbose_name=_("Email"))
 
     social_code = models.CharField(
         max_length=10, unique=True, verbose_name=_("Social Code"))
@@ -102,7 +103,7 @@ class CompanyProfile(models.Model):
         verbose_name_plural = _("Company Profiles")
 
     def __str__(self) -> str:
-        return f"{self.title}- {self.user.national_code}"
+        return f"{self.company_title}- {self.user.national_code}"
 
 
 class Organization(models.Model):
