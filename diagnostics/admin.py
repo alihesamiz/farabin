@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
-from .models import City, CompanyProfile, Institute, Organization, Province, User
+from .models import City, CompanyProfile, Institute, Organization, Province, User, AccountTurnOver, FinancialAsset, LifeCycle, ProfitLossStatement, SoldProductFee, BalanceReport, TaxDeclarationFile
+
 # Register your models here.
 
 
@@ -79,6 +80,7 @@ class CityAdminInline(admin.StackedInline):
 class ProvinceAdmin(admin.ModelAdmin):
     list_display = ['name']
     search_fields = ['name']
+    ordering = ['name']
     inlines = [CityAdminInline]
 
 
@@ -90,6 +92,63 @@ class CityAdmin(admin.ModelAdmin):
     list_display = ['name', 'province_name']
     search_fields = ['name']
 
+    @admin.display(ordering=['province_name'])
     def province_name(self, city: City):
         return city.province.name
     province_name.short_description = _("Province Name")
+
+
+class ProfitStatementInline(admin.StackedInline):
+    model = ProfitLossStatement
+    extra = 0
+    min_num = 1
+    max_num = 1
+
+
+class LifeCycleInline(admin.StackedInline):
+    model = LifeCycle
+    extra = 0
+    min_num = 1
+    max_num = 1
+
+
+class SaledProductInline(admin.StackedInline):
+    model = SoldProductFee
+    extra = 0
+    min_num = 1
+    max_num = 1
+
+
+class BalanceReportInline(admin.StackedInline):
+    model = BalanceReport
+    extra = 0
+    min_num = 1
+    max_num = 1
+
+
+class TaxDeclarationInline(admin.StackedInline):
+    model = TaxDeclarationFile
+    extra = 0
+    min_num = 1
+    max_num = 1
+
+
+class AccountTurnOverInline(admin.StackedInline):
+    model = AccountTurnOver
+    extra = 0
+    min_num = 1
+    max_num = 1
+
+
+@admin.register(FinancialAsset)
+class FinancialAssestModel(admin.ModelAdmin):
+    list_display = ['company__company_title', 'year']
+    inlines = [TaxDeclarationInline, BalanceReportInline, ProfitStatementInline, SaledProductInline,
+               AccountTurnOverInline]
+    # This will allow selection of multiple life cycles
+    filter_horizontal = ('capital_providing_method',)
+
+
+@admin.register(LifeCycle)
+class LifeCycleAdmin(admin.ModelAdmin):
+    pass
