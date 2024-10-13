@@ -9,6 +9,7 @@ djangorestframework = "*"
 django-cors-headers = "*"
 djangorestframework-simplejwt = {extras = ["blacklist"], version = "*"}
 numpy = "*"
+drf-spectacular = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"
