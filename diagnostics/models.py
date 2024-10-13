@@ -124,10 +124,10 @@ class Service(models.Model):
 
 
 class CompanyService(models.Model):
-    company = models.ForeignKey(CompanyProfile, on_delete=models.CASCADE, related_name='services')
-    service = models.ForeignKey(Service, on_delete=models.CASCADE)
-    is_active = models.BooleanField(default=False)
-    purchased_date = models.DateTimeField(auto_now_add=True)
+    company = models.ForeignKey(CompanyProfile, on_delete=models.CASCADE, related_name='services', verbose_name=_("Company"))
+    service = models.ForeignKey(Service, on_delete=models.CASCADE, verbose_name=_("Service"))
+    is_active = models.BooleanField(default=False, verbose_name=_("Activate"))
+    purchased_date = models.DateTimeField(auto_now_add=True, verbose_name=_("Purchased Date"))
 
     class Meta:
         unique_together = ("company", "service")
@@ -139,7 +139,7 @@ class CompanyService(models.Model):
 
 
 class Dashboard(models.Model):
-    company_service = models.ForeignKey(CompanyService, on_delete=models.CASCADE, related_name='dashboards')
+    company_service = models.ForeignKey(CompanyService, on_delete=models.CASCADE, related_name='dashboards', verbose_name=_("Company Service"))
 
     class Meta:
         verbose_name = _("Dashboard")

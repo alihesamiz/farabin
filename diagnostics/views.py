@@ -101,7 +101,6 @@ class OTPViewSet(viewsets.ViewSet):
 
         except User.DoesNotExist:
             return Response({'error': 'User does not exist.'}, status=status.HTTP_404_NOT_FOUND)
-# "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcyOTQwNzg3MSwiaWF0IjoxNzI4ODAzMDcxLCJqdGkiOiI4ODY2ZDdmOGI3Yjk0ZGIwYTNkMThiYTljOTQxYjAxMiIsInVzZXJfaWQiOjJ9.Em6acSbVWrwYRKVrsH598-wybgLVLsLLfsfZ0y2L4oc"
 
 
 class LogoutViewSet(viewsets.ViewSet):
@@ -156,27 +155,6 @@ class CompanyProfileViewSet(viewsets.ModelViewSet):
             raise ValidationError("Customer profile already exists.")
         # Link the authenticated user to the newly created customer
         serializer.save(user=self.request.user)
-
-
-# class DashboardViewSet(viewsets.ViewSet):
-#     permission_classes = [IsAuthenticated]
-
-#     @action(detail=False, methods=['get'])
-#     def dashboard(self, request):
-#         # Get the user's financial assets and count them
-#         try:
-#             company_profile = CompanyProfile.objects.get(user=request.user)
-#         except CompanyProfile.DoesNotExist:
-#             return Response({'error': 'No company profile found for this user.'}, status=400)
-
-#         # Get the user's financial assets and count them
-#         financial_assets_count = FinancialAsset.objects.filter(
-#             company=company_profile).aggregate(total_declarations=Count('id'))
-
-#         # Return the count in the response
-#         return Response({
-#             'total_tax_declarations': financial_assets_count['total_declarations']
-#         })
 
 
 class DashboardViewSet(viewsets.ModelViewSet):
