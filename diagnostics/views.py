@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.decorators import action
 from rest_framework import status, viewsets
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.exceptions import NotFound, ValidationError
 
@@ -19,87 +19,33 @@ from .serializers import (
 )
 
 
-# Register User and OTP Handling with ModelViewSet
-# class RegisterViewSet(viewsets.ViewSet):
-#     """
-#     A ViewSet for registering users and handling OTP operations.
-#     """
-
-#     def create(self, request):
-#         phone_number = request.data.get('phone_number')
-
-#         if not phone_number:
-#             return Response({'error': 'Phone number is required.'}, status=status.HTTP_400_BAD_REQUEST)
-
-#         user, created = User.objects.get_or_create(phone_number=phone_number)
-
-#         if created:
-#             user.set_unusable_password()
-#             user.save()
-#             return Response({'message': 'User created successfully. Proceed to OTP verification.'}, status=status.HTTP_201_CREATED)
-#         else:
-#             return Response({'message': 'User already exists.'}, status=status.HTTP_200_OK)
-
-
-# class OTPViewSet(viewsets.ViewSet):
-#     """
-#     A ViewSet for sending and verifying OTP.
-#     """
-
-#     def send_otp(self, request):
-#         phone_number = request.data.get('phone_number')
-
-#         try:
-#             user = User.objects.get(phone_number=phone_number)
-#         except User.DoesNotExist:
-#             return Response({'error': 'User with this phone number does not exist.'}, status=status.HTTP_404_NOT_FOUND)
-
-#         # Generate OTP and save it
-#         otp = OTP(user=user)
-#         otp_code = otp.generate_otp()
-#         otp.otp_code = otp_code
-#         otp.save()
-
-#         print(f"sending {otp_code} to {phone_number}")
-
-#         return Response({'message': 'OTP sent successfully.'}, status=status.HTTP_200_OK)
-
-#     def verify_otp(self, request):
-#         phone_number = request.data.get('phone_number')
-#         otp_code = request.data.get('otp_code')
-
-#         try:
-#             user = User.objects.get(phone_number=phone_number)
-#             otp = OTP.objects.filter(user=user).last()
-
-#             if otp and otp.is_valid() and otp.otp_code == otp_code:
-#                 refresh = RefreshToken.for_user(user)
-#                 access_token = str(refresh.access_token)
-
-#                 return Response({
-#                     'message': 'OTP verified successfully.',
-#                     'refresh': str(refresh),
-#                     'access': access_token
-#                 }, status=status.HTTP_200_OK)
-#             else:
-#                 return Response({'error': 'Invalid or expired OTP.'}, status=status.HTTP_400_BAD_REQUEST)
-
-#         except User.DoesNotExist:
-#             return Response({'error': 'User does not exist.'}, status=status.HTTP_404_NOT_FOUND)
-
-
 class RegisterViewSet(viewsets.ModelViewSet):
     """
-    A ModelViewSet for registering users.
+    A ModelViewSet for registering users. Allows only registration (create) 
+    for unauthenticated users, but restricts listing/retrieving users to 
+    authenticated users only.
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+    # Define permissions based on the action
+    def get_permissions(self):
+        if self.action == 'create':
+            # Allow anyone to register (create)
+            return [AllowAny()]
+        else:
+            # Require authentication for list and other actions
+            return [IsAuthenticated()]
+
+    # Override the create method to handle registration
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        return Response({'message': 'User created successfully. Proceed to OTP verification.'}, status=status.HTTP_201_CREATED)
+        return Response(
+            {'message': 'User created successfully. Proceed to OTP verification.'},
+            status=status.HTTP_201_CREATED
+        )
 
 
 class OTPViewSet(viewsets.ViewSet):
@@ -156,6 +102,7 @@ class OTPViewSet(viewsets.ViewSet):
         except User.DoesNotExist:
             return Response({'error': 'User does not exist.'}, status=status.HTTP_404_NOT_FOUND)
 # "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcyOTQwNzg3MSwiaWF0IjoxNzI4ODAzMDcxLCJqdGkiOiI4ODY2ZDdmOGI3Yjk0ZGIwYTNkMThiYTljOTQxYjAxMiIsInVzZXJfaWQiOjJ9.Em6acSbVWrwYRKVrsH598-wybgLVLsLLfsfZ0y2L4oc"
+
 
 class LogoutViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
