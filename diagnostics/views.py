@@ -34,7 +34,7 @@ class RegisterViewSet(viewsets.ModelViewSet):
             return [AllowAny()]
         else:
             # Require authentication for list and other actions
-            return [isAdmin()]
+            return [IsAdminUser()]
 
     # Override the create method to handle registration
     def create(self, request, *args, **kwargs):
