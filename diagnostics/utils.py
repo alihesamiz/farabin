@@ -52,12 +52,33 @@ def get_life_cycle(financial_assets):
 
 @deconstructible
 class CustomUtils:
+
     def __init__(self, path=None, fields=None) -> None:
         self.path = path
         self.fields = fields
 
+    def generate_otp(self):
+        """Generate a 6-digit OTP."""
+        return str(np.random.randint(100000, 999999))
+
+    def send_otp(self, phone_number, otp):
+        """Send OTP to the given phone number (placeholder for SMS integration)."""
+        # Here you should integrate with an SMS provider
+        # For now, it's just printing the OTP as a placeholder
+        print(f"Sending OTP {otp} to {phone_number}")
+
+    def persian_slugify(self, value: str):
+        """Slugify a string, keeping Persian characters and numbers."""
+        # Keep Persian characters and numbers
+        value = value.strip(" ")
+        print(value)
+        # value = re.sub(r'[^\u0600-\u06FF0-9\s-]', '', value)
+        # value = re.sub(r'[\s]+', '-', value)  # Replace spaces with hyphens
+        # print(value.strip('-'))
+        return value.strip('-')
+
     def rename_folder(self, instance, filename: str):
-        """Dynamically rename the image based on model fields."""
+        """Dynamically rename the file based on model fields."""
         ext = filename.split('.')[-1].lower()
 
         # Collect field values and join them into the filename
@@ -80,8 +101,9 @@ class CustomUtils:
         if not base_filename:
             base_filename = 'file'
 
+        # Get company title and slugify it
         company_title = getattr(
-            instance.financial_asset.company, 'title', 'default-company')
+            instance.financial_asset.company, 'company_title', 'default-company')
         company_slug = self.persian_slugify(company_title)
 
         # Add unique ID to prevent collisions
@@ -89,25 +111,3 @@ class CustomUtils:
 
         # Combine the final path with the company folder
         return os.path.join(f"financial_analysis/diagnoses/files/{company_slug}", final_filename)
-
-        # Add unique ID to prevent collisions
-        final_filename = f"{base_filename}.{ext}"
-
-        return os.path.join(self.path, final_filename)
-
-    def generate_otp(self):
-        """Generate a 6-digit OTP."""
-        return str(np.random.randint(100000, 999999))
-
-    def send_otp(self, phone_number, otp):
-        """Send OTP to the given phone number (placeholder for SMS integration)."""
-        # Here you should integrate with an SMS provider
-        # For now, it's just printing the OTP as a placeholder
-        print(f"Sending OTP {otp} to {phone_number}")
-
-    def persian_slugify(self, value):
-        """Slugify a string, keeping Persian characters and numbers."""
-        # Keep Persian characters and numbers
-        value = re.sub(r'[^\u0600-\u06FF0-9\s-]', '', value)
-        value = re.sub(r'[\s]+', '-', value)  # Replace spaces with hyphens
-        return value.strip('-')

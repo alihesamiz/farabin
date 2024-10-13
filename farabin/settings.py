@@ -84,6 +84,11 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'farabin.wsgi.application'
+##{
+#     "message": "OTP verified successfully.",
+#     "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcyOTQwNzI3NSwiaWF0IjoxNzI4ODAyNDc1LCJqdGkiOiJlNTU3NmQ1YmE0ODA0Yzc5ODA3ZmE5NGZhM2NlMDIzNCIsInVzZXJfaWQiOjJ9.o17sN2TQz9RJ4OzRJQOPF9i_VyHS-cJMgUxTXi9_8fM",
+#     "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI4ODg4ODc1LCJpYXQiOjE3Mjg4MDI0NzUsImp0aSI6IjU3NDg0NWY2MmU1MDQ0M2Q4NTdiNzQ3ZjhjMjU4ZmJkIiwidXNlcl9pZCI6Mn0.gcedkL1V8wP4m9xsGY1FO58ceNP3YgTCihluPOF5HQ4"
+# }
 
 
 # Database
@@ -139,7 +144,14 @@ LOCALE_PATHS = [
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
+STATIC_ROOT = BASE_DIR / 'static'
+
 STATIC_URL = 'static/'
+
+MEDIA_ROOT = BASE_DIR / 'media'
+
+MEDIA_URL = 'media/'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

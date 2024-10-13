@@ -1,3 +1,5 @@
+from rest_framework_simplejwt.tokens import RefreshToken, TokenError
+from django.db.models import Count
 from rest_framework.views import APIView
 from rest_framework.decorators import action
 from rest_framework import status, viewsets
@@ -6,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.exceptions import NotFound, ValidationError
 
-from .models import User, CompanyProfile, OTP
+from .models import FinancialAsset, User, CompanyProfile, OTP
 from .serializers import (
     OTPSendSerializer,
     OTPVerifySerializer,
@@ -153,9 +155,35 @@ class OTPViewSet(viewsets.ViewSet):
 
         except User.DoesNotExist:
             return Response({'error': 'User does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+# "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcyOTQwNzg3MSwiaWF0IjoxNzI4ODAzMDcxLCJqdGkiOiI4ODY2ZDdmOGI3Yjk0ZGIwYTNkMThiYTljOTQxYjAxMiIsInVzZXJfaWQiOjJ9.Em6acSbVWrwYRKVrsH598-wybgLVLsLLfsfZ0y2L4oc"
+
+class LogoutViewSet(viewsets.ViewSet):
+    permission_classes = [IsAuthenticated]
+
+    @action(methods=['post'], detail=False)
+    def logout(self, request):
+        # Step 1: Check if refresh_token is in the request data
+        refresh_token = request.data.get('refresh_token')
+        if not refresh_token:
+            return Response({'detail': 'Refresh token is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # Step 2: Attempt to blacklist the token
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+
+            return Response({'detail': 'Logout successful'}, status=status.HTTP_205_RESET_CONTENT)
+
+        except TokenError as e:
+            # Handle case when the token is invalid or already blacklisted
+            return Response({'detail': 'Invalid or expired token'}, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            # General exception handling for other errors
+            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
 # Customer Profile ViewSet
-
-
 class CompanyProfileViewSet(viewsets.ModelViewSet):
     """
     A ViewSet for handling company profiles. Allows creating, retrieving, and updating profiles.
@@ -183,7 +211,22 @@ class CompanyProfileViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
 
-# class Dashboard(APIView):
-#     permission_classes=[IsAuthenticated]
-#     def get(self,request):
-#         tax_declaration= 
+class DashboardViewSet(viewsets.ViewSet):
+    permission_classes = [IsAuthenticated]
+
+    @action(detail=False, methods=['get'])
+    def dashboard(self, request):
+        # Get the user's financial assets and count them
+        try:
+            company_profile = CompanyProfile.objects.get(user=request.user)
+        except CompanyProfile.DoesNotExist:
+            return Response({'error': 'No company profile found for this user.'}, status=400)
+
+        # Get the user's financial assets and count them
+        financial_assets_count = FinancialAsset.objects.filter(
+            company=company_profile).aggregate(total_declarations=Count('id'))
+
+        # Return the count in the response
+        return Response({
+            'total_tax_declarations': financial_assets_count['total_declarations']
+        })

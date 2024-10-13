@@ -13,9 +13,10 @@ from uuid import uuid4
 # Create your models here.
 
 
-
 ####################################
 """User Model"""
+
+
 class User(BaseUser):
 
     phone_number = models.CharField(
@@ -45,8 +46,11 @@ class User(BaseUser):
     def is_admin(self):
         return self.is_superuser
 
+
 ####################################
 """OTP Model"""
+
+
 class OTP(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='+')
@@ -63,6 +67,8 @@ class OTP(models.Model):
 
 ####################################
 """Company Model"""
+
+
 class CompanyProfile(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid4)
@@ -113,8 +119,11 @@ class CompanyProfile(models.Model):
     def __str__(self) -> str:
         return f"{self.company_title}- {self.user.national_code}"
 
+
 ####################################
 """Organizations Model"""
+
+
 class Organization(models.Model):
     DEFEND = 'defend'
 
@@ -138,9 +147,10 @@ class Organization(models.Model):
         return f"{self.custom_organization_title}" if self.custom_organization_title else f"{self.get_organization_title_display()}"
 
 
-
 ####################################
 """City and province Models"""
+
+
 class City(models.Model):
 
     name = models.CharField(max_length=200, verbose_name=_('Name'))
@@ -171,6 +181,8 @@ class Province(models.Model):
 
 ####################################
 """Work place Model"""
+
+
 class Institute(models.Model):
 
     title = models.CharField(max_length=250, verbose_name=_('Title'))
@@ -489,8 +501,8 @@ class LifeCycle(models.Model):
 
 
 RENAME_TAX_DECLARATION_PATH = CustomUtils(
-    path="financial_analysis/diagnoses/files",
-    fields=['company__title', 'year']
+    path="financial_analysis/diagnoses/files", 
+    fields=['financial_asset__company__company_title', 'financial_asset__year']
 )
 
 
@@ -502,16 +514,17 @@ class TaxDeclarationFile(models.Model):
                             upload_to=RENAME_TAX_DECLARATION_PATH.rename_folder)
 
     def __str__(self):
-        return f"File for {self.financial_asset.company.title} - {self.financial_asset.year}"
-    
+        return f"File for {self.financial_asset.company.company_title} - {self.financial_asset.year}"
+
     class Meta:
         verbose_name = _("Tax Declaration File")
         verbose_name_plural = _("Tax Declaration Files")
 
+
 class FinancialAsset(models.Model):
 
     company = models.ForeignKey(
-        'CompanyProfile', on_delete=models.CASCADE, related_name='financial_records',
+        CompanyProfile, on_delete=models.CASCADE, related_name='financial_records',
         verbose_name=_('Company'))
     year = models.PositiveIntegerField(verbose_name=_('Year'))
 
@@ -524,4 +537,4 @@ class FinancialAsset(models.Model):
         verbose_name_plural = _('Financial Assets')
 
     def __str__(self):
-        return f"{self.company.title} - {self.year}"
+        return f"{self.company.company_title} - {self.year}"
