@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.decorators import action
 from rest_framework import status, viewsets
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.exceptions import NotFound, ValidationError
 
@@ -13,7 +13,6 @@ from .serializers import (
     OTPSendSerializer,
     OTPVerifySerializer,
     UserSerializer,
-    # OTPSerializer,
     CompanyProfileSerializer,
     CompanyProfileCreateSerializer
 )
@@ -35,7 +34,7 @@ class RegisterViewSet(viewsets.ModelViewSet):
             return [AllowAny()]
         else:
             # Require authentication for list and other actions
-            return [IsAuthenticated()]
+            return [isAdmin()]
 
     # Override the create method to handle registration
     def create(self, request, *args, **kwargs):
