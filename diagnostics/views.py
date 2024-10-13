@@ -8,8 +8,9 @@ from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.exceptions import NotFound, ValidationError
 
-from .models import FinancialAsset, User, CompanyProfile, OTP
+from .models import Dashboard, FinancialAsset, User, CompanyProfile, OTP
 from .serializers import (
+    DashboardSerializer,
     OTPSendSerializer,
     OTPVerifySerializer,
     UserSerializer,
@@ -157,22 +158,54 @@ class CompanyProfileViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
 
-class DashboardViewSet(viewsets.ViewSet):
-    permission_classes = [IsAuthenticated]
+# class DashboardViewSet(viewsets.ViewSet):
+#     permission_classes = [IsAuthenticated]
 
-    @action(detail=False, methods=['get'])
-    def dashboard(self, request):
-        # Get the user's financial assets and count them
-        try:
-            company_profile = CompanyProfile.objects.get(user=request.user)
-        except CompanyProfile.DoesNotExist:
-            return Response({'error': 'No company profile found for this user.'}, status=400)
+#     @action(detail=False, methods=['get'])
+#     def dashboard(self, request):
+#         # Get the user's financial assets and count them
+#         try:
+#             company_profile = CompanyProfile.objects.get(user=request.user)
+#         except CompanyProfile.DoesNotExist:
+#             return Response({'error': 'No company profile found for this user.'}, status=400)
 
-        # Get the user's financial assets and count them
-        financial_assets_count = FinancialAsset.objects.filter(
-            company=company_profile).aggregate(total_declarations=Count('id'))
+#         # Get the user's financial assets and count them
+#         financial_assets_count = FinancialAsset.objects.filter(
+#             company=company_profile).aggregate(total_declarations=Count('id'))
 
-        # Return the count in the response
-        return Response({
-            'total_tax_declarations': financial_assets_count['total_declarations']
-        })
+#         # Return the count in the response
+#         return Response({
+#             'total_tax_declarations': financial_assets_count['total_declarations']
+#         })
+
+
+class DashboardViewSet(viewsets.ModelViewSet):
+    queryset = Dashboard.objects.all()
+    serializer_class = DashboardSerializer
+
+    def list(self, request, *args, **kwargs):
+        # Example of adding aggregated data
+        queryset = self.get_queryset().annotate(total_services=Count('company_service'))
+        serializer = self.get_serializer(queryset, many=True)
+
+        # Prepare response data
+        response_data = serializer.data
+
+        # Add custom aggregated field by looping over response data
+        for data in response_data:
+            # Access `company_service` field by using nested structure.
+            company_id = Dashboard.objects.filter(id=data['id']).values_list(
+                'company_service__company_id', flat=True).first()
+
+            # Now, calculate total services for this company
+            total_services = Dashboard.objects.filter(
+                company_service__company_id=company_id).count()
+
+            # Add `total_services` to the response data
+            data['total_services'] = total_services
+
+            declaration_files_count = FinancialAsset.objects.filter(
+                company_id=company_id).count()
+            data['declaration_files_count'] = declaration_files_count
+
+        return Response(response_data, status=status.HTTP_200_OK)

@@ -1,3 +1,4 @@
+from .models import CompanyService, Service, Dashboard
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 from .models import City, CompanyProfile, Institute, Organization, Province, User, AccountTurnOver, FinancialAsset, LifeCycle, ProfitLossStatement, SoldProductFee, BalanceReport, TaxDeclarationFile
@@ -151,4 +152,19 @@ class FinancialAssestModel(admin.ModelAdmin):
 
 @admin.register(LifeCycle)
 class LifeCycleAdmin(admin.ModelAdmin):
+    list_display = ['capital_providing', 'other_capital_providing']
+
+
+@admin.register(Service)
+class ServiceAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(CompanyService)
+class CompanyServiceAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Dashboard)
+class DashboardAdmin(admin.ModelAdmin):
     pass

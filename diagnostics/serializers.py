@@ -4,7 +4,7 @@ from rest_framework_simplejwt.tokens import Token
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
-from .models import OTP, CompanyProfile
+from .models import OTP, CompanyProfile, Dashboard
 User = get_user_model()
 
 
@@ -158,3 +158,19 @@ class CompanyProfileCreateSerializer(serializers.ModelSerializer):
                 'field': 'social_code'
             })
         return value
+
+
+class DashboardSerializer(serializers.ModelSerializer):
+    company_title = serializers.CharField(
+        source='company_service.company.company_title', read_only=True)
+    service_name = serializers.CharField(
+        source='company_service.service.name', read_only=True)
+    is_active = serializers.BooleanField(
+        source='company_service.is_active', read_only=True)
+    purchased_date = serializers.DateTimeField(
+        source='company_service.purchased_date', read_only=True)
+
+    class Meta:
+        model = Dashboard
+        fields = ['id', 'company_title', 'service_name',
+                  'is_active', 'purchased_date']

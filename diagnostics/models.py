@@ -69,9 +69,12 @@ class OTP(models.Model):
 """Company Model"""
 
 
-class CompanyProfile(models.Model):
+from uuid import uuid4
+from django.db import models
+from django.utils.translation import gettext_lazy as _
 
-    id = models.UUIDField(primary_key=True, default=uuid4)
+class CompanyProfile(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
 
     NEWBIE_LICENSE = 'newbie'
     INNOVATIVE_LICENSE = 'innovative'
@@ -83,32 +86,19 @@ class CompanyProfile(models.Model):
     ]
 
     user = models.OneToOneField(
-        User, on_delete=models.CASCADE, verbose_name=_("User"))
+        'User', on_delete=models.CASCADE, related_name='company', verbose_name=_("User"))
 
-    company_title = models.CharField(
-        max_length=255, verbose_name=_("Company Title"))
-
-    email = models.EmailField(
-        max_length=255, unique=True, verbose_name=_("Email"))
-
-    social_code = models.CharField(
-        max_length=10, unique=True, verbose_name=_("Social Code"))
-
-    manager_name = models.CharField(
-        max_length=255, verbose_name=_("Manager Full Name"))
-
-    license = models.CharField(
-        max_length=15, choices=LICENSE_CHOICES, verbose_name=_("License Type"))
+    company_title = models.CharField(max_length=255, verbose_name=_("Company Title"))
+    email = models.EmailField(max_length=255, unique=True, verbose_name=_("Email"))
+    social_code = models.CharField(max_length=10, unique=True, verbose_name=_("Social Code"))
+    manager_name = models.CharField(max_length=255, verbose_name=_("Manager Full Name"))
+    license = models.CharField(max_length=15, choices=LICENSE_CHOICES, verbose_name=_("License Type"))
 
     work_place = models.ForeignKey(
         'Institute', on_delete=models.CASCADE, verbose_name=_("Work Place"))
 
-    tech_field = models.CharField(
-        max_length=500, null=True, blank=True, verbose_name=_("Technical Field"))
-
-    insurance_list = models.SmallIntegerField(
-        default=1, verbose_name=_("Insurance List"))
-
+    tech_field = models.CharField(max_length=500, null=True, blank=True, verbose_name=_("Technical Field"))
+    insurance_list = models.PositiveSmallIntegerField(default=1, verbose_name=_("Insurance List"))
     organization = models.ForeignKey(
         'Organization', null=True, blank=True, verbose_name=_("Organization"), on_delete=models.CASCADE)
 
@@ -117,7 +107,47 @@ class CompanyProfile(models.Model):
         verbose_name_plural = _("Company Profiles")
 
     def __str__(self) -> str:
-        return f"{self.company_title}- {self.user.national_code}"
+        return f"{self.company_title} - {self.user.national_code}"
+
+
+class Service(models.Model):
+    name = models.CharField(max_length=255, verbose_name=_("Service Name"))
+    description = models.TextField(verbose_name=_("Service Description"))
+    price = models.DecimalField(decimal_places=2, max_digits=20, verbose_name=_("Price"))
+
+    class Meta:
+        verbose_name = _("Service")
+        verbose_name_plural = _("Services")
+
+    def __str__(self) -> str:
+        return f"{self.name} - {self.description[:10]}"
+
+
+class CompanyService(models.Model):
+    company = models.ForeignKey(CompanyProfile, on_delete=models.CASCADE, related_name='services')
+    service = models.ForeignKey(Service, on_delete=models.CASCADE)
+    is_active = models.BooleanField(default=False)
+    purchased_date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("company", "service")
+        verbose_name = _("Company Service")
+        verbose_name_plural = _("Company Services")
+
+    def __str__(self) -> str:
+        return f"{self.company.company_title} - {self.service.name} ({'Active' if self.is_active else 'Inactive'})"
+
+
+class Dashboard(models.Model):
+    company_service = models.ForeignKey(CompanyService, on_delete=models.CASCADE, related_name='dashboards')
+
+    class Meta:
+        verbose_name = _("Dashboard")
+        verbose_name_plural = _("Dashboards")
+
+    def __str__(self) -> str:
+        return f"Dashboard for {self.company_service.company.company_title} - {self.company_service.service.name}"
+
 
 
 ####################################
@@ -501,7 +531,7 @@ class LifeCycle(models.Model):
 
 
 RENAME_TAX_DECLARATION_PATH = CustomUtils(
-    path="financial_analysis/diagnoses/files", 
+    path="financial_analysis/diagnoses/files",
     fields=['financial_asset__company__company_title', 'financial_asset__year']
 )
 
