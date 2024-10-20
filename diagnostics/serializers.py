@@ -74,10 +74,10 @@ class OTPSendSerializer(serializers.Serializer):
                 'message': _("National Code must contain only digits."),
                 'field': 'national_code'
             })
-        if len(value) != 10:  # Assuming Iranian phone numbers
+        if len(value) != 11:  # Assuming Iranian phone numbers
             raise ValidationError({
                 'error_code': 'invalid_length',
-                'message': _("National Code must be 10 digits long."),
+                'message': _("National Code must be 11 digits long."),
                 'field': 'national_code'
             })
         return value

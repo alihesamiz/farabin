@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.exceptions import NotFound, ValidationError
 from .models import FinancialAsset
-from company.models import Dashboard , CompanyProfile
+from company.models import Dashboard, CompanyProfile
 from core.models import OTP
 from django.contrib.auth import get_user_model
 from .serializers import (
@@ -149,8 +149,12 @@ class CompanyProfileViewSet(viewsets.ModelViewSet):
     """
     A ViewSet for handling company profiles. Allows creating, retrieving, and updating profiles.
     """
-    queryset = CompanyProfile.objects.all()
+    # queryset = CompanyProfile.objects.all()
     permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return CompanyProfile.objects.filter(user=user)
 
     def get_serializer_class(self):
         if self.action == 'create':
