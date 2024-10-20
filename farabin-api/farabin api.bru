@@ -4,8 +4,18 @@ meta {
   seq: 2
 }
 
-get {
-  url: 127.0.0.1
-  body: none
+post {
+  url: 127.0.0.1:8000/logout/logout/
+  body: json
   auth: none
+}
+
+headers {
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI4ODg5NDcxLCJpYXQiOjE3Mjg4MDMwNzEsImp0aSI6IjQxZjBjY2UwZjgxMjRhOWE4MGM5YzQ5ZDdlYjEzM2I2IiwidXNlcl9pZCI6Mn0.MQCu-lO-tbmc0gFsNoJousHbYV8Ulb3gcq7u_4x-6ZA
+}
+
+body:json {
+  {
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcyOTQwNzg3MSwiaWF0IjoxNzI4ODAzMDcxLCJqdGkiOiI4ODY2ZDdmOGI3Yjk0ZGIwYTNkMThiYTljOTQxYjAxMiIsInVzZXJfaWQiOjJ9.Em6acSbVWrwYRKVrsH598-wybgLVLsLLfsfZ0y2L4oc"
+  }
 }
