@@ -62,11 +62,19 @@ class OTPViewSet(viewsets.ViewSet):
         phone_number = serializer.validated_data['phone_number']
         national_code = serializer.validated_data['national_code']
 
+        # Check if a user with the given phone number already exists
         try:
-            user, created = User.objects.get_or_create(
-                phone_number=phone_number, national_code=national_code)
+            user = User.objects.get(phone_number=phone_number)
+
+            # If the user exists but the national code doesn't match
+            if user.national_code != national_code:
+                return Response({'error': 'The national code does not match the phone number.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # If the phone number and national code match, proceed to OTP generation
         except User.DoesNotExist:
-            return Response({'error': 'User with this phone number or national code does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+            # If the phone number does not exist, create a new user
+            user = User.objects.create(
+                phone_number=phone_number, national_code=national_code)
 
         # Generate OTP and save it
         otp = OTP(user=user)
