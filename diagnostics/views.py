@@ -57,11 +57,12 @@ class OTPViewSet(viewsets.ViewSet):
         serializer = OTPSendSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         phone_number = serializer.validated_data['phone_number']
+        national_code = serializer.validated_data['national_code']
 
         try:
-            user = User.objects.get(phone_number=phone_number)
+            user = User.objects.get(phone_number=phone_number,national_code=national_code)
         except User.DoesNotExist:
-            return Response({'error': 'User with this phone number does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'User with this phone number or national code does not exist.'}, status=status.HTTP_404_NOT_FOUND)
 
         # Generate OTP and save it
         otp = OTP(user=user)
@@ -104,6 +105,7 @@ class OTPViewSet(viewsets.ViewSet):
 
 
 class LogoutViewSet(viewsets.ViewSet):
+    
     permission_classes = [IsAuthenticated]
 
     @action(methods=['post'], detail=False)

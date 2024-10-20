@@ -49,7 +49,8 @@ class UserSerializer(serializers.ModelSerializer):
 class OTPSendSerializer(serializers.Serializer):
     # Adjust max_length based on your requirements
     phone_number = serializers.CharField(max_length=11)
-
+    national_code = serializers.CharField(max_length = 11)
+    
     def validate_phone_number(self, value):
         if not value.isdigit():
             raise ValidationError({
@@ -62,6 +63,21 @@ class OTPSendSerializer(serializers.Serializer):
                 'error_code': 'invalid_length',
                 'message': _("Phone number must be 11 digits long."),
                 'field': 'phone_number'
+            })
+        return value
+    
+    def validate_national_code(self, value):
+        if not value.isdigit():
+            raise ValidationError({
+                'error_code': 'invalid_national_code',
+                'message': _("National Code must contain only digits."),
+                'field': 'national_code'
+            })
+        if len(value) != 10:  # Assuming Iranian phone numbers
+            raise ValidationError({
+                'error_code': 'invalid_length',
+                'message': _("National Code must be 10 digits long."),
+                'field': 'national_code'
             })
         return value
 
