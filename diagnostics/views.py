@@ -7,7 +7,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.exceptions import NotFound, ValidationError
-from .models import Dashboard, FinancialAsset,  CompanyProfile
+from .models import FinancialAsset
+from company.models import Dashboard , CompanyProfile
 from core.models import OTP
 from django.contrib.auth import get_user_model
 from .serializers import (

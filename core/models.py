@@ -1,4 +1,6 @@
-from django.contrib.auth.models import AbstractBaseUser as BaseUser
+from django.contrib.auth.models import AbstractBaseUser as BaseUser , PermissionsMixin
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.models import Group, Permission
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from django.db import models
@@ -9,23 +11,68 @@ from .managers import UserManager
 # Create your models here.
 
 
-class User(BaseUser):
+# class User(BaseUser):
+#     phone_number = models.CharField(
+#         max_length=11, unique=True, validators=[phone_number_validator])
+#     national_code = models.CharField(max_length=11, unique=True)
+#     otp = models.CharField(max_length=6)
+#     is_active = models.BooleanField(default=True)
+#     is_staff = models.BooleanField(default=False)
+#     is_superuser = models.BooleanField(default=False)
 
-    phone_number = models.CharField(
-        max_length=11, unique=True, validators=[phone_number_validator])
+#     USERNAME_FIELD = 'national_code'
+#     REQUIRED_FIELDS = ['phone_number']
 
+#     objects = UserManager()
+
+#     def __str__(self) -> str:
+#         return f"{self.phone_number}"
+
+#     def has_perm(self, perm, obj=None):
+#         return self.is_superuser
+
+#     def has_module_perms(self, app_label):
+#         return self.is_superuser
+
+#     @property
+#     def is_admin(self):
+#         return self.is_superuser
+
+
+#     class Meta:
+#         verbose_name = _("User")
+#         verbose_name_plural = _("Users")
+
+class User(BaseUser, PermissionsMixin):
+    phone_number = models.CharField(max_length=11, unique=True, validators=[phone_number_validator])
     national_code = models.CharField(max_length=11, unique=True)
-
     otp = models.CharField(max_length=6)
-
     is_active = models.BooleanField(default=True)
-
     is_staff = models.BooleanField(default=False)
-
     is_superuser = models.BooleanField(default=False)
 
-    USERNAME_FIELD = 'national_code'
+    # Added fields for groups and permissions
+    groups = models.ManyToManyField(
+        Group,
+        verbose_name=_('groups'),
+        blank=True,
+        help_text=_(
+            'The groups this user belongs to. A user will get all permissions '
+            'granted to each of their groups.'
+        ),
+        related_name="custom_user_set",
+        related_query_name="user",
+    )
+    user_permissions = models.ManyToManyField(
+        'auth.Permission',
+        verbose_name=_('user permissions'),
+        blank=True,
+        help_text=_('Specific permissions for this user.'),
+        related_name="custom_user_set",
+        related_query_name="user",
+    )
 
+    USERNAME_FIELD = 'national_code'
     REQUIRED_FIELDS = ['phone_number']
 
     objects = UserManager()
@@ -34,15 +81,26 @@ class User(BaseUser):
         return f"{self.phone_number}"
 
     def has_perm(self, perm, obj=None):
-        return self.is_superuser
+        # Check if user is superuser
+        if self.is_superuser:
+            return True
+        # Check if user has specific permission
+        return self.user_permissions.filter(codename=perm).exists() or super().has_perm(perm, obj)
 
     def has_module_perms(self, app_label):
-        return self.is_superuser
+        # Check if user is superuser
+        if self.is_superuser:
+            return True
+        # Check if user has permissions in a specific app
+        return self.user_permissions.filter(content_type__app_label=app_label).exists() or super().has_module_perms(app_label)
 
     @property
     def is_admin(self):
         return self.is_superuser
 
+    class Meta:
+        verbose_name = _("User")
+        verbose_name_plural = _("Users")
 
 ####################################
 """OTP Model"""

@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('diagnostics', '0001_initial'),
+        ('diagnostics', '0002_alter_balancereport_balance_report_file_and_more'),
     ]
 
     operations = [

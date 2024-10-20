@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 PROJECT_APPS = [
     'diagnostics',
     'core',
+    'company',
 ]
 
 THIRED_PARTY_APPS = [

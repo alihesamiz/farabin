@@ -1,0 +1,114 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-10-20 18:44+0330\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+#: company/admin.py:17
+msgid "National Code"
+msgstr "کد ثبت ملی شرکت"
+
+#: company/apps.py:8 company/models.py:62
+msgid "Company"
+msgstr "شرکت"
+
+#: company/models.py:23
+msgid "Newbie"
+msgstr "نوپا"
+
+#: company/models.py:24
+msgid "Innovative"
+msgstr "نوآور"
+
+#: company/models.py:25
+msgid "Technological"
+msgstr "فناور"
+
+#: company/models.py:29
+msgid "User"
+msgstr "کاربر"
+
+#: company/models.py:32
+msgid "Company Title"
+msgstr "عنوان شرکت"
+
+#: company/models.py:34
+msgid "Email"
+msgstr "ایمیل"
+
+#: company/models.py:36
+msgid "Social Code"
+msgstr "کد ملی"
+
+#: company/models.py:38
+msgid "Manager Full Name"
+msgstr "نام کامل مدیرعامل"
+
+#: company/models.py:40
+msgid "License Type"
+msgstr "نوع گواهی"
+
+#: company/models.py:43
+msgid "Work Place"
+msgstr "محل استقرار"
+
+#: company/models.py:46
+msgid "Technical Field"
+msgstr "حوزه فناوری"
+
+#: company/models.py:48
+msgid "Insurance List"
+msgstr "تعداد لیست بیمه‌شدگان"
+
+#: company/models.py:50
+msgid "Organization"
+msgstr "نهاد"
+
+#: company/models.py:53
+msgid "Company Profile"
+msgstr "پروفایل شرکت"
+
+#: company/models.py:54
+msgid "Company Profiles"
+msgstr "پروفایل شرکت‌ها"
+
+#: company/models.py:64
+msgid "Service"
+msgstr "خدمت"
+
+#: company/models.py:65
+msgid "Activate"
+msgstr "فعالسازی"
+
+#: company/models.py:67
+msgid "Purchased Date"
+msgstr "تاریخ خرید"
+
+#: company/models.py:71 company/models.py:80
+msgid "Company Service"
+msgstr "خدمت شرکت"
+
+#: company/models.py:72
+msgid "Company Services"
+msgstr "خدمت‌های شرکت‌ها"
+
+#: company/models.py:83
+msgid "Dashboard"
+msgstr "داشبورد"
+
+#: company/models.py:84
+msgid "Dashboards"
+msgstr "داشبورد‌ها"

@@ -1,0 +1,111 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-10-20 18:49+0330\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: core/admin.py:22
+msgid "Personal info"
+msgstr "اطلاعات شخصی"
+
+#: core/admin.py:23
+msgid "Permissions"
+msgstr "اجازه‌ها"
+
+#: core/admin.py:25
+msgid "Important dates"
+msgstr "تاریخ‌های مههم"
+
+#: core/admin.py:85
+msgid "Province Name"
+msgstr "نام استان"
+
+#: core/apps.py:8
+msgid "Core"
+msgstr "اصلی"
+
+#: core/models.py:47
+msgid "User"
+msgstr "کاربر"
+
+#: core/models.py:48
+msgid "Users"
+msgstr "کاربران"
+
+#: core/models.py:77
+msgid "Defend"
+msgstr "دفاع"
+
+#: core/models.py:80
+msgid "Organization Title"
+msgstr "نام نهاد"
+
+#: core/models.py:85
+msgid "Enter a custom organization title if none of the choices apply."
+msgstr "در صورتی که نام نهاد مورد نظر موجود نیست وارد نمایید."
+
+#: core/models.py:85
+msgid "Other Organization Title"
+msgstr "سایر"
+
+#: core/models.py:89
+msgid "Organization"
+msgstr "نهاد"
+
+#: core/models.py:90
+msgid "Organizations"
+msgstr "نهاد‌ها"
+
+#: core/models.py:102 core/models.py:118
+msgid "Name"
+msgstr "نام"
+
+#: core/models.py:105 core/models.py:124 core/models.py:137
+msgid "Province"
+msgstr "استان"
+
+#: core/models.py:111
+msgid "City"
+msgstr "شهر"
+
+#: core/models.py:112
+msgid "Cities"
+msgstr "شهرها"
+
+#: core/models.py:125
+msgid "Provinces"
+msgstr "استان‌ها"
+
+#: core/models.py:134
+msgid "Title"
+msgstr "عنوان"
+
+#: core/models.py:143
+msgid "Institute"
+msgstr "موسسه"
+
+#: core/models.py:144
+msgid "Institutes"
+msgstr "موسسات"
+
+#: core/validators.py:6
+msgid "Phone number must be in 09XXXXXXXXX format."
+msgstr "شماره تلفن را به صورت صحیح وارد نمایید."
+
+#: core/validators.py:7
+msgid "Invalid_phone_number"
+msgstr "شماره تلفن نامعتبر"

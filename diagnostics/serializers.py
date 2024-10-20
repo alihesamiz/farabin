@@ -4,7 +4,7 @@ from rest_framework_simplejwt.tokens import Token
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
-from .models import CompanyProfile, Dashboard
+from company.models import CompanyProfile, Dashboard
 from core.models import OTP
 User = get_user_model()
 
