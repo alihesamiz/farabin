@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-9v=003(196kstx7ucu*k-##a(#ay(g@%++rw5_--e+82_m01q+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -55,6 +55,7 @@ THIRED_PARTY_APPS = [
 
 
 INSTALLED_APPS += PROJECT_APPS + THIRED_PARTY_APPS
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -85,11 +86,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'farabin.wsgi.application'
-##{
-#     "message": "OTP verified successfully.",
-#     "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcyOTQwNzI3NSwiaWF0IjoxNzI4ODAyNDc1LCJqdGkiOiJlNTU3NmQ1YmE0ODA0Yzc5ODA3ZmE5NGZhM2NlMDIzNCIsInVzZXJfaWQiOjJ9.o17sN2TQz9RJ4OzRJQOPF9i_VyHS-cJMgUxTXi9_8fM",
-#     "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI4ODg4ODc1LCJpYXQiOjE3Mjg4MDI0NzUsImp0aSI6IjU3NDg0NWY2MmU1MDQ0M2Q4NTdiNzQ3ZjhjMjU4ZmJkIiwidXNlcl9pZCI6Mn0.gcedkL1V8wP4m9xsGY1FO58ceNP3YgTCihluPOF5HQ4"
-# }
 
 
 # Database
@@ -178,3 +174,15 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
 
 }
+
+
+# development
+CORS_ALLOW_ALL_ORIGINS = True
+
+# production
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:3000",
+    "http://localhost:3000",
+    "http://127.0.0.1:8000",
+    "http://localhost:8000",
+]
