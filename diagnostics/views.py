@@ -63,7 +63,7 @@ class OTPViewSet(viewsets.ViewSet):
         national_code = serializer.validated_data['national_code']
 
         try:
-            created, user = User.objects.get_or_create(
+            user, created = User.objects.get_or_create(
                 phone_number=phone_number, national_code=national_code)
         except User.DoesNotExist:
             return Response({'error': 'User with this phone number or national code does not exist.'}, status=status.HTTP_404_NOT_FOUND)
