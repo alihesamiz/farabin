@@ -10,6 +10,7 @@ django-cors-headers = "*"
 djangorestframework-simplejwt = {extras = ["blacklist"], version = "*"}
 numpy = "*"
 drf-spectacular = "*"
+psycopg2-binary = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"
