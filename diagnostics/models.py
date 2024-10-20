@@ -1,77 +1,16 @@
-from django.utils import timezone
+from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser as BaseUser
-
-from diagnostics.utils import CustomUtils
-from .validators import phone_number_validator
-from .managers import UserManager
-from datetime import timedelta
-import random
 from uuid import uuid4
-
-# Create your models here.
-
-
-####################################
-"""User Model"""
+from .utils import CustomUtils
 
 
-class User(BaseUser):
-
-    phone_number = models.CharField(
-        max_length=11, unique=True, validators=[phone_number_validator])
-    national_code = models.CharField(max_length=11, unique=True)
-    otp = models.CharField(max_length=6)
-
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
-
-    USERNAME_FIELD = 'national_code'
-    REQUIRED_FIELDS = ['phone_number']
-
-    objects = UserManager()
-
-    def __str__(self) -> str:
-        return f"{self.phone_number}"
-
-    def has_perm(self, perm, obj=None):
-        return self.is_superuser
-
-    def has_module_perms(self, app_label):
-        return self.is_superuser
-
-    @property
-    def is_admin(self):
-        return self.is_superuser
-
-
-####################################
-"""OTP Model"""
-
-
-class OTP(models.Model):
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='+')
-    otp_code = models.CharField(max_length=6)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def is_valid(self):
-        # OTP is valid for 10 minutes
-        return self.created_at >= timezone.now() - timedelta(minutes=3)
-
-    def generate_otp(self):
-        return random.randint(100000, 999999)
+User = get_user_model()
 
 
 ####################################
 """Company Model"""
 
-
-from uuid import uuid4
-from django.db import models
-from django.utils.translation import gettext_lazy as _
 
 class CompanyProfile(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
@@ -86,21 +25,28 @@ class CompanyProfile(models.Model):
     ]
 
     user = models.OneToOneField(
-        'User', on_delete=models.CASCADE, related_name='company', verbose_name=_("User"))
+        User, on_delete=models.CASCADE, related_name='company', verbose_name=_("User"))
 
-    company_title = models.CharField(max_length=255, verbose_name=_("Company Title"))
-    email = models.EmailField(max_length=255, unique=True, verbose_name=_("Email"))
-    social_code = models.CharField(max_length=10, unique=True, verbose_name=_("Social Code"))
-    manager_name = models.CharField(max_length=255, verbose_name=_("Manager Full Name"))
-    license = models.CharField(max_length=15, choices=LICENSE_CHOICES, verbose_name=_("License Type"))
+    company_title = models.CharField(
+        max_length=255, verbose_name=_("Company Title"))
+    email = models.EmailField(
+        max_length=255, unique=True, verbose_name=_("Email"))
+    social_code = models.CharField(
+        max_length=10, unique=True, verbose_name=_("Social Code"))
+    manager_name = models.CharField(
+        max_length=255, verbose_name=_("Manager Full Name"))
+    license = models.CharField(
+        max_length=15, choices=LICENSE_CHOICES, verbose_name=_("License Type"))
 
     work_place = models.ForeignKey(
-        'Institute', on_delete=models.CASCADE, verbose_name=_("Work Place"))
+        'core.Institute', on_delete=models.CASCADE, verbose_name=_("Work Place"))
 
-    tech_field = models.CharField(max_length=500, null=True, blank=True, verbose_name=_("Technical Field"))
-    insurance_list = models.PositiveSmallIntegerField(default=1, verbose_name=_("Insurance List"))
+    tech_field = models.CharField(
+        max_length=500, null=True, blank=True, verbose_name=_("Technical Field"))
+    insurance_list = models.PositiveSmallIntegerField(
+        default=1, verbose_name=_("Insurance List"))
     organization = models.ForeignKey(
-        'Organization', null=True, blank=True, verbose_name=_("Organization"), on_delete=models.CASCADE)
+        'core.Organization', null=True, blank=True, verbose_name=_("Organization"), on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = _("Company Profile")
@@ -113,7 +59,8 @@ class CompanyProfile(models.Model):
 class Service(models.Model):
     name = models.CharField(max_length=255, verbose_name=_("Service Name"))
     description = models.TextField(verbose_name=_("Service Description"))
-    price = models.DecimalField(decimal_places=2, max_digits=20, verbose_name=_("Price"))
+    price = models.DecimalField(
+        decimal_places=2, max_digits=20, verbose_name=_("Price"))
 
     class Meta:
         verbose_name = _("Service")
@@ -124,10 +71,13 @@ class Service(models.Model):
 
 
 class CompanyService(models.Model):
-    company = models.ForeignKey(CompanyProfile, on_delete=models.CASCADE, related_name='services', verbose_name=_("Company"))
-    service = models.ForeignKey(Service, on_delete=models.CASCADE, verbose_name=_("Service"))
+    company = models.ForeignKey(CompanyProfile, on_delete=models.CASCADE,
+                                related_name='services', verbose_name=_("Company"))
+    service = models.ForeignKey(
+        Service, on_delete=models.CASCADE, verbose_name=_("Service"))
     is_active = models.BooleanField(default=False, verbose_name=_("Activate"))
-    purchased_date = models.DateTimeField(auto_now_add=True, verbose_name=_("Purchased Date"))
+    purchased_date = models.DateTimeField(
+        auto_now_add=True, verbose_name=_("Purchased Date"))
 
     class Meta:
         unique_together = ("company", "service")
@@ -139,7 +89,8 @@ class CompanyService(models.Model):
 
 
 class Dashboard(models.Model):
-    company_service = models.ForeignKey(CompanyService, on_delete=models.CASCADE, related_name='dashboards', verbose_name=_("Company Service"))
+    company_service = models.ForeignKey(
+        CompanyService, on_delete=models.CASCADE, related_name='dashboards', verbose_name=_("Company Service"))
 
     class Meta:
         verbose_name = _("Dashboard")
@@ -147,85 +98,6 @@ class Dashboard(models.Model):
 
     def __str__(self) -> str:
         return f"Dashboard for {self.company_service.company.company_title} - {self.company_service.service.name}"
-
-
-
-####################################
-"""Organizations Model"""
-
-
-class Organization(models.Model):
-    DEFEND = 'defend'
-
-    ORGANIZATION_CHOICES = [
-        (DEFEND, _("Defend"))
-    ]
-    organization_title = models.CharField(
-        choices=ORGANIZATION_CHOICES, default=DEFEND, max_length=50, blank=True, null=True, verbose_name=_("Organization Title")
-    )
-    custom_organization_title = models.CharField(
-        max_length=50, blank=True, null=True,
-        help_text=_(
-            "Enter a custom organization title if none of the choices apply."), verbose_name=_("Other Organization Title")
-    )
-
-    class Meta:
-        verbose_name = _("Organization")
-        verbose_name_plural = _("Organizations")
-
-    def __str__(self) -> str:
-        return f"{self.custom_organization_title}" if self.custom_organization_title else f"{self.get_organization_title_display()}"
-
-
-####################################
-"""City and province Models"""
-
-
-class City(models.Model):
-
-    name = models.CharField(max_length=200, verbose_name=_('Name'))
-
-    province = models.ForeignKey(
-        'Province', related_name='cities', on_delete=models.CASCADE, default="", verbose_name=_('Province'))
-
-    def __str__(self) -> str:
-        return self.name
-
-    class Meta:
-        verbose_name = _("City")
-        verbose_name_plural = _("Cities")
-
-
-class Province(models.Model):
-
-    name = models.CharField(max_length=200, unique=True,
-                            verbose_name=_('Name'))
-
-    def __str__(self) -> str:
-        return self.name
-
-    class Meta:
-        verbose_name = _("Province")
-        verbose_name_plural = _("Provinces")
-
-
-####################################
-"""Work place Model"""
-
-
-class Institute(models.Model):
-
-    title = models.CharField(max_length=250, verbose_name=_('Title'))
-
-    province = models.ForeignKey(
-        Province, on_delete=models.CASCADE, verbose_name=_('Province'))
-
-    def __str__(self) -> str:
-        return f"{self.title} , {self.province}"
-
-    class Meta:
-        verbose_name = _("Institute")
-        verbose_name_plural = _("Institutes")
 
 
 ####################################

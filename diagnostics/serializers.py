@@ -4,7 +4,8 @@ from rest_framework_simplejwt.tokens import Token
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
-from .models import OTP, CompanyProfile, Dashboard
+from .models import CompanyProfile, Dashboard
+from core.models import OTP
 User = get_user_model()
 
 
@@ -49,8 +50,8 @@ class UserSerializer(serializers.ModelSerializer):
 class OTPSendSerializer(serializers.Serializer):
     # Adjust max_length based on your requirements
     phone_number = serializers.CharField(max_length=11)
-    national_code = serializers.CharField(max_length = 11)
-    
+    national_code = serializers.CharField(max_length=11)
+
     def validate_phone_number(self, value):
         if not value.isdigit():
             raise ValidationError({
@@ -65,7 +66,7 @@ class OTPSendSerializer(serializers.Serializer):
                 'field': 'phone_number'
             })
         return value
-    
+
     def validate_national_code(self, value):
         if not value.isdigit():
             raise ValidationError({

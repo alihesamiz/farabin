@@ -42,7 +42,8 @@ INSTALLED_APPS = [
 ]
 
 PROJECT_APPS = [
-    'diagnostics'
+    'diagnostics',
+    'core',
 ]
 
 THIRED_PARTY_APPS = [
@@ -156,7 +157,7 @@ MEDIA_URL = 'media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-AUTH_USER_MODEL = 'diagnostics.User'
+AUTH_USER_MODEL = 'core.User'
 
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',

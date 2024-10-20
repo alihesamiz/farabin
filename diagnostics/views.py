@@ -7,8 +7,9 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.exceptions import NotFound, ValidationError
-
-from .models import Dashboard, FinancialAsset, User, CompanyProfile, OTP
+from .models import Dashboard, FinancialAsset,  CompanyProfile
+from core.models import OTP
+from django.contrib.auth import get_user_model
 from .serializers import (
     DashboardSerializer,
     OTPSendSerializer,
@@ -17,6 +18,8 @@ from .serializers import (
     CompanyProfileSerializer,
     CompanyProfileCreateSerializer
 )
+
+User = get_user_model()
 
 
 class RegisterViewSet(viewsets.ModelViewSet):
@@ -60,7 +63,8 @@ class OTPViewSet(viewsets.ViewSet):
         national_code = serializer.validated_data['national_code']
 
         try:
-            user = User.objects.get(phone_number=phone_number,national_code=national_code)
+            created, user = User.objects.get_or_create(
+                phone_number=phone_number, national_code=national_code)
         except User.DoesNotExist:
             return Response({'error': 'User with this phone number or national code does not exist.'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -105,7 +109,7 @@ class OTPViewSet(viewsets.ViewSet):
 
 
 class LogoutViewSet(viewsets.ViewSet):
-    
+
     permission_classes = [IsAuthenticated]
 
     @action(methods=['post'], detail=False)

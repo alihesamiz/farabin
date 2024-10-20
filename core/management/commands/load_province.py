@@ -1,6 +1,6 @@
 import json
 from django.core.management.base import BaseCommand
-from diagnostics.models import Province
+from core.models import Province
 
 
 class Command(BaseCommand):
@@ -8,7 +8,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         # Path to your JSON file
-        with open('diagnostics/management/commands/provinces.json', 'r', encoding='utf-8') as file:
+        with open('core/management/commands/provinces.json', 'r', encoding='utf-8') as file:
             data = json.load(file)
 
             for item in data:
