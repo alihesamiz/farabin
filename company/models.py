@@ -35,6 +35,36 @@ class LifeCycle(models.Model):
 
 
 ####################################
+"""Special tech Model"""
+
+
+class SpecialTech(models.Model):
+    name = models.CharField(max_length=255, verbose_name=_("Name"))
+
+    def __str__(self) -> str:
+        return f"{self.name}"
+
+    class Meta:
+        verbose_name = _("Special Tech")
+        verbose_name_plural = _("Special Techs")
+
+
+####################################
+"""tech field Model"""
+
+
+class TechField(models.Model):
+    name = models.CharField(max_length=255, verbose_name=_("Name"))
+
+    def __str__(self) -> str:
+        return f"{self.name}"
+
+    class Meta:
+        verbose_name = _("Tech Field")
+        verbose_name_plural = _("Tech Fields")
+
+
+####################################
 """Company Model"""
 
 
@@ -58,27 +88,31 @@ class CompanyProfile(models.Model):
 
     company_title = models.CharField(
         max_length=255, verbose_name=_("Company Title"))
-    
+
     email = models.EmailField(
         max_length=255, unique=True, verbose_name=_("Email"))
-    
+
     social_code = models.CharField(
         max_length=10, unique=True, verbose_name=_("Social Code"))
-    
+
     manager_name = models.CharField(
         max_length=255, verbose_name=_("Manager Full Name"))
 
     license = models.CharField(
         max_length=1, choices=LICENSE_CHOICES, verbose_name=_("License Type"))
 
-    work_place = models.ForeignKey(
-        'core.Institute', on_delete=models.CASCADE, verbose_name=_("Work Place"))
+    tech_field = models.ForeignKey('TechField',
+                                   null=True,
+                                   blank=True,
+                                   on_delete=models.SET_NULL,
+                                   verbose_name=_("Technical Field"))
 
-    tech_field = models.CharField(
-        max_length=500, null=True, blank=True, verbose_name=_("Technical Field"))
-
-    special_filed = models.CharField(
-        max_length=100, null=True, blank=True, verbose_name=_("Special Field"))
+    special_filed = models.ForeignKey('SpecialTech',
+                                      null=True,
+                                      blank=True,
+                                      on_delete=models.SET_NULL,
+                                      verbose_name=_("Special Field")
+                                      )
 
     insurance_list = models.PositiveSmallIntegerField(
         default=1, verbose_name=_("Insurance List"))
@@ -88,6 +122,14 @@ class CompanyProfile(models.Model):
 
     capital_providing_method = models.ManyToManyField(
         LifeCycle, verbose_name=_('Capital Providing Method'), related_name='company_profile')
+
+    province = models.ForeignKey(
+        'core.Province', on_delete=models.CASCADE, verbose_name=_("Province"))
+
+    city = models.ForeignKey(
+        'core.City', on_delete=models.CASCADE, verbose_name=_("City"))
+    
+    address = models.CharField(max_length=255,verbose_name=_("Address"))
 
     class Meta:
         verbose_name = _("Company Profile")
