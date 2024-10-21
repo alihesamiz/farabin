@@ -11,37 +11,6 @@ from .managers import UserManager
 # Create your models here.
 
 
-# class User(BaseUser):
-#     phone_number = models.CharField(
-#         max_length=11, unique=True, validators=[phone_number_validator])
-#     national_code = models.CharField(max_length=11, unique=True)
-#     otp = models.CharField(max_length=6)
-#     is_active = models.BooleanField(default=True)
-#     is_staff = models.BooleanField(default=False)
-#     is_superuser = models.BooleanField(default=False)
-
-#     USERNAME_FIELD = 'national_code'
-#     REQUIRED_FIELDS = ['phone_number']
-
-#     objects = UserManager()
-
-#     def __str__(self) -> str:
-#         return f"{self.phone_number}"
-
-#     def has_perm(self, perm, obj=None):
-#         return self.is_superuser
-
-#     def has_module_perms(self, app_label):
-#         return self.is_superuser
-
-#     @property
-#     def is_admin(self):
-#         return self.is_superuser
-
-
-#     class Meta:
-#         verbose_name = _("User")
-#         verbose_name_plural = _("Users")
 
 class User(BaseUser, PermissionsMixin):
     phone_number = models.CharField(
