@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-21 09:42+0330\n"
+"POT-Creation-Date: 2024-10-21 10:52+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,15 +22,15 @@ msgstr ""
 msgid "National Code"
 msgstr "کد ثبت ملی شرکت"
 
-#: company/admin.py:35 company/models.py:78
+#: company/admin.py:35 company/models.py:81
 msgid "Special Field"
 msgstr "حوزه تخصصی"
 
-#: company/admin.py:37 company/models.py:87
+#: company/admin.py:37 company/models.py:90
 msgid "Capital Providing Method"
 msgstr "راه‌های تامین سرمایه"
 
-#: company/apps.py:8 company/models.py:103
+#: company/apps.py:8 company/models.py:106
 msgid "Company"
 msgstr "شرکت"
 
@@ -82,73 +82,81 @@ msgstr "فعالسازی"
 msgid "Company Title"
 msgstr "عنوان شرکت"
 
-#: company/models.py:62
+#: company/models.py:63
 msgid "Email"
 msgstr "ایمیل"
 
-#: company/models.py:64
+#: company/models.py:66
 msgid "Social Code"
 msgstr "کد ملی"
 
-#: company/models.py:66
+#: company/models.py:69
 msgid "Manager Full Name"
 msgstr "نام کامل مدیرعامل"
 
-#: company/models.py:69
+#: company/models.py:72
 msgid "License Type"
 msgstr "نوع گواهی"
 
-#: company/models.py:72
+#: company/models.py:75
 msgid "Work Place"
 msgstr "محل استقرار"
 
-#: company/models.py:75
+#: company/models.py:78
 msgid "Technical Field"
 msgstr "حوزه فناوری"
 
-#: company/models.py:81
+#: company/models.py:84
 msgid "Insurance List"
 msgstr "تعداد لیست بیمه‌شدگان"
 
-#: company/models.py:84
+#: company/models.py:87
 msgid "Organization"
 msgstr "نهاد"
 
-#: company/models.py:90
+#: company/models.py:93
 msgid "Company Profile"
 msgstr "پروفایل شرکت"
 
-#: company/models.py:91
+#: company/models.py:94
 msgid "Company Profiles"
 msgstr "پروفایل شرکت‌ها"
 
-#: company/models.py:105
+#: company/models.py:108
 msgid "Service"
 msgstr "خدمت"
 
-#: company/models.py:106
+#: company/models.py:109
 msgid "Activate"
 msgstr "فعالسازی"
 
-#: company/models.py:108
+#: company/models.py:111
 msgid "Purchased Date"
 msgstr "تاریخ خرید"
 
-#: company/models.py:112 company/models.py:125
+#: company/models.py:115 company/models.py:128
 msgid "Company Service"
 msgstr "خدمت شرکت"
 
-#: company/models.py:113
+#: company/models.py:116
 msgid "Company Services"
 msgstr "خدمت‌های شرکت‌ها"
 
-#: company/models.py:128
+#: company/models.py:131
 msgid "Dashboard"
 msgstr "داشبورد"
 
-#: company/models.py:129
+#: company/models.py:132
 msgid "Dashboards"
 msgstr "داشبورد‌ها"
+
+#: company/serializers.py:30 company/serializers.py:59
+msgid "A company with this email already exists."
+msgstr "این ایمیل از قبل وجود دارد."
+
+#: company/serializers.py:39 company/serializers.py:68
+msgid "A company with this social code already exists."
+msgstr "این کد ملی از قبل وجود دارد"
 
 #~ msgid "Capital Providing Other"
 #~ msgstr "سایر"

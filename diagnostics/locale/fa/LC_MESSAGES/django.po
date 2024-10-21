@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-21 09:42+0330\n"
+"POT-Creation-Date: 2024-10-21 10:52+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -519,14 +519,6 @@ msgstr "کد ارسال شده تنها شامل اعداد است."
 msgid "OTP code must be 6 digits long."
 msgstr "طول کد ارسال شده برابر با ۶ است."
 
-#: diagnostics/serializers.py:138 diagnostics/serializers.py:167
-msgid "A company with this email already exists."
-msgstr "شرکتی با این عنوان وجود دارد."
-
-#: diagnostics/serializers.py:147 diagnostics/serializers.py:176
-msgid "A company with this social code already exists."
-msgstr "شرکتی با این شماره ثبت ملی وجود دارد."
-
 #: diagnostics/utils.py:11
 msgid "Start"
 msgstr "شروع"
@@ -570,6 +562,12 @@ msgstr "صورت صحیح تلفن همراه 09XXXXXXXXX میباشد."
 #: diagnostics/validators.py:7
 msgid "Invalid_phone_number"
 msgstr "شماره تلفن نامعتبر"
+
+#~ msgid "A company with this email already exists."
+#~ msgstr "شرکتی با این عنوان وجود دارد."
+
+#~ msgid "A company with this social code already exists."
+#~ msgstr "شرکتی با این شماره ثبت ملی وجود دارد."
 
 #~ msgid "Service Name"
 #~ msgstr "نام سرویس"
