@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-20 18:49+0330\n"
+"POT-Creation-Date: 2024-10-21 09:42+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,89 +18,131 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: core/admin.py:22
+#: core/admin.py:23
 msgid "Personal info"
 msgstr "اطلاعات شخصی"
 
-#: core/admin.py:23
+#: core/admin.py:24
 msgid "Permissions"
 msgstr "اجازه‌ها"
 
-#: core/admin.py:25
+#: core/admin.py:27
 msgid "Important dates"
 msgstr "تاریخ‌های مههم"
 
-#: core/admin.py:85
+#: core/admin.py:87
 msgid "Province Name"
 msgstr "نام استان"
 
-#: core/apps.py:8
+#: core/admin.py:96 core/models.py:214
+msgid "Price"
+msgstr "قیمت"
+
+#: core/apps.py:9
 msgid "Core"
 msgstr "اصلی"
 
-#: core/models.py:47
+#: core/models.py:58
+msgid "groups"
+msgstr "گروه‌ها"
+
+#: core/models.py:61
+msgid ""
+"The groups this user belongs to. A user will get all permissions granted to "
+"each of their groups."
+msgstr ""
+
+#: core/models.py:69
+msgid "user permissions"
+msgstr "اجازه‌های کاربر"
+
+#: core/models.py:71
+msgid "Specific permissions for this user."
+msgstr "اجازه‌های اختاصاصی برای این کاربر"
+
+#: core/models.py:103
 msgid "User"
 msgstr "کاربر"
 
-#: core/models.py:48
+#: core/models.py:104
 msgid "Users"
 msgstr "کاربران"
 
-#: core/models.py:77
+#: core/models.py:133
 msgid "Defend"
 msgstr "دفاع"
 
-#: core/models.py:80
+#: core/models.py:136
 msgid "Organization Title"
 msgstr "نام نهاد"
 
-#: core/models.py:85
+#: core/models.py:141
 msgid "Enter a custom organization title if none of the choices apply."
 msgstr "در صورتی که نام نهاد مورد نظر موجود نیست وارد نمایید."
 
-#: core/models.py:85
+#: core/models.py:141
 msgid "Other Organization Title"
 msgstr "سایر"
 
-#: core/models.py:89
+#: core/models.py:145
 msgid "Organization"
 msgstr "نهاد"
 
-#: core/models.py:90
+#: core/models.py:146
 msgid "Organizations"
 msgstr "نهاد‌ها"
 
-#: core/models.py:102 core/models.py:118
+#: core/models.py:158 core/models.py:174
 msgid "Name"
 msgstr "نام"
 
-#: core/models.py:105 core/models.py:124 core/models.py:137
+#: core/models.py:161 core/models.py:180 core/models.py:193
 msgid "Province"
 msgstr "استان"
 
-#: core/models.py:111
+#: core/models.py:167
 msgid "City"
 msgstr "شهر"
 
-#: core/models.py:112
+#: core/models.py:168
 msgid "Cities"
 msgstr "شهرها"
 
-#: core/models.py:125
+#: core/models.py:181
 msgid "Provinces"
 msgstr "استان‌ها"
 
-#: core/models.py:134
+#: core/models.py:190
 msgid "Title"
 msgstr "عنوان"
 
-#: core/models.py:143
+#: core/models.py:199
 msgid "Institute"
 msgstr "موسسه"
 
-#: core/models.py:144
+#: core/models.py:200
 msgid "Institutes"
 msgstr "موسسات"
+
+#: core/models.py:209
+msgid "Service Name"
+msgstr "نام سرویس"
+
+#: core/models.py:211
+msgid "Service Description"
+msgstr "شرح سرویس"
+
+#: core/models.py:217
+msgid "Service Active"
+msgstr "فعالسازی"
+
+#: core/models.py:220
+msgid "Service"
+msgstr "سرویس"
+
+#: core/models.py:221
+msgid "Services"
+msgstr "سرویس‌ها"
 
 #: core/validators.py:6
 msgid "Phone number must be in 09XXXXXXXXX format."

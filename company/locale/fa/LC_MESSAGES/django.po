@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-20 18:44+0330\n"
+"POT-Creation-Date: 2024-10-21 09:42+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,98 +17,138 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-#: company/admin.py:17
+
+#: company/admin.py:31
 msgid "National Code"
 msgstr "کد ثبت ملی شرکت"
 
-#: company/apps.py:8 company/models.py:62
+#: company/admin.py:35 company/models.py:78
+msgid "Special Field"
+msgstr "حوزه تخصصی"
+
+#: company/admin.py:37 company/models.py:87
+msgid "Capital Providing Method"
+msgstr "راه‌های تامین سرمایه"
+
+#: company/apps.py:8 company/models.py:103
 msgid "Company"
 msgstr "شرکت"
 
+#: company/models.py:22
+msgid "Operational"
+msgstr "عملیاتی"
+
 #: company/models.py:23
+msgid "Finance"
+msgstr "تسهیلات مالی"
+
+#: company/models.py:24
+msgid "Invest"
+msgstr "سرمایه‌گذاری"
+
+#: company/models.py:27
+msgid "Capital Providing"
+msgstr "تامین سرمایه"
+
+#: company/models.py:30
+msgid "Life Cycle"
+msgstr "چرخه عمر"
+
+#: company/models.py:31
+msgid "Life Cycles"
+msgstr "چرخه‌های عمر"
+
+#: company/models.py:48
 msgid "Newbie"
 msgstr "نوپا"
 
-#: company/models.py:24
+#: company/models.py:49
 msgid "Innovative"
 msgstr "نوآور"
 
-#: company/models.py:25
+#: company/models.py:50
 msgid "Technological"
 msgstr "فناور"
 
-#: company/models.py:29
+#: company/models.py:54
 msgid "User"
 msgstr "کاربر"
 
-#: company/models.py:32
+#: company/models.py:57
+msgid "Profile Active"
+msgstr "فعالسازی"
+
+#: company/models.py:60
 msgid "Company Title"
 msgstr "عنوان شرکت"
 
-#: company/models.py:34
+#: company/models.py:62
 msgid "Email"
 msgstr "ایمیل"
 
-#: company/models.py:36
+#: company/models.py:64
 msgid "Social Code"
 msgstr "کد ملی"
 
-#: company/models.py:38
+#: company/models.py:66
 msgid "Manager Full Name"
 msgstr "نام کامل مدیرعامل"
 
-#: company/models.py:40
+#: company/models.py:69
 msgid "License Type"
 msgstr "نوع گواهی"
 
-#: company/models.py:43
+#: company/models.py:72
 msgid "Work Place"
 msgstr "محل استقرار"
 
-#: company/models.py:46
+#: company/models.py:75
 msgid "Technical Field"
 msgstr "حوزه فناوری"
 
-#: company/models.py:48
+#: company/models.py:81
 msgid "Insurance List"
 msgstr "تعداد لیست بیمه‌شدگان"
 
-#: company/models.py:50
+#: company/models.py:84
 msgid "Organization"
 msgstr "نهاد"
 
-#: company/models.py:53
+#: company/models.py:90
 msgid "Company Profile"
 msgstr "پروفایل شرکت"
 
-#: company/models.py:54
+#: company/models.py:91
 msgid "Company Profiles"
 msgstr "پروفایل شرکت‌ها"
 
-#: company/models.py:64
+#: company/models.py:105
 msgid "Service"
 msgstr "خدمت"
 
-#: company/models.py:65
+#: company/models.py:106
 msgid "Activate"
 msgstr "فعالسازی"
 
-#: company/models.py:67
+#: company/models.py:108
 msgid "Purchased Date"
 msgstr "تاریخ خرید"
 
-#: company/models.py:71 company/models.py:80
+#: company/models.py:112 company/models.py:125
 msgid "Company Service"
 msgstr "خدمت شرکت"
 
-#: company/models.py:72
+#: company/models.py:113
 msgid "Company Services"
 msgstr "خدمت‌های شرکت‌ها"
 
-#: company/models.py:83
+#: company/models.py:128
 msgid "Dashboard"
 msgstr "داشبورد"
 
-#: company/models.py:84
+#: company/models.py:129
 msgid "Dashboards"
 msgstr "داشبورد‌ها"
+
+#~ msgid "Capital Providing Other"
+#~ msgstr "سایر"

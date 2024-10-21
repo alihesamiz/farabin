@@ -22,7 +22,10 @@ admin.site.site_header = "مدیریت وبسایت فرابین"
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('diagnostics.urls')),
+    
+    path('diagnostic/', include('diagnostics.urls')),
+    
+    path('company/', include('company.urls')),
 
     # Schema generation
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),

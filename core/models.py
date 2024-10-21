@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractBaseUser as BaseUser , PermissionsMixin
+from django.contrib.auth.models import AbstractBaseUser as BaseUser, PermissionsMixin
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Group, Permission
 from django.utils.translation import gettext_lazy as _
@@ -44,7 +44,8 @@ from .managers import UserManager
 #         verbose_name_plural = _("Users")
 
 class User(BaseUser, PermissionsMixin):
-    phone_number = models.CharField(max_length=11, unique=True, validators=[phone_number_validator])
+    phone_number = models.CharField(
+        max_length=11, unique=True, validators=[phone_number_validator])
     national_code = models.CharField(max_length=11, unique=True)
     otp = models.CharField(max_length=6)
     is_active = models.BooleanField(default=True)
@@ -101,6 +102,7 @@ class User(BaseUser, PermissionsMixin):
     class Meta:
         verbose_name = _("User")
         verbose_name_plural = _("Users")
+
 
 ####################################
 """OTP Model"""
@@ -196,3 +198,27 @@ class Institute(models.Model):
     class Meta:
         verbose_name = _("Institute")
         verbose_name_plural = _("Institutes")
+
+
+####################################
+"""Services model"""
+
+
+class Service(models.Model):
+
+    name = models.CharField(max_length=255, verbose_name=_("Service Name"))
+
+    description = models.TextField(verbose_name=_("Service Description"))
+
+    price = models.DecimalField(
+        decimal_places=2, max_digits=20, verbose_name=_("Price"))
+
+    service_active = models.BooleanField(
+        default=False, verbose_name=_("Service Active"))
+
+    class Meta:
+        verbose_name = _("Service")
+        verbose_name_plural = _("Services")
+
+    def __str__(self) -> str:
+        return f"{self.name} - {self.description[:10]}"

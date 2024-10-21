@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-20 18:44+0330\n"
+"POT-Creation-Date: 2024-10-21 08:35+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,11 +18,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: farabin/settings.py:135
+#: farabin/settings.py:145
 msgid "English"
 msgstr "انگلیسی"
 
-#: farabin/settings.py:137
+#: farabin/settings.py:147
 msgid "Persian"
 msgstr "فارسی"
 

@@ -4,19 +4,6 @@ from django.db import models
 from .utils import CustomUtils
 
 
-class Service(models.Model):
-    name = models.CharField(max_length=255, verbose_name=_("Service Name"))
-    description = models.TextField(verbose_name=_("Service Description"))
-    price = models.DecimalField(
-        decimal_places=2, max_digits=20, verbose_name=_("Price"))
-
-    class Meta:
-        verbose_name = _("Service")
-        verbose_name_plural = _("Services")
-
-    def __str__(self) -> str:
-        return f"{self.name} - {self.description[:10]}"
-
 
 ####################################
 """diagnostic Models"""
@@ -296,28 +283,28 @@ class AccountTurnOver(models.Model):
         verbose_name_plural = _("Accounts Turnovers")
 
 
-class LifeCycle(models.Model):
-    OPERATIONAL = 'operational'
-    FINANCE = 'finance'
-    INVEST = 'invest'
+# class LifeCycle(models.Model):
+#     OPERATIONAL = 'operational'
+#     FINANCE = 'finance'
+#     INVEST = 'invest'
 
-    LIFE_CYCLE_CHOICES = [
-        (OPERATIONAL, _('Operational')),
-        (FINANCE, _('Finance')),
-        (INVEST, _('Invest')),
-    ]
-    capital_providing = models.CharField(
-        max_length=11, choices=LIFE_CYCLE_CHOICES, default=OPERATIONAL, verbose_name=_("Capital Providing"))
+#     LIFE_CYCLE_CHOICES = [
+#         (OPERATIONAL, _('Operational')),
+#         (FINANCE, _('Finance')),
+#         (INVEST, _('Invest')),
+#     ]
+#     capital_providing = models.CharField(
+#         max_length=11, choices=LIFE_CYCLE_CHOICES, default=OPERATIONAL, verbose_name=_("Capital Providing"))
 
-    other_capital_providing = models.CharField(
-        max_length=20, verbose_name=_("Capital Providing Other"), null=True, blank=True)
+#     other_capital_providing = models.CharField(
+#         max_length=20, verbose_name=_("Capital Providing Other"), null=True, blank=True)
 
-    class Meta:
-        verbose_name = _('Life Cycle')
-        verbose_name_plural = _('Life Cycles')
+#     class Meta:
+#         verbose_name = _('Life Cycle')
+#         verbose_name_plural = _('Life Cycles')
 
-    def __str__(self):
-        return self.get_capital_providing_display()
+#     def __str__(self):
+#         return self.get_capital_providing_display()
 
 
 RENAME_TAX_DECLARATION_PATH = CustomUtils(
@@ -348,8 +335,8 @@ class FinancialAsset(models.Model):
         verbose_name=_('Company'))
     year = models.PositiveIntegerField(verbose_name=_('Year'))
 
-    capital_providing_method = models.ManyToManyField(
-        LifeCycle, verbose_name=_('Life Cycles'), related_name='financial_assets')
+    # capital_providing_method = models.ManyToManyField(
+    #     LifeCycle, verbose_name=_('Life Cycles'), related_name='financial_assets')
 
     class Meta:
         unique_together = ('company', 'year')

@@ -1,19 +1,12 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
-from .models import AccountTurnOver, FinancialAsset, LifeCycle, ProfitLossStatement, SoldProductFee, BalanceReport, TaxDeclarationFile, Service
+from .models import AccountTurnOver, FinancialAsset,  ProfitLossStatement, SoldProductFee, BalanceReport, TaxDeclarationFile
 
 # Register your models here.
 
 
 class ProfitStatementInline(admin.StackedInline):
     model = ProfitLossStatement
-    extra = 0
-    min_num = 1
-    max_num = 1
-
-
-class LifeCycleInline(admin.StackedInline):
-    model = LifeCycle
     extra = 0
     min_num = 1
     max_num = 1
@@ -53,14 +46,3 @@ class FinancialAssestModel(admin.ModelAdmin):
     inlines = [TaxDeclarationInline, BalanceReportInline, ProfitStatementInline, SaledProductInline,
                AccountTurnOverInline]
     # This will allow selection of multiple life cycles
-    filter_horizontal = ('capital_providing_method',)
-
-
-@admin.register(LifeCycle)
-class LifeCycleAdmin(admin.ModelAdmin):
-    list_display = ['capital_providing', 'other_capital_providing']
-
-
-@admin.register(Service)
-class ServiceAdmin(admin.ModelAdmin):
-    pass
