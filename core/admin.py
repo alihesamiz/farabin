@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import gettext_lazy as _
-from .models import Service, User, Institute, City, Province, Organization
+from .models import Service, User, City, Province
 
 # Register your models here.
 
@@ -45,16 +45,11 @@ class UserAdmin(admin.ModelAdmin):
     list_filter = ('is_active', 'is_staff', 'is_superuser')
 
 
-@admin.register(Organization)
-class OrganizationAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(Institute)
-class InstituteAdmin(admin.ModelAdmin):
-    list_display = ['title', 'province']
-    autocomplete_fields = ['province']
-    search_fields = ['title']
+# @admin.register(Institute)
+# class InstituteAdmin(admin.ModelAdmin):
+#     list_display = ['title', 'province']
+#     autocomplete_fields = ['province']
+#     search_fields = ['title']
 
 # Admin for Province
 

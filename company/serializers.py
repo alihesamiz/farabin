@@ -104,10 +104,12 @@ class CompanyProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = CompanyProfile
         fields = [
-            'company_title', 'user_national_code', 'email', 'social_code',
-            'manager_name', 'license', 'work_place', 'tech_field', 'special_filed',
-            'insurance_list', 'organization', 'capital_providing_method', 'profile_active',
-            'services'  # Include services in the serialized output
+
+            'user_national_code',
+            'company_title',  'social_code', 'email', 'manager_name',
+            'license', 'special_field', 'tech_field',  'province', 'city',
+            'insurance_list', 'capital_providing_method',
+            'profile_active', 'services'
         ]
         # read_only_fields = ['user_national_code']
 
@@ -134,9 +136,9 @@ class CompanyProfileCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = CompanyProfile
         fields = [
-            'company_title', 'email', 'social_code', 'manager_name',
-            'license', 'work_place', 'tech_field', 'special_filed',
-            'insurance_list', 'organization', 'capital_providing_method',
+            'company_title',  'social_code', 'email', 'manager_name',
+            'license', 'special_field', 'tech_field',  'province', 'city',
+            'insurance_list', 'capital_providing_method',
             'profile_active'
         ]
 

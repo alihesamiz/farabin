@@ -31,7 +31,7 @@ class CompanyAdmin(admin.ModelAdmin):
     national_code.short_description = _("National Code")
 
     def special_field_display(self, company_profile: CompanyProfile):
-        return company_profile.special_filed  # Ensure this matches the field name
+        return company_profile.special_field  # Ensure this matches the field name
     special_field_display.short_description = _("Special Field")
 
     @admin.display(description=_("Capital Providing Method"))

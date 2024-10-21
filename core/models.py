@@ -11,7 +11,6 @@ from .managers import UserManager
 # Create your models here.
 
 
-
 class User(BaseUser, PermissionsMixin):
     phone_number = models.CharField(
         max_length=11, unique=True, validators=[phone_number_validator])
@@ -95,27 +94,27 @@ class OTP(models.Model):
 """Organizations Model"""
 
 
-class Organization(models.Model):
-    DEFEND = 'defend'
+# class Organization(models.Model):
+#     DEFEND = 'defend'
 
-    ORGANIZATION_CHOICES = [
-        (DEFEND, _("Defend"))
-    ]
-    organization_title = models.CharField(
-        choices=ORGANIZATION_CHOICES, default=DEFEND, max_length=50, blank=True, null=True, verbose_name=_("Organization Title")
-    )
-    custom_organization_title = models.CharField(
-        max_length=50, blank=True, null=True,
-        help_text=_(
-            "Enter a custom organization title if none of the choices apply."), verbose_name=_("Other Organization Title")
-    )
+#     ORGANIZATION_CHOICES = [
+#         (DEFEND, _("Defend"))
+#     ]
+#     organization_title = models.CharField(
+#         choices=ORGANIZATION_CHOICES, default=DEFEND, max_length=50, blank=True, null=True, verbose_name=_("Organization Title")
+#     )
+#     custom_organization_title = models.CharField(
+#         max_length=50, blank=True, null=True,
+#         help_text=_(
+#             "Enter a custom organization title if none of the choices apply."), verbose_name=_("Other Organization Title")
+#     )
 
-    class Meta:
-        verbose_name = _("Organization")
-        verbose_name_plural = _("Organizations")
+#     class Meta:
+#         verbose_name = _("Organization")
+#         verbose_name_plural = _("Organizations")
 
-    def __str__(self) -> str:
-        return f"{self.custom_organization_title}" if self.custom_organization_title else f"{self.get_organization_title_display()}"
+#     def __str__(self) -> str:
+#         return f"{self.custom_organization_title}" if self.custom_organization_title else f"{self.get_organization_title_display()}"
 
 
 ####################################
@@ -133,6 +132,7 @@ class City(models.Model):
         return self.name
 
     class Meta:
+        unique_together = [['name', 'province']]
         verbose_name = _("City")
         verbose_name_plural = _("Cities")
 
@@ -154,19 +154,19 @@ class Province(models.Model):
 """Work place Model"""
 
 
-class Institute(models.Model):
+# class Institute(models.Model):
 
-    title = models.CharField(max_length=250, verbose_name=_('Title'))
+#     title = models.CharField(max_length=250, verbose_name=_('Title'))
 
-    province = models.ForeignKey(
-        Province, on_delete=models.CASCADE, verbose_name=_('Province'))
+#     province = models.ForeignKey(
+#         Province, on_delete=models.CASCADE, verbose_name=_('Province'))
 
-    def __str__(self) -> str:
-        return f"{self.title} , {self.province}"
+#     def __str__(self) -> str:
+#         return f"{self.title} , {self.province}"
 
-    class Meta:
-        verbose_name = _("Institute")
-        verbose_name_plural = _("Institutes")
+#     class Meta:
+#         verbose_name = _("Institute")
+#         verbose_name_plural = _("Institutes")
 
 
 ####################################

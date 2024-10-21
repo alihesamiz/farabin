@@ -184,26 +184,3 @@ class OTPViewSet(viewsets.ViewSet):
 
         except User.DoesNotExist:
             return Response({'error': 'User does not exist.'}, status=status.HTTP_404_NOT_FOUND)
-
-
-class LogoutViewSet(viewsets.ViewSet):
-
-    permission_classes = [IsAuthenticated]
-
-    @action(methods=['post'], detail=False, url_path='')
-    def logout(self, request):
-        """
-        Handles logout by blacklisting the refresh token.
-        """
-        refresh_token = request.data.get('refresh_token')
-        if not refresh_token:
-            return Response({'detail': 'Refresh token is required'}, status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            token = RefreshToken(refresh_token)
-            token.blacklist()
-            return Response({'detail': 'Logout successful'}, status=status.HTTP_200_OK)
-        except TokenError:
-            return Response({'detail': 'Invalid or expired token'}, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
