@@ -12,7 +12,7 @@ class Command(BaseCommand):
         script_dir = os.path.dirname(os.path.abspath(__file__))
 
         # Build the full path to the JSON file
-        file_path = os.path.join(script_dir, 'provinces.json')
+        file_path = os.path.join(script_dir, 'updated_cities.json')
         with open(file_path, 'r', encoding='utf-8') as file:
             data = json.load(file)
 
