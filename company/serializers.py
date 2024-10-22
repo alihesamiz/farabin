@@ -144,8 +144,16 @@ class CompanyProfileCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         # We do not pass 'user' here since it's provided in the view
-        return CompanyProfile.objects.create(**validated_data)
+        capital_providing_methods = validated_data.pop('capital_providing_method', [])
+        
+        # Create the CompanyProfile object (without the many-to-many field)
+        company_profile = CompanyProfile.objects.create(**validated_data)
+        
+        # Now add the many-to-many relationships
+        company_profile.capital_providing_method.set(capital_providing_methods)
 
+        return company_profile
+    
     def validate_email(self, value):
         if CompanyProfile.objects.filter(email=value).exists():
             raise serializers.ValidationError({

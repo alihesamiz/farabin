@@ -15,35 +15,11 @@ from .serializers import (
 
 User = get_user_model()
 
-
-# class RegisterViewSet(viewsets.ModelViewSet):
-#     """
-#     A ModelViewSet for registering users. Allows only registration (create)
-#     for unauthenticated users, but restricts listing/retrieving users to
-#     authenticated users only.
-#     """
-#     queryset = User.objects.all()
-#     serializer_class = UserSerializer
-
-#     # Define permissions based on the action
-#     def get_permissions(self):
-#         if self.action == 'create':
-#             # Allow anyone to register (create)
-#             return [AllowAny()]
-#         else:
-#             # Require authentication for list and other actions
-#             return [IsAdminUser()]
-
-#     # Override the create method to handle registration
-#     def create(self, request, *args, **kwargs):
-#         serializer = self.get_serializer(data=request.data)
-#         serializer.is_valid(raise_exception=True)
-#         user = serializer.save()
-#         return Response(
-#             {'message': 'User created successfully. Proceed to OTP verification.'},
-#             status=status.HTTP_201_CREATED
-#         )
-
+# {
+#     "message": "OTP verified successfully.",
+#     "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczMDE4Mjc5OCwiaWF0IjoxNzI5NTc3OTk4LCJqdGkiOiI2YTU5ZDg5YTI4M2M0ZGE3OTVhMDA1YTVkMWZmOTc4ZSIsInVzZXJfaWQiOjN9.A7alNS6kIC7Fwl7EgTRZ2K7hQ47TEEk57uEBsMbW7Vc",
+#     "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI5NjY0Mzk4LCJpYXQiOjE3Mjk1Nzc5OTgsImp0aSI6ImUzZWM5OTRhYjc3NzQ0OGE5ZTI1NzUzNzQwNWM4YjhlIiwidXNlcl9pZCI6M30.xaYHz_g6XOpHemgY1sjQQMYn1hwZ4azG2aIr4s4aKHo"
+# }
 
 class OTPViewSet(viewsets.ViewSet):
     """
