@@ -1,80 +1,44 @@
+import logging
 from django.shortcuts import render
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from django.db.models import Count
 from rest_framework.views import APIView
+from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework.exceptions import NotFound, ValidationError
-from .models import Dashboard, CompanyProfile
+from .models import BalanceReport, Dashboard, CompanyProfile, TaxDeclaration
 from diagnostics.models import FinancialAsset
 from .serializers import (
+    BalanceReportCreateSerializer,
+    BalanceReportSerializer,
     DashboardSerializer,
     CompanyProfileSerializer,
-    CompanyProfileCreateSerializer
+    CompanyProfileCreateSerializer,
+    TaxDeclarationCreateSerializer,
+    TaxDeclarationSerializer
 )
-# Create your views here.
 
-
-# class CompanyProfileViewSet(viewsets.ModelViewSet):
-#     """
-#     A ViewSet for handling company profiles. Allows creating, retrieving, and updating profiles.
-#     """
-#     # queryset = CompanyProfile.objects.all()
-#     permission_classes = [IsAuthenticated]
-
-#     def get_queryset(self):
-#         user = self.request.user
-#         return CompanyProfile.objects.filter(user=user)
-
-#     def get_serializer_class(self):
-#         if self.action == 'create':
-#             return CompanyProfileCreateSerializer  # Use create serializer for POST requests
-#         return CompanyProfileSerializer  # Use normal serializer for retrieve/update
-
-#     def get_object(self):
-#         try:
-#             # Return the company profile for the authenticated user
-#             return CompanyProfile.objects.get(user=self.request.user)
-#         except CompanyProfile.DoesNotExist:
-#             raise NotFound("Customer profile not found. Please create one.")
-
-#     def perform_create(self, serializer):
-#         # Ensure a customer does not already exist for the user
-#         if CompanyProfile.objects.filter(user=self.request.user).exists():
-#             raise ValidationError("Customer profile already exists.")
-#         # Link the authenticated user to the newly created customer
-#         serializer.save(user=self.request.user)
 
 class CompanyProfileViewSet(viewsets.ModelViewSet):
-    """
-    A ViewSet for handling company profiles. Allows creating, retrieving, and updating profiles.
-    """
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        user = self.request.user
-        return CompanyProfile.objects.filter(user=user)
+        return CompanyProfile.objects.filter(user=self.request.user)
 
     def get_serializer_class(self):
-        if self.action == 'create':
-            return CompanyProfileCreateSerializer  # Use create serializer for POST requests
-        return CompanyProfileSerializer  # Use normal serializer for retrieve/update
+        if self.action in ['create', 'update', 'partial_update']:
+            return CompanyProfileCreateSerializer
+        return CompanyProfileSerializer
 
-    def get_object(self):
-        try:
-            # Return the company profile for the authenticated user
-            return CompanyProfile.objects.get(user=self.request.user)
-        except CompanyProfile.DoesNotExist:
-            raise NotFound("Customer profile not found. Please create one.")
-
-    def perform_create(self, serializer):
-        # Ensure a customer does not already exist for the user
-        if CompanyProfile.objects.filter(user=self.request.user).exists():
-            raise ValidationError("Customer profile already exists.")
-        # Link the authenticated user to the newly created customer
-        serializer.save(user=self.request.user)
+    @action(detail=True, methods=['get'])
+    def retrieve_profile(self, request, pk=None):
+        queryset = self.get_queryset()
+        company_profile = get_object_or_404(queryset, pk=pk)
+        serializer = CompanyProfileSerializer(company_profile)
+        return Response(serializer.data)
 
 
 class DashboardViewSet(viewsets.ModelViewSet):
@@ -107,3 +71,79 @@ class DashboardViewSet(viewsets.ModelViewSet):
             data['declaration_files_count'] = declaration_files_count
 
         return Response(response_data, status=status.HTTP_200_OK)
+
+
+logger = logging.getLogger(__name__)
+
+# TaxDeclaration ViewSet
+
+
+# class TaxDeclarationViewSet(viewsets.ModelViewSet):
+#     permission_classes = [IsAuthenticated]
+#     serializer_class = TaxDeclarationSerializer
+#     queryset = TaxDeclaration.objects.all()
+
+#     def get_serializer_context(self):
+#         # Pass the request to the serializer context
+#         context = super().get_serializer_context()
+#         context['request'] = self.request
+#         return context
+
+#     def perform_destroy(self, instance):
+#         try:
+#             instance.delete()
+#             print(True)
+#         except Exception as e:
+#             print(False)
+# # BalanceReport ViewSet
+
+
+# class BalanceReportViewSet(viewsets.ModelViewSet):
+#     permission_classes = [IsAuthenticated]
+#     queryset = BalanceReport.objects.all()
+#     serializer_class = BalanceReportSerializer
+
+#     def get_serializer_context(self):
+#         # Pass the request to the serializer context
+#         context = super().get_serializer_context()
+#         context['request'] = self.request
+#         return context
+
+
+class TaxDeclarationViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = TaxDeclaration.objects.all()
+
+    def get_serializer_class(self):
+        if self.action in ['create', 'update']:
+            return TaxDeclarationCreateSerializer
+        return TaxDeclarationSerializer
+
+    def get_serializer_context(self):
+        # Pass the request to the serializer context
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
+
+    def perform_destroy(self, instance):
+        try:
+            instance.delete()
+            print(True)
+        except Exception as e:
+            print(False)
+
+
+class BalanceReportViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = BalanceReport.objects.all()
+
+    def get_serializer_class(self):
+        if self.action in ['create', 'update']:
+            return BalanceReportCreateSerializer
+        return BalanceReportSerializer
+
+    def get_serializer_context(self):
+        # Pass the request to the serializer context
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context

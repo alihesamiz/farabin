@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "name": "farabin",
+  "name": "farabin-api",
   "type": "collection",
   "ignore": [
     "node_modules",

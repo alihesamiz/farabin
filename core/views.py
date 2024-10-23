@@ -6,12 +6,13 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework_simplejwt.tokens import RefreshToken
 from core.models import OTP
+from .utils import GeneralUtils
 from django.contrib.auth import get_user_model
 from .serializers import (
     OTPSendSerializer,
-    OTPVerifySerializer,
-    # UserSerializer,
+    OTPVerifySerializer
 )
+from company.models import CompanyProfile
 
 User = get_user_model()
 
@@ -20,6 +21,7 @@ User = get_user_model()
 #     "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczMDE4Mjc5OCwiaWF0IjoxNzI5NTc3OTk4LCJqdGkiOiI2YTU5ZDg5YTI4M2M0ZGE3OTVhMDA1YTVkMWZmOTc4ZSIsInVzZXJfaWQiOjN9.A7alNS6kIC7Fwl7EgTRZ2K7hQ47TEEk57uEBsMbW7Vc",
 #     "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI5NjY0Mzk4LCJpYXQiOjE3Mjk1Nzc5OTgsImp0aSI6ImUzZWM5OTRhYjc3NzQ0OGE5ZTI1NzUzNzQwNWM4YjhlIiwidXNlcl9pZCI6M30.xaYHz_g6XOpHemgY1sjQQMYn1hwZ4azG2aIr4s4aKHo"
 # }
+
 
 class OTPViewSet(viewsets.ViewSet):
     """
@@ -60,6 +62,7 @@ class OTPViewSet(viewsets.ViewSet):
     )
     @action(detail=False, methods=['get', 'post'], url_path='send')
     def send_otp(self, request):
+        util = GeneralUtils()
         serializer = OTPSendSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         phone_number = serializer.validated_data['phone_number']
@@ -84,9 +87,7 @@ class OTPViewSet(viewsets.ViewSet):
         otp_code = otp.generate_otp()
         otp.otp_code = otp_code
         otp.save()
-
-        print(f"sending {otp_code} to {phone_number}")
-
+        util.send_otp(phone_number, otp_code)
         return Response({'message': 'OTP sent successfully.'}, status=status.HTTP_200_OK)
 
     @extend_schema(
@@ -147,6 +148,8 @@ class OTPViewSet(viewsets.ViewSet):
             otp = OTP.objects.filter(user=user).last()
 
             if otp and otp.is_valid() and otp.otp_code == otp_code:
+                CompanyProfile.objects.get_or_create(user=user)
+
                 refresh = RefreshToken.for_user(user)
                 access_token = str(refresh.access_token)
 

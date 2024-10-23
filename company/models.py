@@ -1,3 +1,4 @@
+from core.utils import GeneralUtils
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
@@ -101,16 +102,12 @@ class CompanyProfile(models.Model):
     license = models.CharField(
         max_length=1, choices=LICENSE_CHOICES, verbose_name=_("License Type"))
 
-    tech_field = models.ForeignKey('TechField',
-                                   null=True,
-                                   blank=True,
-                                   on_delete=models.SET_NULL,
+    tech_field = models.ForeignKey('TechField', default=1,
+                                   on_delete=models.CASCADE,
                                    verbose_name=_("Technical Field"))
 
-    special_field = models.ForeignKey('SpecialTech',
-                                      null=True,
-                                      blank=True,
-                                      on_delete=models.SET_NULL,
+    special_field = models.ForeignKey('SpecialTech', default=1,
+                                      on_delete=models.CASCADE,
                                       verbose_name=_("Special Field")
                                       )
 
@@ -124,12 +121,12 @@ class CompanyProfile(models.Model):
         LifeCycle, verbose_name=_('Capital Providing Method'), related_name='company_profile')
 
     province = models.ForeignKey(
-        'core.Province', on_delete=models.CASCADE, verbose_name=_("Province"))
+        'core.Province', default=1, on_delete=models.CASCADE, verbose_name=_("Province"))
 
     city = models.ForeignKey(
-        'core.City', on_delete=models.CASCADE, verbose_name=_("City"))
-    
-    address = models.CharField(max_length=255,verbose_name=_("Address"))
+        'core.City', default=1, on_delete=models.CASCADE, verbose_name=_("City"))
+
+    address = models.CharField(max_length=255, verbose_name=_("Address"))
 
     class Meta:
         verbose_name = _("Company Profile")
@@ -175,3 +172,66 @@ class Dashboard(models.Model):
 
     def __str__(self) -> str:
         return f"Dashboard for {self.company_service.company.company_title} - {self.company_service.service.name}"
+
+
+TAX_FILE_UPLOADING_PATH = GeneralUtils(
+    path="financial_files/files/tax_files",
+    fields=['company__company_title', 'year']
+)
+
+
+####################################
+"""TaxDeclaration Model"""
+
+
+class TaxDeclaration(models.Model):
+
+    company = models.ForeignKey(CompanyProfile, on_delete=models.SET_NULL, null=True, verbose_name=_(
+        "Company"), related_name="taxfiles")
+
+    year = models.PositiveSmallIntegerField()
+
+    tax_file = models.FileField(verbose_name=_(
+        "File"), upload_to=TAX_FILE_UPLOADING_PATH.rename_folder, blank=True, null=True)
+
+    def __str__(self) -> str:
+        return f"{self.company.company_title} -> {self.year}"
+
+    class Meta:
+        verbose_name = _("Tax Declaration")
+        verbose_name_plural = _("Tax Declarations")
+        unique_together = [['company', 'year']]
+
+
+########################
+"""non-TaxDeclaration Model"""
+
+BALANCE_REPORT_FILE_UPLOADING_PATH = GeneralUtils(
+    path="financial_files/files/non-tax_files",
+    fields=['company__company_title', 'year']
+)
+
+
+class BalanceReport(models.Model):
+
+    company = models.ForeignKey(CompanyProfile, on_delete=models.SET_NULL, null=True, verbose_name=_(
+        "Company"), related_name="reportfiles")
+
+    year = models.PositiveSmallIntegerField()
+
+    balance_report_file = models.FileField(verbose_name=_(
+        "Balance Report File"), upload_to=BALANCE_REPORT_FILE_UPLOADING_PATH.rename_folder, blank=True, null=True)
+
+    prift_loss_file = models.FileField(verbose_name=_(
+        "Prift Loss File"), upload_to=BALANCE_REPORT_FILE_UPLOADING_PATH.rename_folder, blank=True, null=True)
+
+    sold_product_file = models.FileField(verbose_name=_(
+        "Sold Product File"), upload_to=BALANCE_REPORT_FILE_UPLOADING_PATH.rename_folder, blank=True, null=True)
+
+    def __str__(self) -> str:
+        return f"{self.company.company_title} -> {self.year}"
+
+    class Meta:
+        verbose_name = _("Balance Report")
+        verbose_name_plural = _("Balance Reports")
+        unique_together = [['company', 'year']]

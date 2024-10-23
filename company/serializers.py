@@ -6,69 +6,9 @@ from django.contrib.auth import get_user_model
 
 from django.utils.translation import gettext_lazy as _
 
-from .models import CompanyProfile, CompanyService, Dashboard
+from .models import BalanceReport, CompanyProfile, CompanyService, Dashboard, TaxDeclaration
 
 User = get_user_model()
-
-
-# class CompanyProfileSerializer(serializers.ModelSerializer):
-#     user_national_code = serializers.CharField(
-#         source='user.national_code', read_only=True)
-
-#     class Meta:
-#         model = CompanyProfile
-
-#         fields = ['company_title', 'user_national_code', 'email', 'social_code',
-#                   'manager_name', 'license', 'work_place', 'tech_field', 'special_filed', 'insurance_list', 'organization', 'capital_providing_method', 'profile_active']
-
-#         read_only_fields = ['user_national_code']
-
-#     def validate_email(self, value):
-#         if CompanyProfile.objects.filter(email=value).exists():
-#             raise ValidationError({
-#                 'error_code': 'email_exists',
-#                 'message': _("A company with this email already exists."),
-#                 'field': 'email'
-#             })
-#         return value
-
-#     def validate_social_code(self, value):
-#         if CompanyProfile.objects.filter(social_code=value).exists():
-#             raise ValidationError({
-#                 'error_code': 'social_code_exists',
-#                 'message': _("A company with this social code already exists."),
-#                 'field': 'social_code'
-#             })
-#         return value
-
-
-# class CompanyProfileCreateSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = CompanyProfile
-#         fields = ['company_title', 'email', 'social_code',
-#                   'manager_name', 'license', 'work_place', 'tech_field', 'special_filed', 'insurance_list', 'organization', 'capital_providing_method', 'profile_active']
-
-#     def create(self, validated_data):
-#         # We do not pass 'user' here since it's provided in the view
-#         return CompanyProfile.objects.create(**validated_data)
-
-#     def validate_email(self, value):
-#         if CompanyProfile.objects.filter(email=value).exists():
-#             raise ValidationError({
-#                 'error_code': 'email_exists',
-#                 'message': _("A company with this email already exists."),
-#                 'field': 'email'
-#             })
-#         return value
-
-#     def validate_social_code(self, value):
-#         if CompanyProfile.objects.filter(social_code=value).exists():
-#             raise ValidationError({
-#                 'error_code': 'social_code_exists',
-#                 'message': _("A company with this social code already exists."),
-#                 'field': 'social_code'
-#             })
-#         return value
 
 
 class DashboardSerializer(serializers.ModelSerializer):
@@ -92,7 +32,7 @@ class CompanyServiceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CompanyService
-        fields = ['service_name', 'is_active', 'purchased_date']
+        fields = ['id', 'service_name', 'is_active', 'purchased_date']
 
 
 class CompanyProfileSerializer(serializers.ModelSerializer):
@@ -105,69 +45,183 @@ class CompanyProfileSerializer(serializers.ModelSerializer):
         model = CompanyProfile
         fields = [
 
-            'user_national_code',
+            'user_national_code', 'id',
             'company_title',  'social_code', 'email', 'manager_name',
             'license', 'special_field', 'tech_field',  'province', 'city',
             'insurance_list', 'capital_providing_method',
-            'profile_active', 'services'
+            'profile_active', 'services', 'address'
         ]
         # read_only_fields = ['user_national_code']
 
-    def validate_email(self, value):
-        if CompanyProfile.objects.filter(email=value).exists():
-            raise serializers.ValidationError({
-                'error_code': 'email_exists',
-                'message': _("A company with this email already exists."),
-                'field': 'email'
-            })
-        return value
+    def update(self, instance, validated_data):
+        # Handle the many-to-many field separately
+        capital_providing_methods = validated_data.pop(
+            'capital_providing_method', [])
 
-    def validate_social_code(self, value):
-        if CompanyProfile.objects.filter(social_code=value).exists():
-            raise serializers.ValidationError({
-                'error_code': 'social_code_exists',
-                'message': _("A company with this social code already exists."),
-                'field': 'social_code'
-            })
-        return value
+        # Update the fields of the instance
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        # Save the instance
+        instance.save()
+
+        # Update the many-to-many field after saving the instance
+        if capital_providing_methods:
+            instance.capital_providing_method.set(capital_providing_methods)
+
+        return instance
 
 
 class CompanyProfileCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = CompanyProfile
         fields = [
+            'id',
             'company_title',  'social_code', 'email', 'manager_name',
             'license', 'special_field', 'tech_field',  'province', 'city',
             'insurance_list', 'capital_providing_method',
-            'profile_active'
+            'profile_active', 'address'
         ]
 
     def create(self, validated_data):
-        # We do not pass 'user' here since it's provided in the view
-        capital_providing_methods = validated_data.pop('capital_providing_method', [])
-        
-        # Create the CompanyProfile object (without the many-to-many field)
-        company_profile = CompanyProfile.objects.create(**validated_data)
-        
-        # Now add the many-to-many relationships
+        capital_providing_methods = validated_data.pop(
+            'capital_providing_method', [])
+
+        # Pass the user (which should be provided by the view)
+        user = self.context['request'].user
+
+        # Create the CompanyProfile object with the user
+        company_profile, created = CompanyProfile.objects.get_or_create(
+            user=user, defaults=validated_data)
+
+        # If the profile already existed (created is False), update it
+        if not created:
+            for attr, value in validated_data.items():
+                setattr(company_profile, attr, value)
+            company_profile.save()
+
+        # Update the many-to-many field after saving the instance
         company_profile.capital_providing_method.set(capital_providing_methods)
 
         return company_profile
-    
-    def validate_email(self, value):
-        if CompanyProfile.objects.filter(email=value).exists():
-            raise serializers.ValidationError({
-                'error_code': 'email_exists',
-                'message': _("A company with this email already exists."),
-                'field': 'email'
-            })
-        return value
 
-    def validate_social_code(self, value):
-        if CompanyProfile.objects.filter(social_code=value).exists():
-            raise serializers.ValidationError({
-                'error_code': 'social_code_exists',
-                'message': _("A company with this social code already exists."),
-                'field': 'social_code'
-            })
-        return value
+
+# class TaxDeclarationSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = TaxDeclaration
+#         fields = ['id', 'company', 'year', 'tax_file']
+        
+#     def create(self, validated_data):
+#         # Get the current user
+#         user = self.context['request'].user
+        
+#         # Get the user's company
+#         company = CompanyProfile.objects.get(user=user)
+        
+#         # Assign the company to the TaxDeclaration
+#         validated_data['company'] = company
+        
+#         # Create the TaxDeclaration
+#         return super().create(validated_data)
+
+
+# class BalanceReportSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = BalanceReport
+#         fields = ['id', 'company', 'company_id', 'year', 'balance_report_file',
+#                   'prift_loss_file', 'sold_product_file']
+        
+#     # def create(self, validated_data):
+#     #     company = validated_data.get('company')
+#     #     year = validated_data.get('year')
+
+#     #     # Check if a record for the same company and year exists
+#     #     existing_report = BalanceReport.objects.filter(company=company, year=year).first()
+
+#     #     if existing_report:
+#     #         # Skip file upload or handle as needed
+#     #         return existing_report
+
+#     #     # Create a new report if it doesn't exist
+#     #     return super().create(validated_data)
+#     def create(self, validated_data):
+#         # Get the current user
+#         user = self.context['request'].user
+        
+#         # Get the user's company
+#         company = CompanyProfile.objects.get(user=user)
+
+#         # Assign the company to the BalanceReport
+#         validated_data['company'] = company
+
+#         # Check if a report for the same company and year exists
+#         year = validated_data.get('year')
+#         existing_report = BalanceReport.objects.filter(company=company, year=year).first()
+
+#         if existing_report:
+#             # If a report exists, return it (skip creating a new one)
+#             return existing_report
+
+#         # Create a new report if it doesn't exist
+#         return super().create(validated_data)
+
+
+class BalanceReportCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BalanceReport
+        fields = [ 'year', 'balance_report_file',
+                  'prift_loss_file', 'sold_product_file']
+
+    def create(self, validated_data):
+        # Get the current user
+        user = self.context['request'].user
+        
+        # Get the user's company
+        company = CompanyProfile.objects.get(user=user)
+
+        # Assign the company to the BalanceReport
+        validated_data['company'] = company
+
+        # Check if a report for the same company and year exists
+        year = validated_data.get('year')
+        existing_report = BalanceReport.objects.filter(company=company, year=year).first()
+
+        if existing_report:
+            # If a report exists, return it (skip creating a new one)
+            return existing_report
+
+        # Create a new report if it doesn't exist
+        return super().create(validated_data)
+
+
+class BalanceReportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BalanceReport
+        fields = ['id', 'company', 'year', 'balance_report_file',
+                  'prift_loss_file', 'sold_product_file']
+
+
+
+class TaxDeclarationCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TaxDeclaration
+        fields = [ 'year', 'tax_file']
+        
+    def create(self, validated_data):
+        # Get the current user
+        user = self.context['request'].user
+        
+        # Get the user's company
+        company = CompanyProfile.objects.get(user=user)
+        
+        # Assign the company to the TaxDeclaration
+        validated_data['company'] = company
+        
+        # Create the TaxDeclaration
+        return super().create(validated_data)
+
+
+class TaxDeclarationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TaxDeclaration
+        fields = ['id', 'company', 'year', 'tax_file']
