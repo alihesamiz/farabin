@@ -4,8 +4,22 @@ meta {
   seq: 2
 }
 
-get {
-  url: 192.168.1.9:8000
-  body: none
-  auth: none
+post {
+  url: 192.168.1.9:8000/company/tax-declarations/
+  body: multipartForm
+  auth: bearer
+}
+
+headers {
+  : 
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI5NzU0ODU4LCJpYXQiOjE3Mjk2Njg0NTgsImp0aSI6ImM2MDM0NmI2ZTM1YzRhZWI5ZTRlNTFhZjBlNDAzNmQzIiwidXNlcl9pZCI6MX0.BhWfpsjwuX4pnxOLRPZ6Dj0VN01svX6twTtzrot8QRI
+}
+
+body:multipart-form {
+  company: f60a3c73-d19f-47f3-9211-6f516ec1cd3c
+  year: 2020
+  file: @file(/home/madassandd/Downloads/Telegram Desktop/TG030801-استخدام افسری نیروی دریایی.pdf)
 }

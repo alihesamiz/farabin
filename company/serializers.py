@@ -106,76 +106,16 @@ class CompanyProfileCreateSerializer(serializers.ModelSerializer):
         return company_profile
 
 
-# class TaxDeclarationSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = TaxDeclaration
-#         fields = ['id', 'company', 'year', 'tax_file']
-        
-#     def create(self, validated_data):
-#         # Get the current user
-#         user = self.context['request'].user
-        
-#         # Get the user's company
-#         company = CompanyProfile.objects.get(user=user)
-        
-#         # Assign the company to the TaxDeclaration
-#         validated_data['company'] = company
-        
-#         # Create the TaxDeclaration
-#         return super().create(validated_data)
-
-
-# class BalanceReportSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = BalanceReport
-#         fields = ['id', 'company', 'company_id', 'year', 'balance_report_file',
-#                   'prift_loss_file', 'sold_product_file']
-        
-#     # def create(self, validated_data):
-#     #     company = validated_data.get('company')
-#     #     year = validated_data.get('year')
-
-#     #     # Check if a record for the same company and year exists
-#     #     existing_report = BalanceReport.objects.filter(company=company, year=year).first()
-
-#     #     if existing_report:
-#     #         # Skip file upload or handle as needed
-#     #         return existing_report
-
-#     #     # Create a new report if it doesn't exist
-#     #     return super().create(validated_data)
-#     def create(self, validated_data):
-#         # Get the current user
-#         user = self.context['request'].user
-        
-#         # Get the user's company
-#         company = CompanyProfile.objects.get(user=user)
-
-#         # Assign the company to the BalanceReport
-#         validated_data['company'] = company
-
-#         # Check if a report for the same company and year exists
-#         year = validated_data.get('year')
-#         existing_report = BalanceReport.objects.filter(company=company, year=year).first()
-
-#         if existing_report:
-#             # If a report exists, return it (skip creating a new one)
-#             return existing_report
-
-#         # Create a new report if it doesn't exist
-#         return super().create(validated_data)
-
-
 class BalanceReportCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = BalanceReport
-        fields = [ 'year', 'balance_report_file',
+        fields = ['year', 'balance_report_file',
                   'prift_loss_file', 'sold_product_file']
 
     def create(self, validated_data):
         # Get the current user
         user = self.context['request'].user
-        
+
         # Get the user's company
         company = CompanyProfile.objects.get(user=user)
 
@@ -184,7 +124,8 @@ class BalanceReportCreateSerializer(serializers.ModelSerializer):
 
         # Check if a report for the same company and year exists
         year = validated_data.get('year')
-        existing_report = BalanceReport.objects.filter(company=company, year=year).first()
+        existing_report = BalanceReport.objects.filter(
+            company=company, year=year).first()
 
         if existing_report:
             # If a report exists, return it (skip creating a new one)
@@ -197,26 +138,25 @@ class BalanceReportCreateSerializer(serializers.ModelSerializer):
 class BalanceReportSerializer(serializers.ModelSerializer):
     class Meta:
         model = BalanceReport
-        fields = ['id', 'company', 'year', 'balance_report_file',
+        fields = ['id', 'year', 'balance_report_file',
                   'prift_loss_file', 'sold_product_file']
-
 
 
 class TaxDeclarationCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = TaxDeclaration
-        fields = [ 'year', 'tax_file']
-        
+        fields = ['year', 'tax_file']
+
     def create(self, validated_data):
         # Get the current user
         user = self.context['request'].user
-        
+
         # Get the user's company
         company = CompanyProfile.objects.get(user=user)
-        
+
         # Assign the company to the TaxDeclaration
         validated_data['company'] = company
-        
+
         # Create the TaxDeclaration
         return super().create(validated_data)
 
@@ -224,4 +164,4 @@ class TaxDeclarationCreateSerializer(serializers.ModelSerializer):
 class TaxDeclarationSerializer(serializers.ModelSerializer):
     class Meta:
         model = TaxDeclaration
-        fields = ['id', 'company', 'year', 'tax_file']
+        fields = ['id',  'year', 'tax_file']
