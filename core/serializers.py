@@ -3,45 +3,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 User = get_user_model()
-
-
-# class UserSerializer(serializers.ModelSerializer):
-
-#     class Meta:
-#         model = User
-#         fields = ['id', 'national_code', 'phone_number']
-
-#     def validate(self, data):
-#         national_code = data.get('national_code')
-#         phone_number = data.get('phone_number')
-
-#         if User.objects.filter(national_code=national_code).exists():
-#             raise ValidationError({
-#                 'error_code': 'national_code_exists',
-#                 'message': _("A user with this national code already exists."),
-#                 'field': 'national_code'
-#             })
-
-#         if User.objects.filter(phone_number=phone_number).exists():
-#             raise ValidationError({
-#                 'error_code': 'phone_number_exists',
-#                 'message': _("A user with this phone number already exists."),
-#                 'field': 'phone_number'
-#             })
-
-#         return data
-
-#     def create(self, validated_data):
-#         # phone_number = validated_data.get('phone_number')
-#         # national_code = validated_data.get('national_code')
-#         user, created = User.objects.get_or_create(**validated_data)
-
-#         if created:
-#             user.set_unusable_password()  # Set a temporary password
-#             user.save()
-
-#         return user
-
+ 
 
 class OTPSendSerializer(serializers.Serializer):
     # Adjust max_length based on your requirements

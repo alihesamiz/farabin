@@ -90,32 +90,7 @@ class OTP(models.Model):
         return random.randint(100000, 999999)
 
 
-####################################
-"""Organizations Model"""
-
-
-# class Organization(models.Model):
-#     DEFEND = 'defend'
-
-#     ORGANIZATION_CHOICES = [
-#         (DEFEND, _("Defend"))
-#     ]
-#     organization_title = models.CharField(
-#         choices=ORGANIZATION_CHOICES, default=DEFEND, max_length=50, blank=True, null=True, verbose_name=_("Organization Title")
-#     )
-#     custom_organization_title = models.CharField(
-#         max_length=50, blank=True, null=True,
-#         help_text=_(
-#             "Enter a custom organization title if none of the choices apply."), verbose_name=_("Other Organization Title")
-#     )
-
-#     class Meta:
-#         verbose_name = _("Organization")
-#         verbose_name_plural = _("Organizations")
-
-#     def __str__(self) -> str:
-#         return f"{self.custom_organization_title}" if self.custom_organization_title else f"{self.get_organization_title_display()}"
-
+ 
 
 ####################################
 """City and province Models"""
@@ -149,24 +124,7 @@ class Province(models.Model):
         verbose_name = _("Province")
         verbose_name_plural = _("Provinces")
 
-
-####################################
-"""Work place Model"""
-
-
-# class Institute(models.Model):
-
-#     title = models.CharField(max_length=250, verbose_name=_('Title'))
-
-#     province = models.ForeignKey(
-#         Province, on_delete=models.CASCADE, verbose_name=_('Province'))
-
-#     def __str__(self) -> str:
-#         return f"{self.title} , {self.province}"
-
-#     class Meta:
-#         verbose_name = _("Institute")
-#         verbose_name_plural = _("Institutes")
+ 
 
 
 ####################################
