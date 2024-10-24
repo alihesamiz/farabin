@@ -4,7 +4,6 @@ from django.db import models
 from .utils import CustomUtils
 
 
-
 ####################################
 """diagnostic Models"""
 
@@ -121,17 +120,8 @@ class ProfitLossStatement(models.Model):
 
 class BalanceReport(models.Model):
 
-    RENAME_REPORT_PATH = CustomUtils(
-        path="financial_analysis/diagnoses/files",
-        fields=['financial_asset__company__title']
-    )
-
     financial_asset = models.ForeignKey(
         'FinancialAsset', on_delete=models.CASCADE, related_name='balance_reports', verbose_name=_('Financial Asset'))
-
-    balance_report_file = models.FileField(verbose_name=_(
-        'Balance Report File'), upload_to=RENAME_REPORT_PATH.rename_folder, blank=True, null=True)
-    # current assets
 
     advance_payment = models.DecimalField(default=0,
                                           max_digits=20, decimal_places=0, verbose_name=_('Advance Payment'))
@@ -228,7 +218,7 @@ class BalanceReport(models.Model):
                                      max_digits=20, decimal_places=0, verbose_name=_('Net Profit'))
 
     class Meta:
-        unique_together = ('financial_asset',)
+        unique_together = [['financial_asset',]]
         verbose_name = _("Balance Report")
         verbose_name_plural = _("Balance Reports")
 
@@ -283,51 +273,6 @@ class AccountTurnOver(models.Model):
         verbose_name_plural = _("Accounts Turnovers")
 
 
-# class LifeCycle(models.Model):
-#     OPERATIONAL = 'operational'
-#     FINANCE = 'finance'
-#     INVEST = 'invest'
-
-#     LIFE_CYCLE_CHOICES = [
-#         (OPERATIONAL, _('Operational')),
-#         (FINANCE, _('Finance')),
-#         (INVEST, _('Invest')),
-#     ]
-#     capital_providing = models.CharField(
-#         max_length=11, choices=LIFE_CYCLE_CHOICES, default=OPERATIONAL, verbose_name=_("Capital Providing"))
-
-#     other_capital_providing = models.CharField(
-#         max_length=20, verbose_name=_("Capital Providing Other"), null=True, blank=True)
-
-#     class Meta:
-#         verbose_name = _('Life Cycle')
-#         verbose_name_plural = _('Life Cycles')
-
-#     def __str__(self):
-#         return self.get_capital_providing_display()
-
-
-RENAME_TAX_DECLARATION_PATH = CustomUtils(
-    path="financial_analysis/diagnoses/files",
-    fields=['financial_asset__company__company_title', 'financial_asset__year']
-)
-
-
-class TaxDeclarationFile(models.Model):
-    financial_asset = models.ForeignKey(
-        'FinancialAsset', on_delete=models.CASCADE, related_name='tax_files'
-    )
-    file = models.FileField(verbose_name=_("Tax Declaration File"),
-                            upload_to=RENAME_TAX_DECLARATION_PATH.rename_folder)
-
-    def __str__(self):
-        return f"File for {self.financial_asset.company.company_title} - {self.financial_asset.year}"
-
-    class Meta:
-        verbose_name = _("Tax Declaration File")
-        verbose_name_plural = _("Tax Declaration Files")
-
-
 class FinancialAsset(models.Model):
 
     company = models.ForeignKey(
@@ -335,11 +280,9 @@ class FinancialAsset(models.Model):
         verbose_name=_('Company'))
     year = models.PositiveIntegerField(verbose_name=_('Year'))
 
-    # capital_providing_method = models.ManyToManyField(
-    #     LifeCycle, verbose_name=_('Life Cycles'), related_name='financial_assets')
 
     class Meta:
-        unique_together = ('company', 'year')
+        unique_together = [['company', 'year']]
         verbose_name = _('Financial Asset')
         verbose_name_plural = _('Financial Assets')
 

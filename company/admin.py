@@ -1,11 +1,19 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 from .models import BalanceReport, CompanyProfile, CompanyService, Dashboard, LifeCycle, TaxDeclaration
+from diagnostics.models import SoldProductFee, ProfitLossStatement, FinancialAsset, BalanceReport
 # Register your models here.
 
 
 class LifeCycleInline(admin.StackedInline):
     model = LifeCycle
+    extra = 0
+    min_num = 1
+    max_num = 1
+
+
+class BalanceReprotInline(admin.TabularInline):
+    model = BalanceReport
     extra = 0
     min_num = 1
     max_num = 1

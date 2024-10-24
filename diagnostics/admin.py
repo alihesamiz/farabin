@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
-from .models import AccountTurnOver, FinancialAsset,  ProfitLossStatement, SoldProductFee, BalanceReport, TaxDeclarationFile
+from .models import AccountTurnOver, FinancialAsset,  ProfitLossStatement, SoldProductFee, BalanceReport
 
 # Register your models here.
 
@@ -26,13 +26,6 @@ class BalanceReportInline(admin.StackedInline):
     max_num = 1
 
 
-class TaxDeclarationInline(admin.StackedInline):
-    model = TaxDeclarationFile
-    extra = 0
-    min_num = 1
-    max_num = 1
-
-
 class AccountTurnOverInline(admin.StackedInline):
     model = AccountTurnOver
     extra = 0
@@ -43,6 +36,6 @@ class AccountTurnOverInline(admin.StackedInline):
 @admin.register(FinancialAsset)
 class FinancialAssestModel(admin.ModelAdmin):
     list_display = ['company__company_title', 'year']
-    inlines = [TaxDeclarationInline, BalanceReportInline, ProfitStatementInline, SaledProductInline,
+    inlines = [BalanceReportInline, ProfitStatementInline, SaledProductInline,
                AccountTurnOverInline]
     # This will allow selection of multiple life cycles
