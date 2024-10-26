@@ -48,6 +48,7 @@ PROJECT_APPS = [
 ]
 
 THIRED_PARTY_APPS = [
+    'silk',
     'drf_spectacular',
     'corsheaders',
     'rest_framework',
@@ -59,6 +60,7 @@ THIRED_PARTY_APPS = [
 INSTALLED_APPS += PROJECT_APPS + THIRED_PARTY_APPS
 
 MIDDLEWARE = [
+    'silk.middleware.SilkyMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
@@ -133,9 +135,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'fa'
+LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'Asia/Tehran'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
@@ -155,11 +157,11 @@ LOCALE_PATHS = [
 
 STATIC_ROOT = BASE_DIR / 'static'
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 MEDIA_ROOT = BASE_DIR / 'media'
 
-MEDIA_URL = 'media/'
+MEDIA_URL = '/media/'
 
 
 # Default primary key field type
@@ -197,4 +199,20 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:8000",
     "http://localhost:8000",
+    "http://127.0.0.1:6379",
+    "http://localhost:6379",
 ]
+
+
+# settings.py
+# Configure Redis URL or RabbitMQ URL here
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+
+
+SILKY_AUTHENTICATION = True
+SILKY_AUTHORISATION = True
+SILKY_MAX_REQUEST_BODY_SIZE = 1024  # 1 KB
+SILKY_MAX_RESPONSE_BODY_SIZE = 1024  # 1 KB
+SILKY_META = True
+SILKY_PYTHON_PROFILER = True

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
-from .models import BalanceReport, CompanyProfile, CompanyService, Dashboard, LifeCycle, TaxDeclaration
-from diagnostics.models import SoldProductFee, ProfitLossStatement, FinancialAsset, BalanceReport
+from .models import BalanceReport, CompanyProfile, CompanyService, Dashboard, LifeCycle, TaxDeclaration, BalanceReport
+from diagnostics.models import SoldProductFee, ProfitLossStatement, FinancialAsset
 # Register your models here.
 
 

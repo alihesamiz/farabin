@@ -12,6 +12,10 @@ numpy = "*"
 drf-spectacular = "*"
 psycopg2-binary = "*"
 ippanel = "*"
+python-magic = "*"
+celery = "*"
+redis = "*"
+django-silk = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"

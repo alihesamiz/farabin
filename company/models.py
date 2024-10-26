@@ -1,9 +1,9 @@
-from core.utils import GeneralUtils
-from django.db import models
-from django.contrib.auth import get_user_model
-from django.utils.translation import gettext_lazy as _
 from uuid import uuid4
-
+from django.utils.translation import gettext_lazy as _
+from django.contrib.auth import get_user_model
+from django.db import models
+from core.utils import GeneralUtils
+from core.validators import pdf_file_validator
 # Create your models here.
 
 
@@ -220,13 +220,13 @@ class BalanceReport(models.Model):
     year = models.PositiveSmallIntegerField()
 
     balance_report_file = models.FileField(verbose_name=_(
-        "Balance Report File"), upload_to=BALANCE_REPORT_FILE_UPLOADING_PATH.rename_folder, blank=True, null=True)
+        "Balance Report File"), validators=[pdf_file_validator], upload_to=BALANCE_REPORT_FILE_UPLOADING_PATH.rename_folder, blank=True, null=True)
 
-    prift_loss_file = models.FileField(verbose_name=_(
-        "Prift Loss File"), upload_to=BALANCE_REPORT_FILE_UPLOADING_PATH.rename_folder, blank=True, null=True)
+    profit_loss_file = models.FileField(verbose_name=_(
+        "Profit Loss File"), validators=[pdf_file_validator], upload_to=BALANCE_REPORT_FILE_UPLOADING_PATH.rename_folder, blank=True, null=True)
 
     sold_product_file = models.FileField(verbose_name=_(
-        "Sold Product File"), upload_to=BALANCE_REPORT_FILE_UPLOADING_PATH.rename_folder, blank=True, null=True)
+        "Sold Product File"), validators=[pdf_file_validator], upload_to=BALANCE_REPORT_FILE_UPLOADING_PATH.rename_folder, blank=True, null=True)
 
     def __str__(self) -> str:
         return f"{self.company.company_title} -> {self.year}"
