@@ -114,9 +114,6 @@ class CompanyProfile(models.Model):
     insurance_list = models.PositiveSmallIntegerField(
         default=1, verbose_name=_("Insurance List"))
 
-    # organization = models.ForeignKey(
-    #     'core.Organization', null=True, blank=True, verbose_name=_("Organization"), on_delete=models.CASCADE)
-
     capital_providing_method = models.ManyToManyField(
         LifeCycle, verbose_name=_('Capital Providing Method'), related_name='company_profile')
 

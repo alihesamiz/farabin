@@ -4,22 +4,26 @@ meta {
   seq: 2
 }
 
-post {
-  url: 192.168.1.9:8000/company/tax-declarations/
+get {
+  url: 192.168.1.9:8000/diagnostic/analysis/?task_id=c0f7a05c-33c7-488f-816b-782973e48196
   body: multipartForm
   auth: bearer
 }
 
+params:query {
+  task_id: c0f7a05c-33c7-488f-816b-782973e48196
+}
+
 headers {
-  : 
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwNTI3NDUwLCJpYXQiOjE3Mjk5MjI2NTAsImp0aSI6IjE4NzU3ZjJhOGM2MzQ1ZTY4ZjdkNzkyZTFkMmZhNWVjIiwidXNlcl9pZCI6MX0.0qAP2nRU5mdKlw4295h_CdHspberxyMLyhF6BhsQYMc
 }
 
 auth:bearer {
-  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI5NzU0ODU4LCJpYXQiOjE3Mjk2Njg0NTgsImp0aSI6ImM2MDM0NmI2ZTM1YzRhZWI5ZTRlNTFhZjBlNDAzNmQzIiwidXNlcl9pZCI6MX0.BhWfpsjwuX4pnxOLRPZ6Dj0VN01svX6twTtzrot8QRI
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwNTI3NDUwLCJpYXQiOjE3Mjk5MjI2NTAsImp0aSI6IjE4NzU3ZjJhOGM2MzQ1ZTY4ZjdkNzkyZTFkMmZhNWVjIiwidXNlcl9pZCI6MX0.0qAP2nRU5mdKlw4295h_CdHspberxyMLyhF6BhsQYMc
 }
 
 body:multipart-form {
-  company: f60a3c73-d19f-47f3-9211-6f516ec1cd3c
-  year: 2020
-  file: @file(/home/madassandd/Downloads/Telegram Desktop/TG030801-استخدام افسری نیروی دریایی.pdf)
+  ~company: f60a3c73-d19f-47f3-9211-6f516ec1cd3c
+  ~year: 2020
+  ~file: @file(/home/madassandd/Downloads/Telegram Desktop/TG030801-استخدام افسری نیروی دریایی.pdf)
 }

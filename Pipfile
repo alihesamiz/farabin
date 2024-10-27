@@ -19,6 +19,8 @@ django-silk = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"
+locust = "*"
+faker = "*"
 
 [requires]
 python_version = "3.12"

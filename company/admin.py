@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 from .models import BalanceReport, CompanyProfile, CompanyService, Dashboard, LifeCycle, TaxDeclaration, BalanceReport
-from diagnostics.models import SoldProductFee, ProfitLossStatement, FinancialAsset
 # Register your models here.
 
 
@@ -26,6 +25,8 @@ class LifeCycleAdmin(admin.ModelAdmin):
 
 @admin.register(CompanyProfile)
 class CompanyAdmin(admin.ModelAdmin):
+
+    search_fields = ['company_title', 'manager_name']
     list_display = ['company_title', 'national_code', 'manager_name',
                     'tech_field', 'special_field_display', 'license', 'insurance_list', 'capital_providing_method_display']
 
@@ -42,7 +43,7 @@ class CompanyAdmin(admin.ModelAdmin):
         return company_profile.special_field  # Ensure this matches the field name
     special_field_display.short_description = _("Special Field")
 
-    @admin.display(description=_("Capital Providing Method"))
+    @admin.display(description=_("Capital Providing Method"), ordering='capital_providing_method_display')
     def capital_providing_method_display(self, company_profile: CompanyProfile):
         return ", ".join([cycle.get_capital_providing_display() for cycle in company_profile.capital_providing_method.all()])
 
