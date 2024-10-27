@@ -159,16 +159,16 @@ class CompanyService(models.Model):
 """Dashboard Model"""
 
 
-class Dashboard(models.Model):
-    company_service = models.ForeignKey(
-        CompanyService, on_delete=models.CASCADE, related_name='dashboards', verbose_name=_("Company Service"))
+# class Dashboard(models.Model):
+#     company_service = models.ForeignKey(
+#         CompanyService, on_delete=models.CASCADE, related_name='dashboards', verbose_name=_("Company Service"))
 
-    class Meta:
-        verbose_name = _("Dashboard")
-        verbose_name_plural = _("Dashboards")
+#     class Meta:
+#         verbose_name = _("Dashboard")
+#         verbose_name_plural = _("Dashboards")
 
-    def __str__(self) -> str:
-        return f"Dashboard for {self.company_service.company.company_title} - {self.company_service.service.name}"
+#     def __str__(self) -> str:
+#         return f"Dashboard for {self.company_service.company.company_title} - {self.company_service.service.name}"
 
 
 TAX_FILE_UPLOADING_PATH = GeneralUtils(

@@ -9,12 +9,11 @@ from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework.exceptions import NotFound, ValidationError
-from .models import BalanceReport, Dashboard, CompanyProfile, TaxDeclaration
+from .models import BalanceReport,  CompanyProfile, TaxDeclaration
 from diagnostics.models import FinancialAsset
 from .serializers import (
     BalanceReportCreateSerializer,
     BalanceReportSerializer,
-    DashboardSerializer,
     CompanyProfileSerializer,
     CompanyProfileCreateSerializer,
     TaxDeclarationCreateSerializer,
@@ -41,78 +40,46 @@ class CompanyProfileViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-class DashboardViewSet(viewsets.ModelViewSet):
-    queryset = Dashboard.objects.all()
-    serializer_class = DashboardSerializer
+class DashboardViewSet(APIView):
+    permission_classes = [IsAuthenticated]
 
-    def list(self, request, *args, **kwargs):
-        # Example of adding aggregated data
-        queryset = self.get_queryset().annotate(total_services=Count('company_service'))
-        serializer = self.get_serializer(queryset, many=True)
+    def get(self, request, *args, **kwargs):
+        try:
+            # Fetch the company profile associated with the authenticated user
+            company = CompanyProfile.objects.get(user=self.request.user)
 
-        # Prepare response data
-        response_data = serializer.data
+            # Retrieve TaxDeclaration and BalanceReport files related to this company
+            tax_files = TaxDeclaration.objects.filter(company=company)
+            report_files = BalanceReport.objects.filter(
+                company=company)
 
-        # Add custom aggregated field by looping over response data
-        for data in response_data:
-            # Access `company_service` field by using nested structure.
-            company_id = Dashboard.objects.filter(id=data['id']).values_list(
-                'company_service__company_id', flat=True).first()
+            tax_files_count = tax_files.count()
+            report_files_count = report_files.count()
+            # Serialize the data
+            tax_files_data = TaxDeclarationSerializer(
+                tax_files, many=True).data
+            report_files_data = BalanceReportSerializer(
+                report_files, many=True).data
 
-            # Now, calculate total services for this company
-            total_services = Dashboard.objects.filter(
-                company_service__company_id=company_id).count()
+            # Return a structured JSON response with both file types
+            response_data = {
+                "company_title": company.company_title,
+                "tax_files": {'tax_files': tax_files_data, 'tax_files_count': tax_files_count},
+                "balance_reports": {'report_files': report_files_data, 'report_files_count': report_files_count}
+            }
 
-            # Add `total_services` to the response data
-            data['total_services'] = total_services
+            return Response(response_data)
 
-            declaration_files_count = FinancialAsset.objects.filter(
-                company_id=company_id).count()
-            data['declaration_files_count'] = declaration_files_count
-
-        return Response(response_data, status=status.HTTP_200_OK)
-
-
-logger = logging.getLogger(__name__)
-
-# TaxDeclaration ViewSet
-
-
-# class TaxDeclarationViewSet(viewsets.ModelViewSet):
-#     permission_classes = [IsAuthenticated]
-#     serializer_class = TaxDeclarationSerializer
-#     queryset = TaxDeclaration.objects.all()
-
-#     def get_serializer_context(self):
-#         # Pass the request to the serializer context
-#         context = super().get_serializer_context()
-#         context['request'] = self.request
-#         return context
-
-#     def perform_destroy(self, instance):
-#         try:
-#             instance.delete()
-#             print(True)
-#         except Exception as e:
-#             print(False)
-# # BalanceReport ViewSet
-
-
-# class BalanceReportViewSet(viewsets.ModelViewSet):
-#     permission_classes = [IsAuthenticated]
-#     queryset = BalanceReport.objects.all()
-#     serializer_class = BalanceReportSerializer
-
-#     def get_serializer_context(self):
-#         # Pass the request to the serializer context
-#         context = super().get_serializer_context()
-#         context['request'] = self.request
-#         return context
+        except CompanyProfile.DoesNotExist:
+            return Response({"error": "Company profile not found"}, status=404)
 
 
 class TaxDeclarationViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
-    queryset = TaxDeclaration.objects.all()
+
+    def get_queryset(self):
+        print(self.request.user)
+        return TaxDeclaration.objects.filter(company__user=self.request.user).all()
 
     def get_serializer_class(self):
         if self.action in ['create', 'update']:
@@ -128,14 +95,16 @@ class TaxDeclarationViewSet(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         try:
             instance.delete()
-            print(True)
+            return Response({"success": "file deleted"}, status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
-            print(False)
+            return Response({"error": "Failed to delete file"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class BalanceReportViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
-    queryset = BalanceReport.objects.all()
+
+    def get_queryset(self):
+        return BalanceReport.objects.filter(company__user=self.request.user).all()
 
     def get_serializer_class(self):
         if self.action in ['create', 'update']:

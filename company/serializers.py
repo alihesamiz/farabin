@@ -6,25 +6,25 @@ from django.contrib.auth import get_user_model
 
 from django.utils.translation import gettext_lazy as _
 
-from .models import BalanceReport, CompanyProfile, CompanyService, Dashboard, TaxDeclaration
+from .models import BalanceReport, CompanyProfile, CompanyService, TaxDeclaration
 
 User = get_user_model()
 
 
-class DashboardSerializer(serializers.ModelSerializer):
-    company_title = serializers.CharField(
-        source='company_service.company.company_title', read_only=True)
-    service_name = serializers.CharField(
-        source='company_service.service.name', read_only=True)
-    is_active = serializers.BooleanField(
-        source='company_service.is_active', read_only=True)
-    purchased_date = serializers.DateTimeField(
-        source='company_service.purchased_date', read_only=True)
+# class DashboardSerializer(serializers.ModelSerializer):
+#     company_title = serializers.CharField(
+#         source='company_service.company.company_title', read_only=True)
+#     service_name = serializers.CharField(
+#         source='company_service.service.name', read_only=True)
+#     is_active = serializers.BooleanField(
+#         source='company_service.is_active', read_only=True)
+#     purchased_date = serializers.DateTimeField(
+#         source='company_service.purchased_date', read_only=True)
 
-    class Meta:
-        model = Dashboard
-        fields = ['id', 'company_title', 'service_name',
-                  'is_active', 'purchased_date']
+#     class Meta:
+#         model = Dashboard
+#         fields = ['id', 'company_title', 'service_name',
+#                   'is_active', 'purchased_date']
 
 
 class CompanyServiceSerializer(serializers.ModelSerializer):

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
-from .models import BalanceReport, CompanyProfile, CompanyService, Dashboard, LifeCycle, TaxDeclaration, BalanceReport
+from .models import BalanceReport, CompanyProfile, CompanyService, LifeCycle, TaxDeclaration, BalanceReport
 # Register your models here.
 
 
@@ -50,11 +50,6 @@ class CompanyAdmin(admin.ModelAdmin):
 
 @admin.register(CompanyService)
 class CompanyServiceAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(Dashboard)
-class DashboardAdmin(admin.ModelAdmin):
     pass
 
 

@@ -6,12 +6,16 @@ router = DefaultRouter()
 
 router.register(r'profile', CompanyProfileViewSet, basename='profile')
 
-router.register(r'dashboard', DashboardViewSet, basename='dashboard')
+# router.register(r'dashboard', DashboardViewSet, basename='dashboard')
 
 router.register(r'tax-declarations', TaxDeclarationViewSet,
-                basename='taxdeclaration')
+                basename='tax-declaration')
 
-router.register(r'balance-reports', BalanceReportViewSet)
+router.register(r'balance-reports',
+                BalanceReportViewSet, basename='balance-report')
 
 
 urlpatterns = router.urls
+
+urlpatterns += [path('dashboard/',
+                     DashboardViewSet.as_view(), name='dashboard')]
