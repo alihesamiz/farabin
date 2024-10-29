@@ -229,7 +229,8 @@ class BalanceReport(models.Model):
     company = models.ForeignKey(CompanyProfile, on_delete=models.SET_NULL, null=True, verbose_name=_(
         "Company"), related_name="reportfiles")
 
-    month = models.CharField(max_length=2, choices=MONTH_CHOICES, verbose_name=_("Month"))
+    month = models.CharField(
+        max_length=2, choices=MONTH_CHOICES, verbose_name=_("Month"))
 
     year = models.PositiveSmallIntegerField(verbose_name=_("Year"))
 
@@ -241,6 +242,9 @@ class BalanceReport(models.Model):
 
     sold_product_file = models.FileField(verbose_name=_(
         "Sold Product File"), validators=[pdf_file_validator], upload_to=BALANCE_REPORT_FILE_UPLOADING_PATH.rename_folder, blank=True, null=True)
+
+    account_turnover_file = models.FileField(verbose_name=_(
+        "Account Turn Over File"), validators=[pdf_file_validator], upload_to=BALANCE_REPORT_FILE_UPLOADING_PATH.rename_folder, blank=True, null=True)
 
     is_saved = models.BooleanField(default=False, verbose_name=_("Is Saved"))
 

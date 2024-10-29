@@ -50,7 +50,7 @@ class DashboardViewSet(APIView):
 
             # Retrieve TaxDeclaration and BalanceReport files related to this company
             tax_files = TaxDeclaration.objects.filter(company=company)
-            
+
             report_files = BalanceReport.objects.filter(
                 company=company)
 

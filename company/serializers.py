@@ -158,7 +158,7 @@ class BalanceReportCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = BalanceReport
         fields = ['year', 'balance_report_file',
-                  'profit_loss_file', 'sold_product_file']
+                  'profit_loss_file', 'sold_product_file','account_turnover_file']
 
     def create(self, validated_data):
         # Get the current user
@@ -187,7 +187,7 @@ class BalanceReportSerializer(serializers.ModelSerializer):
     class Meta:
         model = BalanceReport
         fields = ['id', 'year', 'balance_report_file',
-                  'profit_loss_file', 'sold_product_file']
+                  'profit_loss_file', 'sold_product_file','account_turnover_file']
 
 
 class TaxDeclarationCreateSerializer(serializers.ModelSerializer):
