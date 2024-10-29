@@ -45,6 +45,7 @@ PROJECT_APPS = [
     'diagnostics',
     'core',
     'company',
+    'ticket',
 ]
 
 THIRED_PARTY_APPS = [
@@ -179,7 +180,7 @@ REST_FRAMEWORK = {
     ],
 }
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(weeks=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(weeks=1),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": True,
@@ -216,4 +217,3 @@ SILKY_MAX_REQUEST_BODY_SIZE = 1024  # 1 KB
 SILKY_MAX_RESPONSE_BODY_SIZE = 1024  # 1 KB
 SILKY_META = True
 SILKY_PYTHON_PROFILER = True
-

@@ -191,6 +191,19 @@ class TaxDeclaration(models.Model):
     tax_file = models.FileField(verbose_name=_(
         "File"), upload_to=TAX_FILE_UPLOADING_PATH.rename_folder, blank=True, null=True)
 
+    is_saved = models.BooleanField(default=False, verbose_name=_("Is Saved"))
+
+    is_sent = models.BooleanField(default=False, verbose_name=_("Is Sent"))
+
+    def save(self, *args, **kwargs):
+        # Only set `is_saved` to True if `is_sent` is True
+        if self.is_saved:
+            if self.is_sent:
+                # TODO call sms sending to the editors function here
+                pass
+        super().save(*args, **kwargs)
+        # Call the superclass `save` method once to save changes
+
     def __str__(self) -> str:
         return f"{self.company.company_title} -> {self.year}"
 
@@ -211,10 +224,14 @@ BALANCE_REPORT_FILE_UPLOADING_PATH = GeneralUtils(
 
 class BalanceReport(models.Model):
 
+    MONTH_CHOICES = [(str(i), f"{i}") for i in range(1, 13)]
+
     company = models.ForeignKey(CompanyProfile, on_delete=models.SET_NULL, null=True, verbose_name=_(
         "Company"), related_name="reportfiles")
 
-    year = models.PositiveSmallIntegerField()
+    month = models.CharField(max_length=2, choices=MONTH_CHOICES, verbose_name=_("Month"))
+
+    year = models.PositiveSmallIntegerField(verbose_name=_("Year"))
 
     balance_report_file = models.FileField(verbose_name=_(
         "Balance Report File"), validators=[pdf_file_validator], upload_to=BALANCE_REPORT_FILE_UPLOADING_PATH.rename_folder, blank=True, null=True)
@@ -225,10 +242,23 @@ class BalanceReport(models.Model):
     sold_product_file = models.FileField(verbose_name=_(
         "Sold Product File"), validators=[pdf_file_validator], upload_to=BALANCE_REPORT_FILE_UPLOADING_PATH.rename_folder, blank=True, null=True)
 
+    is_saved = models.BooleanField(default=False, verbose_name=_("Is Saved"))
+
+    is_sent = models.BooleanField(default=False, verbose_name=_("Is Sent"))
+
+    def save(self, *args, **kwargs):
+        # Only set `is_saved` to True if `is_sent` is True
+        if self.is_saved:
+            if self.is_sent:
+                # TODO call sms sending to the editors function here
+                pass
+        super().save(*args, **kwargs)
+        # Call the superclass `save` method once to save changes
+
     def __str__(self) -> str:
         return f"{self.company.company_title} -> {self.year}"
 
     class Meta:
         verbose_name = _("Balance Report")
         verbose_name_plural = _("Balance Reports")
-        unique_together = [['company', 'year']]
+        unique_together = [['company', 'month'], ['company', 'year'],]

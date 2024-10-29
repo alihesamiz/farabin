@@ -1,3 +1,4 @@
+from django.db import IntegrityError
 from rest_framework.exceptions import ValidationError
 
 from rest_framework import serializers
@@ -83,27 +84,74 @@ class CompanyProfileCreateSerializer(serializers.ModelSerializer):
             'profile_active', 'address'
         ]
 
+    def validate_email(self, value):
+        # Check if the email is already used by another company profile
+        request = self.context.get('request')
+        # Get current profile ID if it exists
+        profile_id = self.instance.id if self.instance else None
+
+        if CompanyProfile.objects.filter(email=value).exclude(id=profile_id).exists():
+            raise ValidationError(
+                "This email is already associated with another company profile.")
+        return value
+
+    def validate_social_code(self, value):
+        request = self.context.get('request')
+        profile_id = self.instance.id if self.instance else None
+
+        if CompanyProfile.objects.filter(social_code=value).exclude(id=profile_id).exists():
+            raise ValidationError(
+                "This Social Code is already associated with another company profile.")
+        return value
+
     def create(self, validated_data):
         capital_providing_methods = validated_data.pop(
             'capital_providing_method', [])
-
-        # Pass the user (which should be provided by the view)
         user = self.context['request'].user
 
-        # Create the CompanyProfile object with the user
-        company_profile, created = CompanyProfile.objects.get_or_create(
-            user=user, defaults=validated_data)
+        try:
+            # Create the CompanyProfile object with the user
+            company_profile, created = CompanyProfile.objects.get_or_create(
+                user=user, defaults=validated_data)
 
-        # If the profile already existed (created is False), update it
-        if not created:
-            for attr, value in validated_data.items():
-                setattr(company_profile, attr, value)
-            company_profile.save()
+            # If the profile already existed, update it
+            if not created:
+                for attr, value in validated_data.items():
+                    setattr(company_profile, attr, value)
+                company_profile.save()
 
-        # Update the many-to-many field after saving the instance
-        company_profile.capital_providing_method.set(capital_providing_methods)
+            # Update the many-to-many field after saving the instance
+            company_profile.capital_providing_method.set(
+                capital_providing_methods)
+            return company_profile
 
-        return company_profile
+        except IntegrityError:
+            raise ValidationError(
+                {"email": "A company profile with this email or social code already exists."})
+
+    def update(self, instance, validated_data):
+        capital_providing_methods = validated_data.pop(
+            'capital_providing_method', [])
+
+        # Run the validate_email method if email is part of the update data
+        if 'email' in validated_data:
+            self.validate_email(validated_data['email'])
+
+        # Update the fields of the instance
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        try:
+            # Save the instance
+            instance.save()
+
+            # Update the many-to-many field after saving the instance
+            instance.capital_providing_method.set(capital_providing_methods)
+            return instance
+
+        except IntegrityError:
+            raise ValidationError(
+                {"email": "A company profile with this email already exists."})
 
 
 class BalanceReportCreateSerializer(serializers.ModelSerializer):

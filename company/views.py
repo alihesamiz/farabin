@@ -50,6 +50,7 @@ class DashboardViewSet(APIView):
 
             # Retrieve TaxDeclaration and BalanceReport files related to this company
             tax_files = TaxDeclaration.objects.filter(company=company)
+            
             report_files = BalanceReport.objects.filter(
                 company=company)
 
@@ -63,7 +64,6 @@ class DashboardViewSet(APIView):
 
             # Return a structured JSON response with both file types
             response_data = {
-                "company_title": company.company_title,
                 "tax_files": {'tax_files': tax_files_data, 'tax_files_count': tax_files_count},
                 "balance_reports": {'report_files': report_files_data, 'report_files_count': report_files_count}
             }

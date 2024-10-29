@@ -5,21 +5,17 @@ meta {
 }
 
 get {
-  url: 192.168.1.9:8000/diagnostic/analysis/?task_id=c0f7a05c-33c7-488f-816b-782973e48196
+  url: 192.168.1.9:8000/company/dashboard
   body: multipartForm
   auth: bearer
 }
 
-params:query {
-  task_id: c0f7a05c-33c7-488f-816b-782973e48196
-}
-
 headers {
-  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwNTI3NDUwLCJpYXQiOjE3Mjk5MjI2NTAsImp0aSI6IjE4NzU3ZjJhOGM2MzQ1ZTY4ZjdkNzkyZTFkMmZhNWVjIiwidXNlcl9pZCI6MX0.0qAP2nRU5mdKlw4295h_CdHspberxyMLyhF6BhsQYMc
+  ~Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwNTI3NDUwLCJpYXQiOjE3Mjk5MjI2NTAsImp0aSI6IjE4NzU3ZjJhOGM2MzQ1ZTY4ZjdkNzkyZTFkMmZhNWVjIiwidXNlcl9pZCI6MX0.0qAP2nRU5mdKlw4295h_CdHspberxyMLyhF6BhsQYMc
 }
 
 auth:bearer {
-  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwNTI3NDUwLCJpYXQiOjE3Mjk5MjI2NTAsImp0aSI6IjE4NzU3ZjJhOGM2MzQ1ZTY4ZjdkNzkyZTFkMmZhNWVjIiwidXNlcl9pZCI6MX0.0qAP2nRU5mdKlw4295h_CdHspberxyMLyhF6BhsQYMc
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwNjEzMDIzLCJpYXQiOjE3MzAwMDgyMjMsImp0aSI6ImY5ZDNmYWM0NmQ1NzQyODg4MDZiNDBkZTRhN2ZhYjdlIiwidXNlcl9pZCI6MX0.3AOh53f6ZhE4jpf_azSUVR6b-xa3IeZg7skX2iriRcI
 }
 
 body:multipart-form {
