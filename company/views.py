@@ -116,3 +116,10 @@ class BalanceReportViewSet(viewsets.ModelViewSet):
         context = super().get_serializer_context()
         context['request'] = self.request
         return context
+
+    def perform_destroy(self, instance):
+        try:
+            instance.delete()
+            return Response({"success": "file deleted"}, status=status.HTTP_204_NO_CONTENT)
+        except Exception as e:
+            return Response({"error": "Failed to delete file"}, status=status.HTTP_400_BAD_REQUEST)

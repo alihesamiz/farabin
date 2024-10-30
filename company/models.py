@@ -191,9 +191,9 @@ class TaxDeclaration(models.Model):
     tax_file = models.FileField(verbose_name=_(
         "File"), upload_to=TAX_FILE_UPLOADING_PATH.rename_folder, blank=True, null=True)
 
-    is_saved = models.BooleanField(default=False, verbose_name=_("Is Saved"))
+    is_saved = models.BooleanField(default=True, verbose_name=_("Is Saved"))
 
-    is_sent = models.BooleanField(default=False, verbose_name=_("Is Sent"))
+    is_sent = models.BooleanField(default=True, verbose_name=_("Is Sent"))
 
     def save(self, *args, **kwargs):
         # Only set `is_saved` to True if `is_sent` is True
@@ -218,7 +218,7 @@ class TaxDeclaration(models.Model):
 
 BALANCE_REPORT_FILE_UPLOADING_PATH = GeneralUtils(
     path="financial_files/files/non-tax_files",
-    fields=['company__company_title', 'year']
+    fields=['company__company_title', 'year', 'month']
 )
 
 
@@ -246,9 +246,9 @@ class BalanceReport(models.Model):
     account_turnover_file = models.FileField(verbose_name=_(
         "Account Turn Over File"), validators=[pdf_file_validator], upload_to=BALANCE_REPORT_FILE_UPLOADING_PATH.rename_folder, blank=True, null=True)
 
-    is_saved = models.BooleanField(default=False, verbose_name=_("Is Saved"))
+    is_saved = models.BooleanField(default=True, verbose_name=_("Is Saved"))
 
-    is_sent = models.BooleanField(default=False, verbose_name=_("Is Sent"))
+    is_sent = models.BooleanField(default=True, verbose_name=_("Is Sent"))
 
     def save(self, *args, **kwargs):
         # Only set `is_saved` to True if `is_sent` is True
@@ -265,4 +265,4 @@ class BalanceReport(models.Model):
     class Meta:
         verbose_name = _("Balance Report")
         verbose_name_plural = _("Balance Reports")
-        unique_together = [['company', 'month'], ['company', 'year'],]
+        unique_together = [['company', 'month'],]

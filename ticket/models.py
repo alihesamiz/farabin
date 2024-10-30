@@ -29,13 +29,13 @@ class Ticket(models.Model):
         (PRIORITY_HIGH, _('High')),]
 
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, verbose_name=_("Customer"))
+        User, on_delete=models.CASCADE, verbose_name=_("Customer"), related_name=_("User"))
     subject = models.CharField(max_length=255, verbose_name=_("Subject"))
     description = models.TextField(verbose_name=_("Description"))
     department = models.ForeignKey(
         'Department', on_delete=models.CASCADE, verbose_name=_("Department"))
     status = models.CharField(max_length=255, verbose_name=_(
-        "Status"), choices=STATUS_CHOICES)
+        "Status"), choices=STATUS_CHOICES, default=STATUS_NEW)
     priority = models.CharField(max_length=255, verbose_name=_(
         "Priority"), choices=PRIORITY_CHOICES)
     created_at = models.DateTimeField(

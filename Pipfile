@@ -16,6 +16,7 @@ python-magic = "*"
 celery = "*"
 redis = "*"
 django-silk = "*"
+flower = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"

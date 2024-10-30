@@ -157,8 +157,8 @@ class CompanyProfileCreateSerializer(serializers.ModelSerializer):
 class BalanceReportCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = BalanceReport
-        fields = ['year', 'balance_report_file',
-                  'profit_loss_file', 'sold_product_file','account_turnover_file']
+        fields = ['year', 'month', 'balance_report_file',
+                  'profit_loss_file', 'sold_product_file', 'account_turnover_file', 'is_saved', 'is_sent']
 
     def create(self, validated_data):
         # Get the current user
@@ -172,22 +172,25 @@ class BalanceReportCreateSerializer(serializers.ModelSerializer):
 
         # Check if a report for the same company and year exists
         year = validated_data.get('year')
+        month = validated_data.get('month')
         existing_report = BalanceReport.objects.filter(
-            company=company, year=year).first()
+            company=company, year=year, month=month).first()
 
         if existing_report:
-            # If a report exists, return it (skip creating a new one)
-            return existing_report
+            raise ValidationError(
+                {"error": "This months' file already exists"})
 
         # Create a new report if it doesn't exist
         return super().create(validated_data)
 
 
 class BalanceReportSerializer(serializers.ModelSerializer):
+    # id = serializers.IntegerField()
+
     class Meta:
         model = BalanceReport
-        fields = ['id', 'year', 'balance_report_file',
-                  'profit_loss_file', 'sold_product_file','account_turnover_file']
+        fields = ['id', 'year', 'month', 'balance_report_file',
+                  'profit_loss_file', 'sold_product_file', 'account_turnover_file', 'is_saved', 'is_sent']
 
 
 class TaxDeclarationCreateSerializer(serializers.ModelSerializer):
@@ -205,6 +208,14 @@ class TaxDeclarationCreateSerializer(serializers.ModelSerializer):
         # Assign the company to the TaxDeclaration
         validated_data['company'] = company
 
+        year = validated_data.get('year')
+        existing_report = TaxDeclaration.objects.filter(
+            company=company, year=year).first()
+
+        if existing_report:
+            raise ValidationError(
+                {"error": "This years' file already exists"})
+
         # Create the TaxDeclaration
         return super().create(validated_data)
 
@@ -212,4 +223,4 @@ class TaxDeclarationCreateSerializer(serializers.ModelSerializer):
 class TaxDeclarationSerializer(serializers.ModelSerializer):
     class Meta:
         model = TaxDeclaration
-        fields = ['id',  'year', 'tax_file']
+        fields = ['id',  'year', 'tax_file', 'is_saved', 'is_sent']

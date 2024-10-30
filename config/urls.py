@@ -32,6 +32,10 @@ urlpatterns = [
     path('auth/', include('core.urls')),
 
 
+    path('tickets/', include('ticket.urls')),
+
+
+
     # Schema generation
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
 
@@ -42,13 +46,15 @@ urlpatterns = [
     # Redoc UI
     path('api/schema/redoc/',
          SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
-    
-    
+
+
     path('silk/', include('silk.urls', namespace='silk')),
 
 ]
 
 
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL,
+                          document_root=settings.STATIC_ROOT)
