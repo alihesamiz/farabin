@@ -10,7 +10,6 @@ from celery.result import AsyncResult
 from company.models import CompanyProfile
 from diagnostics.utils import get_life_cycle
 from .models import FinancialAsset
-from company.models import CompanyProfile
 from .tasks import perform_calculations
 
 

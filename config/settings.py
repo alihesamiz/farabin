@@ -49,6 +49,8 @@ PROJECT_APPS = [
 ]
 
 THIRED_PARTY_APPS = [
+    'django_extensions',
+    'django_celery_beat',
     'silk',
     'drf_spectacular',
     'corsheaders',
@@ -136,9 +138,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'fa'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Tehran'
 
 USE_I18N = True
 
@@ -193,6 +195,8 @@ SIMPLE_JWT = {
 
 # development
 CORS_ALLOW_ALL_ORIGINS = True
+
+X_FRAME_OPTIONS = 'ALLOWALL'
 
 # production
 CORS_ALLOWED_ORIGINS = [

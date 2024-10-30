@@ -31,10 +31,7 @@ urlpatterns = [
 
     path('auth/', include('core.urls')),
 
-
     path('tickets/', include('ticket.urls')),
-
-
 
     # Schema generation
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),

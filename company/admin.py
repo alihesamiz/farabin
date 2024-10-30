@@ -50,14 +50,38 @@ class CompanyAdmin(admin.ModelAdmin):
 
 @admin.register(CompanyService)
 class CompanyServiceAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['company', 'service', 'is_active', 'purchased_date']
+
+    search_fields = ['company__company_title',
+                     'service__description', 'purchased_date']
 
 
 @admin.register(TaxDeclaration)
 class TaxFileAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['company_title', 'year', 'tax_file',
+                    'is_saved',
+                    'is_sent',]
+
+    search_fields = ['company__company_title', 'purchased_date', 'year']
+
+    @admin.display(ordering='company__company_title')
+    def company_title(self, tax_declaration: TaxDeclaration):
+        return tax_declaration.company.company_title
+    company_title.short_description = _("Company Title")
 
 
 @admin.register(BalanceReport)
 class BalanceReportFileAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['company_title', 'month', 'year', 'balance_report_file', 'profit_loss_file',
+                    'sold_product_file',
+                    'account_turnover_file',
+                    'is_saved',
+                    'is_sent',]
+
+    search_fields = ['company__company_title',
+                     'purchased_date', 'year', 'month']
+
+    @admin.display(ordering='company__company_title')
+    def company_title(self, tax_declaration: TaxDeclaration):
+        return tax_declaration.company.company_title
+    company_title.short_description = _("Company Title")

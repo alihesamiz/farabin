@@ -44,7 +44,7 @@ class Ticket(models.Model):
         auto_now=True, verbose_name=_("Updated At"))
 
     def __str__(self):
-        return f"{self.subject} - {self.customer} : {self.priority}"
+        return f"{self.subject} - {self.user} : {self.priority}"
 
     class Meta:
         verbose_name = _("Ticket")
@@ -64,9 +64,14 @@ class Department(models.Model):
 
 
 class Agent(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, verbose_name=_("User"))
     department = models.ForeignKey(
-        Department, on_delete=models.CASCADE, related_name="agents")
+        Department, on_delete=models.CASCADE, related_name="agents", verbose_name=_("Department"))
 
     def __str__(self):
         return f"{self.user}"
+
+    class Meta:
+        verbose_name = _("Agent")
+        verbose_name_plural = _("Agents")

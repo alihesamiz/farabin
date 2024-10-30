@@ -186,7 +186,7 @@ class TaxDeclaration(models.Model):
     company = models.ForeignKey(CompanyProfile, on_delete=models.SET_NULL, null=True, verbose_name=_(
         "Company"), related_name="taxfiles")
 
-    year = models.PositiveSmallIntegerField()
+    year = models.PositiveSmallIntegerField(verbose_name=_("Year"))
 
     tax_file = models.FileField(verbose_name=_(
         "File"), upload_to=TAX_FILE_UPLOADING_PATH.rename_folder, blank=True, null=True)

@@ -1,0 +1,111 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-10-30 10:22+0330\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: ticket/admin.py:17 ticket/admin.py:20
+msgid "Members count"
+msgstr ""
+
+#: ticket/apps.py:7 ticket/models.py:50
+msgid "Ticket"
+msgstr "تیکت"
+
+#: ticket/models.py:16
+msgid "New"
+msgstr "جدید"
+
+#: ticket/models.py:17
+msgid "In Progress"
+msgstr "در حال بررسی"
+
+#: ticket/models.py:18
+msgid "Resolved"
+msgstr "حل شده"
+
+#: ticket/models.py:19
+msgid "Closed"
+msgstr "بسته شده"
+
+#: ticket/models.py:27
+msgid "Low"
+msgstr "کم"
+
+#: ticket/models.py:28
+msgid "Medium"
+msgstr "متوسط"
+
+#: ticket/models.py:29
+msgid "High"
+msgstr "زیاد"
+
+#: ticket/models.py:32
+msgid "Customer"
+msgstr "مشتری"
+
+#: ticket/models.py:32 ticket/models.py:68
+msgid "User"
+msgstr "کاربر"
+
+#: ticket/models.py:33
+msgid "Subject"
+msgstr "عنوان"
+
+#: ticket/models.py:34 ticket/models.py:56
+msgid "Description"
+msgstr "توضیحات"
+
+#: ticket/models.py:36 ticket/models.py:62 ticket/models.py:70
+msgid "Department"
+msgstr "دپارتمان"
+
+#: ticket/models.py:38
+msgid "Status"
+msgstr "وضعیت"
+
+#: ticket/models.py:40
+msgid "Priority"
+msgstr "اولویت"
+
+#: ticket/models.py:42
+msgid "Created At"
+msgstr "ایجاد شده در"
+
+#: ticket/models.py:44
+msgid "Updated At"
+msgstr "بروزرسانی شده در"
+
+#: ticket/models.py:51
+msgid "Tickets"
+msgstr "تیکت‌ها"
+
+#: ticket/models.py:55
+msgid "Name"
+msgstr "نام"
+
+#: ticket/models.py:63
+msgid "Departments"
+msgstr "دپارتمان‌ها"
+
+#: ticket/models.py:76
+msgid "Agent"
+msgstr "کارمند"
+
+#: ticket/models.py:77
+msgid "Agents"
+msgstr "کارمندان"
