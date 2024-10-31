@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-30 10:09+0330\n"
+"POT-Creation-Date: 2024-10-31 10:46+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,6 +29,10 @@ msgstr "حوزه تخصصی"
 #: company/admin.py:46 company/models.py:118
 msgid "Capital Providing Method"
 msgstr "راه‌های تامین سرمایه"
+
+#: company/admin.py:70 company/admin.py:87 company/models.py:91
+msgid "Company Title"
+msgstr "عنوان شرکت"
 
 #: company/apps.py:8 company/models.py:142 company/models.py:187
 #: company/models.py:230
@@ -99,10 +103,6 @@ msgstr "کاربر"
 msgid "Profile Active"
 msgstr "فعالسازی"
 
-#: company/models.py:91
-msgid "Company Title"
-msgstr "عنوان شرکت"
-
 #: company/models.py:94
 msgid "Email"
 msgstr "ایمیل"
@@ -167,6 +167,10 @@ msgstr "خدمت شرکت"
 msgid "Company Services"
 msgstr "خدمت‌های شرکت‌ها"
 
+#: company/models.py:189 company/models.py:235
+msgid "Year"
+msgstr "سال"
+
 #: company/models.py:192
 msgid "File"
 msgstr "فایل"
@@ -190,10 +194,6 @@ msgstr "اظهارنامه‌ها"
 #: company/models.py:233
 msgid "Month"
 msgstr "ماه"
-
-#: company/models.py:235
-msgid "Year"
-msgstr "سال"
 
 #: company/models.py:238
 msgid "Balance Report File"

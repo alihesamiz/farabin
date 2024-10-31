@@ -5,5 +5,5 @@ router = DefaultRouter()
 urlpatterns = router.urls
 urlpatterns += [
     path('analysis/', DiagnosticAnalysisView.as_view(),
-         name='diagnostic_analysis'),
+         name='diagnostic-analysis'),
 ]

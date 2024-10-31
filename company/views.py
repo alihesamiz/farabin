@@ -1,27 +1,17 @@
-from io import BytesIO
-from django.http import HttpResponse
-from pdf2image import convert_from_path
-from PyPDF2 import PdfReader, PdfWriter
-from rest_framework import status
+from django.views.decorators.clickjacking import xframe_options_exempt
 from django.utils.decorators import method_decorator
 from django.http import FileResponse, HttpResponse
-from django.conf import settings
-from django.http import FileResponse
-import os
-from django.views.decorators.clickjacking import xframe_options_exempt
-import logging
-from django.shortcuts import render
-from rest_framework_simplejwt.tokens import RefreshToken, TokenError
-from django.db.models import Count
-from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
-from rest_framework.decorators import action
-from rest_framework import status, viewsets
-from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework.exceptions import NotFound, ValidationError
+from rest_framework.response import Response
+from rest_framework.decorators import action
+from rest_framework import status, viewsets
+from rest_framework.views import APIView
+from rest_framework import status
+from PyPDF2 import PdfReader, PdfWriter
+import os
 from .models import BalanceReport,  CompanyProfile, TaxDeclaration
-from diagnostics.models import FinancialAsset
 from .serializers import (
     BalanceReportCreateSerializer,
     BalanceReportSerializer,
@@ -128,6 +118,12 @@ class TaxDeclarationViewSet(viewsets.ModelViewSet):
         response['X-Frame-Options'] = 'ALLOWALL'
 
         return response
+
+    @action(detail=False, methods=['get'])
+    def year(self, request):
+        tax_declarations = self.get_queryset()
+        years = tax_declarations.values('year').distinct()
+        return Response(years, status=status.HTTP_200_OK)
 
     # @method_decorator(xframe_options_exempt, name='pdf')
     # @action(detail=True, methods=['get'])
@@ -259,6 +255,24 @@ class BalanceReportViewSet(viewsets.ModelViewSet):
         response['X-Frame-Options'] = 'ALLOWALL'  # Customize as needed
 
         return response
+
+    @action(detail=False, methods=['get'])
+    def year(self, request):
+        balance_reports = self.get_queryset()
+        year_month_data = {}
+        for entry in balance_reports.values('year', 'month').distinct():
+            year = entry['year']
+            month = entry['month']
+            if year not in year_month_data:
+                year_month_data[year] = []
+            if month not in year_month_data[year]:
+                year_month_data[year].append(month)
+
+        # Format the data for the response
+        formatted_data = [{'year': year, 'months': sorted(
+            months)} for year, months in year_month_data.items()]
+
+        return Response(formatted_data, status=status.HTTP_200_OK)
 
     def perform_destroy(self, instance):
         try:

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-30 10:09+0330\n"
+"POT-Creation-Date: 2024-10-31 10:46+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,452 +18,457 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
+#: diagnostics/admin.py:45
+msgid "Company Title"
+msgstr "نام شرکت"
+
 #: diagnostics/apps.py:8
 msgid "Diagnostic"
 msgstr "عارضه‌یابی(سرآمد)"
 
-#: diagnostics/models.py:9 diagnostics/models.py:45 diagnostics/models.py:120
-#: diagnostics/models.py:224 diagnostics/models.py:282
+#: diagnostics/models.py:8 diagnostics/models.py:44 diagnostics/models.py:119
+#: diagnostics/models.py:223 diagnostics/models.py:284
+#: diagnostics/models.py:313 diagnostics/models.py:330
 msgid "Financial Asset"
 msgstr "دارایی مالی"
 
-#: diagnostics/models.py:11
+#: diagnostics/models.py:10 diagnostics/models.py:360
 msgid "Consuming Material"
 msgstr "مواد اولیه مصرفی"
 
-#: diagnostics/models.py:13
+#: diagnostics/models.py:12 diagnostics/models.py:362
 msgid "Production Fee"
 msgstr "هزینه مستقیم"
 
-#: diagnostics/models.py:15
+#: diagnostics/models.py:14 diagnostics/models.py:364
 msgid "Construction Overhead"
 msgstr "سربار ساخت"
 
-#: diagnostics/models.py:17
+#: diagnostics/models.py:16
 msgid "Production Total Price"
 msgstr "جمع هزینه تولید"
 
-#: diagnostics/models.py:19
+#: diagnostics/models.py:18
 msgid "Current Constructing Product First Period"
 msgstr "کالای در جریان تولید اول دوره"
 
-#: diagnostics/models.py:21
+#: diagnostics/models.py:20
 msgid "Current Constructing Product End Period"
 msgstr "کالای در جریان تولید پایان دوره"
 
-#: diagnostics/models.py:23
+#: diagnostics/models.py:22
 msgid "Produced Product Total Price"
 msgstr "هزینه تمام شده کالای تولید شده"
 
-#: diagnostics/models.py:25
+#: diagnostics/models.py:24
 msgid "First Period Produced Inventory"
 msgstr "ذخیره کالای تولید شده اول دوره"
 
-#: diagnostics/models.py:27
+#: diagnostics/models.py:26
 msgid "Period Bought Product"
 msgstr "کالای خریداری شده در طول دوره"
 
-#: diagnostics/models.py:29
+#: diagnostics/models.py:28
 msgid "Ready for Sale Product"
 msgstr "کالای اماده به فروش"
 
-#: diagnostics/models.py:31
+#: diagnostics/models.py:30
 msgid "End Period Inventory"
 msgstr "ذخیره کالای پایان دوره"
 
-#: diagnostics/models.py:33
+#: diagnostics/models.py:32
 msgid "Other Product"
 msgstr "سایر"
 
-#: diagnostics/models.py:35
+#: diagnostics/models.py:34
 msgid "Sold Product Total Price"
 msgstr "جمع هزینه کالای فروخته شده"
 
-#: diagnostics/models.py:39
+#: diagnostics/models.py:38
 msgid "Sold Product Fee"
 msgstr "هزینه کالای فروخته شده"
 
-#: diagnostics/models.py:40
+#: diagnostics/models.py:39
 msgid "Sold Products Fee"
 msgstr "هزینه کالاهای فروخته شده"
 
-#: diagnostics/models.py:47
+#: diagnostics/models.py:46
 msgid "Operational Income"
 msgstr "درآمد عملیاتی"
 
-#: diagnostics/models.py:49
+#: diagnostics/models.py:48
 msgid "Operational Income Expense"
 msgstr "مخارج درامد عملیاتی"
 
-#: diagnostics/models.py:51
+#: diagnostics/models.py:50 diagnostics/models.py:348
 msgid "Gross Profit"
 msgstr "سود ناخالص"
 
-#: diagnostics/models.py:53
+#: diagnostics/models.py:52 diagnostics/models.py:368
 msgid "Salary Fee"
 msgstr "هزینه دستمزد"
 
-#: diagnostics/models.py:55
+#: diagnostics/models.py:54
 msgid "Marketing Fee"
 msgstr "هزینه بازاریابی"
 
-#: diagnostics/models.py:57
+#: diagnostics/models.py:56
 msgid "Doubtful Burnt Claims Fee"
 msgstr "هزینه دارایی های مشکوک الوصول و سوخت شده"
 
-#: diagnostics/models.py:59
+#: diagnostics/models.py:58
 msgid "Attendance Fee"
 msgstr "هزینه حضور هیئت مدیره"
 
-#: diagnostics/models.py:61
+#: diagnostics/models.py:60
 msgid "Accounting Fee"
 msgstr "هزینه حسابداری و حسابرسی"
 
-#: diagnostics/models.py:63
+#: diagnostics/models.py:62
 msgid "Consulting Fee"
 msgstr "هزینه مشاوره"
 
-#: diagnostics/models.py:65
+#: diagnostics/models.py:64
 msgid "Rental Fee"
 msgstr "هزینه اجاره غیر از محل شرکت"
 
-#: diagnostics/models.py:67
+#: diagnostics/models.py:66
 msgid "Other General Expense"
 msgstr "سایر هزینه‌های عمومی"
 
-#: diagnostics/models.py:69
+#: diagnostics/models.py:68
 msgid "Total General Expense"
 msgstr "جمع هزینه مخارج عمومی"
 
-#: diagnostics/models.py:71
+#: diagnostics/models.py:70
 msgid "Other Operational Income"
 msgstr "سایر درآمدهای عملیاتی"
 
-#: diagnostics/models.py:73
+#: diagnostics/models.py:72
 msgid "Other Operational Expense"
 msgstr "سایر مخارج عملیاتی"
 
-#: diagnostics/models.py:75
+#: diagnostics/models.py:74 diagnostics/models.py:354
 msgid "Operational Profit"
 msgstr "سود عملیاتی"
 
-#: diagnostics/models.py:77
+#: diagnostics/models.py:76
 msgid "Immovable Property Sale Profit"
 msgstr "سود حاصل از فروش دارایی غیر منقول"
 
-#: diagnostics/models.py:79
+#: diagnostics/models.py:78
 msgid "Other Assets Sale Profit"
 msgstr "سود حاصل از فروش سایر دارایی‌ها"
 
-#: diagnostics/models.py:81
+#: diagnostics/models.py:80
 msgid "Material Sale Profit"
 msgstr "سود فروش مواد اولیه"
 
-#: diagnostics/models.py:83
+#: diagnostics/models.py:82
 msgid "Investment Sale Profit"
 msgstr "سود فروش سرمایه گذاری"
 
-#: diagnostics/models.py:85
+#: diagnostics/models.py:84
 msgid "Interpretation Profit"
 msgstr "سود تسعیری"
 
-#: diagnostics/models.py:87
+#: diagnostics/models.py:86
 msgid "Dividend Profit"
 msgstr "سود سهام‌الشرکا"
 
-#: diagnostics/models.py:89
+#: diagnostics/models.py:88
 msgid "Investment Profit"
 msgstr "سود سرمایه‌گذاری"
 
-#: diagnostics/models.py:91
+#: diagnostics/models.py:90
 msgid "Bank Deposit Profit"
 msgstr "سود سپرده بانکی"
 
-#: diagnostics/models.py:93
+#: diagnostics/models.py:92
 msgid "Rental Income"
 msgstr "درآمد اجاره"
 
-#: diagnostics/models.py:95
+#: diagnostics/models.py:94
 msgid "Incidental Income"
 msgstr "درآمد های تصادفی"
 
-#: diagnostics/models.py:97
+#: diagnostics/models.py:96
 msgid "Other Non-Operational Income/Expense"
 msgstr "سایر درآمد/هزینه های عملیاتی"
 
-#: diagnostics/models.py:99
+#: diagnostics/models.py:98
 msgid "Net Value Other Non-Operational Income/Expense"
 msgstr "مقدار خاصل سایر درآمد/هزینه های غیر عملیاتی"
 
-#: diagnostics/models.py:101
+#: diagnostics/models.py:100
 msgid "Financial Expense"
 msgstr "مخارج مالی"
 
-#: diagnostics/models.py:103
+#: diagnostics/models.py:102 diagnostics/models.py:356
 msgid "Proceed Profit"
 msgstr "سود ویژه"
 
-#: diagnostics/models.py:105
+#: diagnostics/models.py:104
 msgid "Current Year Income Tax"
 msgstr "مالیات بر درآمد سال جاری"
 
-#: diagnostics/models.py:107
+#: diagnostics/models.py:106
 msgid "Previous Year Income Tax"
 msgstr "مالیات بر درآمد سال گذشته"
 
-#: diagnostics/models.py:109 diagnostics/models.py:226
+#: diagnostics/models.py:108 diagnostics/models.py:225
 msgid "Profit After Tax"
 msgstr "سود بعد از کسر مالیات"
 
-#: diagnostics/models.py:113
+#: diagnostics/models.py:112
 msgid "Profit And Loss Statement"
 msgstr "صورت سود و زیان"
 
-#: diagnostics/models.py:114
+#: diagnostics/models.py:113
 msgid "Profit And Loss Statements"
 msgstr "صورت‌های سود و زیان"
 
-#: diagnostics/models.py:123
+#: diagnostics/models.py:122
 msgid "Advance Payment"
 msgstr "پیشپرداخت"
 
-#: diagnostics/models.py:125
+#: diagnostics/models.py:124 diagnostics/models.py:352
 msgid "Inventory"
 msgstr "انبار"
 
-#: diagnostics/models.py:127
+#: diagnostics/models.py:126
 msgid "Recievable Trade Account"
 msgstr "حساب دریافتنی تجاری"
 
-#: diagnostics/models.py:129
+#: diagnostics/models.py:128
 msgid "Short term Investment"
 msgstr "سرمایه‌گذاری کوتاه مدت"
 
-#: diagnostics/models.py:132
+#: diagnostics/models.py:131
 msgid "Cash Balance"
 msgstr "تراز نقدی"
 
-#: diagnostics/models.py:135
+#: diagnostics/models.py:134
 msgid "Non-current assets held for sale"
 msgstr "دارایی های غیر جاری نگهداری شده برای فروش"
 
-#: diagnostics/models.py:137 diagnostics/models.py:197
+#: diagnostics/models.py:136 diagnostics/models.py:196
 msgid "Current Partner/Shareholder"
 msgstr "جاری شرکا/سهامداران"
 
-#: diagnostics/models.py:139
+#: diagnostics/models.py:138
 msgid "Total Current Asset"
 msgstr "جمع دارایی‌های جاری"
 
-#: diagnostics/models.py:144
+#: diagnostics/models.py:143
 msgid "Tangible Fixed Asset"
 msgstr "دارایی‌های ثابت مشهود"
 
-#: diagnostics/models.py:146
+#: diagnostics/models.py:145
 msgid "Property Investment"
 msgstr "سرمایه‌گذاری ملک"
 
-#: diagnostics/models.py:148
+#: diagnostics/models.py:147
 msgid "Intangible Asset"
 msgstr "دارایی‌های ثابت نامشهود"
 
-#: diagnostics/models.py:150
+#: diagnostics/models.py:149
 msgid "Long Term Investment"
 msgstr "سرمایه‌گذاری طولانی مدت"
 
-#: diagnostics/models.py:152
+#: diagnostics/models.py:151
 msgid "Long Term Receivable"
 msgstr "دریافتنی‌های طولانی مدت"
 
-#: diagnostics/models.py:154
+#: diagnostics/models.py:153
 msgid "Other Asset"
 msgstr "سایر دارایی‌ها"
 
-#: diagnostics/models.py:156
+#: diagnostics/models.py:155
 msgid "Total Non-Current Asset"
 msgstr "جمع دارایی های غیرجاری"
 
-#: diagnostics/models.py:160
+#: diagnostics/models.py:159
 msgid "Wealth"
 msgstr "سرمایه"
 
-#: diagnostics/models.py:162 diagnostics/models.py:246
+#: diagnostics/models.py:161 diagnostics/models.py:245
 msgid "Wealth Increase"
 msgstr "افزایش سرمایه"
 
-#: diagnostics/models.py:164
+#: diagnostics/models.py:163
 msgid "Share Spend"
 msgstr "صرف سهام"
 
-#: diagnostics/models.py:166
+#: diagnostics/models.py:165
 msgid "Treasury Share Spend"
 msgstr "صرف سهام خزانه"
 
-#: diagnostics/models.py:168 diagnostics/models.py:244
+#: diagnostics/models.py:167 diagnostics/models.py:243
 msgid "Legal Reserve"
 msgstr "اندوخته قانونی"
 
-#: diagnostics/models.py:170
+#: diagnostics/models.py:169
 msgid "Other Reserve"
 msgstr "سایر اندوخته‌ها"
 
-#: diagnostics/models.py:172
+#: diagnostics/models.py:171
 msgid "Asset Revaluation Surplus and Other Unrealized Gains"
 msgstr "مازاد تجدید ارزیابی دارایی‌ها و سایر سود‌های تحقق نیافته"
 
-#: diagnostics/models.py:174
+#: diagnostics/models.py:173
 msgid "Accumulated Profit and Loss"
 msgstr "سود و زیان انباشته"
 
-#: diagnostics/models.py:176
+#: diagnostics/models.py:175
 msgid "Treasury Share"
 msgstr "سهام خزانه"
 
-#: diagnostics/models.py:179
+#: diagnostics/models.py:178
 msgid "Ownership right total"
 msgstr "جمع حقوق مالکانه"
 
-#: diagnostics/models.py:183
+#: diagnostics/models.py:182
 msgid "Trade Payable"
 msgstr "پرداختنی‌های تجاری"
 
-#: diagnostics/models.py:185
+#: diagnostics/models.py:184
 msgid "Paid Tax"
 msgstr "مالیات پرداختی"
 
-#: diagnostics/models.py:187
+#: diagnostics/models.py:186
 msgid "Dividend Payable"
 msgstr "سود سهام پرداختنی"
 
-#: diagnostics/models.py:189
+#: diagnostics/models.py:188
 msgid "Financial Facility"
 msgstr "تسهیلات مالی"
 
-#: diagnostics/models.py:191
+#: diagnostics/models.py:190
 msgid "Reserves"
 msgstr "ذخایر"
 
-#: diagnostics/models.py:193
+#: diagnostics/models.py:192
 msgid "Advance"
 msgstr "پیش‌دریافت‌ها"
 
-#: diagnostics/models.py:195
+#: diagnostics/models.py:194
 msgid "Liability related to non-current asset held for sale"
 msgstr "بدهی‌های مرتبط با دارایی‌های غیر جاری نگهداری شده برای فروش"
 
-#: diagnostics/models.py:199
+#: diagnostics/models.py:198
 msgid "Total Current Debt"
 msgstr "جمع بدهی‌های جاری"
 
-#: diagnostics/models.py:203
+#: diagnostics/models.py:202
 msgid "Longterm Payable"
 msgstr "پرداختنی‌های بلند مدت"
 
-#: diagnostics/models.py:205
+#: diagnostics/models.py:204
 msgid "Longterm Financial Facilities"
 msgstr "تسهیلات مالی بلند مدت"
 
-#: diagnostics/models.py:207
+#: diagnostics/models.py:206
 msgid "Reserve Employee Termination Benefit"
 msgstr "دخیره مزایای پایان خدمت کارکنان"
 
-#: diagnostics/models.py:209
+#: diagnostics/models.py:208
 msgid "Total Non-Current Debt"
 msgstr "جمع بدهی‌های غیرجاره"
 
-#: diagnostics/models.py:212
+#: diagnostics/models.py:211 diagnostics/models.py:350
 msgid "Net Sale"
 msgstr "فروش خالص"
 
-#: diagnostics/models.py:214
+#: diagnostics/models.py:213 diagnostics/models.py:358
 msgid "Net Profit"
 msgstr "سود خالص"
 
-#: diagnostics/models.py:218
+#: diagnostics/models.py:217
 msgid "Balance Report"
 msgstr "ترازنامه"
 
-#: diagnostics/models.py:219
+#: diagnostics/models.py:218
 msgid "Balance Reports"
 msgstr "ترازنامه‌ها"
 
-#: diagnostics/models.py:228
+#: diagnostics/models.py:227
 msgid "First Year  Accumulated Profit"
 msgstr "سود(زیان) انباشه ابتدای سال"
 
-#: diagnostics/models.py:230
+#: diagnostics/models.py:229
 msgid "Correcting Mistake"
 msgstr "اصلاح اشتباهات"
 
-#: diagnostics/models.py:232
+#: diagnostics/models.py:231
 msgid "Accounting Method Change"
 msgstr "تغییر در رویه حسابداری"
 
-#: diagnostics/models.py:234
+#: diagnostics/models.py:233
 msgid "First Year`s Accumulated Profit Balanced"
 msgstr "سود(زیاد) انباشته ابتدای سال تعدیل شده"
 
-#: diagnostics/models.py:236
+#: diagnostics/models.py:235
 msgid "Transfer From Reserve"
 msgstr "انتقال از اندوخته‌ها"
 
-#: diagnostics/models.py:238
+#: diagnostics/models.py:237
 msgid "Other Account Turnover"
 msgstr "سایر"
 
-#: diagnostics/models.py:240
+#: diagnostics/models.py:239
 msgid "Allocable Profit"
 msgstr "سود قابل تخصیص"
 
-#: diagnostics/models.py:242
+#: diagnostics/models.py:241
 msgid "Share Profit"
 msgstr "سود سهام مصوب"
 
-#: diagnostics/models.py:248
+#: diagnostics/models.py:247
 msgid "Current Wealt Increase"
 msgstr "افزایش سرمایه در جریان"
 
-#: diagnostics/models.py:250
+#: diagnostics/models.py:249
 msgid "Other Reserves"
 msgstr "سایر اندوخته‌ها"
 
-#: diagnostics/models.py:252
+#: diagnostics/models.py:251
 msgid "Treasury Share Purchase"
 msgstr "خرید سهام خزانه"
 
-#: diagnostics/models.py:254
+#: diagnostics/models.py:253
 msgid "Treasury Share Sale"
 msgstr "فروش سهام خزانه"
 
-#: diagnostics/models.py:256
+#: diagnostics/models.py:255
 msgid "Treasury Share Sale Profit"
 msgstr "سود(زیان) حاصل از فروش سهام خزانه"
 
-#: diagnostics/models.py:258
+#: diagnostics/models.py:257
 msgid "Board Reward"
 msgstr "پاداش هیئت مدیره"
 
-#: diagnostics/models.py:260
+#: diagnostics/models.py:259
 msgid "Other Profit"
 msgstr "سایر"
 
-#: diagnostics/models.py:262
+#: diagnostics/models.py:261
 msgid "Total Allocated Profit"
 msgstr "جمع تخصیص سود"
 
-#: diagnostics/models.py:264
+#: diagnostics/models.py:263
 msgid "End Year`s Accumulated profit"
 msgstr "سود(زیان) انباشته در پایان سال"
 
-#: diagnostics/models.py:268
+#: diagnostics/models.py:267
 msgid "Account TurnOver"
 msgstr "گردش حساب"
 
-#: diagnostics/models.py:269
+#: diagnostics/models.py:268
 msgid "Accounts Turnovers"
 msgstr "گردش حساب‌ها"
 
-#: diagnostics/models.py:276
+#: diagnostics/models.py:275
 msgid "Company"
 msgstr "شرکت"
 
@@ -471,9 +476,149 @@ msgstr "شرکت"
 msgid "Year"
 msgstr "سال"
 
-#: diagnostics/models.py:283
+#: diagnostics/models.py:280
+msgid "Month"
+msgstr "ماه"
+
+#: diagnostics/models.py:285
 msgid "Financial Assets"
 msgstr "دارایی‌های مالی"
+
+#: diagnostics/models.py:294
+msgid "Name"
+msgstr "نام"
+
+#: diagnostics/models.py:297
+msgid "Value"
+msgstr "داده"
+
+#: diagnostics/models.py:300 diagnostics/models.py:320
+msgid "Analysis Report"
+msgstr "ترازنامه"
+
+#: diagnostics/models.py:303 diagnostics/models.py:304
+msgid "Chart Data"
+msgstr "داده نمودار"
+
+#: diagnostics/models.py:315
+msgid "Analysis Text"
+msgstr "توضیح تحلیلات"
+
+#: diagnostics/models.py:321
+msgid "Analysis Reports"
+msgstr "ترازنامه‌ها"
+
+#: diagnostics/models.py:332
+msgid "Current Asset"
+msgstr "جمع دارایی‌های جاری"
+
+#: diagnostics/models.py:334
+msgid "Non-Current Asset"
+msgstr "جمع دارایی های غیرجاری"
+
+#: diagnostics/models.py:336
+msgid "Total Asset"
+msgstr "جمع دارایی‌های جاری"
+
+#: diagnostics/models.py:338
+msgid "Current Debt"
+msgstr " بدهی‌های جاری"
+
+#: diagnostics/models.py:340
+msgid "Non-Current Debt"
+msgstr " بدهی غیرجاری"
+
+#: diagnostics/models.py:342
+msgid "Total Debt"
+msgstr "جمع بدهی‌های جاری"
+
+#: diagnostics/models.py:344
+msgid "Total Equity"
+msgstr "مجموع حقوق سهام داران"
+
+#: diagnostics/models.py:346
+msgid "Total Equity and Debt Sum"
+msgstr "جمع بدهی‌های جاری"
+
+#: diagnostics/models.py:366
+msgid "Total Production Price"
+msgstr "جمع هزینه کالای فروخته شده"
+
+#: diagnostics/models.py:370
+msgid "Production Salary Fee"
+msgstr "هزینه مستقیم"
+
+#: diagnostics/models.py:372
+msgid "Usability"
+msgstr "کارایی"
+
+#: diagnostics/models.py:374
+msgid "Efficiency"
+msgstr "اثربخشی"
+
+#: diagnostics/models.py:376
+msgid "Return on Assets (ROA)"
+msgstr "بازگشت دارایی"
+
+#: diagnostics/models.py:378
+msgid "Return on Assets Before Tax (ROAB)"
+msgstr "بازگشت دارایی"
+
+#: diagnostics/models.py:380
+msgid "Return on Equity (ROE)"
+msgstr ""
+
+#: diagnostics/models.py:382
+msgid "Gross Profit Margin"
+msgstr "حاشیه سود ناخالص"
+
+#: diagnostics/models.py:384
+msgid "Profit Margin Ratio"
+msgstr ""
+
+#: diagnostics/models.py:386
+msgid "Debt Ratio"
+msgstr ""
+
+#: diagnostics/models.py:388
+msgid "Capital Ratio"
+msgstr "راه‌های تامین سرمایه"
+
+#: diagnostics/models.py:390
+msgid "Proprietary Ratio"
+msgstr ""
+
+#: diagnostics/models.py:392
+msgid "Equity to Total Debt Ratio"
+msgstr ""
+
+#: diagnostics/models.py:394
+msgid "Equity to Non-Current Asset Ratio"
+msgstr "جمع دارایی های غیرجاری"
+
+#: diagnostics/models.py:396
+msgid "Current Ratio"
+msgstr ""
+
+#: diagnostics/models.py:398
+msgid "Instant Ratio"
+msgstr ""
+
+#: diagnostics/models.py:400
+msgid "Stock Turnover"
+msgstr "گردش حساب‌ها"
+
+#: diagnostics/models.py:402
+msgid "Altman Bankruptcy Ratio"
+msgstr ""
+
+#: diagnostics/models.py:408
+msgid "Calculated Data"
+msgstr ""
+
+#: diagnostics/models.py:409
+msgid "Calculated Datas"
+msgstr ""
 
 #: diagnostics/utils.py:8
 msgid "Start"
@@ -583,9 +728,6 @@ msgstr "افول ۲"
 #~ msgid "Invest"
 #~ msgstr "سرمایه‌گذاری"
 
-#~ msgid "Capital Providing"
-#~ msgstr "راه‌های تامین سرمایه"
-
 #~ msgid "Capital Providing Other"
 #~ msgstr "سایر راه‌های تامین سرمایه"
 
@@ -621,9 +763,6 @@ msgstr "افول ۲"
 
 #~ msgid "User"
 #~ msgstr "کاربر"
-
-#~ msgid "Company Title"
-#~ msgstr "نام شرکت"
 
 #~ msgid "Email"
 #~ msgstr "ایمیل"
@@ -687,9 +826,6 @@ msgstr "افول ۲"
 
 #~ msgid "Organizations"
 #~ msgstr "نهادها"
-
-#~ msgid "Name"
-#~ msgstr "نام"
 
 #~ msgid "Province"
 #~ msgstr "استان"

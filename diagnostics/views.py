@@ -14,9 +14,7 @@ from .tasks import perform_calculations
 
 
 class DiagnosticAnalysisView(APIView):
-
     permission_classes = [IsAuthenticated]
-
     def post(self, request, *args, **kwargs):
 
         company_id = CompanyProfile.objects.get(user=self.request.user).id

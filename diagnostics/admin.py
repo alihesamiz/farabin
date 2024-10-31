@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
-from .models import AccountTurnOver, FinancialAsset,  ProfitLossStatement, SoldProductFee, BalanceReport
+from .models import AccountTurnOver, AnalysisReport, CalculatedData, ChartData, FinancialAsset,  ProfitLossStatement, SoldProductFee, BalanceReport
 
 # Register your models here.
 
@@ -46,3 +46,19 @@ class FinancialAssestModel(admin.ModelAdmin):
 
     search_fields = ['company__company_title', 'year']
     # This will allow selection of multiple life cycles
+
+
+class ChartDataInline(admin.StackedInline):
+    model = ChartData
+    min_num = 1
+    extra = 0
+
+
+@admin.register(AnalysisReport)
+class AnalysisAdmin(admin.ModelAdmin):
+    inlines = [ChartDataInline]
+
+
+@admin.register(CalculatedData)
+class CalculatedDataAdmin(admin.ModelAdmin):
+    pass
