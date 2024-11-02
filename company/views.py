@@ -65,8 +65,10 @@ class DashboardViewSet(APIView):
 
             # Return a structured JSON response with both file types
             response_data = {
-                "tax_files": {'tax_files': tax_files_data, 'tax_files_count': tax_files_count},
-                "balance_reports": {'report_files': report_files_data, 'report_files_count': report_files_count}
+                'tax_files_count': tax_files_count,
+                'report_files_count': report_files_count*4,
+                'all_uploaded_files': tax_files_count + report_files_count*4,
+                "tickets": 0
             }
 
             return Response(response_data)

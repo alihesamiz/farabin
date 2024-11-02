@@ -5,9 +5,13 @@ meta {
 }
 
 get {
-  url: 192.168.1.9:8000/company/dashboard
+  url: 192.168.1.9:8000/diagnostic/analysis/?task_id=8cb9a6be-b8d7-44d2-a447-a1ea243ce58e
   body: multipartForm
   auth: bearer
+}
+
+params:query {
+  task_id: 8cb9a6be-b8d7-44d2-a447-a1ea243ce58e
 }
 
 headers {
@@ -15,10 +19,13 @@ headers {
 }
 
 auth:bearer {
-  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwNjEzMDIzLCJpYXQiOjE3MzAwMDgyMjMsImp0aSI6ImY5ZDNmYWM0NmQ1NzQyODg4MDZiNDBkZTRhN2ZhYjdlIiwidXNlcl9pZCI6MX0.3AOh53f6ZhE4jpf_azSUVR6b-xa3IeZg7skX2iriRcI
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwNDQ2MDI1LCJpYXQiOjE3MzAzNTk2MjUsImp0aSI6ImU0MjU2ZWJlMGZiOTRjYmNiYmRiMTZjYjYwMjkzMWM1IiwidXNlcl9pZCI6MX0.efv4K0336K3_LD_IcMIfS6ziu9vSggKW3BwhNPrHPiE
 }
 
 body:multipart-form {
+  phone_number: 09138038121
+  national_code: 12736700277
+  otp_code: 495488
   ~company: f60a3c73-d19f-47f3-9211-6f516ec1cd3c
   ~year: 2020
   ~file: @file(/home/madassandd/Downloads/Telegram Desktop/TG030801-استخدام افسری نیروی دریایی.pdf)

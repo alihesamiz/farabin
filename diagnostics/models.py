@@ -288,40 +288,55 @@ class FinancialAsset(models.Model):
         return f"{self.company.company_title} - {self.year}"
 
 
-class ChartData(models.Model):
-
-    name = models.CharField(
-        max_length=255, verbose_name=_('Name'))
-
-    value = models.DecimalField(
-        max_digits=20, decimal_places=0, verbose_name=_('Value'))
-
-    analysis = models.ForeignKey(
-        'AnalysisReport', on_delete=models.CASCADE, related_name='chart_data', verbose_name=_('Analysis Report'))
-
-    class Meta:
-        verbose_name = _("Chart Data")
-        verbose_name_plural = _("Chart Data")
-
-    def str__(self):
-        return f"{self.value}"
-
-
 class AnalysisReport(models.Model):
 
-    financial_asset = models.ForeignKey(
-        'FinancialAsset', on_delete=models.CASCADE, related_name='analysis_reports', verbose_name=_('Financial Asset'))
+    DEBT_CHART = 'debt'
+    ASSET_CHART = 'asset'
+    SALE_CHART = 'sale'
+    EQUITY_CHART = 'equity'
+    LIFE_CYCLE_CHART = 'life_cycle'
+    BANKRUPSY_CHART = 'bankruptcy'
+    PROFITIBILITY_CHART = 'profitability'
+    SALARY_CHART = 'salary'
+    INVENTORY_CHART = 'inventory'
+    AGILITY_CHART = 'agility'
+    LIQUIDITY_CHART = 'liquidity'
+    LEVERAGE_CHART = 'leverage'
+    COST_CHART = 'cost'
+    PROFIT_CHART = 'profit'
 
-    text = models.TextField(verbose_name=_('Analysis Text'))
+    CHART_CHOICES = [
+        (DEBT_CHART, _("Debt Chart")),
+        (ASSET_CHART, _("Asset Chart")),
+        (SALE_CHART, _("Sale Chart")),
+        (EQUITY_CHART, _("Equity Chart")),
+        (LIFE_CYCLE_CHART, _("Life Cycle Chart")),
+        (BANKRUPSY_CHART, _("Bankruptcy Chart")),
+        (PROFITIBILITY_CHART, _("Profitability Chart")),
+        (SALARY_CHART, _("Salary Chart")),
+        (INVENTORY_CHART, _("Inventory Chart")),
+        (AGILITY_CHART, _("Agility Chart")),
+        (LIQUIDITY_CHART, _("Liquidity Chart")),
+        (LEVERAGE_CHART, _("Leverage Chart")),
+        (COST_CHART, _("Cost Chart")),
+        (PROFIT_CHART, _("Profit Chart")),
+    ]
 
-    # data = models.ManyToManyField(ChartData, verbose_name=_('Chart Data'))
+    calculated_data = models.ForeignKey(
+        'CalculatedData', on_delete=models.CASCADE, related_name='analysis_reports', verbose_name=_('Calculated Data'))
+
+    chart_name = models.CharField(max_length=15, verbose_name=_(
+        'Chart Name'), help_text=_("Enter the name of each chart"), choices=CHART_CHOICES)
+
+    text = models.TextField(verbose_name=_('Analysis Text'), help_text=_(
+        "Enter the analysis text for each chart"))
 
     class Meta:
         verbose_name = _("Analysis Report")
         verbose_name_plural = _("Analysis Reports")
 
     def __str__(self):
-        return f"{self.text}"
+        return f"{self.calculated_data.financial_asset.company.company_title} - {self.calculated_data.financial_asset.year} - {self.chart_name}"
 
 
 class CalculatedData(models.Model):
