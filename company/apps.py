@@ -6,3 +6,6 @@ class CompanyConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'company'
     verbose_name = _("Company")
+
+    def ready(self) -> None:
+        import company.signals

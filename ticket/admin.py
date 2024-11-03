@@ -1,18 +1,8 @@
+from .models import Ticket, TicketAnswer, Agent, TicketDescription
 from django.utils.translation import gettext_lazy as _
 from django.contrib import admin
-from .models import Ticket, Department, Agent
+from .models import Ticket, Department, Agent, TicketAnswer
 # Register your models here.
-
-
-@admin.register(Ticket)
-class TicketAdmin(admin.ModelAdmin):
-    search_fields = ['company_title']
-    list_display = ['company_title', 'department', 'priority',
-                    'status', 'created_at', 'updated_at']
-
-    def company_title(self, ticket: Ticket):
-        return f"{ticket.user.company.company_title}"
-    company_title.short_description = _("Company Title")
 
 
 @admin.register(Department)
@@ -29,3 +19,39 @@ class DepartmentAdmin(admin.ModelAdmin):
 class AgentAdmin(admin.ModelAdmin):
     autocomplete_fields = ['user']
     list_display = ['user', 'department']
+
+
+class TicketAnswerInline(admin.TabularInline):
+    model = TicketAnswer
+    fields = ('agent', 'comment', 'created_at', 'updated_at')
+    readonly_fields = ('created_at', 'updated_at')
+    extra = 1  # Number of empty forms to display for adding new answers
+
+
+class TicketDescriptionInline(admin.TabularInline):
+    model = TicketDescription
+    fields = ('company', 'comment', 'created_at', 'updated_at')
+    readonly_fields = ('created_at', 'updated_at')
+    extra = 1  # Number of empty forms to display for adding new descriptions
+
+
+@admin.register(Ticket)
+class TicketAdmin(admin.ModelAdmin):
+    list_display = ('subject', 'department', 'status',
+                    'priority', 'created_at', 'updated_at')
+    search_fields = ('subject', 'description', 'department__name')
+    list_filter = ('status', 'priority', 'department')
+    readonly_fields = ('created_at', 'updated_at')
+    inlines = [TicketDescriptionInline, TicketAnswerInline, ]
+
+    def get_queryset(self, request):
+        # Limit queryset based on the user's department if needed
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs  # Superuser can see all tickets
+        try:
+            agent = Agent.objects.get(user=request.user)
+            # Filter by agent's department
+            return qs.filter(department=agent.department)
+        except Agent.DoesNotExist:
+            return qs.none()

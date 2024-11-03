@@ -160,7 +160,7 @@ class CompanyService(models.Model):
 
 TAX_FILE_UPLOADING_PATH = GeneralUtils(
     path="financial_files/files/tax_files",
-    fields=['company__company_title', 'year'])
+    fields=['year'])
 
 
 class TaxDeclaration(models.Model):
@@ -247,4 +247,4 @@ class BalanceReport(models.Model):
     class Meta:
         verbose_name = _("Balance Report")
         verbose_name_plural = _("Balance Reports")
-        unique_together = [['company', 'month'],]
+        unique_together = [['company', 'month', 'year'],]

@@ -5,6 +5,46 @@ from django.utils.translation import gettext_lazy as _
 User = get_user_model()
 
 
+class TicketAnswer(models.Model):
+
+    ticket = models.ForeignKey(
+        'Ticket', on_delete=models.CASCADE, verbose_name=_("Ticket"))
+    agent = models.ForeignKey(
+        'Agent', on_delete=models.CASCADE, verbose_name=_("Agent"))
+
+    comment = models.TextField(verbose_name=_("Comment"))
+
+    created_at = models.DateTimeField(
+        auto_now_add=True, verbose_name=_("Created At"))
+    updated_at = models.DateTimeField(
+        auto_now=True, verbose_name=_("Updated At"))
+
+    class Meta:
+        verbose_name = _("Ticket Answer")
+        verbose_name_plural = _("Ticket Answers")
+
+
+class TicketDescription(models.Model):
+
+    ticket = models.ForeignKey(
+        'Ticket', on_delete=models.CASCADE, verbose_name=_("Ticket"))
+
+    company = models.ForeignKey(
+        'company.CompanyProfile', on_delete=models.CASCADE, verbose_name=_("Company"))
+
+    comment = models.TextField(verbose_name=_("Comment"))
+
+    created_at = models.DateTimeField(
+        auto_now_add=True, verbose_name=_("Created At"))
+
+    updated_at = models.DateTimeField(
+        auto_now=True, verbose_name=_("Updated At"))
+
+    class Meta:
+        verbose_name = _("Ticket Description")
+        verbose_name_plural = _("Ticket Descriptions")
+
+
 class Ticket(models.Model):
 
     STATUS_NEW = 'new'
@@ -28,12 +68,9 @@ class Ticket(models.Model):
         (PRIORITY_MEDIUM, _('Medium')),
         (PRIORITY_HIGH, _('High')),]
 
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, verbose_name=_("Customer"), related_name=_("User"))
     subject = models.CharField(max_length=255, verbose_name=_("Subject"))
     service = models.ForeignKey(
         'core.Service', on_delete=models.CASCADE, verbose_name=_("Service"))
-    description = models.TextField(verbose_name=_("Description"))
     department = models.ForeignKey(
         'Department', on_delete=models.CASCADE, verbose_name=_("Department"))
     status = models.CharField(max_length=255, verbose_name=_(
@@ -46,7 +83,7 @@ class Ticket(models.Model):
         auto_now=True, verbose_name=_("Updated At"))
 
     def __str__(self):
-        return f"{self.subject} - {self.user} : {self.priority}"
+        return f"{self.subject} : {self.priority}"
 
     class Meta:
         verbose_name = _("Ticket")
