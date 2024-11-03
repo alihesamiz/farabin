@@ -323,10 +323,10 @@ class AnalysisReport(models.Model):
     ]
 
     calculated_data = models.ForeignKey(
-        'CalculatedData', on_delete=models.CASCADE, related_name='analysis_reports', verbose_name=_('Calculated Data'))
+        'FinancialData', on_delete=models.CASCADE, related_name='analysis_reports', verbose_name=_('Calculated Data'), help_text=_("Select company assosiated with the year for entering the analysis text report. it would be better to only choose the last yaer of each company"))
 
     chart_name = models.CharField(max_length=15, verbose_name=_(
-        'Chart Name'), help_text=_("Enter the name of each chart"), choices=CHART_CHOICES)
+        'Chart Name'), help_text=_("Enter the name of each chart"), choices=CHART_CHOICES,)
 
     text = models.TextField(verbose_name=_('Analysis Text'), help_text=_(
         "Enter the analysis text for each chart"))
@@ -339,7 +339,7 @@ class AnalysisReport(models.Model):
         return f"{self.calculated_data.financial_asset.company.company_title} - {self.calculated_data.financial_asset.year} - {self.chart_name}"
 
 
-class CalculatedData(models.Model):
+class FinancialData(models.Model):
 
     financial_asset = models.ForeignKey(
         FinancialAsset, on_delete=models.CASCADE, related_name='calculated_data', verbose_name=_('Financial Asset'))
@@ -420,5 +420,5 @@ class CalculatedData(models.Model):
         return f"{self.financial_asset.company.company_title} - {self.financial_asset.year}"
 
     class Meta:
-        verbose_name = _("Calculated Data")
-        verbose_name_plural = _("Calculated Datas")
+        verbose_name = _("Financial Data")
+        verbose_name_plural = _("Financial Datas")

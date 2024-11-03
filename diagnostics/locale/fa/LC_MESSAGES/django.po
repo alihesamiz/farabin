@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-02 10:43+0330\n"
+"POT-Creation-Date: 2024-11-03 10:28+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,9 +18,13 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: diagnostics/admin.py:46
+#: diagnostics/admin.py:47 diagnostics/admin.py:62
 msgid "Company Title"
 msgstr "نام شرکت"
+
+#: diagnostics/admin.py:67 diagnostics/models.py:277
+msgid "Year"
+msgstr "سال"
 
 #: diagnostics/apps.py:8
 msgid "Diagnostic"
@@ -472,10 +476,6 @@ msgstr "گردش حساب‌ها"
 msgid "Company"
 msgstr "شرکت"
 
-#: diagnostics/models.py:277
-msgid "Year"
-msgstr "سال"
-
 #: diagnostics/models.py:280
 msgid "Month"
 msgstr "ماه"
@@ -540,9 +540,16 @@ msgstr "نمودار هزینه"
 msgid "Profit Chart"
 msgstr "نمودار سود"
 
-#: diagnostics/models.py:326 diagnostics/models.py:423
+#: diagnostics/models.py:326
 msgid "Calculated Data"
 msgstr "داده‌ محاسباتی"
+
+#: diagnostics/models.py:326
+msgid ""
+"Select company assosiated with the year for entering the analysis text "
+"report. it would be better to only choose the last yaer of each company"
+
+msgstr "شرکت مرتبط با سال را برای ورود متن تحلیلات وارد کنید.(بهتر است تنها سال اخر را انتخاب کنید) "
 
 #: diagnostics/models.py:329
 msgid "Chart Name"
@@ -672,9 +679,13 @@ msgstr "گردش حساب‌ها"
 msgid "Altman Bankruptcy Ratio"
 msgstr "نسبت ورشکستگی آلتمن"
 
+#: diagnostics/models.py:423
+msgid "Financial Data"
+msgstr "داده مالی"
+
 #: diagnostics/models.py:424
-msgid "Calculated Datas"
-msgstr "داده‌های محاسباتی"
+msgid "Financial Datas"
+msgstr "داده‌های مالی"
 
 #: diagnostics/utils.py:8
 msgid "Start"
@@ -711,6 +722,9 @@ msgstr "افول ۱"
 #: diagnostics/utils.py:10
 msgid "Decline 2"
 msgstr "افول ۲"
+
+#~ msgid "Calculated Datas"
+#~ msgstr "داده‌های محاسباتی"
 
 #~ msgid "Name"
 #~ msgstr "نام"

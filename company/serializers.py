@@ -1,3 +1,6 @@
+from dateutil.relativedelta import relativedelta
+from datetime import datetime
+from core.models import Service
 from django.db import IntegrityError
 from rest_framework.exceptions import ValidationError
 
@@ -28,49 +31,131 @@ User = get_user_model()
 #                   'is_active', 'purchased_date']
 
 
-class CompanyServiceSerializer(serializers.ModelSerializer):
-    service_name = serializers.CharField(source='service.name', read_only=True)
+# class CompanyServiceSerializer(serializers.ModelSerializer):
+#     service_name = serializers.CharField(source='service.name', read_only=True)
 
-    class Meta:
-        model = CompanyService
-        fields = ['id', 'service_name', 'is_active', 'purchased_date']
+
+#     class Meta:
+#         model = CompanyService
+#         fields = ['id', 'service_name', 'is_active', 'purchased_date']
+
+
+# class CompanyServiceSerializer(serializers.ModelSerializer):
+#     all_services = serializers.SerializerMethodField()
+
+#     class Meta:
+#         model = CompanyService
+#         fields = ['all_services']
+
+#     def get_all_services(self, obj):
+#         # Get all services
+#         all_services = Service.objects.all()
+
+#         # Retrieve company-specific services for the related company
+#         company_services = CompanyService.objects.filter(company=obj.company)
+
+#         # Map active services by service ID to their activation details
+#         active_services = {cs.service_id: cs for cs in company_services}
+
+#         # Build a list of all services with their active status and purchase date
+#         services_data = []
+#         for service in all_services:
+#             service_data = {
+#                 'service_name': service.name,
+#                 'description': service.description,
+#                 'price': service.price,
+#                 'is_active': service.id in active_services,
+#                 'purchased_date': active_services[service.id].purchased_date if service.id in active_services else None
+#             }
+#             services_data.append(service_data)
+
+#         return services_data
+
+
+# class CompanyProfileSerializer(serializers.ModelSerializer):
+#     user_national_code = serializers.CharField(
+#         source='user.national_code', read_only=True)
+#     services = CompanyServiceSerializer(
+#         many=True, read_only=True)  # Remove `source='services'`
+
+#     class Meta:
+#         model = CompanyProfile
+#         fields = [
+
+#             'user_national_code', 'id',
+#             'company_title',  'social_code', 'email', 'manager_name',
+#             'license', 'special_field', 'tech_field',  'province', 'city',
+#             'insurance_list', 'capital_providing_method',
+#             'profile_active', 'services', 'address'
+#         ]
+#         # read_only_fields = ['user_national_code']
+
+#     def update(self, instance, validated_data):
+#         # Handle the many-to-many field separately
+#         capital_providing_methods = validated_data.pop(
+#             'capital_providing_method', [])
+
+#         # Update the fields of the instance
+#         for attr, value in validated_data.items():
+#             setattr(instance, attr, value)
+
+#         # Save the instance
+#         instance.save()
+
+#         # Update the many-to-many field after saving the instance
+#         if capital_providing_methods:
+#             instance.capital_providing_method.set(capital_providing_methods)
+
+#         return instance
+class CompanyServiceSerializer(serializers.Serializer):
+    # Directly define the fields for each service entry
+    service_name = serializers.CharField()
+    description = serializers.CharField()
+    price = serializers.DecimalField(max_digits=20, decimal_places=0)
+    is_active = serializers.BooleanField()
+    purchased_date = serializers.DateField(allow_null=True)
 
 
 class CompanyProfileSerializer(serializers.ModelSerializer):
     user_national_code = serializers.CharField(
-        source='user.national_code', read_only=True)
-    services = CompanyServiceSerializer(
-        many=True, read_only=True)  # Remove `source='services'`
+        source='user.national_code', read_only=True
+    )
+    # Single call to fetch all services
+    services = serializers.SerializerMethodField()
 
     class Meta:
         model = CompanyProfile
         fields = [
-
-            'user_national_code', 'id',
-            'company_title',  'social_code', 'email', 'manager_name',
-            'license', 'special_field', 'tech_field',  'province', 'city',
-            'insurance_list', 'capital_providing_method',
-            'profile_active', 'services', 'address'
+            'user_national_code', 'id', 'company_title', 'social_code', 'email',
+            'manager_name', 'license', 'special_field', 'tech_field', 'province',
+            'city', 'insurance_list', 'capital_providing_method', 'profile_active',
+            'services', 'address'
         ]
-        # read_only_fields = ['user_national_code']
 
-    def update(self, instance, validated_data):
-        # Handle the many-to-many field separately
-        capital_providing_methods = validated_data.pop(
-            'capital_providing_method', [])
+    def get_services(self, obj):
+        # Retrieve all services available
+        all_services = Service.objects.all()
 
-        # Update the fields of the instance
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
+        # Get active services for this company
+        company_services = CompanyService.objects.filter(company=obj)
+        active_services = {cs.service_id: cs for cs in company_services}
 
-        # Save the instance
-        instance.save()
+        # Format the response data for each service
+        services_data = [
+            {
+                'service_name': service.name,
+                'description': service.description,
+                # 'price': service.price,
+                'is_active': service.id in active_services,
+                'purchased_date': active_services[service.id].purchased_date
+                if service.id in active_services else None,
+                "expiration_date":  active_services[service.id].purchased_date + relativedelta(months=3)
+                if service.id in active_services else None
+            }
+            for service in all_services
+        ]
 
-        # Update the many-to-many field after saving the instance
-        if capital_providing_methods:
-            instance.capital_providing_method.set(capital_providing_methods)
-
-        return instance
+        return services_data
 
 
 class CompanyProfileCreateSerializer(serializers.ModelSerializer):

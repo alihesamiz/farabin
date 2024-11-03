@@ -22,6 +22,7 @@ django-extensions = "*"
 pypdf2 = "*"
 pdf2image = "*"
 pillow = "*"
+python-dateutil = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"

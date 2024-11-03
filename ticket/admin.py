@@ -6,8 +6,13 @@ from .models import Ticket, Department, Agent
 
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
-    list_display = ['user', 'department', 'priority',
+    search_fields = ['company_title']
+    list_display = ['company_title', 'department', 'priority',
                     'status', 'created_at', 'updated_at']
+
+    def company_title(self, ticket: Ticket):
+        return f"{ticket.user.company.company_title}"
+    company_title.short_description = _("Company Title")
 
 
 @admin.register(Department)
@@ -22,4 +27,5 @@ class DepartmentAdmin(admin.ModelAdmin):
 
 @admin.register(Agent)
 class AgentAdmin(admin.ModelAdmin):
+    autocomplete_fields = ['user']
     list_display = ['user', 'department']

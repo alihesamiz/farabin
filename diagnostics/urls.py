@@ -1,9 +1,12 @@
 from rest_framework.routers import DefaultRouter
 from django.urls import path, include
-from .views import DiagnosticAnalysisView
+from .views import DiagnosticAnalysisViewSet
+
+
 router = DefaultRouter()
+
+router.register(r'analysis', DiagnosticAnalysisViewSet,
+                basename='diagnostic-analysis')
+
+# router.register(r'anal', AnalysisReportViewSet, basename='analysis-report')
 urlpatterns = router.urls
-urlpatterns += [
-    path('analysis/', DiagnosticAnalysisView.as_view(),
-         name='diagnostic-analysis'),
-]

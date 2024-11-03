@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-31 10:46+0330\n"
+"POT-Creation-Date: 2024-11-03 10:28+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,12 +30,12 @@ msgstr "حوزه تخصصی"
 msgid "Capital Providing Method"
 msgstr "راه‌های تامین سرمایه"
 
-#: company/admin.py:70 company/admin.py:87 company/models.py:91
+#: company/admin.py:71 company/admin.py:88 company/models.py:91
 msgid "Company Title"
 msgstr "عنوان شرکت"
 
-#: company/apps.py:8 company/models.py:142 company/models.py:187
-#: company/models.py:230
+#: company/apps.py:8 company/models.py:142 company/models.py:169
+#: company/models.py:212
 msgid "Company"
 msgstr "شرکت"
 
@@ -167,55 +167,55 @@ msgstr "خدمت شرکت"
 msgid "Company Services"
 msgstr "خدمت‌های شرکت‌ها"
 
-#: company/models.py:189 company/models.py:235
+#: company/models.py:171 company/models.py:217
 msgid "Year"
 msgstr "سال"
 
-#: company/models.py:192
+#: company/models.py:174
 msgid "File"
 msgstr "فایل"
 
-#: company/models.py:194 company/models.py:249
+#: company/models.py:176 company/models.py:231
 msgid "Is Saved"
 msgstr "ذخیره شود؟"
 
-#: company/models.py:196 company/models.py:251
+#: company/models.py:178 company/models.py:233
 msgid "Is Sent"
 msgstr "ارسال شود؟"
 
-#: company/models.py:211
+#: company/models.py:193
 msgid "Tax Declaration"
 msgstr "اظهارنامه"
 
-#: company/models.py:212
+#: company/models.py:194
 msgid "Tax Declarations"
 msgstr "اظهارنامه‌ها"
 
-#: company/models.py:233
+#: company/models.py:215
 msgid "Month"
 msgstr "ماه"
 
-#: company/models.py:238
+#: company/models.py:220
 msgid "Balance Report File"
 msgstr "فایل ترایزنامه"
 
-#: company/models.py:241
+#: company/models.py:223
 msgid "Profit Loss File"
 msgstr "فایل صورت سود و زیان"
 
-#: company/models.py:244
+#: company/models.py:226
 msgid "Sold Product File"
 msgstr "فایل هزینه کالای فروش رفته"
 
-#: company/models.py:247
+#: company/models.py:229
 msgid "Account Turn Over File"
 msgstr "فایل گردش حساب"
 
-#: company/models.py:266
+#: company/models.py:248
 msgid "Balance Report"
 msgstr "ترازنامه‌"
 
-#: company/models.py:267
+#: company/models.py:249
 msgid "Balance Reports"
 msgstr "ترازنامه‌ها"
 

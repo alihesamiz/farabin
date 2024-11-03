@@ -1,7 +1,7 @@
 from celery import shared_task
 import numpy as np
 from company.models import CompanyProfile
-from diagnostics.models import CalculatedData, FinancialAsset
+from diagnostics.models import FinancialData, FinancialAsset
 from .utils import get_life_cycle, FinancialCalculations
 
 
@@ -16,7 +16,7 @@ def perform_calculations(financial_asset_ids, company_id):
     data = []
     for idx, asset in enumerate(financial_assets):
         data = [
-            CalculatedData(
+            FinancialData(
                 financial_asset=asset,
                 current_asset=results['current_asset'][idx],
                 non_current_asset=results['non_current_asset'][idx],
@@ -57,7 +57,7 @@ def perform_calculations(financial_asset_ids, company_id):
                 altman_bankrupsy_ratio=results['altman_bankrupsy_ratio'][idx],
             )
         ]
-    CalculatedData.objects.bulk_create(data)
+    FinancialData.objects.bulk_create(data)
     company = CompanyProfile.objects.get(id=company_id)
     life_cycle_stage, x_positions, y_positions = get_life_cycle(company)
     results['life_cycle_stage'] = life_cycle_stage

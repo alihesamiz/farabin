@@ -18,14 +18,14 @@ class BalanceReprotInline(admin.TabularInline):
     max_num = 1
 
 
-@admin.register(LifeCycle)
-class LifeCycleAdmin(admin.ModelAdmin):
-    list_display = ['capital_providing',]
+# @admin.register(LifeCycle)
+# class LifeCycleAdmin(admin.ModelAdmin):
+#     list_display = ['capital_providing',]
 
 
 @admin.register(CompanyProfile)
 class CompanyAdmin(admin.ModelAdmin):
-
+    autocomplete_fields = ['user']
     search_fields = ['company_title', 'manager_name']
     list_display = ['company_title', 'national_code', 'manager_name',
                     'tech_field', 'special_field_display', 'license', 'insurance_list', 'capital_providing_method_display']
@@ -50,6 +50,7 @@ class CompanyAdmin(admin.ModelAdmin):
 
 @admin.register(CompanyService)
 class CompanyServiceAdmin(admin.ModelAdmin):
+    autocomplete_fields = ['company']
     list_display = ['company', 'service', 'is_active', 'purchased_date']
 
     search_fields = ['company__company_title',

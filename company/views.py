@@ -109,7 +109,6 @@ class TaxDeclarationViewSet(viewsets.ModelViewSet):
 
         # Ensure the file exists
         if not os.path.exists(pdf_path):
-            print("File not found")
             return Response({"error": "File not found"}, status=status.HTTP_404_NOT_FOUND)
 
         response = FileResponse(open(pdf_path, 'rb'),

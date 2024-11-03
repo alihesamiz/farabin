@@ -31,6 +31,8 @@ class Ticket(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, verbose_name=_("Customer"), related_name=_("User"))
     subject = models.CharField(max_length=255, verbose_name=_("Subject"))
+    service = models.ForeignKey(
+        'core.Service', on_delete=models.CASCADE, verbose_name=_("Service"))
     description = models.TextField(verbose_name=_("Description"))
     department = models.ForeignKey(
         'Department', on_delete=models.CASCADE, verbose_name=_("Department"))
