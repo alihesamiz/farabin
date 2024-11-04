@@ -148,9 +148,14 @@ class GeneralUtils:
             base_filename = 'file'
 
         # Create the path for the file upload: financial_files/company_name/year/
-        current_company_title = getattr(
-            instance.company, 'company_title', 'default-company')
-        current_slug = self.persian_slugify(current_company_title)
+        # current_company_title = getattr(
+        #     instance.company, 'company_title', 'default-company')
+        # current_slug = self.persian_slugify(current_company_title)
+
+        current_slug = getattr(
+            instance.company, 'id', 'default-company')
+
+        # current_slug = self.persian_slugify(current_company_title)
         year = getattr(instance, 'year', 'unknown-year')
         month = getattr(instance, 'month', '')
 

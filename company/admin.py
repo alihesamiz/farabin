@@ -18,9 +18,9 @@ class BalanceReprotInline(admin.TabularInline):
     max_num = 1
 
 
-# @admin.register(LifeCycle)
-# class LifeCycleAdmin(admin.ModelAdmin):
-#     list_display = ['capital_providing',]
+@admin.register(LifeCycle)
+class LifeCycleAdmin(admin.ModelAdmin):
+    list_display = ['capital_providing',]
 
 
 @admin.register(CompanyProfile)

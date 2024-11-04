@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.db import models
@@ -277,7 +278,7 @@ class FinancialAsset(models.Model):
     year = models.PositiveIntegerField(verbose_name=_('Year'))
 
     month = models.PositiveIntegerField(
-        verbose_name=_('Month'), null=True, blank=True)
+        verbose_name=_('Month'), null=True, blank=True, validators=[MinValueValidator(1), MaxValueValidator(12)])
 
     class Meta:
         unique_together = [['company', 'year']]

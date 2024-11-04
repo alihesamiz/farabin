@@ -1,3 +1,4 @@
+from django.core.files.storage import default_storage
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.utils.decorators import method_decorator
 from django.http import FileResponse, HttpResponse
@@ -95,10 +96,23 @@ class TaxDeclarationViewSet(viewsets.ModelViewSet):
         return context
 
     def perform_destroy(self, instance):
+        
         try:
+            file_path = instance.tax_file.path
+            
+            folder_path = os.path.dirname(file_path)
+            
+            if file_path and default_storage.exists(file_path):
+                default_storage.delete(file_path)
+            
+            if folder_path and not os.listdir(folder_path):
+                os.rmdir(folder_path)
+
             instance.delete()
+
             return Response({"success": "file deleted"}, status=status.HTTP_204_NO_CONTENT)
-        except Exception as e:
+        
+        except Exception as e:  
             return Response({"error": "Failed to delete file"}, status=status.HTTP_400_BAD_REQUEST)
 
     @xframe_options_exempt
@@ -211,17 +225,17 @@ class BalanceReportViewSet(viewsets.ModelViewSet):
         return BalanceReportSerializer
 
     def get_serializer_context(self):
-        # Pass the request to the serializer context
         context = super().get_serializer_context()
+        
         context['request'] = self.request
+        
         return context
 
     @method_decorator(xframe_options_exempt, name='pdf')
     @action(detail=True, methods=['get'])
     def pdf(self, request, pk=None):
         balance_report = self.get_object()
-
-        # Paths to each of the PDF files
+        
         pdf_files = [
             balance_report.balance_report_file.path,
             balance_report.profit_loss_file.path,
@@ -233,14 +247,15 @@ class BalanceReportViewSet(viewsets.ModelViewSet):
 
         for pdf_path in pdf_files:
             if os.path.exists(pdf_path):
-                # Read the PDF and extract the first page
                 try:
                     pdf_reader = PdfReader(pdf_path)
-                    if len(pdf_reader.pages) > 0:  # Check if the PDF has at least one page
-                        # Add the first page to the writer
+                    
+                    if len(pdf_reader.pages) > 0:  
                         pdf_writer.add_page(pdf_reader.pages[0])
+                        
                 except Exception as e:
                     return Response({"error": f"Error processing {pdf_path}: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
             else:
                 return Response({"error": f"File not found: {pdf_path}"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -260,7 +275,9 @@ class BalanceReportViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'])
     def year(self, request):
         balance_reports = self.get_queryset()
+        
         year_month_data = {}
+        
         for entry in balance_reports.values('year', 'month').distinct():
             year = entry['year']
             month = entry['month']
@@ -268,16 +285,35 @@ class BalanceReportViewSet(viewsets.ModelViewSet):
                 year_month_data[year] = []
             if month not in year_month_data[year]:
                 year_month_data[year].append(month)
-
-        # Format the data for the response
-        formatted_data = [{'year': year, 'months': sorted(
-            months)} for year, months in year_month_data.items()]
+        
+        formatted_data = [{'year': year, 'months': sorted(months)} for year, months in year_month_data.items()]
 
         return Response(formatted_data, status=status.HTTP_200_OK)
 
     def perform_destroy(self, instance):
         try:
+            file_paths = [
+                instance.balance_report_file.path,
+                instance.profit_loss_file.path,
+                instance.sold_product_file.path,
+                instance.account_turnover_file.path,
+            ]
+
+            folder_path = os.path.dirname(file_paths[0])
+            
+            for file_path in file_paths:
+                if file_path and default_storage.exists(file_path):
+                    default_storage.delete(file_path)
+            
+            if file_path and default_storage.exists(file_path):
+                default_storage.delete(file_path)
+            
+            if folder_path and not os.listdir(folder_path):
+                os.rmdir(folder_path)
+            
             instance.delete()
-            return Response({"success": "file deleted"}, status=status.HTTP_204_NO_CONTENT)
+            
+            return Response({"success": "File and record deleted"}, status=status.HTTP_204_NO_CONTENT)
+        
         except Exception as e:
-            return Response({"error": "Failed to delete file"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": f"Failed to delete file: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)

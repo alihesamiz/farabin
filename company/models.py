@@ -159,7 +159,7 @@ class CompanyService(models.Model):
 """TaxDeclaration Model"""
 
 TAX_FILE_UPLOADING_PATH = GeneralUtils(
-    path="financial_files/files/tax_files",
+    path="tax_files",
     fields=['year'])
 
 
@@ -199,8 +199,8 @@ class TaxDeclaration(models.Model):
 """non-TaxDeclaration Model"""
 
 BALANCE_REPORT_FILE_UPLOADING_PATH = GeneralUtils(
-    path="financial_files/files/non-tax_files",
-    fields=['company__company_title', 'year', 'month']
+    path="non-tax_files",
+    fields=['year', 'month']
 )
 
 

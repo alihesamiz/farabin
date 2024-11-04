@@ -155,8 +155,10 @@ class OTPViewSet(viewsets.ViewSet):
             otp = OTP.objects.filter(user=user).last()
 
             if otp and otp.is_valid() and otp.otp_code == otp_code:
-                CompanyProfile.objects.get_or_create(user=user)
-
+                print('aslkdjaslkdjlkasjd')
+                company, created = CompanyProfile.objects.get_or_create(
+                    user=user)
+                print(created)
                 refresh = RefreshToken.for_user(user)
                 access_token = str(refresh.access_token)
                 ####
