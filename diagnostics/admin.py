@@ -37,7 +37,7 @@ class AccountTurnOverInline(admin.StackedInline):
 @admin.register(FinancialAsset)
 class FinancialAssestModel(admin.ModelAdmin):
     autocomplete_fields = ['company']
-    list_display = ['company_title', 'year']
+    list_display = ['company_title', 'year', 'month']
     inlines = [BalanceReportInline, ProfitStatementInline, SaledProductInline,
                AccountTurnOverInline]
 
@@ -53,9 +53,14 @@ class FinancialAssestModel(admin.ModelAdmin):
 @admin.register(FinancialData)
 class CalculatedDataAdmin(admin.ModelAdmin):
     autocomplete_fields = ['financial_asset']
-    list_display = ['company_title', 'financial_year']
+    list_display = ['company_title', 'financial_year', 'financial_month']
     search_fields = [
-        'financial_asset__company__company_title', 'financial_asset__year']
+        'financial_asset__company__company_title', 'financial_asset__year', 'financial_asset__month']
+
+    list_filter = [
+        'financial_asset__company__company_title', 'financial_asset__year', 'financial_asset__month']
+
+    sortable_by = ['company_title', 'financial_year', 'financial_month']
 
     def company_title(self, obj):
         return obj.financial_asset.company.company_title
@@ -65,6 +70,10 @@ class CalculatedDataAdmin(admin.ModelAdmin):
         return obj.financial_asset.year
     financial_year.short_description = _(
         'Year')  # Custom column name
+
+    def financial_month(self, obj):
+        return obj.financial_asset.month if obj.financial_asset.month else '-'
+    financial_month.short_description = _("Month")
 
 
 @admin.register(AnalysisReport)
