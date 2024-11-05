@@ -1,23 +1,22 @@
+from django.contrib.auth import get_user_model
+from django.utils import timezone
 from datetime import timedelta
 #
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
-from rest_framework_simplejwt.tokens import RefreshToken, TokenError
-from rest_framework.decorators import action
-from rest_framework import status, viewsets
-from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
+from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework import status, viewsets
 #
-from django.contrib.auth import get_user_model
-from django.utils import timezone
-#
-from .models import OTP
-from .utils import GeneralUtils
-from .serializers import (
-    OTPSendSerializer,
-    OTPVerifySerializer
-)
 from company.models import CompanyProfile
+from .utils import GeneralUtils
+from .models import OTP
+from .serializers import (
+    OTPVerifySerializer,
+    OTPSendSerializer,
+)
 
 User = get_user_model()
 
@@ -63,38 +62,45 @@ class OTPViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['get', 'post'], url_path='send')
     def send_otp(self, request):
         util = GeneralUtils()
+
         serializer = OTPSendSerializer(data=request.data)
+
         serializer.is_valid(raise_exception=True)
+
         phone_number = serializer.validated_data['phone_number']
+
         national_code = serializer.validated_data['national_code']
 
-        # Check if a user with the given phone number already exists
         try:
             user = User.objects.get(phone_number=phone_number)
 
-            # If the user exists but the national code doesn't match
             if user.national_code != national_code:
                 return Response({'error': 'The national code does not match the phone number.'}, status=status.HTTP_400_BAD_REQUEST)
 
-            # remeber to uncomment the otp limitation time
-            # last_otp = OTP.objects.filter(user=user).last()
+            last_otp = OTP.objects.filter(user=user).last()
 
-            # if last_otp and timezone.now() < last_otp.created_at + self.COOLDOWN_PERIOD:
-            #     time_remaining = (last_otp.created_at +
-            #                       self.COOLDOWN_PERIOD - timezone.now()).seconds
-            #     return Response({
-            #         'error': f'You can`t request a new OTP.'
-            #     }, status=status.HTTP_429_TOO_MANY_REQUESTS)
+            if last_otp and timezone.now() < last_otp.created_at + self.COOLDOWN_PERIOD:
+                time_remaining = (last_otp.created_at +
+                                  self.COOLDOWN_PERIOD - timezone.now()).seconds
+
+                return Response({
+                    'error': f'You can`t request a new OTP.'
+                }, status=status.HTTP_429_TOO_MANY_REQUESTS)
 
         except User.DoesNotExist:
             user = User.objects.create(
                 phone_number=phone_number, national_code=national_code)
 
         otp = OTP(user=user)
+
         otp_code = otp.generate_otp()
+
         otp.otp_code = otp_code
+
         otp.save()
+
         util.send_otp(phone_number, otp_code)
+
         return Response({'message': 'OTP sent successfully.'}, status=status.HTTP_200_OK)
 
     @extend_schema(
@@ -142,26 +148,27 @@ class OTPViewSet(viewsets.ViewSet):
     )
     @action(detail=False, methods=['get', 'post'], url_path='verify')
     def verify_otp(self, request):
-        # Ensure the phone_number is included in the request data
         serializer = OTPVerifySerializer(data=request.data)
+
         serializer.is_valid(raise_exception=True)
 
-        # Access both phone_number and otp_code from validated data
         phone_number = serializer.validated_data['phone_number']
+
         otp_code = serializer.validated_data['otp_code']
 
         try:
             user = User.objects.get(phone_number=phone_number)
+
             otp = OTP.objects.filter(user=user).last()
 
             if otp and otp.is_valid() and otp.otp_code == otp_code:
-                print('aslkdjaslkdjlkasjd')
                 company, created = CompanyProfile.objects.get_or_create(
                     user=user)
-                print(created)
+
                 refresh = RefreshToken.for_user(user)
+
                 access_token = str(refresh.access_token)
-                ####
+
                 otp.delete()
 
                 return Response({
@@ -169,6 +176,7 @@ class OTPViewSet(viewsets.ViewSet):
                     'refresh': str(refresh),
                     'access': access_token
                 }, status=status.HTTP_200_OK)
+
             else:
                 return Response({'error': 'Invalid or expired OTP.'}, status=status.HTTP_400_BAD_REQUEST)
 

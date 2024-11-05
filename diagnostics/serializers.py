@@ -1,11 +1,5 @@
 from rest_framework import serializers
-from .models import AnalysisReport, FinancialData, SoldProductFee, ProfitLossStatement, BalanceReport, AccountTurnOver, FinancialAsset
-
-
-class FinancialAssetSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = FinancialAsset
-        fields = '__all__'
+from .models import AnalysisReport, FinancialData
 
 
 class BaseChartSerializer(serializers.Serializer):
@@ -38,16 +32,171 @@ class AssetChartSerializer(BaseChartSerializer):
         super().__init__(*args, chart_name=AnalysisReport.ASSET_CHART, **kwargs)
 
 
+class SaleChartSerializer(BaseChartSerializer):
+    net_sale = serializers.DecimalField(max_digits=20, decimal_places=0)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, chart_name=AnalysisReport.SALE_CHART, **kwargs)
+
+
+class EquityChartSerializer(BaseChartSerializer):
+    total_equity = serializers.DecimalField(max_digits=20, decimal_places=0)
+
+    total_debt = serializers.DecimalField(max_digits=20, decimal_places=0)
+
+    total_sum_equity_debt = serializers.DecimalField(
+        max_digits=20, decimal_places=0)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, chart_name=AnalysisReport.DEBT_CHART, **kwargs)
+
+
+class BankrupsyChartSerializer(BaseChartSerializer):
+
+    altman_bankrupsy_ratio = serializers.DecimalField(
+        max_digits=5, decimal_places=0)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, chart_name=AnalysisReport.BANKRUPSY_CHART, **kwargs)
+
+
+class ProfitibilityChartSerializer(BaseChartSerializer):
+    roa = serializers.DecimalField(max_digits=20, decimal_places=0)
+
+    roab = serializers.DecimalField(
+        max_digits=20, decimal_places=0)
+
+    usability = serializers.DecimalField(max_digits=20, decimal_places=0)
+
+    efficiency = serializers.DecimalField(max_digits=20, decimal_places=0)
+
+    gross_profit_margin = serializers.DecimalField(
+        max_digits=20, decimal_places=0)
+
+    profit_margin_ratio = serializers.DecimalField(
+        max_digits=20, decimal_places=0)
+
+    roe = serializers.DecimalField(max_digits=20, decimal_places=0)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, chart_name=AnalysisReport.PROFITIBILITY_CHART, **kwargs)
+
+
+class InventoryChartSerializer(BaseChartSerializer):
+
+    inventory = serializers.DecimalField(max_digits=20, decimal_places=0)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, chart_name=AnalysisReport.INVENTORY_CHART, **kwargs)
+
+
+class AgilityChartSerializer(BaseChartSerializer):
+    instant_ratio = serializers.DecimalField(max_digits=20, decimal_places=0)
+
+    stock_turnover = serializers.DecimalField(
+        max_digits=20, decimal_places=0)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, chart_name=AnalysisReport.AGILITY_CHART, **kwargs)
+
+
 class DebtChartSerializer(BaseChartSerializer):
     current_debt = serializers.DecimalField(max_digits=10, decimal_places=2)
+
     non_current_debt = serializers.DecimalField(
         max_digits=10, decimal_places=2)
+
     total_debt = serializers.DecimalField(max_digits=10, decimal_places=2)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, chart_name=AnalysisReport.DEBT_CHART, **kwargs)
 
-# Make sure you have a proper serializer for AnalysisReport defined
+
+class LiquidityChartSerializer(BaseChartSerializer):
+
+    current_ratio = serializers.DecimalField(max_digits=20, decimal_places=0)
+
+    instant_ratio = serializers.DecimalField(
+        max_digits=20, decimal_places=0)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, chart_name=AnalysisReport.LIQUIDITY_CHART, **kwargs)
+
+
+class LeverageChartSerializer(BaseChartSerializer):
+
+    debt_ratio = serializers.DecimalField(max_digits=20, decimal_places=0)
+
+    capital_ratio = serializers.DecimalField(max_digits=20, decimal_places=0)
+
+    proprietary_ratio = serializers.DecimalField(
+        max_digits=20, decimal_places=0)
+
+    equity_per_total_debt_ratio = serializers.DecimalField(
+        max_digits=20, decimal_places=0)
+
+    equity_per_total_non_current_asset_ratio = serializers.DecimalField(
+        max_digits=20, decimal_places=0)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, chart_name=AnalysisReport.LEVERAGE_CHART, **kwargs)
+
+
+class LiquidityChartSerializer(BaseChartSerializer):
+
+    current_ratio = serializers.DecimalField(max_digits=20, decimal_places=0)
+
+    instant_ratio = serializers.DecimalField(
+        max_digits=20, decimal_places=0)
+
+    # 'current_asset', 'non_current_asset', 'total_asset',
+    #               'current_debt', 'non_current_debt', 'total_debt', 'total_equity',
+    #               'total_sum_equity_debt', 'gross_profit', 'net_sale', 'inventory',
+    #               'operational_profit', 'proceed_profit', 'net_profit', 'consuming_material',
+    #               'production_fee', 'construction_overhead', 'production_total_price',
+    #               'salary_fee', 'salary_production_fee', 'usability', 'efficiency', 'roa',
+    #               'roab', 'roe', 'gross_profit_margin', 'profit_margin_ratio', 'debt_ratio',
+    #               'capital_ratio', 'proprietary_ratio', 'equity_per_total_debt_ratio',
+    #               'equity_per_total_non_current_asset_ratio', 'current_ratio', 'instant_ratio',
+    #               'stock_turnover', 'altman_bankrupsy_ratio'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, chart_name=AnalysisReport.LIQUIDITY_CHART, **kwargs)
+
+
+class CostChartSerializer(BaseChartSerializer):
+
+    consuming_material = serializers.DecimalField(
+        max_digits=20, decimal_places=0)
+
+    production_fee = serializers.DecimalField(
+        max_digits=20, decimal_places=0)
+
+    construction_overhead = serializers.DecimalField(
+        max_digits=20, decimal_places=0)
+
+    production_total_price = serializers.DecimalField(
+        max_digits=20, decimal_places=0)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, chart_name=AnalysisReport.COST_CHART, **kwargs)
+
+
+class ProfitChartSerializer(BaseChartSerializer):
+    gross_profit = serializers.DecimalField(max_digits=20, decimal_places=0)
+
+    net_sale = serializers.DecimalField(max_digits=20, decimal_places=0)
+
+    operational_profit = serializers.DecimalField(
+        max_digits=20, decimal_places=0)
+
+    proceed_profit = serializers.DecimalField(max_digits=20, decimal_places=0)
+
+    net_profit = serializers.DecimalField(
+        max_digits=20, decimal_places=0)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, chart_name=AnalysisReport.PROFIT_CHART, **kwargs)
 
 
 class AnalysisReportSerializer(serializers.ModelSerializer):
@@ -57,12 +206,12 @@ class AnalysisReportSerializer(serializers.ModelSerializer):
 
 
 class FinancialDataSerializer(serializers.ModelSerializer):
+    is_monthly = serializers.SerializerMethodField()
     financial_asset = serializers.SerializerMethodField()
-    # charts = AnalysisReportSerializer(many=True, source='analysis_reports')
 
     class Meta:
         model = FinancialData
-        fields = ['id',
+        fields = ['id', 'is_monthly',
                   'financial_asset', 'current_asset', 'non_current_asset', 'total_asset',
                   'current_debt', 'non_current_debt', 'total_debt', 'total_equity',
                   'total_sum_equity_debt', 'gross_profit', 'net_sale', 'inventory',
@@ -72,16 +221,10 @@ class FinancialDataSerializer(serializers.ModelSerializer):
                   'roab', 'roe', 'gross_profit_margin', 'profit_margin_ratio', 'debt_ratio',
                   'capital_ratio', 'proprietary_ratio', 'equity_per_total_debt_ratio',
                   'equity_per_total_non_current_asset_ratio', 'current_ratio', 'instant_ratio',
-                  'stock_turnover', 'altman_bankrupsy_ratio',]  # 'charts']
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Precompute the financial asset data once and store it
-        self.financial_asset_info = {
-            "year": self.instance.financial_asset.year,
-            "month": self.instance.financial_asset.month if self.instance.financial_asset.month else '-'
-        } if self.instance else None
+                  'stock_turnover', 'altman_bankrupsy_ratio',]
 
     def get_financial_asset(self, obj):
-        # Simply return the precomputed value
-        return self.financial_asset_info
+        return {"year": obj.financial_asset.year, "month": obj.financial_asset.month if obj.financial_asset.month else "", }
+
+    def get_is_monthly(self, obj):
+        return True if obj.financial_asset.month else False

@@ -1,9 +1,7 @@
-from .models import AnalysisReport
-from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
+from django.contrib import admin
 from .models import AccountTurnOver, AnalysisReport, FinancialData, FinancialAsset,  ProfitLossStatement, SoldProductFee, BalanceReport
 
-# Register your models here.
 
 
 class ProfitStatementInline(admin.StackedInline):

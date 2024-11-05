@@ -24,6 +24,8 @@ pdf2image = "*"
 pillow = "*"
 python-dateutil = "*"
 django-nested-admin = "*"
+python-dotenv = "*"
+django-admin-notification = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"

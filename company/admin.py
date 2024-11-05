@@ -1,4 +1,8 @@
+from django.db import transaction
+from typing import Any
 from django.contrib import admin
+from django.db.models.query import QuerySet
+from django.http import HttpRequest
 from django.utils.translation import gettext_lazy as _
 from .models import BalanceReport, CompanyProfile, CompanyService, LifeCycle, TaxDeclaration, BalanceReport
 # Register your models here.
@@ -70,6 +74,17 @@ class TaxFileAdmin(admin.ModelAdmin):
         return tax_declaration.company.company_title
     company_title.short_description = _("Company Title")
 
+    def delete_model(self, request: HttpRequest, obj: Any):
+        if obj.tax_file:
+            obj.tax_file.delete(save=False)
+        return super().delete_model(request, obj)
+
+    def delete_queryset(self, request: HttpRequest, queryset: QuerySet) -> None:
+        for obj in queryset:
+            if obj.tax_file:
+                obj.tax_file.delete(save=False)
+        return super().delete_queryset(request, queryset)
+
 
 @admin.register(BalanceReport)
 class BalanceReportFileAdmin(admin.ModelAdmin):
@@ -86,3 +101,25 @@ class BalanceReportFileAdmin(admin.ModelAdmin):
     def company_title(self, tax_declaration: TaxDeclaration):
         return tax_declaration.company.company_title
     company_title.short_description = _("Company Title")
+
+    def delete_model(self, request: HttpRequest, obj: Any) -> None:
+        
+        if obj:
+            with transaction.atomic():
+                obj.balance_report_file.delete(save=False)
+                obj.profit_loss_file.delete(save=False)
+                obj.sold_product_file.delete(save=False)
+                obj.account_turnover_file.delete(save=False)
+        
+        return super().delete_model(request, obj)
+
+    def delete_queryset(self, request: HttpRequest, queryset: QuerySet) -> None:
+        
+        for obj in queryset:
+            with transaction.atomic():
+                obj.balance_report_file.delete(save=False)
+                obj.profit_loss_file.delete(save=False)
+                obj.sold_product_file.delete(save=False)
+                obj.account_turnover_file.delete(save=False)
+        
+        return super().delete_queryset(request, queryset)

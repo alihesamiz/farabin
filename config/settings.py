@@ -12,8 +12,12 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from django.utils.translation import gettext_lazy as _
 from datetime import timedelta
+from dotenv import load_dotenv
 from pathlib import Path
+import os
 
+
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -22,9 +26,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-9v=003(196kstx7ucu*k-##a(#ay(g@%++rw5_--e+82_m01q+'
+SECRET_KEY = os.getenv("FARABIN_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# DEBUG = os.getenv("FARABIN_DEBUG", 'False') == "True"
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
@@ -51,7 +56,6 @@ PROJECT_APPS = [
 THIRED_PARTY_APPS = [
     'django_extensions',
     'django_celery_beat',
-    'silk',
     'drf_spectacular',
     'corsheaders',
     'rest_framework',
@@ -63,7 +67,6 @@ THIRED_PARTY_APPS = [
 INSTALLED_APPS += PROJECT_APPS + THIRED_PARTY_APPS
 
 MIDDLEWARE = [
-    'silk.middleware.SilkyMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
@@ -187,7 +190,6 @@ SIMPLE_JWT = {
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": True,
-
     "AUTH_HEADER_TYPES": ("Bearer",),
 
 }
