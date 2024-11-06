@@ -280,6 +280,9 @@ class FinancialAsset(models.Model):
     month = models.PositiveIntegerField(
         verbose_name=_('Month'), null=True, blank=True, validators=[MinValueValidator(1), MaxValueValidator(12)])
 
+    is_tax_record = models.BooleanField(
+        default=False, verbose_name=_('Tax Record'))
+
     class Meta:
         unique_together = [['company', 'year', 'month']]
         verbose_name = _('Financial Asset')

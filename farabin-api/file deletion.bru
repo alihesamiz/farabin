@@ -5,7 +5,7 @@ meta {
 }
 
 get {
-  url: 192.168.1.9:8000/company/profile
+  url: 192.168.1.9:8000/diagnostic/analysis/chart/equity/
   body: multipartForm
   auth: bearer
 }
@@ -15,14 +15,14 @@ headers {
 }
 
 auth:bearer {
-  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwODA1ODAxLCJpYXQiOjE3MzA3MTk0MDEsImp0aSI6ImRkZDNiNzk2YjkwNTQzZjc4MGM2N2MwODc5MGY2MzgzIiwidXNlcl9pZCI6MX0.PfX3Z4DN3mfHLpYy1Uo2drXpVCWBs4M6uI2KSn5B_qE
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwODkyOTc1LCJpYXQiOjE3MzA4MDY1NzUsImp0aSI6ImEzYjk3N2I3MDAzZTRjM2I4Y2NlYmY4ZDUwNjViNTBlIiwidXNlcl9pZCI6MX0.GtVq0fgxB-kv46gihPyPaSB8VhDi6F9538IM0KEm1-I
 }
 
 body:multipart-form {
   phone_number: 09138038121
   national_code: 12736700277
-  otp_code: 896417
-  year: 2020
-  tax_file: @file(/home/madassandd/Downloads/Telegram Desktop/TG030801-استخدام افسری نیروی دریایی.pdf)
+  otp_code: 961310
+  ~year: 2020
+  ~tax_file: @file(/home/madassandd/Downloads/Telegram Desktop/TG030801-استخدام افسری نیروی دریایی.pdf)
   ~company: f60a3c73-d19f-47f3-9211-6f516ec1cd3c
 }

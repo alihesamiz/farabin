@@ -206,7 +206,7 @@ BALANCE_REPORT_FILE_UPLOADING_PATH = GeneralUtils(
 
 class BalanceReport(models.Model):
 
-    MONTH_CHOICES = [(str(i), f"{i}") for i in range(1, 13)]
+    MONTH_CHOICES = [(str(i), f"{i}") for i in range(1, 14)]
 
     company = models.ForeignKey(CompanyProfile, on_delete=models.SET_NULL, null=True, verbose_name=_(
         "Company"), related_name="reportfiles")

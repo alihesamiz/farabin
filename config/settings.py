@@ -29,8 +29,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("FARABIN_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = os.getenv("FARABIN_DEBUG", 'False') == "True"
-DEBUG = True
+DEBUG = os.getenv("FARABIN_DEBUG", 'False') == "True"
+# DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -38,6 +38,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    # "admin_notification",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -61,6 +62,7 @@ THIRED_PARTY_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
+    'django_seed',
 ]
 
 
@@ -68,6 +70,7 @@ INSTALLED_APPS += PROJECT_APPS + THIRED_PARTY_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -223,3 +226,9 @@ SILKY_MAX_REQUEST_BODY_SIZE = 1024  # 1 KB
 SILKY_MAX_RESPONSE_BODY_SIZE = 1024  # 1 KB
 SILKY_META = True
 SILKY_PYTHON_PROFILER = False
+
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+
+# NOTIFICATION_MODELS = 'company.CompanyProfile'

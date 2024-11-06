@@ -178,7 +178,8 @@ class OTPViewSet(viewsets.ViewSet):
                 }, status=status.HTTP_200_OK)
 
             else:
-                return Response({'error': 'Invalid or expired OTP.'}, status=status.HTTP_400_BAD_REQUEST)
+                otp.delete()
+                return Response({'error': 'Invalid or expired OTP.Try again after 3 Minutes'}, status=status.HTTP_400_BAD_REQUEST)
 
         except User.DoesNotExist:
             return Response({'error': 'User does not exist.'}, status=status.HTTP_404_NOT_FOUND)

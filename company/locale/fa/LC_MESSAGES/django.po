@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-03 10:28+0330\n"
+"POT-Creation-Date: 2024-11-06 13:30+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,19 +18,19 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: company/admin.py:40
+#: company/admin.py:44
 msgid "National Code"
 msgstr "کد ثبت ملی شرکت"
 
-#: company/admin.py:44 company/models.py:111
+#: company/admin.py:48 company/models.py:111
 msgid "Special Field"
 msgstr "حوزه تخصصی"
 
-#: company/admin.py:46 company/models.py:118
+#: company/admin.py:50 company/models.py:118
 msgid "Capital Providing Method"
 msgstr "راه‌های تامین سرمایه"
 
-#: company/admin.py:71 company/admin.py:88 company/models.py:91
+#: company/admin.py:75 company/admin.py:103 company/models.py:91
 msgid "Company Title"
 msgstr "عنوان شرکت"
 

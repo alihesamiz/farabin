@@ -25,7 +25,8 @@ pillow = "*"
 python-dateutil = "*"
 django-nested-admin = "*"
 python-dotenv = "*"
-django-admin-notification = "*"
+whitenoise = "*"
+django-seed = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"

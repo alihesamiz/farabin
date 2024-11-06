@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-30 10:09+0330\n"
+"POT-Creation-Date: 2024-11-06 13:30+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,19 +18,19 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: core/admin.py:23
+#: core/admin.py:26
 msgid "Personal info"
 msgstr "اطلاعات شخصی"
 
-#: core/admin.py:24
+#: core/admin.py:27
 msgid "Permissions"
 msgstr "اجازه‌ها"
 
-#: core/admin.py:27
+#: core/admin.py:30
 msgid "Important dates"
 msgstr "تاریخ‌های مهم"
 
-#: core/admin.py:91 core/models.py:141
+#: core/admin.py:94 core/models.py:141
 msgid "Price"
 msgstr "قیمت"
 
