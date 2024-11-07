@@ -38,6 +38,11 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    "admin_interface",
+    "colorfield",
+    # 'jet.dashboard',
+    # 'jet',
+    "admin_notification",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -67,6 +72,7 @@ THIRED_PARTY_APPS = [
 INSTALLED_APPS += PROJECT_APPS + THIRED_PARTY_APPS
 
 MIDDLEWARE = [
+    # 'django.middleware.locale.LocaleMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -232,4 +238,4 @@ SILKY_PYTHON_PROFILER = False
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
-# NOTIFICATION_MODELS = 'company.CompanyProfile'
+NOTIFICATION_MODELS = 'ticket.Ticket'

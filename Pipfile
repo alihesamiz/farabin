@@ -26,6 +26,8 @@ python-dotenv = "*"
 whitenoise = "*"
 django-seed = "*"
 django-admin-extensions = "*"
+django-admin-interface = "*"
+django-admin-notification = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"
