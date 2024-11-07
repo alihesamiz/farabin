@@ -95,6 +95,15 @@ class TaxDeclarationViewSet(viewsets.ModelViewSet):
         context['request'] = self.request
         return context
 
+    def destroy(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            self.perform_destroy(instance)
+            print('asdklashjdlkashdkj')
+            return Response({"success": "file deleted"}, status=status.HTTP_204_NO_CONTENT)
+        except Exception as e:
+            return Response({"error": "Failed to delete file"}, status=status.HTTP_400_BAD_REQUEST)
+
     def perform_destroy(self, instance):
 
         try:
@@ -110,10 +119,8 @@ class TaxDeclarationViewSet(viewsets.ModelViewSet):
 
             instance.delete()
 
-            return Response({"success": "file deleted"}, status=status.HTTP_204_NO_CONTENT)
-
         except Exception as e:
-            return Response({"error": "Failed to delete file"}, status=status.HTTP_400_BAD_REQUEST)
+            pass
 
     @xframe_options_exempt
     @action(detail=True, methods=['get'])
@@ -139,78 +146,6 @@ class TaxDeclarationViewSet(viewsets.ModelViewSet):
         tax_declarations = self.get_queryset()
         years = tax_declarations.values('year').distinct()
         return Response(years, status=status.HTTP_200_OK)
-
-    # @method_decorator(xframe_options_exempt, name='pdf')
-    # @action(detail=True, methods=['get'])
-    # def pdf(self, request, pk=None):
-    #     tax_declaration = self.get_object()
-    #     pdf_path = tax_declaration.tax_file.path  # Adjust based on your file field
-
-    #     # Ensure the file exists
-    #     if not os.path.exists(pdf_path):
-    #         return Response({"error": "File not found"}, status=status.HTTP_404_NOT_FOUND)
-
-    #     # Read the PDF and extract the first page
-    #     try:
-    #         pdf_reader = PdfReader(pdf_path)
-    #         pdf_writer = PdfWriter()
-
-    #         if len(pdf_reader.pages) > 0:  # Check if the PDF has at least one page
-    #             # Add the first page to the writer
-    #             pdf_writer.add_page(pdf_reader.pages[0])
-
-    #             # Create a response PDF file in memory
-    #             response_pdf_path = 'first_page.pdf'
-    #             with open(response_pdf_path, 'wb') as output_pdf_file:
-    #                 pdf_writer.write(output_pdf_file)
-
-    #             # Serve the response PDF file
-    #             response = FileResponse(
-    #                 open(response_pdf_path, 'rb'), content_type='application/pdf')
-    #             response['Content-Disposition'] = f'attachment; filename="{
-    #                 tax_declaration.tax_file.name}"'
-    #             response['X-Frame-Options'] = 'ALLOWALL'  # Customize as needed
-
-    #             return response
-    #         else:
-    #             return Response({"error": "PDF has no pages"}, status=status.HTTP_404_NOT_FOUND)
-
-    #     except Exception as e:
-    #         return Response({"error": f"Error processing the PDF: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    # @method_decorator(xframe_options_exempt, name='pdf')
-    # @action(detail=True, methods=['get'])
-    # def pdf(self, request, pk=None):
-    #     tax_declaration = self.get_object()
-    #     pdf_path = tax_declaration.tax_file.path  # Adjust based on your file field
-
-    #     # Ensure the file exists
-    #     if not os.path.exists(pdf_path):
-    #         return Response({"error": "File not found"}, status=status.HTTP_404_NOT_FOUND)
-
-    #     try:
-    #         # Convert the first page of the PDF to an image
-    #         images = convert_from_path(pdf_path, first_page=1, last_page=1)
-    #         if images:
-    #             # Use BytesIO to create an in-memory binary stream for the image
-    #             img_stream = BytesIO()
-    #             images[0].save(img_stream, format='PNG')
-    #             # Move the cursor to the beginning of the stream
-    #             img_stream.seek(0)
-
-    #             # Create an HTTP response with the image
-    #             response = HttpResponse(
-    #                 img_stream.read(), content_type='image/png')
-    #             response['Content-Disposition'] = f'inline; filename="{
-    #                 tax_declaration.tax_file.name}.png"'
-    #             response['X-Frame-Options'] = 'ALLOWALL'  # Customize as needed
-
-    #             return response
-    #         else:
-    #             return Response({"error": "PDF has no pages"}, status=status.HTTP_404_NOT_FOUND)
-
-    #     except Exception as e:
-    #         return Response({"error": f"Error processing the PDF: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class BalanceReportViewSet(viewsets.ModelViewSet):
@@ -291,6 +226,14 @@ class BalanceReportViewSet(viewsets.ModelViewSet):
 
         return Response(formatted_data, status=status.HTTP_200_OK)
 
+    def destroy(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            self.perform_destroy(instance)
+            return Response({"success": "files deleted"}, status=status.HTTP_204_NO_CONTENT)
+        except Exception as e:
+            return Response({"error": "Failed to delete files"}, status=status.HTTP_400_BAD_REQUEST)
+
     def perform_destroy(self, instance):
         try:
             file_paths = [
@@ -314,7 +257,5 @@ class BalanceReportViewSet(viewsets.ModelViewSet):
 
             instance.delete()
 
-            return Response({"success": "File and record deleted"}, status=status.HTTP_204_NO_CONTENT)
-
         except Exception as e:
-            return Response({"error": f"Failed to delete file: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+            pass

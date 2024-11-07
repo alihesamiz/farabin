@@ -278,10 +278,10 @@ class FinancialAsset(models.Model):
     year = models.PositiveIntegerField(verbose_name=_('Year'))
 
     month = models.PositiveIntegerField(
-        verbose_name=_('Month'), null=True, blank=True, validators=[MinValueValidator(1), MaxValueValidator(12)])
+        verbose_name=_('Month'), null=True, blank=True, validators=[MinValueValidator(1), MaxValueValidator(13)])
 
     is_tax_record = models.BooleanField(
-        default=False, verbose_name=_('Tax Record'))
+        default=False, verbose_name=_('Is Tax Record'))
 
     class Meta:
         unique_together = [['company', 'year', 'month']]
@@ -290,57 +290,6 @@ class FinancialAsset(models.Model):
 
     def __str__(self):
         return f"{self.company.company_title} - {self.year}({self.month})"
-
-
-class AnalysisReport(models.Model):
-
-    DEBT_CHART = 'debt'
-    ASSET_CHART = 'asset'
-    SALE_CHART = 'sale'
-    EQUITY_CHART = 'equity'
-    LIFE_CYCLE_CHART = 'life_cycle'
-    BANKRUPSY_CHART = 'bankruptcy'
-    PROFITIBILITY_CHART = 'profitability'
-    SALARY_CHART = 'salary'
-    INVENTORY_CHART = 'inventory'
-    AGILITY_CHART = 'agility'
-    LIQUIDITY_CHART = 'liquidity'
-    LEVERAGE_CHART = 'leverage'
-    COST_CHART = 'cost'
-    PROFIT_CHART = 'profit'
-
-    CHART_CHOICES = [
-        (DEBT_CHART, _("Debt Chart")),
-        (ASSET_CHART, _("Asset Chart")),
-        (SALE_CHART, _("Sale Chart")),
-        (EQUITY_CHART, _("Equity Chart")),
-        (LIFE_CYCLE_CHART, _("Life Cycle Chart")),
-        (BANKRUPSY_CHART, _("Bankruptcy Chart")),
-        (PROFITIBILITY_CHART, _("Profitability Chart")),
-        (SALARY_CHART, _("Salary Chart")),
-        (INVENTORY_CHART, _("Inventory Chart")),
-        (AGILITY_CHART, _("Agility Chart")),
-        (LIQUIDITY_CHART, _("Liquidity Chart")),
-        (LEVERAGE_CHART, _("Leverage Chart")),
-        (COST_CHART, _("Cost Chart")),
-        (PROFIT_CHART, _("Profit Chart")),
-    ]
-
-    calculated_data = models.ForeignKey(
-        'FinancialData', on_delete=models.CASCADE, related_name='analysis_reports', verbose_name=_('Calculated Data'), help_text=_("Select company assosiated with the year for entering the analysis text report. it would be better to only choose the last yaer of each company"))
-
-    chart_name = models.CharField(max_length=15, verbose_name=_(
-        'Chart Name'), help_text=_("Enter the name of each chart"), choices=CHART_CHOICES,)
-
-    text = models.TextField(verbose_name=_('Analysis Text'), help_text=_(
-        "Enter the analysis text for each chart"))
-
-    class Meta:
-        verbose_name = _("Analysis Report")
-        verbose_name_plural = _("Analysis Reports")
-
-    def __str__(self):
-        return f"{self.calculated_data.financial_asset.company.company_title} - {self.calculated_data.financial_asset.year} - {self.chart_name}"
 
 
 class FinancialData(models.Model):
@@ -420,9 +369,63 @@ class FinancialData(models.Model):
     altman_bankrupsy_ratio = models.DecimalField(
         default=0, max_digits=20, decimal_places=0, verbose_name=_('Altman Bankruptcy Ratio'))
 
+    is_published = models.BooleanField(
+        verbose_name=_("Is Published"), default=False)
+
     def __str__(self) -> str:
         return f"{self.financial_asset.company.company_title} - {self.financial_asset.year} - {self.financial_asset.month if self.financial_asset.month else '-'}"
 
     class Meta:
         verbose_name = _("Financial Data")
         verbose_name_plural = _("Financial Datas")
+
+
+class AnalysisReport(models.Model):
+
+    DEBT_CHART = 'debt'
+    ASSET_CHART = 'asset'
+    SALE_CHART = 'sale'
+    EQUITY_CHART = 'equity'
+    LIFE_CYCLE_CHART = 'life_cycle'
+    BANKRUPSY_CHART = 'bankruptcy'
+    PROFITIBILITY_CHART = 'profitability'
+    SALARY_CHART = 'salary'
+    INVENTORY_CHART = 'inventory'
+    AGILITY_CHART = 'agility'
+    LIQUIDITY_CHART = 'liquidity'
+    LEVERAGE_CHART = 'leverage'
+    COST_CHART = 'cost'
+    PROFIT_CHART = 'profit'
+
+    CHART_CHOICES = [
+        (DEBT_CHART, _("Debt Chart")),
+        (ASSET_CHART, _("Asset Chart")),
+        (SALE_CHART, _("Sale Chart")),
+        (EQUITY_CHART, _("Equity Chart")),
+        (LIFE_CYCLE_CHART, _("Life Cycle Chart")),
+        (BANKRUPSY_CHART, _("Bankruptcy Chart")),
+        (PROFITIBILITY_CHART, _("Profitability Chart")),
+        (SALARY_CHART, _("Salary Chart")),
+        (INVENTORY_CHART, _("Inventory Chart")),
+        (AGILITY_CHART, _("Agility Chart")),
+        (LIQUIDITY_CHART, _("Liquidity Chart")),
+        (LEVERAGE_CHART, _("Leverage Chart")),
+        (COST_CHART, _("Cost Chart")),
+        (PROFIT_CHART, _("Profit Chart")),
+    ]
+
+    calculated_data = models.ForeignKey(
+        'FinancialData', on_delete=models.CASCADE, related_name='analysis_reports', verbose_name=_('Calculated Data'), help_text=_("Select company assosiated with the year for entering the analysis text report. it would be better to only choose the last yaer of each company"))
+
+    chart_name = models.CharField(max_length=15, verbose_name=_(
+        'Chart Name'), help_text=_("Enter the name of each chart"), choices=CHART_CHOICES,)
+
+    text = models.TextField(verbose_name=_('Analysis Text'), help_text=_(
+        "Enter the analysis text for each chart"))
+
+    class Meta:
+        verbose_name = _("Analysis Report")
+        verbose_name_plural = _("Analysis Reports")
+
+    def __str__(self):
+        return f"{self.calculated_data.financial_asset.company.company_title} - {self.calculated_data.financial_asset.year} - {self.chart_name}"

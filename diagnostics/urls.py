@@ -5,7 +5,7 @@ from .views import DiagnosticAnalysisViewSet
 
 router = DefaultRouter()
 
-router.register(r'analysis', DiagnosticAnalysisViewSet,
+router.register(r'', DiagnosticAnalysisViewSet,
                 basename='diagnostic-analysis')
 
 # router.register(r'anal', AnalysisReportViewSet, basename='analysis-report')

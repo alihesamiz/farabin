@@ -29,8 +29,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("FARABIN_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("FARABIN_DEBUG", 'False') == "True"
-# DEBUG = False
+# DEBUG = os.getenv("FARABIN_DEBUG", 'False') == "True"
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -38,7 +38,6 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    # "admin_notification",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -55,7 +54,6 @@ PROJECT_APPS = [
 ]
 
 THIRED_PARTY_APPS = [
-    'django_extensions',
     'django_celery_beat',
     'drf_spectacular',
     'corsheaders',
@@ -151,6 +149,9 @@ TIME_ZONE = 'Asia/Tehran'
 USE_I18N = True
 
 USE_TZ = True
+
+USE_L10N = True
+
 
 LANGUAGES = [
     ('en-us', _('English')),
