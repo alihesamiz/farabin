@@ -32,7 +32,7 @@ msgstr "کارمند"
 
 #: ticket/models.py:15 ticket/models.py:35
 msgid "Comment"
-msgstr ""
+msgstr "پیام"
 
 #: ticket/models.py:18 ticket/models.py:38 ticket/models.py:81
 msgid "Created At"

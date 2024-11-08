@@ -129,7 +129,7 @@ class CompanyProfileSerializer(serializers.ModelSerializer):
             'user_national_code', 'id', 'company_title', 'social_code', 'email',
             'manager_name', 'license', 'special_field', 'tech_field', 'province',
             'city', 'insurance_list', 'capital_providing_method', 'profile_active',
-            'services', 'address'
+            'address', 'services',
         ]
 
     def get_services(self, obj):

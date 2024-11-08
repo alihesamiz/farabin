@@ -13,9 +13,8 @@ from .managers import UserManager
 
 class User(BaseUser, PermissionsMixin):
     phone_number = models.CharField(
-        max_length=11, unique=True, validators=[phone_number_validator])
-    national_code = models.CharField(max_length=11, unique=True)
-    otp = models.CharField(max_length=6)
+        max_length=11, unique=True, validators=[phone_number_validator],verbose_name=_("Phone Number"))
+    national_code = models.CharField(max_length=11, unique=True,verbose_name=_("National Code"))
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
@@ -78,7 +77,7 @@ class User(BaseUser, PermissionsMixin):
 
 class OTP(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='+')
+        User, on_delete=models.CASCADE, related_name='otps')
     otp_code = models.CharField(max_length=6)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -87,10 +86,11 @@ class OTP(models.Model):
         return self.created_at >= timezone.now() - timedelta(minutes=3)
 
     def generate_otp(self):
-        return random.randint(100000, 999999)
+        return f"{random.randint(100000, 999999):06}"
 
+    def __str__(self):
+        return f"OTP for {self.user.phone_number} - Code: {self.otp_code}"
 
- 
 
 ####################################
 """City and province Models"""
@@ -123,8 +123,6 @@ class Province(models.Model):
     class Meta:
         verbose_name = _("Province")
         verbose_name_plural = _("Provinces")
-
- 
 
 
 ####################################

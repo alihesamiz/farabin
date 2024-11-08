@@ -293,6 +293,8 @@ class FinancialAsset(models.Model):
 
 
 class FinancialData(models.Model):
+    
+    is_published = models.BooleanField(default=False, help_text=_("Define whether the reports are published and shown to the user or not."),verbose_name=_("Publish for user"))
 
     financial_asset = models.ForeignKey(
         FinancialAsset, on_delete=models.CASCADE, related_name='calculated_data', verbose_name=_('Financial Asset'))

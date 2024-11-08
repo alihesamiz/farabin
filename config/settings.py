@@ -39,10 +39,10 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     "admin_interface",
+    "admin_notification",
     "colorfield",
     # 'jet.dashboard',
     # 'jet',
-    "admin_notification",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

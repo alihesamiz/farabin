@@ -186,11 +186,9 @@ class GeneralUtils:
                     break
 
         if month:
-            final_path = f"{
-                self.path}/{current_slug}/{year}/{month}/{base_filename}-{field_name}.{ext}"
+            final_path = f"{self.path}/{current_slug}/{year}/{month}/{base_filename}-{field_name}.{ext}"
         else:
-            final_path = f"{
-                self.path}/{current_slug}/{year}/{base_filename}-{field_name}.{ext}"
+            final_path = f"{self.path}/{current_slug}/{year}/{base_filename}-{field_name}.{ext}"
 
         # Store the current slug as the '_previous_company_slug' for future checks
         setattr(instance, '_previous_company_slug', current_slug)

@@ -10,6 +10,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status, viewsets
 #
+from .tasks import send_otp_task
 from company.models import CompanyProfile
 from .utils import GeneralUtils
 from .models import OTP
@@ -25,43 +26,11 @@ class OTPViewSet(viewsets.ViewSet):
     """
     A ViewSet for sending and verifying OTP.
     """
+    util = GeneralUtils()
     COOLDOWN_PERIOD = timedelta(minutes=3)
 
-    @extend_schema(
-        request=OTPSendSerializer,
-        responses={200: OpenApiExample(
-            'Success',
-            value={
-                'message': 'OTP sent successfully.'
-            }
-        ), 400: OpenApiExample(
-            'Validation error',
-            value={
-                'error': 'The national code does not match the phone number.'
-            }
-        )},
-        summary="Send OTP",
-        description="Sends a one-time password (OTP) to the user's phone number. If the phone number exists and the national code matches, OTP is generated; otherwise, a new user is created.",
-        parameters=[
-            OpenApiParameter(
-                name="phone_number", description="The phone number of the user", required=True, type=str),
-            OpenApiParameter(
-                name="national_code", description="The national code of the user", required=True, type=str)
-        ],
-        examples=[
-            OpenApiExample(
-                'Valid Request',
-                description='Send OTP to phone number',
-                value={
-                    'phone_number': '09123456789',
-                    'national_code': '12345678901'
-                }
-            )
-        ]
-    )
     @action(detail=False, methods=['get', 'post'], url_path='send')
     def send_otp(self, request):
-        util = GeneralUtils()
 
         serializer = OTPSendSerializer(data=request.data)
 
@@ -70,90 +39,34 @@ class OTPViewSet(viewsets.ViewSet):
         phone_number = serializer.validated_data['phone_number']
 
         national_code = serializer.validated_data['national_code']
-        print(national_code, phone_number)
 
         try:
             user, created = User.objects.get_or_create(
                 phone_number=phone_number,
                 defaults={'national_code': national_code}
             )
-            if user.national_code != national_code:
-                return Response({'error': 'The national code does not match the phone number.'}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        if not created and user.national_code != national_code:
+            return Response({'error': 'The national code does not match the phone number.'}, status=status.HTTP_400_BAD_REQUEST)
 
-            last_otp = OTP.objects.filter(user=user).last()
+        last_otp = OTP.objects.filter(user=user).last()
 
-            if last_otp and timezone.now() < last_otp.created_at + self.COOLDOWN_PERIOD:
-                time_remaining = (last_otp.created_at +
-                                  self.COOLDOWN_PERIOD - timezone.now()).seconds
+        if last_otp and timezone.now() < last_otp.created_at + self.COOLDOWN_PERIOD:
 
-                return Response({
-                    'error': f'You can`t request a new OTP.'
-                }, status=status.HTTP_429_TOO_MANY_REQUESTS)
+            return Response({
+                'error': f'You can`t request a new OTP.'
+            }, status=status.HTTP_429_TOO_MANY_REQUESTS)
 
-        except User.DoesNotExist:
-            # Only create the user if it doesn’t exist based on `national_code`
-            user, created = User.objects.get_or_create(
-                phone_number=phone_number,
-                defaults={'national_code': national_code}
-            )
-            if not created:
-                return Response({'error': 'A user with this national code already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+        send_otp_task.delay(user.id, phone_number)
+        
+        # otp = OTP.objects.create(user=user, otp_code=OTP.generate_otp(self))
 
-        otp = OTP(user=user)
-
-        otp_code = otp.generate_otp()
-
-        otp.otp_code = otp_code
-
-        otp.save()
-
-        util.send_otp(phone_number, otp_code)
+        # self.util.send_otp(phone_number, otp.otp_code)
 
         return Response({'message': 'OTP sent successfully.'}, status=status.HTTP_200_OK)
 
-    @extend_schema(
-        request=OTPVerifySerializer,
-        responses={
-            200: OpenApiExample(
-                'Success',
-                value={
-                    'message': 'OTP verified successfully.',
-                    'refresh': 'token_string',
-                    'access': 'access_token_string'
-                }
-            ),
-            400: OpenApiExample(
-                'Invalid or expired OTP',
-                value={
-                    'error': 'Invalid or expired OTP.'
-                }
-            ),
-            404: OpenApiExample(
-                'User does not exist',
-                value={
-                    'error': 'User does not exist.'
-                }
-            )
-        },
-        summary="Verify OTP",
-        description="Verifies the OTP sent to the user. If valid, returns JWT tokens.",
-        parameters=[
-            OpenApiParameter(
-                name="phone_number", description="The phone number of the user", required=True, type=str),
-            OpenApiParameter(
-                name="otp_code", description="The OTP code sent to the user", required=True, type=str)
-        ],
-        examples=[
-            OpenApiExample(
-                'Valid Request',
-                description='Verify OTP for login',
-                value={
-                    'phone_number': '09123456789',
-                    'otp_code': '123456'
-                }
-            )
-        ]
-    )
     @action(detail=False, methods=['get', 'post'], url_path='verify')
     def verify_otp(self, request):
         serializer = OTPVerifySerializer(data=request.data)
@@ -186,7 +99,8 @@ class OTPViewSet(viewsets.ViewSet):
                 }, status=status.HTTP_200_OK)
 
             else:
-                otp.delete()
+                if otp:
+                    otp.delete()
                 return Response({'error': 'Invalid or expired OTP.Try again after 3 Minutes'}, status=status.HTTP_400_BAD_REQUEST)
 
         except User.DoesNotExist:

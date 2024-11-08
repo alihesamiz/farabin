@@ -19,5 +19,5 @@ def pdf_file_validator(value):
     # Check file size (1 MB limit)
     max_file_size = 1 * 1024 * 1024  # 1 MB in bytes
     if value.size > max_file_size:
-        raise ValidationError(f"File size should not exceed 1 MB. Current size: {
-                              value.size / (1024 * 1024):.2f} MB.")
+        raise ValidationError(
+            f"File size should not exceed 1 MB. Current size: {value.size / (1024 * 1024):.2f} MB.")

@@ -29,9 +29,6 @@ class TicketDescription(models.Model):
     ticket = models.ForeignKey(
         'Ticket', on_delete=models.CASCADE, verbose_name=_("Ticket"))
 
-    company = models.ForeignKey(
-        'company.CompanyProfile', on_delete=models.CASCADE, verbose_name=_("Company"))
-
     comment = models.TextField(verbose_name=_("Comment"))
 
     created_at = models.DateTimeField(
@@ -68,7 +65,13 @@ class Ticket(models.Model):
         (PRIORITY_MEDIUM, _('Medium')),
         (PRIORITY_HIGH, _('High')),]
 
+    issuer = models.ForeignKey(
+        'company.CompanyProfile', on_delete=models.SET_NULL, null=True, verbose_name=_("Issuer"))
+
     subject = models.CharField(max_length=255, verbose_name=_("Subject"))
+
+    comment = models.CharField(max_length=255, verbose_name=_("Comment"))
+
     service = models.ForeignKey(
         'core.Service', on_delete=models.CASCADE, verbose_name=_("Service"))
     department = models.ForeignKey(

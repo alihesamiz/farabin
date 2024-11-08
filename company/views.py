@@ -59,10 +59,10 @@ class DashboardViewSet(APIView):
             tax_files_count = tax_files.count()
             report_files_count = report_files.count()
             # Serialize the data
-            tax_files_data = TaxDeclarationSerializer(
-                tax_files, many=True).data
-            report_files_data = BalanceReportSerializer(
-                report_files, many=True).data
+            # tax_files_data = TaxDeclarationSerializer(
+            #     tax_files, many=True).data
+            # report_files_data = BalanceReportSerializer(
+            #     report_files, many=True).data
 
             # Return a structured JSON response with both file types
             response_data = {

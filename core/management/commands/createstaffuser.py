@@ -66,8 +66,8 @@ class Command(BaseCommand):
             # Add 'view_user' permission to the user's group
             group.permissions.add(view_user_permission)
 
-            self.stdout.write(self.style.SUCCESS(f'Successfully created staff user {
-                              phone_number}, added to {group_name}, and granted view user permission.'))
+            self.stdout.write(
+                self.style.SUCCESS(f'Successfully created staff user {phone_number}, added to {group_name}, and granted view user permission.'))
 
         except Permission.DoesNotExist:
             self.stderr.write(self.style.ERROR(

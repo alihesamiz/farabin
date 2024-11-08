@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-06 13:30+0330\n"
+"POT-Creation-Date: 2024-11-08 20:49+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,7 +30,7 @@ msgstr "اجازه‌ها"
 msgid "Important dates"
 msgstr "تاریخ‌های مهم"
 
-#: core/admin.py:94 core/models.py:141
+#: core/admin.py:94 core/models.py:139
 msgid "Price"
 msgstr "قیمت"
 
@@ -38,29 +38,37 @@ msgstr "قیمت"
 msgid "Core"
 msgstr "اصلی"
 
-#: core/models.py:26
+#: core/models.py:16
+msgid "Phone Number"
+msgstr "شماره تلفن"
+
+#: core/models.py:17
+msgid "National Code"
+msgstr "شناسه ملی"
+
+#: core/models.py:25
 msgid "groups"
 msgstr "گروه‌ها"
 
-#: core/models.py:29
+#: core/models.py:28
 msgid ""
 "The groups this user belongs to. A user will get all permissions granted to "
 "each of their groups."
 msgstr ""
 
-#: core/models.py:37
+#: core/models.py:36
 msgid "user permissions"
 msgstr "اجازه‌های کاربر"
 
-#: core/models.py:39
+#: core/models.py:38
 msgid "Specific permissions for this user."
 msgstr "اجازه‌های اختاصاصی برای این کاربر"
 
-#: core/models.py:71
+#: core/models.py:70
 msgid "User"
 msgstr "کاربر"
 
-#: core/models.py:72
+#: core/models.py:71
 msgid "Users"
 msgstr "کاربران"
 
@@ -84,29 +92,29 @@ msgstr "شهرها"
 msgid "Provinces"
 msgstr "استان‌ها"
 
-#: core/models.py:136
+#: core/models.py:134
 msgid "Service Name"
 msgstr "نام سرویس"
 
-#: core/models.py:138
+#: core/models.py:136
 msgid "Service Description"
 msgstr "شرح سرویس"
 
-#: core/models.py:144
+#: core/models.py:142
 msgid "Service Active"
 msgstr "فعالسازی"
 
-#: core/models.py:147
+#: core/models.py:145
 msgid "Service"
 msgstr "سرویس"
 
-#: core/models.py:148
+#: core/models.py:146
 msgid "Services"
 msgstr "سرویس‌ها"
 
 #: core/serializers.py:17 core/serializers.py:53
 msgid "Phone number must contain only digits."
-msgstr ""
+msgstr "شماره تلفن تنها شامل اعداد است"
 
 #: core/serializers.py:23 core/serializers.py:59
 msgid "Phone number must be 11 digits long."
@@ -114,19 +122,19 @@ msgstr "شماره تلفن را به صورت صحیح وارد نمایید."
 
 #: core/serializers.py:32
 msgid "National Code must contain only digits."
-msgstr ""
+msgstr "شناسه ملی تنها شامل اعداد است"
 
 #: core/serializers.py:38
 msgid "National Code must be 11 digits long."
-msgstr ""
+msgstr "طول شناسه ملی ۱۱ رقم است"
 
 #: core/serializers.py:68
 msgid "OTP code must contain only digits."
-msgstr ""
+msgstr "کد ورود تنها شامل اعداد است"
 
 #: core/serializers.py:74
 msgid "OTP code must be 6 digits long."
-msgstr ""
+msgstr "طول کد ورود ۶ عدد است"
 
 #: core/validators.py:10
 msgid "Phone number must be in 09XXXXXXXXX format."

@@ -30,7 +30,7 @@ class TicketAnswerInline(admin.TabularInline):
 
 class TicketDescriptionInline(admin.TabularInline):
     model = TicketDescription
-    fields = ('company', 'comment', 'created_at', 'updated_at')
+    fields = ('comment', 'created_at', 'updated_at')
     readonly_fields = ('created_at', 'updated_at')
     extra = 1  # Number of empty forms to display for adding new descriptions
 
