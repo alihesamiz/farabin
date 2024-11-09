@@ -8,7 +8,7 @@ User = get_user_model()
 class TicketAnswer(models.Model):
 
     ticket = models.ForeignKey(
-        'Ticket', on_delete=models.CASCADE, verbose_name=_("Ticket"))
+        'Ticket', on_delete=models.CASCADE, verbose_name=_("Ticket"), related_name='answers')
     agent = models.ForeignKey(
         'Agent', on_delete=models.CASCADE, verbose_name=_("Agent"))
 
@@ -24,10 +24,10 @@ class TicketAnswer(models.Model):
         verbose_name_plural = _("Ticket Answers")
 
 
-class TicketDescription(models.Model):
+class TicketComment(models.Model):
 
     ticket = models.ForeignKey(
-        'Ticket', on_delete=models.CASCADE, verbose_name=_("Ticket"))
+        'Ticket', on_delete=models.CASCADE, verbose_name=_("Ticket"), related_name='comments')
 
     comment = models.TextField(verbose_name=_("Comment"))
 
@@ -38,8 +38,8 @@ class TicketDescription(models.Model):
         auto_now=True, verbose_name=_("Updated At"))
 
     class Meta:
-        verbose_name = _("Ticket Description")
-        verbose_name_plural = _("Ticket Descriptions")
+        verbose_name = _("Ticket Comment")
+        verbose_name_plural = _("Ticket Comments")
 
 
 class Ticket(models.Model):
@@ -89,6 +89,7 @@ class Ticket(models.Model):
         return f"{self.subject} : {self.priority}"
 
     class Meta:
+        ordering = ['-created_at']
         verbose_name = _("Ticket")
         verbose_name_plural = _("Tickets")
 

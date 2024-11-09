@@ -22,10 +22,12 @@ def trigger_calculation_task(sender, instance, **kwargs):
         financial_calculator = FinancialCalculations(instance).process_assets()
 
         results = financial_calculator.get_results()['data']
+        print(results)
 
-        financial_data, created = FinancialData.objects.get_or_create(
+        financial_data, created = FinancialData.objects.update_or_create(
             financial_asset=instance,
             defaults={
+                'is_published': False,
                 'current_asset': results['current_asset'],
                 'non_current_asset': results['non_current_asset'],
                 'total_asset': results['total_asset'],
@@ -64,3 +66,4 @@ def trigger_calculation_task(sender, instance, **kwargs):
                 'altman_bankrupsy_ratio': results['altman_bankrupsy_ratio'],
             }
         )
+        print(created)

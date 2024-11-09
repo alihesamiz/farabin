@@ -108,9 +108,7 @@ class FinancialCalculations:
         return self
 
     def _process_balance_report(self, financial_asset, balance_report):
-        self.year = (int(financial_asset.year))
-        self.month = (int(financial_asset.month)
-                      if financial_asset.month else "")
+
         current_asset_value = int(balance_report.total_current_asset)
         non_current_asset_value = int(balance_report.total_non_current_asset)
         total_asset_value = current_asset_value + non_current_asset_value
@@ -325,8 +323,6 @@ class FinancialCalculations:
         return {
             'status': 'success',
             'data': {
-                'year': self.year,
-                'month': self.month,
                 'current_asset': self.current_asset,
                 'non_current_asset': self.non_current_asset,
                 'total_asset': self.total_asset,

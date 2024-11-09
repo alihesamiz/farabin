@@ -1,4 +1,4 @@
-from .models import Ticket, TicketAnswer, Agent, TicketDescription
+from .models import Ticket, TicketAnswer, Agent, TicketComment
 from django.utils.translation import gettext_lazy as _
 from django.contrib import admin
 from .models import Ticket, Department, Agent, TicketAnswer
@@ -28,8 +28,8 @@ class TicketAnswerInline(admin.TabularInline):
     extra = 1  # Number of empty forms to display for adding new answers
 
 
-class TicketDescriptionInline(admin.TabularInline):
-    model = TicketDescription
+class TicketCommentInline(admin.TabularInline):
+    model = TicketComment
     fields = ('comment', 'created_at', 'updated_at')
     readonly_fields = ('created_at', 'updated_at')
     extra = 1  # Number of empty forms to display for adding new descriptions
@@ -42,7 +42,7 @@ class TicketAdmin(admin.ModelAdmin):
     search_fields = ('subject', 'description', 'department__name')
     list_filter = ('status', 'priority', 'department')
     readonly_fields = ('created_at', 'updated_at')
-    inlines = [TicketDescriptionInline, TicketAnswerInline, ]
+    inlines = [TicketCommentInline, TicketAnswerInline, ]
 
     def get_queryset(self, request):
         # Limit queryset based on the user's department if needed

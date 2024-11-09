@@ -1,5 +1,3 @@
-from rest_framework.response import Response
-from rest_framework import status
 from rest_framework import serializers
 from .models import AnalysisReport, FinancialAsset, FinancialData
 
@@ -150,18 +148,6 @@ class LiquidityChartSerializer(BaseChartSerializer):
 
     instant_ratio = serializers.DecimalField(
         max_digits=20, decimal_places=0)
-
-    # 'current_asset', 'non_current_asset', 'total_asset',
-    #               'current_debt', 'non_current_debt', 'total_debt', 'total_equity',
-    #               'total_sum_equity_debt', 'gross_profit', 'net_sale', 'inventory',
-    #               'operational_profit', 'proceed_profit', 'net_profit', 'consuming_material',
-    #               'production_fee', 'construction_overhead', 'production_total_price',
-    #               'salary_fee', 'salary_production_fee', 'usability', 'efficiency', 'roa',
-    #               'roab', 'roe', 'gross_profit_margin', 'profit_margin_ratio', 'debt_ratio',
-    #               'capital_ratio', 'proprietary_ratio', 'equity_per_total_debt_ratio',
-    #               'equity_per_total_non_current_asset_ratio', 'current_ratio', 'instant_ratio',
-    #               'stock_turnover', 'altman_bankrupsy_ratio'
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, chart_name=AnalysisReport.LIQUIDITY_CHART, **kwargs)
 
@@ -207,31 +193,6 @@ class AnalysisReportSerializer(serializers.ModelSerializer):
         fields = ['chart_name', 'text']
 
 
-# class FinancialDataSerializer(serializers.ModelSerializer):
-#     is_monthly = serializers.SerializerMethodField()
-#     financial_asset = serializers.SerializerMethodField()
-
-#     class Meta:
-#         model = FinancialData
-#         fields = ['id', 'is_monthly',
-#                   'financial_asset', 'current_asset', 'non_current_asset', 'total_asset',
-#                   'current_debt', 'non_current_debt', 'total_debt', 'total_equity',
-#                   'total_sum_equity_debt', 'gross_profit', 'net_sale', 'inventory',
-#                   'operational_profit', 'proceed_profit', 'net_profit', 'consuming_material',
-#                   'production_fee', 'construction_overhead', 'production_total_price',
-#                   'salary_fee', 'salary_production_fee', 'usability', 'efficiency', 'roa',
-#                   'roab', 'roe', 'gross_profit_margin', 'profit_margin_ratio', 'debt_ratio',
-#                   'capital_ratio', 'proprietary_ratio', 'equity_per_total_debt_ratio',
-#                   'equity_per_total_non_current_asset_ratio', 'current_ratio', 'instant_ratio',
-#                   'stock_turnover', 'altman_bankrupsy_ratio',]
-
-#     def get_financial_asset(self, obj):
-#         return {"year": obj.financial_asset.year, "month": obj.financial_asset.month if obj.financial_asset.month else "", }
-
-#     def get_is_monthly(self, obj):
-#         return True if obj.financial_asset.month else False
-
-
 class FinancialAssetSerializer(serializers.ModelSerializer):
     class Meta:
         model = FinancialAsset
@@ -258,7 +219,6 @@ class FinancialDataSerializer(serializers.ModelSerializer):
 
     def get_financial_asset(self, instance):
         return {"year": instance.calculated_data.year, "month": instance.financial_asset.month if instance.financial_asset.month else ""}
-
 
 
 class MonthlyFinancialDataSerializer(serializers.ModelSerializer):
@@ -309,6 +269,7 @@ class MonthlyFinancialDataSerializer(serializers.ModelSerializer):
     def get_financial_asset(self, instance):
         return {"year": instance.calculated_data.year, "month": instance.financial_asset.month if instance.financial_asset.month else ""}
 
+
 class MonthDataSerializer(serializers.ModelSerializer):
     month = serializers.IntegerField(source="financial_asset.month")
 
@@ -324,6 +285,7 @@ class MonthDataSerializer(serializers.ModelSerializer):
             'proprietary_ratio', 'equity_per_total_debt_ratio', 'equity_per_total_non_current_asset_ratio',
             'current_ratio', 'instant_ratio', 'stock_turnover', 'altman_bankrupsy_ratio'
         ]
+
 
 class YearlyFinanceDataSerializer(serializers.Serializer):
     year = serializers.IntegerField()

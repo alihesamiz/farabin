@@ -32,7 +32,7 @@ class AccountTurnOverInline(admin.StackedInline):
 
 
 @admin.register(FinancialAsset)
-class FinancialAssestModel(admin.ModelAdmin):
+class FinancialAssestAdmin(admin.ModelAdmin):
     autocomplete_fields = ['company']
     list_display = ['company_title', 'year', 'month']
     inlines = [BalanceReportInline, ProfitStatementInline, SaledProductInline,
@@ -50,15 +50,16 @@ class FinancialAssestModel(admin.ModelAdmin):
     company_title.short_description = _("Company Title")
     company_title.admin_order_field = 'company_title'
 
-    # This will allow selection of multiple life cycles
+    # This will allow selection of multiple l<pife cycles
 
 
 @admin.register(FinancialData)
 class CalculatedDataAdmin(admin.ModelAdmin):
     autocomplete_fields = ['financial_asset']
-    list_display = ['company_title', 'financial_year', 'financial_month']
+    list_display = ['company_title', 'financial_year',
+                    'financial_month', 'is_published']
     search_fields = [
-        'financial_asset__company__company_title', 'financial_asset__year', 'financial_asset__month']
+        'financial_asset__company__company_title', 'financial_asset__year', 'financial_asset__month', 'is_published']
 
     list_filter = [
         'financial_asset__company__company_title', 'financial_asset__year', 'financial_asset__month']

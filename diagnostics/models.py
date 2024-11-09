@@ -293,8 +293,9 @@ class FinancialAsset(models.Model):
 
 
 class FinancialData(models.Model):
-    
-    is_published = models.BooleanField(default=False, help_text=_("Define whether the reports are published and shown to the user or not."),verbose_name=_("Publish for user"))
+
+    is_published = models.BooleanField(default=False, help_text=_(
+        "Define whether the reports are published and shown to the user or not."), verbose_name=_("Publish for user"))
 
     financial_asset = models.ForeignKey(
         FinancialAsset, on_delete=models.CASCADE, related_name='calculated_data', verbose_name=_('Financial Asset'))
@@ -370,9 +371,6 @@ class FinancialData(models.Model):
         default=0, max_digits=20, decimal_places=0, verbose_name=_('Stock Turnover'))
     altman_bankrupsy_ratio = models.DecimalField(
         default=0, max_digits=20, decimal_places=0, verbose_name=_('Altman Bankruptcy Ratio'))
-
-    is_published = models.BooleanField(
-        verbose_name=_("Is Published"), default=False)
 
     def __str__(self) -> str:
         return f"{self.financial_asset.company.company_title} - {self.financial_asset.year} - {self.financial_asset.month if self.financial_asset.month else '-'}"
