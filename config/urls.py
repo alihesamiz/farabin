@@ -47,6 +47,7 @@ urlpatterns = [
     path('check/notification', check_notification_view,
          name="check_notifications"),
 
+
     # path(r'^jet/', include('jet.urls', 'jet')),  # Django JET URLS
     # path(r'^jet/dashboard/', include('jet.dashboard.urls',
     #      'jet-dashboard')),  # Django JET dashboard URLS

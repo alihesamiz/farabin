@@ -41,14 +41,14 @@ INSTALLED_APPS = [
     "admin_interface",
     "admin_notification",
     "colorfield",
-    # 'jet.dashboard',
-    # 'jet',
+    # "helpdesk",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
 ]
 
 PROJECT_APPS = [
@@ -66,6 +66,8 @@ THIRED_PARTY_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'django_seed',
+    'nested_admin',
+    'channels',
 ]
 
 
@@ -104,6 +106,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
+
+ASGI_APPLICATION = 'config.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -213,6 +217,7 @@ X_FRAME_OPTIONS = 'ALLOWALL'
 # production
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
+    "http://192.168.1.10:3000",
     "http://localhost:3000",
     "http://127.0.0.1:8000",
     "http://localhost:8000",
@@ -225,17 +230,10 @@ CORS_ALLOWED_ORIGINS = [
 # Configure Redis URL or RabbitMQ URL here
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-
-
-SILKY_AUTHENTICATION = True
-SILKY_AUTHORISATION = True
-SILKY_MAX_REQUEST_BODY_SIZE = 1024  # 1 KB
-SILKY_MAX_RESPONSE_BODY_SIZE = 1024  # 1 KB
-SILKY_META = True
-SILKY_PYTHON_PROFILER = False
-
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+# HELPDESK_TEAMS_MODE_ENABLED = False
 
 NOTIFICATION_MODELS = 'ticket.Ticket'

@@ -29,6 +29,9 @@ class TicketComment(models.Model):
     ticket = models.ForeignKey(
         'Ticket', on_delete=models.CASCADE, verbose_name=_("Ticket"), related_name='comments')
 
+    answer = models.ForeignKey(
+        'TicketAnswer', on_delete=models.CASCADE, verbose_name=_("Answer"), related_name='comments', null=True
+    )
     comment = models.TextField(verbose_name=_("Comment"))
 
     created_at = models.DateTimeField(

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-09 15:09+0330\n"
+"POT-Creation-Date: 2024-11-12 12:26+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,23 +22,29 @@ msgstr ""
 msgid "Members count"
 msgstr "تعداد اعضا"
 
-#: ticket/apps.py:7 ticket/models.py:11 ticket/models.py:30 ticket/models.py:93
+#: ticket/admin.py:50
+#, fuzzy
+#| msgid "Company Title"
+msgid "Company Title"
+msgstr "نام شرکت"
+
+#: ticket/apps.py:7 ticket/models.py:11 ticket/models.py:30 ticket/models.py:96
 msgid "Ticket"
 msgstr "تیکت"
 
-#: ticket/models.py:13 ticket/models.py:119
+#: ticket/models.py:13 ticket/models.py:122
 msgid "Agent"
 msgstr "کارمند"
 
-#: ticket/models.py:15 ticket/models.py:32 ticket/models.py:73
+#: ticket/models.py:15 ticket/models.py:35 ticket/models.py:76
 msgid "Comment"
 msgstr "پیام"
 
-#: ticket/models.py:18 ticket/models.py:35 ticket/models.py:84
+#: ticket/models.py:18 ticket/models.py:38 ticket/models.py:87
 msgid "Created At"
 msgstr "ایجاد شده در"
 
-#: ticket/models.py:20 ticket/models.py:38 ticket/models.py:86
+#: ticket/models.py:20 ticket/models.py:41 ticket/models.py:89
 msgid "Updated At"
 msgstr "بروزرسانی شده در"
 
@@ -50,94 +56,93 @@ msgstr "پاسخ تیکت"
 msgid "Ticket Answers"
 msgstr "پاسخ‌های تیکت"
 
-#: ticket/models.py:41
+#: ticket/models.py:33
+msgid "Answer"
+msgstr "پاسخ"
+
+#: ticket/models.py:44
 msgid "Ticket Comment"
 msgstr "پیام تیکت"
 
-#: ticket/models.py:42
+#: ticket/models.py:45
 msgid "Ticket Comments"
 msgstr "پیام تیکت"
 
-#: ticket/models.py:53
+#: ticket/models.py:56
 msgid "New"
 msgstr "جدید"
 
-#: ticket/models.py:54
+#: ticket/models.py:57
 msgid "In Progress"
 msgstr "در حال بررسی"
 
-#: ticket/models.py:55
+#: ticket/models.py:58
 msgid "Resolved"
 msgstr "پاسخ داده‌شده"
 
-#: ticket/models.py:56
+#: ticket/models.py:59
 msgid "Closed"
 msgstr "بسته شده"
 
-#: ticket/models.py:64
+#: ticket/models.py:67
 msgid "Low"
 msgstr "کم"
 
-#: ticket/models.py:65
+#: ticket/models.py:68
 msgid "Medium"
 msgstr "متوسط"
 
-#: ticket/models.py:66
+#: ticket/models.py:69
 msgid "High"
 msgstr "زیاد"
 
-#: ticket/models.py:69
+#: ticket/models.py:72
 msgid "Issuer"
 msgstr "سازنده"
 
-#: ticket/models.py:71
+#: ticket/models.py:74
 msgid "Subject"
 msgstr "عنوان"
 
-#: ticket/models.py:76
+#: ticket/models.py:79
 msgid "Service"
 msgstr "سرویس"
 
-#: ticket/models.py:78 ticket/models.py:105 ticket/models.py:113
+#: ticket/models.py:81 ticket/models.py:108 ticket/models.py:116
 msgid "Department"
 msgstr "دپارتمان"
 
-#: ticket/models.py:80
+#: ticket/models.py:83
 msgid "Status"
 msgstr "وضعیت"
 
-#: ticket/models.py:82
+#: ticket/models.py:85
 msgid "Priority"
 msgstr "اولویت"
 
-#: ticket/models.py:94
+#: ticket/models.py:97
 msgid "Tickets"
 msgstr "تیکت‌ها"
 
-#: ticket/models.py:98
+#: ticket/models.py:101
 msgid "Name"
 msgstr "نام"
 
-#: ticket/models.py:99
+#: ticket/models.py:102
 msgid "Description"
 msgstr "توضیحات"
 
-#: ticket/models.py:106
+#: ticket/models.py:109
 msgid "Departments"
 msgstr "دپارتمان‌ها"
 
-#: ticket/models.py:111
+#: ticket/models.py:114
 msgid "User"
 msgstr "کاربر"
 
-#: ticket/models.py:120
+#: ticket/models.py:123
 msgid "Agents"
 msgstr "کارمندان"
-
-#, fuzzy
-#~| msgid "Company Title"
-#~ msgid "Company"
-#~ msgstr "نام شرکت"
 
 #, fuzzy
 #~| msgid "Description"
@@ -148,9 +153,6 @@ msgstr "کارمندان"
 #~| msgid "Description"
 #~ msgid "Ticket Descriptions"
 #~ msgstr "توضیحات"
-
-#~ msgid "Answer"
-#~ msgstr "پاسخ"
 
 #~ msgid "Customer"
 #~ msgstr "مشتری"

@@ -1,3 +1,5 @@
+from django.utils import timezone
+from datetime import timedelta
 from uuid import uuid4
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
@@ -173,9 +175,9 @@ class TaxDeclaration(models.Model):
     tax_file = models.FileField(verbose_name=_(
         "File"), upload_to=TAX_FILE_UPLOADING_PATH.rename_folder, blank=True, null=True)
 
-    is_saved = models.BooleanField(default=True, verbose_name=_("Is Saved"))
+    is_saved = models.BooleanField(default=False, verbose_name=_("Is Saved"))
 
-    is_sent = models.BooleanField(default=True, verbose_name=_("Is Sent"))
+    is_sent = models.BooleanField(default=False, verbose_name=_("Is Sent"))
 
     def save(self, *args, **kwargs):
         # Only set `is_saved` to True if `is_sent` is True
@@ -228,9 +230,9 @@ class BalanceReport(models.Model):
     account_turnover_file = models.FileField(verbose_name=_(
         "Account Turn Over File"), validators=[pdf_file_validator], upload_to=BALANCE_REPORT_FILE_UPLOADING_PATH.rename_folder, blank=True, null=True)
 
-    is_saved = models.BooleanField(default=True, verbose_name=_("Is Saved"))
+    is_saved = models.BooleanField(default=False, verbose_name=_("Is Saved"))
 
-    is_sent = models.BooleanField(default=True, verbose_name=_("Is Sent"))
+    is_sent = models.BooleanField(default=False, verbose_name=_("Is Sent"))
 
     def save(self, *args, **kwargs):
         # Only set `is_saved` to True if `is_sent` is True
@@ -248,3 +250,41 @@ class BalanceReport(models.Model):
         verbose_name = _("Balance Report")
         verbose_name_plural = _("Balance Reports")
         unique_together = [['company', 'month', 'year'],]
+
+
+class Request(models.Model):
+
+    REQUEST_STATUS_NEW = 'new'
+    REQUEST_STATUS_PENDING = 'pending'
+    REQUEST_STATUS_ANSWERED = 'answered'
+
+    REQUEST_STATUS_CHOICES = [
+        (REQUEST_STATUS_NEW, _("New")),
+        (REQUEST_STATUS_PENDING, _("Pending")),
+        (REQUEST_STATUS_ANSWERED, _("Answered")),
+    ]
+
+    company = models.ForeignKey(
+        CompanyProfile, on_delete=models.SET_NULL, verbose_name=_("Company"), null=True)
+
+    status = models.CharField(verbose_name=_(
+        "Status"), max_length=10, choices=REQUEST_STATUS_CHOICES, default=REQUEST_STATUS_NEW)
+
+    created_at = models.DateTimeField(
+        auto_now_add=True, verbose_name=_("Created At"))
+
+    updated_at = models.DateTimeField(
+        auto_now=True, verbose_name=_("Updated At"))
+
+    service = models.ForeignKey(CompanyService, related_name="services",
+                                on_delete=models.SET_NULL, verbose_name=_("Service"), null=True)
+
+    class Meta:
+        verbose_name = _("Request")
+        verbose_name_plural = _("Requests")
+
+    def check_and_update_status(self):
+        # Check if status is "new" and more than 30 minutes have passed since creation
+        if self.status == self.REQUEST_STATUS_NEW and timezone.now() >= self.created_at + timedelta(minutes=30):
+            self.status = self.REQUEST_STATUS_PENDING
+            self.save()

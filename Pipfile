@@ -28,6 +28,9 @@ django-seed = "*"
 django-admin-extensions = "*"
 django-admin-interface = "*"
 django-admin-notification = "*"
+django-nested-admin = "*"
+channels = "*"
+channels-redis = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"

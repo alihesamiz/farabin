@@ -143,6 +143,7 @@ class CompanyProfileSerializer(serializers.ModelSerializer):
         # Format the response data for each service
         services_data = [
             {
+                'id': service.id,
                 'service_name': service.name,
                 'description': service.description,
                 # 'price': service.price,

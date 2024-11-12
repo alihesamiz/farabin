@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.db.models.query import QuerySet
 from django.http import HttpRequest
 from django.utils.translation import gettext_lazy as _
-from .models import BalanceReport, CompanyProfile, CompanyService, LifeCycle, TaxDeclaration, BalanceReport
+from .models import BalanceReport, CompanyProfile, CompanyService, LifeCycle, Request, TaxDeclaration, BalanceReport
 # Register your models here.
 
 
@@ -103,23 +103,34 @@ class BalanceReportFileAdmin(admin.ModelAdmin):
     company_title.short_description = _("Company Title")
 
     def delete_model(self, request: HttpRequest, obj: Any) -> None:
-        
+
         if obj:
             with transaction.atomic():
                 obj.balance_report_file.delete(save=False)
                 obj.profit_loss_file.delete(save=False)
                 obj.sold_product_file.delete(save=False)
                 obj.account_turnover_file.delete(save=False)
-        
+
         return super().delete_model(request, obj)
 
     def delete_queryset(self, request: HttpRequest, queryset: QuerySet) -> None:
-        
+
         for obj in queryset:
             with transaction.atomic():
                 obj.balance_report_file.delete(save=False)
                 obj.profit_loss_file.delete(save=False)
                 obj.sold_product_file.delete(save=False)
                 obj.account_turnover_file.delete(save=False)
-        
+
         return super().delete_queryset(request, queryset)
+
+
+@admin.register(Request)
+class CompanyRequestAdmin(admin.ModelAdmin):
+    list_display = [
+        "company",
+        "status",
+        "created_at",
+        "updated_at",
+        "service",
+    ]
