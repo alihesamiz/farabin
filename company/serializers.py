@@ -132,14 +132,15 @@ class CompanyProfileSerializer(serializers.ModelSerializer):
             'address', 'services',
         ]
 
-    def get_services(self, obj):
+    def get_services(self, company):
         # Retrieve all services available
         all_services = Service.objects.all()
 
         # Get active services for this company
-        company_services = CompanyService.objects.filter(company=obj)
-        active_services = {cs.service_id: cs for cs in company_services}
-
+        company_services = CompanyService.objects.filter(company=company)
+        active_services = {
+            cs.service_id: cs for cs in company_services if cs.is_active
+        }
         # Format the response data for each service
         services_data = [
             {
@@ -157,6 +158,8 @@ class CompanyProfileSerializer(serializers.ModelSerializer):
         ]
 
         return services_data
+
+# TODO : if user service time is expired the service will be removed
 
 
 class CompanyProfileCreateSerializer(serializers.ModelSerializer):

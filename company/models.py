@@ -145,6 +145,7 @@ class CompanyService(models.Model):
     service = models.ForeignKey(
         'core.Service', on_delete=models.CASCADE, verbose_name=_("Service"))
     is_active = models.BooleanField(default=False, verbose_name=_("Activate"))
+    
     purchased_date = models.DateField(
         auto_now_add=True, verbose_name=_("Purchased Date"))
 
@@ -157,39 +158,43 @@ class CompanyService(models.Model):
         return f"{self.company.company_title} - {self.service.name} ({'Active' if self.is_active else 'Inactive'})"
 
 
-####################################
-"""TaxDeclaration Model"""
 
-TAX_FILE_UPLOADING_PATH = GeneralUtils(
-    path="tax_files",
-    fields=['year'])
+######################
+"""Company Files"""
+
+class CompanyFileAbstract(models.Model):
+
+    company = models.ForeignKey(CompanyProfile, on_delete=models.SET_NULL, null=True, verbose_name=_(
+        "Company"))
+
+    year = models.PositiveSmallIntegerField(verbose_name=_("Year"))
+
+    is_saved = models.BooleanField(default=True, verbose_name=_("Is Saved"))
+
+    is_sent = models.BooleanField(default=False, verbose_name=_("Is Sent"))
+
+    class Meta:
+        abstract = True
 
 
-class TaxDeclaration(models.Model):
+
+def get_tax_file_upload_path(instance, filename):
+    path = GeneralUtils(path="tax_files", fields=[
+                        'year']).rename_folder(instance, filename)
+    return path
+
+
+class TaxDeclaration(CompanyFileAbstract):
 
     company = models.ForeignKey(CompanyProfile, on_delete=models.SET_NULL, null=True, verbose_name=_(
         "Company"), related_name="taxfiles")
 
-    year = models.PositiveSmallIntegerField(verbose_name=_("Year"))
-
     tax_file = models.FileField(verbose_name=_(
-        "File"), upload_to=TAX_FILE_UPLOADING_PATH.rename_folder, blank=True, null=True)
-
-    is_saved = models.BooleanField(default=False, verbose_name=_("Is Saved"))
-
-    is_sent = models.BooleanField(default=False, verbose_name=_("Is Sent"))
-
-    def save(self, *args, **kwargs):
-        # Only set `is_saved` to True if `is_sent` is True
-        if self.is_saved:
-            if self.is_sent:
-                # TODO call sms sending to the editors function here
-                pass
-        super().save(*args, **kwargs)
-        # Call the superclass `save` method once to save changes
+        "File"), upload_to=get_tax_file_upload_path, blank=True, null=True)
 
     def __str__(self) -> str:
         return f"{self.company.company_title} -> {self.year}"
+    
 
     class Meta:
         verbose_name = _("Tax Declaration")
@@ -197,16 +202,14 @@ class TaxDeclaration(models.Model):
         unique_together = [['company', 'year']]
 
 
-########################
-"""non-TaxDeclaration Model"""
 
-BALANCE_REPORT_FILE_UPLOADING_PATH = GeneralUtils(
-    path="non-tax_files",
-    fields=['year', 'month']
-)
+def get_non_tax_file_upload_path(instance, filename):
+    path = GeneralUtils(
+        path="non-tax_files", fields=['year', 'month']).rename_folder(instance, filename)
+    return path
 
 
-class BalanceReport(models.Model):
+class BalanceReport(CompanyFileAbstract):
 
     MONTH_CHOICES = [(str(i), f"{i}") for i in range(1, 14)]
 
@@ -216,32 +219,18 @@ class BalanceReport(models.Model):
     month = models.CharField(
         max_length=2, choices=MONTH_CHOICES, verbose_name=_("Month"))
 
-    year = models.PositiveSmallIntegerField(verbose_name=_("Year"))
-
     balance_report_file = models.FileField(verbose_name=_(
-        "Balance Report File"), validators=[pdf_file_validator], upload_to=BALANCE_REPORT_FILE_UPLOADING_PATH.rename_folder, blank=True, null=True)
+        "Balance Report File"), validators=[pdf_file_validator], upload_to=get_non_tax_file_upload_path, blank=True, null=True)
 
     profit_loss_file = models.FileField(verbose_name=_(
-        "Profit Loss File"), validators=[pdf_file_validator], upload_to=BALANCE_REPORT_FILE_UPLOADING_PATH.rename_folder, blank=True, null=True)
+        "Profit Loss File"), validators=[pdf_file_validator], upload_to=get_non_tax_file_upload_path, blank=True, null=True)
 
     sold_product_file = models.FileField(verbose_name=_(
-        "Sold Product File"), validators=[pdf_file_validator], upload_to=BALANCE_REPORT_FILE_UPLOADING_PATH.rename_folder, blank=True, null=True)
+        "Sold Product File"), validators=[pdf_file_validator], upload_to=get_non_tax_file_upload_path, blank=True, null=True)
 
     account_turnover_file = models.FileField(verbose_name=_(
-        "Account Turn Over File"), validators=[pdf_file_validator], upload_to=BALANCE_REPORT_FILE_UPLOADING_PATH.rename_folder, blank=True, null=True)
+        "Account Turn Over File"), validators=[pdf_file_validator], upload_to=get_non_tax_file_upload_path, blank=True, null=True)
 
-    is_saved = models.BooleanField(default=False, verbose_name=_("Is Saved"))
-
-    is_sent = models.BooleanField(default=False, verbose_name=_("Is Sent"))
-
-    def save(self, *args, **kwargs):
-        # Only set `is_saved` to True if `is_sent` is True
-        if self.is_saved:
-            if self.is_sent:
-                # TODO call sms sending to the editors function here
-                pass
-        super().save(*args, **kwargs)
-        # Call the superclass `save` method once to save changes
 
     def __str__(self) -> str:
         return f"{self.company.company_title} -> {self.year}"
@@ -256,12 +245,12 @@ class Request(models.Model):
 
     REQUEST_STATUS_NEW = 'new'
     REQUEST_STATUS_PENDING = 'pending'
-    REQUEST_STATUS_ANSWERED = 'answered'
+    REQUEST_STATUS_ACCEPTED = 'accepted'
 
     REQUEST_STATUS_CHOICES = [
         (REQUEST_STATUS_NEW, _("New")),
         (REQUEST_STATUS_PENDING, _("Pending")),
-        (REQUEST_STATUS_ANSWERED, _("Answered")),
+        (REQUEST_STATUS_ACCEPTED, _("Accepted")),
     ]
 
     company = models.ForeignKey(

@@ -1,13 +1,23 @@
-# reporting/signals.py
-from django.conf import settings
-import os
-import shutil
-from django.core.files.storage import default_storage
 from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
-from .models import BalanceReport, CompanyProfile, TaxDeclaration
-from core.utils import GeneralUtils
+from .models import BalanceReport, CompanyProfile, CompanyService, TaxDeclaration, Request
+from .tasks import send_file_uploading_notification
 
+@receiver(post_save, sender=TaxDeclaration)
+@receiver(post_save, sender=BalanceReport)
+def create_request_if_sent(sender, instance, created, **kwargs):
+    if instance.is_sent:
+        try:
+            service_instance = CompanyService.objects.get(id=1)
+        except CompanyService.DoesNotExist:
+            return
+        Request.objects.create(
+            company=instance.company,
+            service=service_instance  # Assign service if needed
+        )
+        send_file_uploading_notification.delay(
+            'tax' if sender is TaxDeclaration else 'balancereport'
+        )
 
 # @receiver(post_save, sender=[BalanceReport, TaxDeclaration])
 # def send_sms_notification(sender, instance, **kwargs):

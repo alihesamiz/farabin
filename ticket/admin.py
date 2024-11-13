@@ -1,24 +1,80 @@
+from django.db.models import Count
+from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 from django.contrib import admin
+from django.contrib.auth.models import Group
 from .models import Ticket, Department, Agent, TicketAnswer, TicketComment
 import nested_admin
 # Register your models here.
 
 
+# @admin.register(Department)
+# class DepartmentAdmin(admin.ModelAdmin):
+#     list_display = ['name', 'population']
+
+#     @admin.display(description=_('Members count'))
+#     def population(self, department: Department):
+#         return department.agents.count()
+#     population.short_description = _('Members count')
+
+#     class AgentInline(nested_admin.NestedStackedInline):
+#         model = Agent
+#         extra = 0  # Show no extra empty rows
+#         fields = ['first_name', 'last_name', 'email',
+#                   'user']  # Customize fields as necessary
+
+#     inlines = [AgentInline]
 @admin.register(Department)
 class DepartmentAdmin(admin.ModelAdmin):
-    list_display = ['name', 'population']
+    list_display = ['name', 'get_agents_count']
 
     @admin.display(description=_('Members count'))
-    def population(self, department: Department):
+    def get_agents_count(self, department: Department):
+        """Return the number of agents in the department."""
         return department.agents.count()
-    population.short_description = _('Members count')
+    get_agents_count.short_description = _('Members count')
+
+    class AgentInline(nested_admin.NestedStackedInline):
+        model = Agent
+        extra = 0  # Show no extra empty rows
+        fields = ['first_name', 'last_name', 'email',
+                  'user']  # Customize fields as necessary
+        # Optionally add a filter for the department (if you have many agents)
+        # list_filter = ['department']
+
+    inlines = [AgentInline]
+
+    # Optimize the list display
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        # Using annotate to show the count of agents per department (efficiency boost)
+        return queryset.annotate(agent_count=Count('agents'))
+
+    class Meta:
+        verbose_name = _("Department")
+        verbose_name_plural = _("Departments")
 
 
 @admin.register(Agent)
 class AgentAdmin(admin.ModelAdmin):
-    autocomplete_fields = ['user']
-    list_display = ['user', 'department']
+    # autocomplete_fields = ['user']
+    list_display = ['first_name', 'last_name',
+                    'phone_number', 'email', 'department']
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        # Check if the field is 'user'
+        if db_field.name == "user":
+            print('lkasdlkas;djlkasjd')
+            group = Group.objects.get(name='Editor')
+            # Filter users to show only those who are staff
+            kwargs['queryset'] = get_user_model().objects.filter(
+                is_staff=True, groups=group)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+    @admin.display(ordering='user__phone_number')
+    def phone_number(self, agent: Agent):
+        return agent.user.phone_number
+    phone_number.short_description = _('Phone Number')
 
 
 class TicketCommentInline(nested_admin.NestedTabularInline):
@@ -49,14 +105,38 @@ class TicketAdmin(nested_admin.NestedModelAdmin):
         return f"{ticket.issuer.company_title}"
     company_title.short_description = _('Company Title')
 
-    # def get_queryset(self, request):
-    #     # Limit queryset based on the user's department if needed
-    #     qs = super().get_queryset(request)
-    #     if request.user.is_superuser:
-    #         return qs  # Superuser can see all tickets
-    #     try:
-    #         agent = Agent.objects.get(user=request.user)
-    #         # Filter by agent's department
-    #         return qs.filter(department=agent.department)
-    #     except Agent.DoesNotExist:
-    #         return qs.none()
+    def get_queryset(self, request):
+        # Get the original queryset
+        qs = super().get_queryset(request)
+
+        # Allow superuser to view all tickets
+        if request.user.is_superuser:
+            return qs
+
+        # Filter tickets based on the agent's department
+        try:
+            agent = Agent.objects.get(user=request.user)
+            return qs.filter(department=agent.department)
+        except Agent.DoesNotExist:
+            # If user is not an agent, show no tickets
+            return qs.none()
+
+    def save_formset(self, request, form, formset, change):
+        """
+        Override save_formset to set the agent for TicketAnswer automatically.
+        """
+        instances = formset.save(commit=False)
+        for instance in instances:
+            # Only apply this logic to TicketAnswer instances
+
+            print('بیلیسل')
+            if isinstance(instance, TicketAnswer) and not instance.agent_id:
+                print('kasjhdkjsahdk')
+                try:
+                    # Set the agent as the current logged-in user
+                    instance.agent = Agent.objects.get(user=request.user)
+                except Agent.DoesNotExist:
+                    # Raise an error if the logged-in user is not an agent
+                    raise ValueError("Only agents can respond to tickets.")
+            instance.save()
+        formset.save_m2m()

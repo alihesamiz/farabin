@@ -1,3 +1,4 @@
+from django.db.transaction import atomic
 from django.core.files.storage import default_storage
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.utils.decorators import method_decorator
@@ -58,7 +59,7 @@ class DashboardViewSet(APIView):
 
             tax_files_count = tax_files.count()
             report_files_count = report_files.count()
-            
+
             # Serialize the data
             # tax_files_data = TaxDeclarationSerializer(
             #     tax_files, many=True).data
@@ -229,34 +230,36 @@ class BalanceReportViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         try:
-            instance = self.get_object()
-            self.perform_destroy(instance)
-            return Response({"success": "files deleted"}, status=status.HTTP_204_NO_CONTENT)
+            with atomic():
+                instance = self.get_object()
+                self.perform_destroy(instance)
+                return Response({"success": "files deleted"}, status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
             return Response({"error": "Failed to delete files"}, status=status.HTTP_400_BAD_REQUEST)
 
     def perform_destroy(self, instance):
         try:
-            file_paths = [
-                instance.balance_report_file.path,
-                instance.profit_loss_file.path,
-                instance.sold_product_file.path,
-                instance.account_turnover_file.path,
-            ]
+            with atomic():
+                file_paths = [
+                    instance.balance_report_file.path,
+                    instance.profit_loss_file.path,
+                    instance.sold_product_file.path,
+                    instance.account_turnover_file.path,
+                ]
 
-            folder_path = os.path.dirname(file_paths[0])
+                folder_path = os.path.dirname(file_paths[0])
 
-            for file_path in file_paths:
+                for file_path in file_paths:
+                    if file_path and default_storage.exists(file_path):
+                        default_storage.delete(file_path)
+
                 if file_path and default_storage.exists(file_path):
                     default_storage.delete(file_path)
 
-            if file_path and default_storage.exists(file_path):
-                default_storage.delete(file_path)
+                if folder_path and not os.listdir(folder_path):
+                    os.rmdir(folder_path)
 
-            if folder_path and not os.listdir(folder_path):
-                os.rmdir(folder_path)
-
-            instance.delete()
+                instance.delete()
 
         except Exception as e:
             pass

@@ -62,63 +62,6 @@ class GeneralUtils:
         value = re.sub(r'[\s]+', '-', value)
         return value.strip('-')
 
-    # RENAME a file based on the company's name, year, and the field name.
-
-    # def rename_folder(self, instance, filename: str):
-    #     """
-    #     Dynamically rename the file based on the company's name, year, and the field name.
-    #     Files are uploaded into directories based on company name, year, and field name.
-    #     """
-    #     # Get the file extension
-    #     ext = filename.split('.')[-1].lower()
-
-    #     # Collect the field values for filename generation (company name and year)
-    #     field_values = []
-    #     for field in self.fields:
-    #         attrs = field.split('__')
-    #         value = instance
-    #         try:
-    #             for attr in attrs:
-    #                 value = getattr(value, attr)
-    #         except AttributeError:
-    #             value = ''
-    #             break
-    #         field_values.append(str(value))
-
-    #     # Slugify the field values (company name and year)
-    #     base_filename = self.persian_slugify("-".join(field_values))
-
-    #     # Ensure the filename is not empty
-    #     if not base_filename:
-    #         base_filename = 'file'
-
-    #     # Create the path for the file upload: financial_files/company_name/year/
-    #     company_title = getattr(
-    #         instance.company, 'company_title', 'default-company')
-    #     company_slug = self.persian_slugify(company_title)
-    #     year = getattr(instance, 'year', 'unknown-year')
-    #     month: str = getattr(instance, 'month', '')
-
-    #     # ** Include the field name in the final file name **
-    #     field_name = 'unknown-field'
-
-    #     # Find the field that is calling this function based on the filename
-    #     for field in instance._meta.fields:
-    #         # Only check FileField fields
-    #         if isinstance(field, models.FileField):
-    #             file_field = getattr(instance, field.name, None)
-    #             if file_field and hasattr(file_field, 'name') and file_field.name == filename:
-    #                 field_name = field.name
-    #                 break
-
-    #     # Final path for the file
-    #     if month:
-    #         final_path = f"{
-    #             self.path}/{company_slug}/{year}/{month}/{base_filename}-{field_name}.{ext}"
-    #     final_path = f"{
-    #         self.path}/{company_slug}/{year}/{base_filename}-{field_name}.{ext}"
-    #     return final_path
-
     def rename_folder(self, instance, filename: str):
         """
         Dynamically rename the file based on the company's name, year, and the field name.
@@ -152,11 +95,14 @@ class GeneralUtils:
         #     instance.company, 'company_title', 'default-company')
         # current_slug = self.persian_slugify(current_company_title)
 
-        current_slug = getattr(
-            instance.company, 'id', 'default-company')
-
+        try:
+            if hasattr(instance.company, 'id'):
+                current_slug = instance.company.id
+        except:
+            current_slug = instance.issuer.id if hasattr(
+                instance.issuer, 'id') else 'default-company'
         # current_slug = self.persian_slugify(current_company_title)
-        year = getattr(instance, 'year', 'unknown-year')
+        year = getattr(instance, 'year', '')
         month = getattr(instance, 'month', '')
 
         # Determine the existing folder structure (in case the company name has changed)
@@ -184,12 +130,16 @@ class GeneralUtils:
                 if file_field and hasattr(file_field, 'name') and file_field.name == filename:
                     field_name = field.name
                     break
-
-        if month:
-            final_path = f"{self.path}/{current_slug}/{year}/{month}/{base_filename}-{field_name}.{ext}"
+        if year != "":
+            if month:
+                final_path = f"{
+                    self.path}/{current_slug}/{year}/{month}/{base_filename}-{field_name}.{ext}"
+            else:
+                final_path = f"{
+                    self.path}/{current_slug}/{year}/{base_filename}-{field_name}.{ext}"
         else:
-            final_path = f"{self.path}/{current_slug}/{year}/{base_filename}-{field_name}.{ext}"
-
+            final_path = f"{
+                self.path}/{current_slug}/{base_filename}-{field_name}.{ext}"
         # Store the current slug as the '_previous_company_slug' for future checks
         setattr(instance, '_previous_company_slug', current_slug)
 
@@ -219,3 +169,11 @@ class GeneralUtils:
 
         # TODO: Implement the SMS sending logic here using the SMS provider API.
         pass
+
+    def deconstruct(self):
+        # This will tell Django to consider this field unchanged in migrations
+        return (
+            'core.GeneralUtils',
+            [self.path, self.fields],  # arguments
+            {}  # keyword arguments
+        )

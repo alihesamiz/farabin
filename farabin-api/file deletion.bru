@@ -4,14 +4,14 @@ meta {
   seq: 2
 }
 
-post {
-  url: 192.168.1.9:8000/tickets/1/comments/
+get {
+  url: 192.168.1.9:8000/tickets/
   body: multipartForm
   auth: bearer
 }
 
 params:query {
-  ~answer_id : 1
+  ~answer_id: 1
 }
 
 headers {
@@ -19,19 +19,20 @@ headers {
 }
 
 auth:bearer {
-  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMxMzEwMDE5LCJpYXQiOjE3MzEyMjM2MTksImp0aSI6ImYyZTI0ZTU3ZjQ0MTQ1ZjY4M2VmMWQ2ZWUzM2M4NmE5IiwidXNlcl9pZCI6MX0.QbAGvqwo5qCtudnFrJCN9WpUJRi2ZKnR_5phH3Rzgtk
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMxNDgzMjI5LCJpYXQiOjE3MzEzOTY4MjksImp0aSI6IjExMjliZmViNDc4MDRjZTg5NjhkY2MyMWQzMmRiZTBjIiwidXNlcl9pZCI6MX0.bqV5DLwBXcXbJ0o3Z3eQUGmRw3PoVzOuCpITzYyBF9E
 }
 
 body:multipart-form {
-  phone_number: 09107764043
-  national_code: 18104913711
-  otp_code: 816624
+  phone_number: 09138038121
+  national_code: 12736700277
+  otp_code: 479467
   subject: lkjlkjlk
   comment: lkjklj
   service: 1
   department: 1
   priority: low
-  answer_id : 1
+  answer_id: 1
+  answer_id: 4
   ~year: 2020
   ~tax_file: @file(/home/madassandd/Downloads/Telegram Desktop/TG030801-استخدام افسری نیروی دریایی.pdf)
   ~company: f60a3c73-d19f-47f3-9211-6f516ec1cd3c

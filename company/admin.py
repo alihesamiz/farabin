@@ -1,3 +1,5 @@
+from django.contrib import messages
+from django.db.transaction import atomic
 from django.db import transaction
 from typing import Any
 from django.contrib import admin
@@ -60,6 +62,29 @@ class CompanyServiceAdmin(admin.ModelAdmin):
     search_fields = ['company__company_title',
                      'service__description', 'purchased_date']
 
+    @admin.action(description=_("Activate selected services"))
+    def activate_services(self, request, queryset):
+        updated_count = queryset.update(is_active=True)
+        self.message_user(
+            request,
+            _("{} service(s) were successfully marked as active.").format(
+                updated_count),
+            messages.SUCCESS
+        )
+
+    @admin.action(description=_("Deactivate selected services"))
+    def deactivate_services(self, request, queryset):
+        updated_count = queryset.update(is_active=False)
+        self.message_user(
+            request,
+            _("{} service(s) were successfully marked as deactive.").format(
+                updated_count),
+            messages.SUCCESS
+        )
+
+    # Add the action to the actions list
+    actions = [activate_services, deactivate_services]
+
 
 @admin.register(TaxDeclaration)
 class TaxFileAdmin(admin.ModelAdmin):
@@ -75,15 +100,28 @@ class TaxFileAdmin(admin.ModelAdmin):
     company_title.short_description = _("Company Title")
 
     def delete_model(self, request: HttpRequest, obj: Any):
-        if obj.tax_file:
-            obj.tax_file.delete(save=False)
-        return super().delete_model(request, obj)
+        with atomic():
+            if obj.tax_file:
+                obj.tax_file.delete(save=False)
+            return super().delete_model(request, obj)
 
     def delete_queryset(self, request: HttpRequest, queryset: QuerySet) -> None:
         for obj in queryset:
-            if obj.tax_file:
-                obj.tax_file.delete(save=False)
+            with atomic():
+                if obj.tax_file:
+                    obj.tax_file.delete(save=False)
         return super().delete_queryset(request, queryset)
+
+    def get_queryset(self, request):
+        # Get the original queryset
+        qs = super().get_queryset(request)
+
+        # Allow superuser to view all tickets
+        if request.user.is_superuser:
+            return qs
+
+        # Filter tickets based on the agent's department
+        return qs.filter(is_sent=True)
 
 
 @admin.register(BalanceReport)
@@ -123,6 +161,17 @@ class BalanceReportFileAdmin(admin.ModelAdmin):
                 obj.account_turnover_file.delete(save=False)
 
         return super().delete_queryset(request, queryset)
+
+    def get_queryset(self, request):
+        # Get the original queryset
+        qs = super().get_queryset(request)
+
+        # Allow superuser to view all tickets
+        if request.user.is_superuser:
+            return qs
+
+        # Filter tickets based on the agent's department
+        return qs.filter(is_sent=True)
 
 
 @admin.register(Request)

@@ -14,3 +14,6 @@ def send_otp_task(user_id,phone_number):
     otp.save()
     util = GeneralUtils()
     util.send_otp(phone_number, otp_code)
+    
+    
+#TODO: define a new sms sending 
