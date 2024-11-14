@@ -1,14 +1,14 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from core.utils import GeneralUtils
-# Create your models here.
+from core import (utils, validators)
+
 User = get_user_model()
 
 
 def get_attachment_upload_path(instance, filename):
-    path = GeneralUtils(path="ticket_attachments", fields=[
-                        'service', 'created_at']).rename_folder(instance, filename)
+    path = utils.GeneralUtils(path="ticket_attachments", fields=[
+        'service', 'created_at']).rename_folder(instance, filename)
     return path
 
 
@@ -55,7 +55,7 @@ class TicketComment(models.Model):
 
 class Ticket(models.Model):
 
-    ATTACHMENT_FILE_PATH = GeneralUtils(
+    ATTACHMENT_FILE_PATH = utils.GeneralUtils(
         path="ticket_attachments",
         fields=['service', 'created_at'])
 
@@ -88,7 +88,7 @@ class Ticket(models.Model):
     comment = models.TextField(verbose_name=_("Comment"))
 
     attached_file = models.FileField(verbose_name=_(
-        "Attached File"), upload_to=get_attachment_upload_path, null=True, blank=True)
+        "Attached File"), upload_to=get_attachment_upload_path, null=True, blank=True,validators=[validators.image_file_validator,validators.pdf_file_validator])
 
     service = models.ForeignKey(
         'core.Service', on_delete=models.CASCADE, verbose_name=_("Service"))

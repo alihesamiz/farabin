@@ -99,6 +99,7 @@ class TicketAdmin(nested_admin.NestedModelAdmin):
     search_fields = ('subject', 'description', 'department__name')
     list_filter = ('status', 'priority', 'department')
     readonly_fields = ('created_at', 'updated_at')
+    date_hierarchy = 'created_at'
     inlines = [TicketAnswerInline]
 
     def company_title(self, ticket: Ticket):

@@ -1,6 +1,4 @@
-from django.core.files.uploadedfile import UploadedFile
 from django.core.exceptions import ValidationError
-import magic
 from django.core.validators import FileExtensionValidator
 from django.core.validators import RegexValidator
 from django.utils.translation import gettext_lazy as _
@@ -21,3 +19,12 @@ def pdf_file_validator(value):
     if value.size > max_file_size:
         raise ValidationError(
             f"File size should not exceed 1 MB. Current size: {value.size / (1024 * 1024):.2f} MB.")
+
+
+def image_file_validator(value):
+    
+    FileExtensionValidator(['jpg','png','jpeg'])(value)
+    
+    max_file_size = 2 * 1024 * 1024 
+    if value.size> max_file_size :
+        raise ValidationError(_(f"File size should be less than {max_file_size}"))
