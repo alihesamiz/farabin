@@ -1,3 +1,8 @@
+from django.utils.html import format_html
+from django.urls import reverse
+from django.template.loader import get_template
+from django.urls import path
+from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
 from django.contrib import admin
 from .models import AccountTurnOver, AnalysisReport, FinancialData, FinancialAsset,  ProfitLossStatement, SoldProductFee, BalanceReport
@@ -57,7 +62,7 @@ class FinancialAssestAdmin(admin.ModelAdmin):
 class CalculatedDataAdmin(admin.ModelAdmin):
     autocomplete_fields = ['financial_asset']
     list_display = ['company_title', 'financial_year',
-                    'financial_month', 'is_published']
+                    'financial_month', 'is_published', 'chart']
     search_fields = [
         'financial_asset__company__company_title', 'financial_asset__year', 'financial_asset__month', 'is_published']
 
@@ -79,6 +84,16 @@ class CalculatedDataAdmin(admin.ModelAdmin):
         return obj.financial_asset.month if obj.financial_asset.month else '-'
     financial_month.short_description = _("Month")
 
+    def get_absolute_url(self):
+        return reverse('', kwargs={'pk': self.pk})
+    
+    def chart(self, financial_data: FinancialData):
+
+        url = reverse('chart')
+        return format_html("<a href={}>{}</a>", url, _('View Charts'))
+    chart.short_description = _("Chart")  # Custom column name
+# broncold
+
 
 @admin.register(AnalysisReport)
 class AnalysisReportAdmin(admin.ModelAdmin):
@@ -87,6 +102,7 @@ class AnalysisReportAdmin(admin.ModelAdmin):
         "chart_name",
         "text",
     ]
+
     autocomplete_fields = ['calculated_data']
     search_fields = [
         'calculated_data__financial_asset__company__company_title',]

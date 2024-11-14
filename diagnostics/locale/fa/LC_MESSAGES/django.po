@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-09 15:09+0330\n"
+"POT-Creation-Date: 2024-11-14 12:49+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,17 +18,25 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: diagnostics/admin.py:50 diagnostics/admin.py:71
+#: diagnostics/admin.py:55 diagnostics/admin.py:76
 msgid "Company Title"
 msgstr "نام شرکت"
 
-#: diagnostics/admin.py:76 diagnostics/models.py:278
+#: diagnostics/admin.py:81 diagnostics/models.py:278
 msgid "Year"
 msgstr "سال"
 
-#: diagnostics/admin.py:80 diagnostics/models.py:281
+#: diagnostics/admin.py:85 diagnostics/models.py:281
 msgid "Month"
 msgstr "ماه"
+
+#: diagnostics/admin.py:93
+msgid "View Charts"
+msgstr "دیدن نمودار"
+
+#: diagnostics/admin.py:94
+msgid "Chart"
+msgstr "نمودار"
 
 #: diagnostics/apps.py:8
 msgid "Diagnostic"

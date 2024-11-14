@@ -1,3 +1,5 @@
+from django.shortcuts import render
+from .models import AnalysisReport
 from itertools import groupby
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import NotFound
@@ -97,3 +99,7 @@ class DiagnosticAnalysisViewSet(ModelViewSet):
         ]
 
         return Response(result)
+
+
+def chart_view(request):
+    pass
