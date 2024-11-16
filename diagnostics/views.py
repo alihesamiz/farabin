@@ -1,5 +1,9 @@
+from django.utils.decorators import method_decorator
+from django.contrib.admin import site as admin_site
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
+from django.contrib.admin.views.decorators import staff_member_required
+
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 import base64
 import io
@@ -114,6 +118,7 @@ class DiagnosticAnalysisViewSet(ModelViewSet):
         return Response(result)
 
 
+@method_decorator(staff_member_required, name='dispatch')
 class CompanyFinancialDataView(View):
     def get(self, request, company_id):
         # Fetch the company profile
@@ -121,8 +126,12 @@ class CompanyFinancialDataView(View):
 
         financial_data = FinancialData.objects.filter(
             financial_asset__company=company).order_by('financial_asset__year', 'financial_asset__month')
-        breadcrumbs = [
-            {"name": _("Dashboard"), "url": reverse('admin:index')},
+
+        admin_context = admin_site.each_context(request)
+        # admin_context['title'] = _("Company Financial Data")
+        admin_context['breadcrumbs'] = [
+            {"name": _("Home"), "url": reverse('admin:index')},
+            {"name": _("Diagnostic"), "url": '/admin/diagnostics/'},
             {"name": _("Analysis Reports"), "url": reverse(
                 'admin:diagnostics_analysisreport_changelist')},
             {"name": company.company_title, "url": ""},
@@ -251,5 +260,5 @@ class CompanyFinancialDataView(View):
             'construction_overhead': construction_overhead,
             'consuming_material': consuming_material,
             'production_total_price': production_total_price,
-            'breadcrumbs': breadcrumbs,  # Add breadcrumbs to the context
+            **admin_context,  # Include admin context for breadcrumbs
         })

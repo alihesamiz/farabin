@@ -1,4 +1,46 @@
-{% extends "admin/base_site.html" %}{% block content %} {% load static %}
+{% extends "admin/base_site.html" %} {% load static %} {%block breadcrumbs %}
+<div>
+  <nav
+    aria-label="breadcrumb"
+    style="
+      background-color: rgb(68, 183, 139);
+      padding: 10px;
+      padding-right: 30px;
+    "
+  >
+    <ol
+      style="
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: flex;
+        flex-wrap: wrap;
+      "
+    >
+      {% for crumb in breadcrumbs %} {% if crumb.url %}
+      <li style="display: inline; margin-right: 5px; font-size: 16px">
+        <a
+          href="{{ crumb.url }}"
+          style="color: #fff; text-decoration: none"
+          onmouseover="this.style.color='rgb(188, 239, 210)';"
+          onmouseout="this.style.color='#fff';"
+        >
+          {{ crumb.name }}
+        </a>
+        <span style="margin: 0 5px; color: #fff">›</span>
+      </li>
+      {% else %}
+      <li
+        style="display: inline; color: #fff; font-weight: bold"
+        aria-current="page"
+      >
+        {{ crumb.name }}
+      </li>
+      {% endif %} {% endfor %}
+    </ol>
+  </nav>
+</div>
+{% endblock breadcrumbs %} {% block content %}
 
 <script src="{% static 'diagnostics/js/charts.js' %}"></script>
 <link
@@ -17,21 +59,6 @@
   rel="stylesheet"
   href="{% static 'diagnostics/css/bootstrap.min.css' %}"
 />
-<div class="breadcrumbs">
-  <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-      {% for crumb in breadcrumbs %} {% if crumb.url %}
-      <li class="breadcrumb-item">
-        <a href="{{ crumb.url }}">{{ crumb.name }}></a>
-      </li>
-      {% else %}
-      <li class="breadcrumb-item active" aria-current="page">
-        {{ crumb.name }}
-      </li>
-      {% endif %} {% endfor %}
-    </ol>
-  </nav>
-</div>
 
 <div class="chart">
   <div

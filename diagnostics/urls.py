@@ -9,6 +9,6 @@ router.register(r'', DiagnosticAnalysisViewSet,
                 basename='diagnostic-analysis')
 
 urlpatterns = router.urls + [
-    path('company-financial-data/<uuid:company_id>/',
+    path('admin/diagnostics/analysisreport/<uuid:company_id>/',
          CompanyFinancialDataView.as_view(), name='company_financial_data'),
 ]

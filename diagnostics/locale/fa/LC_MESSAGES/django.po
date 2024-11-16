@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-14 12:49+0330\n"
+"POT-Creation-Date: 2024-11-16 21:01+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: diagnostics/admin.py:55 diagnostics/admin.py:76
+#: diagnostics/admin.py:57 diagnostics/admin.py:76
 msgid "Company Title"
 msgstr "نام شرکت"
 
@@ -30,15 +30,15 @@ msgstr "سال"
 msgid "Month"
 msgstr "ماه"
 
-#: diagnostics/admin.py:93
-msgid "View Charts"
-msgstr "دیدن نمودار"
+#: diagnostics/admin.py:129
+msgid "No data available"
+msgstr "داده‌ای موجود نیست"
 
-#: diagnostics/admin.py:94
+#: diagnostics/admin.py:130
 msgid "Chart"
 msgstr "نمودار"
 
-#: diagnostics/apps.py:8
+#: diagnostics/apps.py:8 diagnostics/views.py:134
 msgid "Diagnostic"
 msgstr "عارضه‌یابی(سرآمد)"
 
@@ -704,7 +704,7 @@ msgstr "تحلیل  هر نمودار را وارد کنید"
 msgid "Analysis Report"
 msgstr "تحلیل"
 
-#: diagnostics/models.py:428
+#: diagnostics/models.py:428 diagnostics/views.py:135
 msgid "Analysis Reports"
 msgstr "تحلیل‌ها"
 
@@ -743,6 +743,13 @@ msgstr "افول ۱"
 #: diagnostics/utils.py:10
 msgid "Decline 2"
 msgstr "افول ۲"
+
+#: diagnostics/views.py:133
+msgid "Home"
+msgstr "شروع"
+
+#~ msgid "View Charts"
+#~ msgstr "دیدن نمودار"
 
 #~ msgid "Is Published"
 #~ msgstr "منتشر شود؟"
