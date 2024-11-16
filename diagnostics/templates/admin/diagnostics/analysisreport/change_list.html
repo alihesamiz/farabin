@@ -1,0 +1,21 @@
+{% extends "admin/change_list.html" %} {% block content %} {{ block.super }}
+
+<h1>نمودار‌ شرکت‌ها</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>نام شرکت</th>
+      <th>نمودار</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for company_data in company_financial_data %}
+    <tr>
+      <td>{{ company_data.company.company_title }}</td>
+      <td>{{company_data.chart|safe}}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

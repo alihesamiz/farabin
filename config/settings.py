@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     "admin_interface",
     "admin_notification",
     "colorfield",
-    # "helpdesk",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -59,12 +58,12 @@ PROJECT_APPS = [
 ]
 
 THIRED_PARTY_APPS = [
-    'django_celery_beat',
+    # 'django_celery_beat',
     'drf_spectacular',
     'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
-    'rest_framework_simplejwt.token_blacklist',
+    # 'rest_framework_simplejwt.token_blacklist',
     'django_seed',
     'nested_admin',
     'channels',

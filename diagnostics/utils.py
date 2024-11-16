@@ -253,9 +253,10 @@ class FinancialCalculations:
         else:
             self.current_ratio = (0)
         if self.current_debt != 0:
+            print(self.instant_ratio, self.current_asset,
+                  self.inventory, self.current_debt)
             self.instant_ratio = (
-                (self.current_asset -
-                    self.inventory)/self.current_debt
+                (self.current_asset - self.inventory)/self.current_debt
             )
         else:
             self.instant_ratio = (0)

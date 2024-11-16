@@ -1,0 +1,168 @@
+{% extends "admin/base_site.html" %}{% block content %} {% load static %}
+
+<script src="{% static 'diagnostics/js/charts.js' %}"></script>
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+  integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+  crossorigin="anonymous"
+/>
+<script
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+  crossorigin="anonymous"
+></script>
+<link rel="stylesheet" href="{% static 'diagnostics/css/style.css' %}" />
+<link
+  rel="stylesheet"
+  href="{% static 'diagnostics/css/bootstrap.min.css' %}"
+/>
+<div class="breadcrumbs">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      {% for crumb in breadcrumbs %} {% if crumb.url %}
+      <li class="breadcrumb-item">
+        <a href="{{ crumb.url }}">{{ crumb.name }}></a>
+      </li>
+      {% else %}
+      <li class="breadcrumb-item active" aria-current="page">
+        {{ crumb.name }}
+      </li>
+      {% endif %} {% endfor %}
+    </ol>
+  </nav>
+</div>
+
+<div class="chart">
+  <div
+    style="
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 10vh;
+      margin-top: 10px;
+      color: rgb(12, 75, 51);
+      text-shadow: 1px 1px 5px rgb(68, 183, 139);
+    "
+  >
+    <h1>{{ company.company_title }}</h1>
+  </div>
+  <div class="flex-container">
+    <!-- Sale Chart -->
+    <div class="chart-box">
+      <canvas
+        id="SaleChart"
+        data-year="{{ year|safe }}"
+        data-net-sale="{{ net_sale|safe }}"
+      ></canvas>
+    </div>
+    <!-- Asset Chart-->
+    <div class="chart-box">
+      <canvas
+        id="AssetChart"
+        data-non-current-asset="{{ non_current_asset|safe }}"
+        data-current-asset="{{current_asset|safe}}"
+        data-total-asset="{{total_asset|safe}}"
+      ></canvas>
+    </div>
+    <!-- Debt Chart -->
+    <div class="chart-box">
+      <canvas
+        id="DebtChart"
+        data-non-current-debt="{{ non_current_debt|safe }}"
+        data-current-debt="{{current_debt|safe}}"
+        data-total-debt="{{total_debt|safe}}"
+      ></canvas>
+    </div>
+    <!-- Bankrupsy Chart -->
+    <div class="chart-box">
+      <canvas
+        id="BankrupsyChart"
+        data-altman-bankrupsy="{{altman_bankrupsy_ratio|safe}}"
+      ></canvas>
+    </div>
+    <!-- Life Cycle Chart -->
+
+    <!-- Equity Chart -->
+    <div class="chart-box">
+      <canvas
+        id="EquityChart"
+        total-equity="{{total_equity|safe}}"
+        total-debt="{{total_debt|safe}}"
+        total-sum-equity-debt="{{total_sum_equity_debt|safe}}"
+      ></canvas>
+    </div>
+    <!-- Inventory Chart -->
+    <div class="chart-box">
+      <canvas id="InventoryChart" data-inventory="{{inventory| safe}}"></canvas>
+    </div>
+    <!-- Salary Chart -->
+    <div class="chart-box">
+      <canvas
+        id="SalaryChart"
+        data-salary-fee="{{ salary_fee| safe}}"
+        data-production-fee="{{ production_fee| safe}}"
+        data-salary-production-fee="{{ salary_production_fee| safe}}"
+      ></canvas>
+    </div>
+    <!-- Profitibility Chart -->
+    <div class="chart-box">
+      <canvas
+        id="ProfitibilityChart"
+        data-roa="{{ roa| safe}}"
+        data-roab="{{ roab| safe}}"
+        data-roe="{{ roe| safe}}"
+        data-efficiency="{{ efficiency| safe}}"
+        data-gross-profit-margin="{{ gross_profit_margin| safe}}"
+        data-net-profit-margin="{{ profit_margin_ratio| safe}}"
+      ></canvas>
+    </div>
+    <!-- Leverage Chart -->
+    <div class="chart-box">
+      <canvas
+        id="LeverageChart"
+        data-debt-ratio="{{ debt_ratio| safe}}"
+        data-capital-ratio="{{ capital_ratio| safe}}"
+        data-property-ratio="{{ proprietary_ratio| safe}}"
+        data-equity-per-debt-ratio="{{ equity_per_total_debt_ratio| safe}}"
+        data-equity-per-asset-ratio="{{ equity_per_total_non_current_asset_ratio| safe}}"
+      ></canvas>
+    </div>
+    <!-- Liquidity Chart -->
+    <div class="chart-box">
+      <canvas
+        id="LiquidityChart"
+        data-instant-ratio="{{instant_ratio | safe}}"
+        data-current-ratio="{{current_ratio | safe}}"
+      ></canvas>
+    </div>
+    <!--  Agility Chart -->
+    <div class="chart-box">
+      <canvas
+        id="AgilityChart"
+        data-stock-turnover="{{stock_turnover|safe}}"
+      ></canvas>
+    </div>
+    <div class="chart-box">
+      <canvas
+        id="ProfitChart"
+        data-gross-profit="{{ gross_profit| safe}}"
+        data-operation-profit="{{ operational_profit| safe}}"
+        data-proceed-profit="{{ proceed_profit| safe}}"
+        data-net-profit="{{ net_profit| safe}}"
+      ></canvas>
+    </div>
+    <div class="chart-box">
+      <canvas
+        id="PriceChart"
+        data-construction-overhead="{{construction_overhead| safe}}"
+        data-consuming-material="{{consuming_material| safe}}"
+        data-production-total-price="{{production_total_price| safe}}"
+      ></canvas>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+{% endblock %}

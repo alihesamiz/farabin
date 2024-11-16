@@ -1,3 +1,4 @@
+from .paginations import FilePagination
 from django.db.transaction import atomic
 from django.core.files.storage import default_storage
 from django.views.decorators.clickjacking import xframe_options_exempt
@@ -11,6 +12,7 @@ from rest_framework.decorators import action
 from rest_framework import status, viewsets
 from rest_framework.views import APIView
 from rest_framework import status
+from rest_framework.pagination import PageNumberPagination
 from PyPDF2 import PdfReader, PdfWriter
 import os
 from .models import BalanceReport,  CompanyProfile, TaxDeclaration
@@ -82,6 +84,7 @@ class DashboardViewSet(APIView):
 
 class TaxDeclarationViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
+    # pagination_class = FilePagination
 
     def get_queryset(self):
         return TaxDeclaration.objects.filter(company__user=self.request.user).order_by('-year').all()
@@ -101,7 +104,6 @@ class TaxDeclarationViewSet(viewsets.ModelViewSet):
         try:
             instance = self.get_object()
             self.perform_destroy(instance)
-            print('asdklashjdlkashdkj')
             return Response({"success": "file deleted"}, status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
             return Response({"error": "Failed to delete file"}, status=status.HTTP_400_BAD_REQUEST)
@@ -152,6 +154,7 @@ class TaxDeclarationViewSet(viewsets.ModelViewSet):
 
 class BalanceReportViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
+    # pagination_class = FilePagination
 
     def get_queryset(self):
         return BalanceReport.objects.filter(company__user=self.request.user).order_by('-year', 'month').all()

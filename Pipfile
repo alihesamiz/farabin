@@ -31,6 +31,7 @@ django-admin-notification = "*"
 django-nested-admin = "*"
 channels = "*"
 channels-redis = "*"
+matplotlib = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"
