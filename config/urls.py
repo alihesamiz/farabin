@@ -14,7 +14,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from admin_notification.views import check_notification_view
+# from admin_notification.views import check_notification_view
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from django.contrib import admin
 from django.urls import path, include
@@ -44,8 +44,9 @@ urlpatterns = [
     # Redoc UI
     path('api/schema/redoc/',
          SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
-    path('check/notification', check_notification_view,
-         name="check_notifications"),
+    
+    # path('check/notification', check_notification_view,
+    #      name="check_notifications"),
 
 
     # path(r'^jet/', include('jet.urls', 'jet')),  # Django JET URLS

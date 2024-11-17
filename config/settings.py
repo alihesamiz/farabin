@@ -39,7 +39,6 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     "admin_interface",
-    "admin_notification",
     "colorfield",
     'django.contrib.admin',
     'django.contrib.auth',
@@ -235,4 +234,4 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # HELPDESK_TEAMS_MODE_ENABLED = False
 
-NOTIFICATION_MODELS = 'ticket.Ticket'
+# NOTIFICATION_MODELS = 'ticket.Ticket'

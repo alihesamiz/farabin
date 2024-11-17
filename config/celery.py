@@ -13,7 +13,8 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks()
 # Ensure 'company.tasks' is included
 app.autodiscover_tasks(lambda: ['company.tasks'])
-
+app.conf.broker_url='redis://redis:6379/0'
+app.conf.result_backend='redis://redis:6379/0'
 
 @app.task(bind=True)
 def debug_task(self):
