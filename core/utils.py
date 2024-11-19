@@ -17,6 +17,10 @@ class GeneralUtils:
 
     # SMS PROVIDER API
     url = "https://api2.ippanel.com/api/v1/sms/pattern/normal/send"
+    
+    GREEN = "\033[92m"
+    
+    RESET = "\033[0m"
 
     headers = {
         'apikey': 'BXb2ovSeYtiAbfVT26gEb50Dmix_-nhAAQRp2v5yfXs=',
@@ -50,7 +54,8 @@ class GeneralUtils:
             response = requests.request(
                 "POST", self.url, headers=self.headers, data=payload)
 
-        print(f"Sending OTP {otp} to {phone_number}")
+        print(f"{self.GREEN}Sending OTP {otp} to {phone_number}")
+        
         return response.text
 
     # SLUGIFY a string, keeping Persian characters and numbers.
@@ -162,7 +167,8 @@ class GeneralUtils:
 
             response = requests.request(
                 "POST", self.url, headers=self.headers, data=payload)
-
+        
+        
         print(f"Sending {message}to {editors}")
 
         return response.text

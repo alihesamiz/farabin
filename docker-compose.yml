@@ -1,8 +1,10 @@
-# version: '3.12'
+version: '3.12'
 
 services:
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     command: sh entrypoint.sh
     ports:
       - "8000:8000"  # Expose port 8000
@@ -17,7 +19,9 @@ services:
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
 
   celery:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     command: celery -A config worker -l INFO
     volumes:
       - .:/app
