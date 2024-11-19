@@ -47,7 +47,9 @@ class OTPViewSet(viewsets.ViewSet):
             )
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+
+        if not user.is_active:
+            return Response({'error': 'User is not active.'}, status=status.HTTP_401_UNAUTHORIZED)
         if not created and user.national_code != national_code:
             return Response({'error': 'The national code does not match the phone number.'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -60,7 +62,7 @@ class OTPViewSet(viewsets.ViewSet):
             }, status=status.HTTP_429_TOO_MANY_REQUESTS)
 
         send_otp_task.delay(user.id, phone_number)
-        
+
         # otp = OTP.objects.create(user=user, otp_code=OTP.generate_otp(self))
 
         # self.util.send_otp(phone_number, otp.otp_code)
