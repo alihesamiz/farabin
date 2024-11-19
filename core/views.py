@@ -9,7 +9,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status, viewsets
-#
+from rest_framework.exceptions import AuthenticationFailed
+
 from .tasks import send_otp_task
 from company.models import CompanyProfile
 from .utils import GeneralUtils
@@ -49,7 +50,9 @@ class OTPViewSet(viewsets.ViewSet):
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         if not user.is_active:
-            return Response({'error': 'User is not active.'}, status=status.HTTP_401_UNAUTHORIZED)
+            raise AuthenticationFailed('User account is disabled.')
+        
+        
         if not created and user.national_code != national_code:
             return Response({'error': 'The national code does not match the phone number.'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -87,6 +90,9 @@ class OTPViewSet(viewsets.ViewSet):
             if otp and otp.is_valid() and otp.otp_code == otp_code:
                 company, created = CompanyProfile.objects.get_or_create(
                     user=user)
+                
+                if not user.is_active:
+                    raise AuthenticationFailed('User account is disabled.')
 
                 refresh = RefreshToken.for_user(user)
 
