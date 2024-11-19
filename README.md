@@ -45,3 +45,13 @@ You can either use `pipenv` or Python's `venv`. Follow the steps for your chosen
     yourvenvname\Scripts\activate
     pip install -r requirements.txt   
     ```
+
+---
+### 3. Running the Project:
+After setting up the environment, execute the following commands to initialize and run the project:
+    ```bash
+    python manage.py makemigrations
+    python manage.py migrate
+    python manage.py collectstatic --noinput
+    python manage.py runserver
+    ```
