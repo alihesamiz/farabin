@@ -54,4 +54,4 @@ After setting up the environment, execute the following commands to initialize a
     python manage.py migrate
     python manage.py collectstatic --noinput
     python manage.py runserver
-    ```
+   ```
