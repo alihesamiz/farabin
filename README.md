@@ -45,9 +45,7 @@ You can either use `pipenv` or Python's `venv`. Follow the steps for your chosen
     yourvenvname\Scripts\activate
     pip install -r requirements.txt   
     ```
-
----
-### 3. Running the Project:
+3. Running the Project:
 After setting up the environment, execute the following commands to initialize and run the project:
    ```bash
     python manage.py makemigrations
@@ -58,5 +56,5 @@ After setting up the environment, execute the following commands to initialize a
 
 
 --- 
-### 4. Accessing the Project:
+### 3. Accessing the Project:
 Open your web browser and navigate to `http://localhost:8000/` to access the project.
