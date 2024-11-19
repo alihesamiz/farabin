@@ -49,7 +49,7 @@ You can either use `pipenv` or Python's `venv`. Follow the steps for your chosen
 ---
 ### 3. Running the Project:
 After setting up the environment, execute the following commands to initialize and run the project:
-    ```bash
+   ```bash
     python manage.py makemigrations
     python manage.py migrate
     python manage.py collectstatic --noinput
