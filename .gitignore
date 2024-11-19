@@ -15,8 +15,8 @@ static/
 staticfiles/
 
 # Environment variables
-.env
-*.env
+# .env
+# *.env
 
 # Django migrations
 */migrations/*.py
