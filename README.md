@@ -35,7 +35,7 @@ You can either use `pipenv` or Python's `venv`. Follow the steps for your chosen
     python -m venv yourvenvname
    ```
 2. Activate the virtual environment and install dependencies:
-- **Linux/Max**:
+- **Linux/Mac**:
   ```bash
   source yourvenvname/bin/activate
   pip install -r requirements.txt
@@ -55,3 +55,8 @@ After setting up the environment, execute the following commands to initialize a
     python manage.py collectstatic --noinput
     python manage.py runserver
    ```
+
+
+--- 
+### 4. Accessing the Project:
+Open your web browser and navigate to `http://localhost:8000/` to access the project.
