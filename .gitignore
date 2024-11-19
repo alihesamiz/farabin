@@ -80,7 +80,7 @@ coverage.xml
 celerybeat-schedule
 
 # dotenv
-.env
+# .env
 
 # virtualenv
 venv/
