@@ -92,7 +92,7 @@ class TaxFileAdmin(admin.ModelAdmin):
                     'is_saved',
                     'is_sent',]
 
-    search_fields = ['company__company_title', 'purchased_date', 'year']
+    search_fields = ['company__company_title', 'year']
 
     @admin.display(ordering='company__company_title')
     def company_title(self, tax_declaration: TaxDeclaration):
@@ -132,8 +132,7 @@ class BalanceReportFileAdmin(admin.ModelAdmin):
                     'is_saved',
                     'is_sent',]
 
-    search_fields = ['company__company_title',
-                     'purchased_date', 'year', 'month']
+    search_fields = ['company__company_title', 'year', 'month']
 
     @admin.display(ordering='company__company_title')
     def company_title(self, tax_declaration: TaxDeclaration):

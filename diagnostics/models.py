@@ -415,7 +415,7 @@ class AnalysisReport(models.Model):
     ]
 
     calculated_data = models.ForeignKey(
-        'FinancialData', on_delete=models.CASCADE, related_name='analysis_reports', verbose_name=_('Calculated Data'), help_text=_("Select company assosiated with the year for entering the analysis text report. it would be better to only choose the last yaer of each company"))
+        FinancialData, on_delete=models.CASCADE, related_name='analysis_reports', verbose_name=_('Calculated Data'), help_text=_("Select company assosiated with the year for entering the analysis text report. it would be better to only choose the last yaer of each company"))
 
     chart_name = models.CharField(max_length=15, verbose_name=_(
         'Chart Name'), help_text=_("Enter the name of each chart"), choices=CHART_CHOICES,)

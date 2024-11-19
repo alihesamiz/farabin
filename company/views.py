@@ -127,7 +127,7 @@ class TaxDeclarationViewSet(viewsets.ModelViewSet):
             pass
 
     @xframe_options_exempt
-    @action(detail=True, methods=['get'])
+    @action(detail=True, methods=['get'],url_path='pdf')
     def pdf(self, request, pk=None,):
         tax_declaration = self.get_object()
         pdf_path = tax_declaration.tax_file.path  # Adjust based on your file field

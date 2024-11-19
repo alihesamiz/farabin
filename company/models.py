@@ -174,6 +174,7 @@ class CompanyFileAbstract(models.Model):
     is_sent = models.BooleanField(default=False, verbose_name=_("Is Sent"))
 
     class Meta:
+        
         abstract = True
 
 

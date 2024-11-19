@@ -1,29 +1,24 @@
+from itertools import groupby
+from django.contrib.admin.views.decorators import staff_member_required
+from django.utils.translation import gettext_lazy as _
 from django.utils.decorators import method_decorator
 from django.contrib.admin import site as admin_site
-from django.utils.translation import gettext_lazy as _
-from django.urls import reverse
-from django.contrib.admin.views.decorators import staff_member_required
-
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-import base64
-import io
-import matplotlib.pyplot as plt
-from company.models import CompanyProfile
-from django.views import View
 from django.shortcuts import render
-from typing import Any
-from itertools import groupby
+from django.urls import reverse
+from django.db.models import Q
+from django.views import View
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework import status
+from .models import AnalysisReport, FinancialData
+from company.models import CompanyProfile
 from .serializers import (
-    AgilityChartSerializer, AssetChartSerializer, BankrupsyChartSerializer, CostChartSerializer, DebtChartSerializer, EquityChartSerializer, FinancialAssetSerializer, FinancialDataSerializer,
-    InventoryChartSerializer, LeverageChartSerializer, LiquidityChartSerializer, FinancialDataSerializer, MonthDataSerializer, MonthlyFinancialDataSerializer, ProfitChartSerializer, ProfitibilityChartSerializer, SaleChartSerializer, YearlyFinanceDataSerializer
+    AgilityChartSerializer, AnalysisReportSerializer, AssetChartSerializer, BankrupsyChartSerializer, CostChartSerializer, DebtChartSerializer, EquityChartSerializer, FinancialDataSerializer,
+    InventoryChartSerializer, LeverageChartSerializer, LiquidityChartSerializer, FinancialDataSerializer, MonthDataSerializer,  ProfitChartSerializer, ProfitibilityChartSerializer, SaleChartSerializer, YearlyFinanceDataSerializer
 )
-from .models import FinancialData
 
 
 class DiagnosticAnalysisViewSet(ModelViewSet):
@@ -71,6 +66,30 @@ class DiagnosticAnalysisViewSet(ModelViewSet):
         if not queryset.exists():
             raise NotFound(detail="No financial data found.")
         return queryset
+
+    @action(detail=False, methods=['get'], url_path='analysis', url_name='analysis')
+    def analysis(self, request):
+        company = self.request.user.company
+
+        analysis = AnalysisReport.objects.select_related("calculated_data").prefetch_related("calculated_data__financial_asset").filter(
+            calculated_data__financial_asset__company=company,
+            calculated_data__is_published=True
+        ).filter(
+            Q(calculated_data__financial_asset__is_tax_record=False) |
+            Q(calculated_data__financial_asset__is_tax_record=True)
+        )
+        monthly_analysis = [
+            item for item in analysis if not item.calculated_data.financial_asset.is_tax_record]
+        yearly_analysis = [
+            item for item in analysis if item.calculated_data.financial_asset.is_tax_record]
+
+        # Serialize results
+        monthly_serializer = AnalysisReportSerializer(
+            monthly_analysis, many=True)
+        yearly_serializer = AnalysisReportSerializer(
+            yearly_analysis, many=True)
+
+        return Response({"monthly_analysis": monthly_serializer.data, "yearly_analysis": yearly_serializer.data})
 
     @action(detail=False, methods=['get'], url_path='chart/(?P<slug>[^/.]+)', url_name='chart')
     def chart(self, request, slug=None):
