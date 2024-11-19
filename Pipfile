@@ -18,7 +18,6 @@ flower = "*"
 django-celery-beat = "*"
 celery = {extras = ["redis"], version = "*"}
 django-extensions = "*"
-pypdf2 = "*"
 pdf2image = "*"
 pillow = "*"
 python-dateutil = "*"

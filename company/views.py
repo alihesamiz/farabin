@@ -13,7 +13,6 @@ from rest_framework import status, viewsets
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
-from PyPDF2 import PdfReader, PdfWriter
 import os
 from .models import BalanceReport,  CompanyProfile, TaxDeclaration
 from .serializers import (
@@ -126,24 +125,24 @@ class TaxDeclarationViewSet(viewsets.ModelViewSet):
         except Exception as e:
             pass
 
-    @xframe_options_exempt
-    @action(detail=True, methods=['get'],url_path='pdf')
-    def pdf(self, request, pk=None,):
-        tax_declaration = self.get_object()
-        pdf_path = tax_declaration.tax_file.path  # Adjust based on your file field
+    # @xframe_options_exempt
+    # @action(detail=True, methods=['get'],url_path='pdf')
+    # def pdf(self, request, pk=None,):
+    #     tax_declaration = self.get_object()
+    #     pdf_path = tax_declaration.tax_file.path  # Adjust based on your file field
 
-        # Ensure the file exists
-        if not os.path.exists(pdf_path):
-            return Response({"error": "File not found"}, status=status.HTTP_404_NOT_FOUND)
+    #     # Ensure the file exists
+    #     if not os.path.exists(pdf_path):
+    #         return Response({"error": "File not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        response = FileResponse(open(pdf_path, 'rb'),
-                                content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="{
-            tax_declaration.tax_file.name}"'
-        # Customize X-Frame-Options if needed for frontend embedding compatibility
-        response['X-Frame-Options'] = 'ALLOWALL'
+    #     response = FileResponse(open(pdf_path, 'rb'),
+    #                             content_type='application/pdf')
+    #     response['Content-Disposition'] = f'attachment; filename="{
+    #         tax_declaration.tax_file.name}"'
+    #     # Customize X-Frame-Options if needed for frontend embedding compatibility
+    #     response['X-Frame-Options'] = 'ALLOWALL'
 
-        return response
+    #     return response
 
     @action(detail=False, methods=['get'])
     def year(self, request):
@@ -171,46 +170,46 @@ class BalanceReportViewSet(viewsets.ModelViewSet):
 
         return context
 
-    @method_decorator(xframe_options_exempt, name='pdf')
-    @action(detail=True, methods=['get'])
-    def pdf(self, request, pk=None):
-        balance_report = self.get_object()
+    # @method_decorator(xframe_options_exempt, name='pdf')
+    # @action(detail=True, methods=['get'])
+    # def pdf(self, request, pk=None):
+    #     balance_report = self.get_object()
 
-        pdf_files = [
-            balance_report.balance_report_file.path,
-            balance_report.profit_loss_file.path,
-            balance_report.sold_product_file.path,
-            balance_report.account_turnover_file.path,
-        ]
+    #     pdf_files = [
+    #         balance_report.balance_report_file.path,
+    #         balance_report.profit_loss_file.path,
+    #         balance_report.sold_product_file.path,
+    #         balance_report.account_turnover_file.path,
+    #     ]
 
-        pdf_writer = PdfWriter()
+    #     pdf_writer = PdfWriter()
 
-        for pdf_path in pdf_files:
-            if os.path.exists(pdf_path):
-                try:
-                    pdf_reader = PdfReader(pdf_path)
+    #     for pdf_path in pdf_files:
+    #         if os.path.exists(pdf_path):
+    #             try:
+    #                 pdf_reader = PdfReader(pdf_path)
 
-                    if len(pdf_reader.pages) > 0:
-                        pdf_writer.add_page(pdf_reader.pages[0])
+    #                 if len(pdf_reader.pages) > 0:
+    #                     pdf_writer.add_page(pdf_reader.pages[0])
 
-                except Exception as e:
-                    return Response({"error": f"Error processing {pdf_path}: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    #             except Exception as e:
+    #                 return Response({"error": f"Error processing {pdf_path}: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-            else:
-                return Response({"error": f"File not found: {pdf_path}"}, status=status.HTTP_404_NOT_FOUND)
+    #         else:
+    #             return Response({"error": f"File not found: {pdf_path}"}, status=status.HTTP_404_NOT_FOUND)
 
-        # Save the new PDF with the first pages
-        response_pdf_path = 'first_pages.pdf'
-        with open(response_pdf_path, 'wb') as output_pdf_file:
-            pdf_writer.write(output_pdf_file)
+    #     # Save the new PDF with the first pages
+    #     response_pdf_path = 'first_pages.pdf'
+    #     with open(response_pdf_path, 'wb') as output_pdf_file:
+    #         pdf_writer.write(output_pdf_file)
 
-        # Serve the response PDF file
-        response = FileResponse(
-            open(response_pdf_path, 'rb'), content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="first_pages.pdf"'
-        response['X-Frame-Options'] = 'ALLOWALL'  # Customize as needed
+    #     # Serve the response PDF file
+    #     response = FileResponse(
+    #         open(response_pdf_path, 'rb'), content_type='application/pdf')
+    #     response['Content-Disposition'] = 'attachment; filename="first_pages.pdf"'
+    #     response['X-Frame-Options'] = 'ALLOWALL'  # Customize as needed
 
-        return response
+    #     return response
 
     @action(detail=False, methods=['get'])
     def year(self, request):

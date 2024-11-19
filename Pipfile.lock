@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "3789df8406797fbdafd60677156e4e794e02dece8a31b56ca81cd5ecc69cfac8"
+            "sha256": "90ba8b5dcb6c0b362376a2a2c0725fe034c613dac2ebb815e8224de4a0c4d335"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -1045,15 +1045,6 @@
             "markers": "python_version >= '3.9'",
             "version": "==3.2.0"
         },
-        "pypdf2": {
-            "hashes": [
-                "sha256:a74408f69ba6271f71b9352ef4ed03dc53a31aa404d29b5d31f53bfecfee1440",
-                "sha256:d16e4205cfee272fbdc0568b68d82be796540b1537508cef59388f839c191928"
-            ],
-            "index": "pypi",
-            "markers": "python_version >= '3.6'",
-            "version": "==3.0.1"
-        },
         "python-crontab": {
             "hashes": [
                 "sha256:40067d1dd39ade3460b2ad8557c7651514cd3851deffff61c5c60e1227c5c36b",
@@ -1943,12 +1934,12 @@
         },
         "locust": {
             "hashes": [
-                "sha256:54a4ec106ec0ee79305deda4659b3f325c1e87b134face75d5da6525adde6316",
-                "sha256:d2920bc7f19d7f3bedee6cc2cafddc547ba128cba51e5e339c308e14fb88f1a7"
+                "sha256:2b92df32c414a272dde321da4afd9e148b5fec32213fe2a260885a469374132b",
+                "sha256:ebfce96f82b0b31418a498ae97724fdba9a41754e88471de56920339f3974347"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.9'",
-            "version": "==2.32.2"
+            "version": "==2.32.3"
         },
         "markupsafe": {
             "hashes": [
