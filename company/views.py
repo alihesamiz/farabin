@@ -1,3 +1,5 @@
+from django.conf import settings
+from ticket.models import Ticket
 from .paginations import FilePagination
 from django.db.transaction import atomic
 from django.core.files.storage import default_storage
@@ -58,6 +60,8 @@ class DashboardViewSet(APIView):
             report_files = BalanceReport.objects.filter(
                 company=company)
 
+            tickets = Ticket.objects.filter(issuer=company).count()
+
             tax_files_count = tax_files.count()
             report_files_count = report_files.count()
 
@@ -72,7 +76,7 @@ class DashboardViewSet(APIView):
                 'tax_files_count': tax_files_count,
                 'report_files_count': report_files_count*4,
                 'all_uploaded_files': tax_files_count + report_files_count*4,
-                "tickets": 0
+                "tickets": tickets
             }
 
             return Response(response_data)
@@ -125,30 +129,62 @@ class TaxDeclarationViewSet(viewsets.ModelViewSet):
         except Exception as e:
             pass
 
-    # @xframe_options_exempt
-    # @action(detail=True, methods=['get'],url_path='pdf')
-    # def pdf(self, request, pk=None,):
-    #     tax_declaration = self.get_object()
-    #     pdf_path = tax_declaration.tax_file.path  # Adjust based on your file field
+    @xframe_options_exempt
+    @action(detail=True, methods=['get'], url_path='pdf')
+    def pdf(self, request, pk=None,):
+        tax_declaration = self.get_object()
+        pdf_path = tax_declaration.tax_file.path  # Adjust based on your file field
 
-    #     # Ensure the file exists
-    #     if not os.path.exists(pdf_path):
-    #         return Response({"error": "File not found"}, status=status.HTTP_404_NOT_FOUND)
+        # Ensure the file exists
+        if not os.path.exists(pdf_path):
+            return Response({"error": "File not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    #     response = FileResponse(open(pdf_path, 'rb'),
-    #                             content_type='application/pdf')
-    #     response['Content-Disposition'] = f'attachment; filename="{
-    #         tax_declaration.tax_file.name}"'
-    #     # Customize X-Frame-Options if needed for frontend embedding compatibility
-    #     response['X-Frame-Options'] = 'ALLOWALL'
+        response = FileResponse(open(pdf_path, 'rb'),
+                                content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{
+            tax_declaration.tax_file.name}"'
+        # Customize X-Frame-Options if needed for frontend embedding compatibility
+        response['X-Frame-Options'] = 'ALLOWALL'
 
-    #     return response
+        return response
 
     @action(detail=False, methods=['get'])
     def year(self, request):
         tax_declarations = self.get_queryset()
         years = tax_declarations.values('year').distinct()
         return Response(years, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['put', 'patch'], url_path='send')
+    def send(self, request):
+        """
+        Update the 'is_sent' field to True for multiple TaxDeclaration instances.
+        Expects a list of IDs in the request body.
+        """
+        ids = list(request.data.get('ids'))
+        if not ids or not isinstance(ids, list):
+            return Response(
+                {"error": "Please provide a valid list of IDs."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Filter queryset to ensure only the user's tax declarations are updated
+        queryset = TaxDeclaration.objects.filter(
+            id__in=ids, company__user=self.request.user
+        )
+
+        if not queryset.exists():
+            return Response(
+                {"error": "No valid tax declarations found for the provided IDs."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Perform the bulk update
+        updated_count = queryset.update(is_sent=True)
+
+        return Response(
+            {"success": f"{updated_count} files marked as sent."},
+            status=status.HTTP_200_OK,
+        )
 
 
 class BalanceReportViewSet(viewsets.ModelViewSet):
@@ -170,65 +206,42 @@ class BalanceReportViewSet(viewsets.ModelViewSet):
 
         return context
 
-    # @method_decorator(xframe_options_exempt, name='pdf')
-    # @action(detail=True, methods=['get'])
-    # def pdf(self, request, pk=None):
-    #     balance_report = self.get_object()
+    @xframe_options_exempt
+    @action(detail=True, methods=['get'], url_path='pdf')
+    def pdf(self, request, pk=None):
+        balance_report = self.get_object()
 
-    #     pdf_files = [
-    #         balance_report.balance_report_file.path,
-    #         balance_report.profit_loss_file.path,
-    #         balance_report.sold_product_file.path,
-    #         balance_report.account_turnover_file.path,
-    #     ]
+        # Get the query parameter for the file name
+        file_name = request.query_params.get('file_name')
 
-    #     pdf_writer = PdfWriter()
+        if not file_name:
+            return Response({"error": "file_name query parameter is required."}, status=status.HTTP_400_BAD_REQUEST)
 
-    #     for pdf_path in pdf_files:
-    #         if os.path.exists(pdf_path):
-    #             try:
-    #                 pdf_reader = PdfReader(pdf_path)
+        # Map file names to file paths
+        file_paths = {
+            "balance_report_file": balance_report.balance_report_file.path,
+            "profit_loss_file": balance_report.profit_loss_file.path,
+            "sold_product_file": balance_report.sold_product_file.path,
+            "account_turnover_file": balance_report.account_turnover_file.path,
+        }
 
-    #                 if len(pdf_reader.pages) > 0:
-    #                     pdf_writer.add_page(pdf_reader.pages[0])
+        # Check if the requested file exists
+        if file_name not in file_paths:
+            return Response({"error": f"File {file_name} is not valid."}, status=status.HTTP_400_BAD_REQUEST)
 
-    #             except Exception as e:
-    #                 return Response({"error": f"Error processing {pdf_path}: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        file_path = file_paths[file_name]
 
-    #         else:
-    #             return Response({"error": f"File not found: {pdf_path}"}, status=status.HTTP_404_NOT_FOUND)
+        if not os.path.exists(file_path):
+            return Response({"error": f"File {file_name} not found."}, status=status.HTTP_404_NOT_FOUND)
 
-    #     # Save the new PDF with the first pages
-    #     response_pdf_path = 'first_pages.pdf'
-    #     with open(response_pdf_path, 'wb') as output_pdf_file:
-    #         pdf_writer.write(output_pdf_file)
+        # Serve the requested file
+        response = FileResponse(open(file_path, 'rb'),
+                                content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{
+            file_name}.pdf"'
+        response['X-Frame-Options'] = 'ALLOWALL'
 
-    #     # Serve the response PDF file
-    #     response = FileResponse(
-    #         open(response_pdf_path, 'rb'), content_type='application/pdf')
-    #     response['Content-Disposition'] = 'attachment; filename="first_pages.pdf"'
-    #     response['X-Frame-Options'] = 'ALLOWALL'  # Customize as needed
-
-    #     return response
-
-    @action(detail=False, methods=['get'])
-    def year(self, request):
-        balance_reports = self.get_queryset()
-
-        year_month_data = {}
-
-        for entry in balance_reports.values('year', 'month').distinct():
-            year = entry['year']
-            month = entry['month']
-            if year not in year_month_data:
-                year_month_data[year] = []
-            if month not in year_month_data[year]:
-                year_month_data[year].append(month)
-
-        formatted_data = [{'year': year, 'months': sorted(
-            months)} for year, months in year_month_data.items()]
-
-        return Response(formatted_data, status=status.HTTP_200_OK)
+        return response
 
     def destroy(self, request, *args, **kwargs):
         try:
@@ -265,3 +278,51 @@ class BalanceReportViewSet(viewsets.ModelViewSet):
 
         except Exception as e:
             pass
+
+    @action(detail=False, methods=['get'])
+    def year(self, request):
+        balance_reports = self.get_queryset()
+
+        year_month_data = {}
+
+        for entry in balance_reports.values('year', 'month').distinct():
+            year = entry['year']
+            month = entry['month']
+            if year not in year_month_data:
+                year_month_data[year] = []
+            if month not in year_month_data[year]:
+                year_month_data[year].append(month)
+
+        formatted_data = [{'year': year, 'months': sorted(
+            months)} for year, months in year_month_data.items()]
+
+        return Response(formatted_data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['put', 'patch'], url_path='send')
+    def send(self, request):
+
+        ids = list(request.data.get('ids'))
+        
+        if not ids or not isinstance(ids, list):
+            return Response(
+                {"error": "Please provide a valid list of IDs."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        queryset = BalanceReport.objects.filter(
+            id__in=ids, company__user=self.request.user
+        )
+
+        if not queryset.exists():
+            return Response(
+                {"error": "No valid tax declarations found for the provided IDs."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Perform the bulk update
+        updated_count = queryset.update(is_saved=True, is_sent=True)
+
+        return Response(
+            {"success": f"{updated_count} files marked as sent."},
+            status=status.HTTP_200_OK,
+        )

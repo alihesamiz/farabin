@@ -25,4 +25,4 @@ class Command(BaseCommand):
                 TechField.objects.get_or_create(name=tech_name)
 
         self.stdout.write(self.style.SUCCESS(
-            'Successfully populated special fields'))
+            'Successfully populated tech fields'))
