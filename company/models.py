@@ -13,6 +13,31 @@ User = get_user_model()
 
 
 ####################################
+"""Life Cycle"""
+
+
+class LifeCycle(models.Model):
+    OPERATIONAL = 'operational'
+    FINANCE = 'finance'
+    INVEST = 'invest'
+
+    LIFE_CYCLE_CHOICES = [
+        (OPERATIONAL, _('Operational')),
+        (FINANCE, _('Finance')),
+        (INVEST, _('Invest')),
+    ]
+    capital_providing = models.CharField(
+        max_length=11, choices=LIFE_CYCLE_CHOICES, default=OPERATIONAL, verbose_name=_("Capital Providing"))
+
+    class Meta:
+        verbose_name = _('Life Cycle')
+        verbose_name_plural = _('Life Cycles')
+
+    def __str__(self):
+        return self.get_capital_providing_display()
+
+
+####################################
 """Special tech Model"""
 
 
@@ -58,15 +83,6 @@ class CompanyProfile(models.Model):
         (TECHNOLOGICAL_LICENSE, _("Technological")),
     ]
 
-    OPERATIONAL = 1
-    FINANCE = 2
-    INVEST = 3
-    LIFE_CYCLE_CHOICES = [
-        (OPERATIONAL, _('Operational')),
-        (FINANCE, _('Finance')),
-        (INVEST, _('Invest')),
-    ]
-
     user = models.OneToOneField(
         User, on_delete=models.CASCADE, related_name='company', verbose_name=_("User"))
 
@@ -101,7 +117,7 @@ class CompanyProfile(models.Model):
         default=1, verbose_name=_("Insurance List"))
 
     capital_providing_method = models.ManyToManyField(
-        'CapitalProvidingMethod', verbose_name=_('Capital Providing Method'))
+        LifeCycle, verbose_name=_('Capital Providing Method'), related_name='company_profile')
 
     province = models.ForeignKey(
         'core.Province', default=1, on_delete=models.CASCADE, verbose_name=_("Province"))
@@ -120,22 +136,6 @@ class CompanyProfile(models.Model):
 
 
 ####################################
-"""Life Cycle"""
-
-
-class CapitalProvidingMethod(models.Model):
-    name = models.CharField(
-        max_length=255, choices=CompanyProfile.LIFE_CYCLE_CHOICES, verbose_name=_("Capital Providing Type"))
-
-    class Meta:
-        verbose_name = _('Capital Providing Method')
-        verbose_name_plural = _('Capital Providing Methods')
-
-    def __str__(self):
-        return self.get_name_display()
-
-
-####################################
 """Company service"""
 
 
@@ -145,7 +145,7 @@ class CompanyService(models.Model):
     service = models.ForeignKey(
         'core.Service', on_delete=models.CASCADE, verbose_name=_("Service"))
     is_active = models.BooleanField(default=False, verbose_name=_("Activate"))
-
+    
     purchased_date = models.DateField(
         auto_now_add=True, verbose_name=_("Purchased Date"))
 
@@ -158,9 +158,9 @@ class CompanyService(models.Model):
         return f"{self.company.company_title} - {self.service.name} ({'Active' if self.is_active else 'Inactive'})"
 
 
+
 ######################
 """Company Files"""
-
 
 class CompanyFileAbstract(models.Model):
 
@@ -174,8 +174,9 @@ class CompanyFileAbstract(models.Model):
     is_sent = models.BooleanField(default=False, verbose_name=_("Is Sent"))
 
     class Meta:
-
+        
         abstract = True
+
 
 
 def get_tax_file_upload_path(instance, filename):
@@ -194,11 +195,13 @@ class TaxDeclaration(CompanyFileAbstract):
 
     def __str__(self) -> str:
         return f"{self.company.company_title} -> {self.year}"
+    
 
     class Meta:
         verbose_name = _("Tax Declaration")
         verbose_name_plural = _("Tax Declarations")
         unique_together = [['company', 'year']]
+
 
 
 def get_non_tax_file_upload_path(instance, filename):
@@ -228,6 +231,7 @@ class BalanceReport(CompanyFileAbstract):
 
     account_turnover_file = models.FileField(verbose_name=_(
         "Account Turn Over File"), validators=[pdf_file_validator], upload_to=get_non_tax_file_upload_path, blank=True, null=True)
+
 
     def __str__(self) -> str:
         return f"{self.company.company_title} -> {self.year}"

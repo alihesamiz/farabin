@@ -6,15 +6,15 @@ from django.contrib import admin
 from django.db.models.query import QuerySet
 from django.http import HttpRequest
 from django.utils.translation import gettext_lazy as _
-from .models import BalanceReport, CompanyProfile, CompanyService, Request, TaxDeclaration, BalanceReport  # , LifeCycle
+from .models import BalanceReport, CompanyProfile, CompanyService, LifeCycle, Request, TaxDeclaration, BalanceReport
 # Register your models here.
 
 
-# class LifeCycleInline(admin.StackedInline):
-#     model = LifeCycle
-#     extra = 0
-#     min_num = 1
-#     max_num = 1
+class LifeCycleInline(admin.StackedInline):
+    model = LifeCycle
+    extra = 0
+    min_num = 1
+    max_num = 1
 
 
 class BalanceReprotInline(admin.TabularInline):
@@ -24,9 +24,9 @@ class BalanceReprotInline(admin.TabularInline):
     max_num = 1
 
 
-# @admin.register(LifeCycle)
-# class LifeCycleAdmin(admin.ModelAdmin):
-#     list_display = ['capital_providing',]
+@admin.register(LifeCycle)
+class LifeCycleAdmin(admin.ModelAdmin):
+    list_display = ['capital_providing',]
 
 
 @admin.register(CompanyProfile)
@@ -34,7 +34,7 @@ class CompanyAdmin(admin.ModelAdmin):
     autocomplete_fields = ['user']
     search_fields = ['company_title', 'manager_name']
     list_display = ['company_title', 'national_code', 'manager_name',
-                    'tech_field', 'special_field_display', 'license', 'insurance_list', 'capital_providing_method']
+                    'tech_field', 'special_field_display', 'license', 'insurance_list', 'capital_providing_method_display']
 
     readonly_fields = ['id']
 
@@ -49,12 +49,9 @@ class CompanyAdmin(admin.ModelAdmin):
         return company_profile.special_field  # Ensure this matches the field name
     special_field_display.short_description = _("Special Field")
 
-    @admin.display(description=_("Capital Providing Method"), ordering='capital_providing_method')
-    def capital_providing_method(self, company_profile: CompanyProfile):
-        return ', '.join([str(item) for item in company_profile.capital_providing_method])
-    # @admin.display(description=_("Capital Providing Method"), ordering='capital_providing_method_display')
-    # def capital_providing_method_display(self, company_profile: CompanyProfile):
-    #     return ", ".join([cycle.get_capital_providing_display() for cycle in company_profile.capital_providing_method.all()])
+    @admin.display(description=_("Capital Providing Method"), ordering='capital_providing_method_display')
+    def capital_providing_method_display(self, company_profile: CompanyProfile):
+        return ", ".join([cycle.get_capital_providing_display() for cycle in company_profile.capital_providing_method.all()])
 
 
 @admin.register(CompanyService)
