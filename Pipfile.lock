@@ -1,10 +1,12 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "84b145b2dd9971385461d74fcf0a97fd8b4f37b58f63add76285af7e8d5f4220"
+            "sha256": "958df4db0097a43ffee9492fc5e873ad5c01549b715e096442adf053ca6789a8"
         },
         "pipfile-spec": 6,
-        "requires": {},
+        "requires": {
+            "python_version": "3.12"
+        },
         "sources": [
             {
                 "name": "pypi",
@@ -392,13 +394,11 @@
             "version": "==3.15.2"
         },
         "djangorestframework-simplejwt": {
-            "extras": [
-                "blacklist"
-            ],
             "hashes": [
                 "sha256:381bc966aa46913905629d472cd72ad45faa265509764e20ffd440164c88d220",
                 "sha256:6c4bd37537440bc439564ebf7d6085e74c5411485197073f508ebdfa34bc9fae"
             ],
+            "index": "pypi",
             "markers": "python_version >= '3.8'",
             "version": "==5.3.1"
         },
@@ -839,14 +839,6 @@
             "markers": "python_version >= '3.8'",
             "version": "==24.2"
         },
-        "pdf2image": {
-            "hashes": [
-                "sha256:eaa959bc116b420dd7ec415fcae49b98100dda3dd18cd2fdfa86d09f112f6d57",
-                "sha256:ecdd58d7afb810dffe21ef2b1bbc057ef434dabbac6c33778a38a3f7744a27e2"
-            ],
-            "index": "pypi",
-            "version": "==1.17.0"
-        },
         "pillow": {
             "hashes": [
                 "sha256:00177a63030d612148e659b55ba99527803288cea7c75fb05766ab7981a8c1b7",
@@ -1033,15 +1025,6 @@
             ],
             "markers": "python_version >= '3.9'",
             "version": "==3.2.0"
-        },
-        "pypdf2": {
-            "hashes": [
-                "sha256:a74408f69ba6271f71b9352ef4ed03dc53a31aa404d29b5d31f53bfecfee1440",
-                "sha256:d16e4205cfee272fbdc0568b68d82be796540b1537508cef59388f839c191928"
-            ],
-            "index": "pypi",
-            "markers": "python_version >= '3.6'",
-            "version": "==3.0.1"
         },
         "python-crontab": {
             "hashes": [
