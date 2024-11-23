@@ -145,7 +145,7 @@ class CompanyService(models.Model):
     service = models.ForeignKey(
         'core.Service', on_delete=models.CASCADE, verbose_name=_("Service"))
     is_active = models.BooleanField(default=False, verbose_name=_("Activate"))
-    
+
     purchased_date = models.DateField(
         auto_now_add=True, verbose_name=_("Purchased Date"))
 
@@ -158,9 +158,9 @@ class CompanyService(models.Model):
         return f"{self.company.company_title} - {self.service.name} ({'Active' if self.is_active else 'Inactive'})"
 
 
-
 ######################
 """Company Files"""
+
 
 class CompanyFileAbstract(models.Model):
 
@@ -174,9 +174,8 @@ class CompanyFileAbstract(models.Model):
     is_sent = models.BooleanField(default=False, verbose_name=_("Is Sent"))
 
     class Meta:
-        
-        abstract = True
 
+        abstract = True
 
 
 def get_tax_file_upload_path(instance, filename):
@@ -195,13 +194,11 @@ class TaxDeclaration(CompanyFileAbstract):
 
     def __str__(self) -> str:
         return f"{self.company.company_title} -> {self.year}"
-    
 
     class Meta:
         verbose_name = _("Tax Declaration")
         verbose_name_plural = _("Tax Declarations")
         unique_together = [['company', 'year']]
-
 
 
 def get_non_tax_file_upload_path(instance, filename):
@@ -232,7 +229,6 @@ class BalanceReport(CompanyFileAbstract):
     account_turnover_file = models.FileField(verbose_name=_(
         "Account Turn Over File"), validators=[pdf_file_validator], upload_to=get_non_tax_file_upload_path, blank=True, null=True)
 
-
     def __str__(self) -> str:
         return f"{self.company.company_title} -> {self.year}"
 
@@ -242,8 +238,7 @@ class BalanceReport(CompanyFileAbstract):
         unique_together = [['company', 'month', 'year'],]
 
 
-class Request(models.Model):
-
+class BaseRequest(models.Model):
     REQUEST_STATUS_NEW = 'new'
     REQUEST_STATUS_PENDING = 'pending'
     REQUEST_STATUS_ACCEPTED = 'accepted'
@@ -270,8 +265,22 @@ class Request(models.Model):
                                 on_delete=models.SET_NULL, verbose_name=_("Service"), null=True)
 
     class Meta:
-        verbose_name = _("Request")
-        verbose_name_plural = _("Requests")
+        abstract = True
+        verbose_name = _("BaseRequest")
+        verbose_name_plural = _("BaseRequests")
+
+
+class DiagnosticRequest(BaseRequest):
+
+    tax_record = models.ForeignKey(TaxDeclaration, on_delete=models.CASCADE, verbose_name=_(
+        "Tax Record"), null=True, blank=True)
+
+    balance_record = models.ForeignKey(BalanceReport, on_delete=models.CASCADE, verbose_name=_(
+        "Balance Record"), null=True, blank=True)
+
+    class Meta:
+        verbose_name = _("Diagnostic Request")
+        verbose_name_plural = _("Diagnostic Requests")
 
     def check_and_update_status(self):
         # Check if status is "new" and more than 30 minutes have passed since creation

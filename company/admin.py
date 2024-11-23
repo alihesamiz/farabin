@@ -6,7 +6,7 @@ from django.contrib import admin
 from django.db.models.query import QuerySet
 from django.http import HttpRequest
 from django.utils.translation import gettext_lazy as _
-from .models import BalanceReport, CompanyProfile, CompanyService, LifeCycle, Request, TaxDeclaration, BalanceReport
+from .models import BalanceReport, CompanyProfile, CompanyService, LifeCycle, DiagnosticRequest, TaxDeclaration, BalanceReport
 # Register your models here.
 
 
@@ -173,12 +173,14 @@ class BalanceReportFileAdmin(admin.ModelAdmin):
         return qs.filter(is_sent=True)
 
 
-@admin.register(Request)
-class CompanyRequestAdmin(admin.ModelAdmin):
+@admin.register(DiagnosticRequest)
+class CompanyDiagnosticRequestAdmin(admin.ModelAdmin):
     list_display = [
         "company",
         "status",
         "created_at",
         "updated_at",
         "service",
+        "tax_record",
+        "balance_record"
     ]

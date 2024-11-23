@@ -34,11 +34,9 @@ class OTPViewSet(viewsets.ViewSet):
     def send_otp(self, request):
 
         serializer = OTPSendSerializer(data=request.data)
-
         serializer.is_valid(raise_exception=True)
 
         phone_number = serializer.validated_data['phone_number']
-
         national_code = serializer.validated_data['national_code']
 
         try:
@@ -46,40 +44,38 @@ class OTPViewSet(viewsets.ViewSet):
                 phone_number=phone_number,
                 defaults={'national_code': national_code}
             )
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            if not user.is_active:
+                raise AuthenticationFailed('User account is disabled.')
 
-        if not user.is_active:
-            raise AuthenticationFailed('User account is disabled.')
         
         
-        if not created and user.national_code != national_code:
-            return Response({'error': 'The national code does not match the phone number.'}, status=status.HTTP_400_BAD_REQUEST)
+            if not created and user.national_code != national_code:
+                return Response({'error': 'The national code does not match the phone number.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        last_otp = OTP.objects.filter(user=user).last()
+            last_otp = OTP.objects.filter(user=user).last()
 
-        if last_otp and timezone.now() < last_otp.created_at + self.COOLDOWN_PERIOD:
+            if last_otp and timezone.now() < last_otp.created_at + self.COOLDOWN_PERIOD:
 
-            return Response({
-                'error': f'You can`t request a new OTP.'
-            }, status=status.HTTP_429_TOO_MANY_REQUESTS)
+                return Response({
+                    'error': f'You can`t request a new OTP.'
+                }, status=status.HTTP_429_TOO_MANY_REQUESTS)
 
-        send_otp_task.delay(user.id, phone_number)
+            send_otp_task.delay(user.id, phone_number)
 
+            return Response({'message': 'OTP sent successfully.'}, status=status.HTTP_200_OK)
         # otp = OTP.objects.create(user=user, otp_code=OTP.generate_otp(self))
 
         # self.util.send_otp(phone_number, otp.otp_code)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        return Response({'message': 'OTP sent successfully.'}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['get', 'post'], url_path='verify')
     def verify_otp(self, request):
         serializer = OTPVerifySerializer(data=request.data)
-
         serializer.is_valid(raise_exception=True)
 
         phone_number = serializer.validated_data['phone_number']
-
         otp_code = serializer.validated_data['otp_code']
 
         try:
@@ -106,10 +102,10 @@ class OTPViewSet(viewsets.ViewSet):
                     'access': access_token
                 }, status=status.HTTP_200_OK)
 
-            else:
-                if otp:
-                    otp.delete()
-                return Response({'error': 'Invalid or expired OTP.Try again after 3 Minutes'}, status=status.HTTP_400_BAD_REQUEST)
+            # else:
+            #     if otp:
+            #         otp.delete()
+            #     return Response({'error': 'Invalid or expired OTP.Try again after 3 Minutes'}, status=status.HTTP_400_BAD_REQUEST)
 
         except User.DoesNotExist:
             return Response({'error': 'User does not exist.'}, status=status.HTTP_404_NOT_FOUND)

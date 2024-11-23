@@ -93,7 +93,15 @@ class DiagnosticAnalysisViewSet(ModelViewSet):
 
     @action(detail=False, methods=['get'], url_path='chart/(?P<slug>[^/.]+)', url_name='chart')
     def chart(self, request, slug=None):
-        queryset = self.get_queryset()
+        company = self.request.user.company
+        queryset = FinancialData.objects.select_related('financial_asset').filter(
+            financial_asset__company=company,
+            financial_asset__is_tax_record=True,
+            is_published=True
+        )
+        if not queryset.exists():
+            raise NotFound(detail="No financial data found.")
+
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -105,17 +113,21 @@ class DiagnosticAnalysisViewSet(ModelViewSet):
             financial_asset__is_tax_record=False,
             is_published=True
         )
+        if not queryset.exists():
+            raise NotFound(detail="No financial data found.")
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
     @action(detail=False, methods=['get'], url_path='month', url_name='month')
     def month(self, request):
-        company = request.user.company
+        company = self.request.user.company
+        print(company)
         queryset = FinancialData.objects.select_related('financial_asset').filter(
             financial_asset__company=company,
             financial_asset__is_tax_record=False,
             is_published=True
         )
+        print(queryset)
 
         if not queryset.exists():
             return Response({'detail': 'No monthly data found.'}, status=status.HTTP_404_NOT_FOUND)

@@ -16,12 +16,14 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 import os
-from .models import BalanceReport,  CompanyProfile, TaxDeclaration
+from .models import BalanceReport,  CompanyProfile, DiagnosticRequest, TaxDeclaration
 from .serializers import (
     BalanceReportCreateSerializer,
     BalanceReportSerializer,
     CompanyProfileSerializer,
     CompanyProfileCreateSerializer,
+    DiagnosticBaseRequestSerializer,
+    # DiagnosticRequestSerializer,
     TaxDeclarationCreateSerializer,
     TaxDeclarationSerializer
 )
@@ -65,6 +67,11 @@ class DashboardViewSet(APIView):
             tax_files_count = tax_files.count()
             report_files_count = report_files.count()
 
+            diagnostic_requests = DiagnosticRequest.objects.filter(
+                company=company)
+            
+            diagnostic_requests_data = DiagnosticBaseRequestSerializer(diagnostic_requests, many=True).data
+
             # Serialize the data
             # tax_files_data = TaxDeclarationSerializer(
             #     tax_files, many=True).data
@@ -76,7 +83,8 @@ class DashboardViewSet(APIView):
                 'tax_files_count': tax_files_count,
                 'report_files_count': report_files_count*4,
                 'all_uploaded_files': tax_files_count + report_files_count*4,
-                "tickets": tickets
+                "tickets": tickets,
+                "diagnostic_requests": diagnostic_requests_data,
             }
 
             return Response(response_data)
@@ -154,18 +162,13 @@ class TaxDeclarationViewSet(viewsets.ModelViewSet):
         years = tax_declarations.values('year').distinct()
         return Response(years, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=['put', 'patch'], url_path='send')
+    @action(detail=False, methods=['put', 'patch'], url_path='send-experts')
     def send(self, request):
         """
         Update the 'is_sent' field to True for multiple TaxDeclaration instances.
         Expects a list of IDs in the request body.
         """
-        ids = list(request.data.get('ids'))
-        if not ids or not isinstance(ids, list):
-            return Response(
-                {"error": "Please provide a valid list of IDs."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        ids = request.data.get('ids', [])
 
         # Filter queryset to ensure only the user's tax declarations are updated
         queryset = TaxDeclaration.objects.filter(
@@ -298,16 +301,10 @@ class BalanceReportViewSet(viewsets.ModelViewSet):
 
         return Response(formatted_data, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=['put', 'patch'], url_path='send')
+    @action(detail=False, methods=['put', 'patch'], url_path='send-experts')
     def send(self, request):
 
-        ids = list(request.data.get('ids'))
-        
-        if not ids or not isinstance(ids, list):
-            return Response(
-                {"error": "Please provide a valid list of IDs."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        ids = request.data.get('ids', [])
 
         queryset = BalanceReport.objects.filter(
             id__in=ids, company__user=self.request.user

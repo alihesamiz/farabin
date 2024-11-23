@@ -10,7 +10,7 @@ from django.contrib.auth import get_user_model
 
 from django.utils.translation import gettext_lazy as _
 
-from .models import BalanceReport, CompanyProfile, CompanyService, TaxDeclaration
+from .models import BalanceReport, BaseRequest, CompanyProfile, CompanyService, DiagnosticRequest, TaxDeclaration
 
 User = get_user_model()
 
@@ -313,3 +313,47 @@ class TaxDeclarationSerializer(serializers.ModelSerializer):
     class Meta:
         model = TaxDeclaration
         fields = ['id',  'year', 'tax_file', 'is_saved', 'is_sent']
+
+
+class BaseRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BaseRequest
+        fields = ['id', 'status', 'created_at', 'updated_at']
+
+    def update(self, instance, validated_data):
+        # Custom update logic if needed
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
+
+
+class DiagnosticBaseRequestSerializer(BaseRequestSerializer):
+    # tax_record = serializers.PrimaryKeyRelatedField(
+    #     queryset=TaxDeclaration.objects.all(), required=False)
+    # balance_record = serializers.PrimaryKeyRelatedField(
+    #     queryset=BalanceReport.objects.all(), required=False)
+
+    class Meta(BaseRequestSerializer.Meta):
+        model = DiagnosticRequest
+        fields = BaseRequestSerializer.Meta.fields
+
+    def validate(self, attrs):
+        # You can add custom validation logic if needed
+        return attrs
+
+
+class DiagnosticRequestSerializer(BaseRequestSerializer):
+    # tax_record = serializers.PrimaryKeyRelatedField(
+    #     queryset=TaxDeclaration.objects.all(), required=False)
+    # balance_record = serializers.PrimaryKeyRelatedField(
+    #     queryset=BalanceReport.objects.all(), required=False)
+
+    class Meta(BaseRequestSerializer.Meta):
+        model = DiagnosticRequest
+        fields = BaseRequestSerializer.Meta.fields + \
+            ['tax_record', 'balance_record']
+
+    def validate(self, attrs):
+        # You can add custom validation logic if needed
+        return attrs

@@ -414,6 +414,10 @@ class AnalysisReport(models.Model):
         (PROFIT_CHART, _("Profit Chart")),
     ]
 
+    monthly = models.BooleanField(default=False, verbose_name=_("Monthly"))
+
+    yearly = models.BooleanField(default=False, verbose_name=_("Yearly"))
+
     calculated_data = models.ForeignKey(
         FinancialData, on_delete=models.CASCADE, related_name='analysis_reports', verbose_name=_('Calculated Data'), help_text=_("Select company assosiated with the year for entering the analysis text report. it would be better to only choose the last yaer of each company"))
 
@@ -422,6 +426,9 @@ class AnalysisReport(models.Model):
 
     text = models.TextField(verbose_name=_('Analysis Text'), help_text=_(
         "Enter the analysis text for each chart"))
+
+    is_published = models.BooleanField(default=False, verbose_name=_(
+        'Published'), help_text=_("Select to publish the analysis report"))
 
     class Meta:
         verbose_name = _("Analysis Report")
