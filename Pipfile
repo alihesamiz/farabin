@@ -27,6 +27,7 @@ matplotlib = "*"
 django-seed = "*"
 requests = "*"
 djangorestframework-simplejwt = "*"
+tornado = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"
