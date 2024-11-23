@@ -10,7 +10,10 @@ __pycache__/
 __pycache__/
 db.sqlite3
 db.sqlite3-journal
-media/
+media/non-tax_files
+media/tax_files
+
+!media/admin-interface/
 static/
 staticfiles/
 
