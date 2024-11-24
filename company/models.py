@@ -242,11 +242,13 @@ class BaseRequest(models.Model):
     REQUEST_STATUS_NEW = 'new'
     REQUEST_STATUS_PENDING = 'pending'
     REQUEST_STATUS_ACCEPTED = 'accepted'
+    REQUEST_STATUS_REJECTED = 'rejected'
 
     REQUEST_STATUS_CHOICES = [
         (REQUEST_STATUS_NEW, _("New")),
         (REQUEST_STATUS_PENDING, _("Pending")),
         (REQUEST_STATUS_ACCEPTED, _("Accepted")),
+        (REQUEST_STATUS_REJECTED, _("Rejected")),
     ]
 
     company = models.ForeignKey(

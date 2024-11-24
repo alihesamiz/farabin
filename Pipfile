@@ -13,8 +13,6 @@ psycopg2-binary = "*"
 python-magic = "*"
 redis = "*"
 flower = "*"
-django-celery-beat = "*"
-celery = {extras = ["redis"], version = "*"}
 python-dateutil = "*"
 python-dotenv = "*"
 whitenoise = "*"
@@ -28,6 +26,10 @@ django-seed = "*"
 requests = "*"
 djangorestframework-simplejwt = "*"
 tornado = "*"
+django-celery-beat = "*"
+celery = {extras = ["redis"], version = "*"}
+pypdf2 = "*"
+pdf2image = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"

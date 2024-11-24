@@ -68,9 +68,10 @@ class DashboardViewSet(APIView):
             report_files_count = report_files.count()
 
             diagnostic_requests = DiagnosticRequest.objects.filter(
-                company=company)
-            
-            diagnostic_requests_data = DiagnosticBaseRequestSerializer(diagnostic_requests, many=True).data
+                company=company).order_by('-updated_at')[:4]
+
+            diagnostic_requests_data = DiagnosticBaseRequestSerializer(
+                diagnostic_requests, many=True).data
 
             # Serialize the data
             # tax_files_data = TaxDeclarationSerializer(
@@ -85,6 +86,11 @@ class DashboardViewSet(APIView):
                 'all_uploaded_files': tax_files_count + report_files_count*4,
                 "tickets": tickets,
                 "diagnostic_requests": diagnostic_requests_data,
+                "management_requests": 0,
+                "marketing_requests": 0,
+                "mis_requests": 0,
+                "rad_requests": 0,
+                "production_requests": 0,
             }
 
             return Response(response_data)

@@ -1,8 +1,9 @@
 import requests
 import json
 from django.db.transaction import atomic
+from django.utils import timezone
 from celery import shared_task
-from .models import BaseRequest
+from .models import BaseRequest, DiagnosticRequest
 from ticket.models import Agent, Department
 from django.contrib.auth import get_user_model
 
@@ -43,3 +44,10 @@ def send_file_uploading_notification(name):
     #     response = requests.request(
     #         "POST", url, headers=headers, data=payload)
     # return response.text
+@shared_task
+def update_request_status_task():
+    request = DiagnosticRequest.objects.only('status','created_at').all()
+    for r in request:
+        if r.status == DiagnosticRequest.REQUEST_STATUS_NEW and timezone.now() > r.created_at + timezone.timedelta(minutes=15):
+            r.status = DiagnosticRequest.REQUEST_STATUS_PENDING
+            r.save()
