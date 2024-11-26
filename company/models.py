@@ -230,7 +230,7 @@ class BalanceReport(CompanyFileAbstract):
         "Account Turn Over File"), validators=[pdf_file_validator], upload_to=get_non_tax_file_upload_path, blank=True, null=True)
 
     def __str__(self) -> str:
-        return f"{self.company.company_title} -> {self.year}"
+        return f"{self.company.company_title} › {self.year}"
 
     class Meta:
         verbose_name = _("Balance Report")

@@ -146,4 +146,4 @@ class Service(models.Model):
         verbose_name_plural = _("Services")
 
     def __str__(self) -> str:
-        return f"{self.name} - {self.description[:10]}"
+        return f"{self.name} › {self.description[:10]}"

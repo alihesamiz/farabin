@@ -289,7 +289,7 @@ class FinancialAsset(models.Model):
         verbose_name_plural = _('Financial Assets')
 
     def __str__(self):
-        return f"{self.company.company_title} - {self.year}({self.month})"
+        return f"{self.company.company_title} › {self.year}({self.month})"
 
 
 class FinancialData(models.Model):
@@ -373,7 +373,7 @@ class FinancialData(models.Model):
         default=0, max_digits=20, decimal_places=0, verbose_name=_('Altman Bankruptcy Ratio'))
 
     def __str__(self) -> str:
-        return f"{self.financial_asset.company.company_title} - {self.financial_asset.year} - {self.financial_asset.month if self.financial_asset.month else '-'}"
+        return f"{self.financial_asset.company.company_title} › {self.financial_asset.year} › {self.financial_asset.month if self.financial_asset.month else '-'}"
 
     class Meta:
         verbose_name = _("Financial Data")
@@ -435,4 +435,4 @@ class AnalysisReport(models.Model):
         verbose_name_plural = _("Analysis Reports")
 
     def __str__(self):
-        return f"{self.calculated_data.financial_asset.company.company_title} - {self.calculated_data.financial_asset.year} - {self.chart_name}"
+        return f"{self.calculated_data.financial_asset.company.company_title} › {self.calculated_data.financial_asset.year} › {self.chart_name}"
