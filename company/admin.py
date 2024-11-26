@@ -92,7 +92,6 @@ class TaxFileAdmin(admin.ModelAdmin):
                     'is_saved',
                     'is_sent',]
 
-
     search_fields = ['company__company_title', 'year']
 
     @admin.display(ordering='company__company_title')
@@ -127,13 +126,7 @@ class TaxFileAdmin(admin.ModelAdmin):
 
 @admin.register(BalanceReport)
 class BalanceReportFileAdmin(admin.ModelAdmin):
-    # list_display = ['company_title', 'month', 'year', 'balance_report_file', 'profit_loss_file',
-    #                 'sold_product_file',
-    #                 'account_turnover_file',
-    #                 'is_saved',
-    #                 'is_sent',]
-
-    list_display = ['month', 'year', 'balance_report_file', 'profit_loss_file',
+    list_display = ['company_title', 'month', 'year', 'balance_report_file', 'profit_loss_file',
                     'sold_product_file',
                     'account_turnover_file',
                     'is_saved',
@@ -141,10 +134,10 @@ class BalanceReportFileAdmin(admin.ModelAdmin):
 
     search_fields = ['company__company_title', 'year', 'month']
 
-    # @admin.display(ordering='company__company_title')
-    # def company_title(self, tax_declaration: TaxDeclaration):
-    #     return tax_declaration.company.company_title
-    # company_title.short_description = _("Company Title")
+    @admin.display(ordering='company__company_title')
+    def company_title(self, tax_declaration: TaxDeclaration):
+        return tax_declaration.company.company_title
+    company_title.short_description = _("Company Title")
 
     def delete_model(self, request: HttpRequest, obj: Any) -> None:
 

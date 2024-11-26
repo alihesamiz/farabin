@@ -77,7 +77,7 @@ class DiagnosticAnalysisViewSet(ModelViewSet):
         ).filter(
             Q(calculated_data__financial_asset__is_tax_record=False) |
             Q(calculated_data__financial_asset__is_tax_record=True)
-        )
+        ).order_by('calculated_data__financial_asset__year', 'calculated_data__financial_asset__month')
         monthly_analysis = [
             item for item in analysis if not item.calculated_data.financial_asset.is_tax_record]
         yearly_analysis = [
@@ -98,12 +98,15 @@ class DiagnosticAnalysisViewSet(ModelViewSet):
             financial_asset__company=company,
             financial_asset__is_tax_record=True,
             is_published=True
-        )
+        ).order_by('financial_asset__year', 'financial_asset__month')
         if not queryset.exists():
             raise NotFound(detail="No financial data found.")
 
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+        try:
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+        except Exception as e:
+            raise NotFound(detail="Error fetching data: {}".format(str(e)))
 
     @action(detail=False, methods=['get'], url_path='chart/(?P<slug>[^/.]+)/month', url_name='chart-month')
     def chart_month(self, request, slug=None):
@@ -112,7 +115,7 @@ class DiagnosticAnalysisViewSet(ModelViewSet):
             financial_asset__company=company,
             financial_asset__is_tax_record=False,
             is_published=True
-        )
+        ).order_by('financial_asset__year', 'financial_asset__month')
         if not queryset.exists():
             raise NotFound(detail="No financial data found.")
         serializer = self.get_serializer(queryset, many=True)
@@ -126,8 +129,7 @@ class DiagnosticAnalysisViewSet(ModelViewSet):
             financial_asset__company=company,
             financial_asset__is_tax_record=False,
             is_published=True
-        )
-        print(queryset)
+        ).order_by('financial_asset__year', 'financial_asset__month')
 
         if not queryset.exists():
             return Response({'detail': 'No monthly data found.'}, status=status.HTTP_404_NOT_FOUND)
@@ -247,7 +249,7 @@ class CompanyFinancialDataView(View):
             construction_overhead.append(int(data.construction_overhead))
             consuming_material.append(int(data.consuming_material))
             production_total_price.append(int(data.production_total_price))
-        
+
         return render(request, 'diagnostics/company_financial_data.html', {
             'company': company,
             'financial_data': financial_data,
