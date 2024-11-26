@@ -21,7 +21,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: celery -A config worker -l INFO
+    command: celery -A config worker --beat -l INFO
     volumes:
       - .:/app
     depends_on:

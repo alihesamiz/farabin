@@ -13,14 +13,13 @@ app = Celery('config')
 # Load task modules from all registered Django app configs.
 app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks()
-app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 app.conf.broker_url = 'redis://redis:6379/0'
 app.conf.result_backend = 'redis://redis:6379/0'
 
 app.conf.beat_schedule = {
-    'update_request_status': {
-        'task': 'company.tasks.update_request_status',
-        'schedule': crontab(minute='*/15'),
+    'update_request_status_task': {
+        'task': 'company.tasks.update_request_status_task',
+        'schedule': crontab(minute='*/30'),
     }}
 
 

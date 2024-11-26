@@ -12,9 +12,16 @@ db.sqlite3
 db.sqlite3-journal
 media/non-tax_files
 media/tax_files
-
 !media/admin-interface/
-static/
+
+/static/admin/
+/static/admin_interface/
+/static/ckeditor/
+/static/colorfield/
+/static/nested_admin/
+/static/rest_framework/
+/static/streamfield/
+!/static/diagnostics/
 staticfiles/
 
 # Environment variables

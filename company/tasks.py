@@ -44,10 +44,20 @@ def send_file_uploading_notification(name):
     #     response = requests.request(
     #         "POST", url, headers=headers, data=payload)
     # return response.text
-@shared_task
-def update_request_status_task():
-    request = DiagnosticRequest.objects.only('status','created_at').all()
-    for r in request:
-        if r.status == DiagnosticRequest.REQUEST_STATUS_NEW and timezone.now() > r.created_at + timezone.timedelta(minutes=15):
-            r.status = DiagnosticRequest.REQUEST_STATUS_PENDING
-            r.save()
+
+
+@shared_task(bind=True)
+def update_request_status_task(self):
+    try:
+        # Calculate the time threshold
+        fifteen_minutes_ago = timezone.now() - timezone.timedelta(minutes=15)
+
+        # Update the status of relevant requests
+        DiagnosticRequest.objects.filter(
+            status=DiagnosticRequest.REQUEST_STATUS_NEW,
+            created_at__lte=fifteen_minutes_ago
+        ).update(status=DiagnosticRequest.REQUEST_STATUS_PENDING)
+
+    except Exception as e:
+        # Retry the task in case of an exception
+        self.retry(exc=e, countdown=60, max_retries=3)

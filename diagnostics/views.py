@@ -247,9 +247,7 @@ class CompanyFinancialDataView(View):
             construction_overhead.append(int(data.construction_overhead))
             consuming_material.append(int(data.consuming_material))
             production_total_price.append(int(data.production_total_price))
-
-        print(production_fee)
-
+        
         return render(request, 'diagnostics/company_financial_data.html', {
             'company': company,
             'financial_data': financial_data,

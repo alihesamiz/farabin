@@ -132,7 +132,7 @@ class CompanyProfile(models.Model):
         verbose_name_plural = _("Company Profiles")
 
     def __str__(self) -> str:
-        return f"{self.company_title} - {self.user.national_code}"
+        return f"{self.company_title} › {self.user.national_code}"
 
 
 ####################################
@@ -155,7 +155,7 @@ class CompanyService(models.Model):
         verbose_name_plural = _("Company Services")
 
     def __str__(self) -> str:
-        return f"{self.company.company_title} - {self.service.name} ({'Active' if self.is_active else 'Inactive'})"
+        return f"{self.company.company_title} › {self.service.name} ({'Active' if self.is_active else 'Inactive'})"
 
 
 ######################
@@ -186,14 +186,14 @@ def get_tax_file_upload_path(instance, filename):
 
 class TaxDeclaration(CompanyFileAbstract):
 
-    company = models.ForeignKey(CompanyProfile, on_delete=models.SET_NULL, null=True, verbose_name=_(
+    company = models.ForeignKey(CompanyProfile, on_delete=models.CASCADE, null=True, verbose_name=_(
         "Company"), related_name="taxfiles")
 
     tax_file = models.FileField(verbose_name=_(
         "File"), upload_to=get_tax_file_upload_path, blank=True, null=True)
 
     def __str__(self) -> str:
-        return f"{self.company.company_title} -> {self.year}"
+        return f"{self.company.company_title} › {self.year}"
 
     class Meta:
         verbose_name = _("Tax Declaration")
@@ -211,7 +211,7 @@ class BalanceReport(CompanyFileAbstract):
 
     MONTH_CHOICES = [(str(i), f"{i}") for i in range(1, 14)]
 
-    company = models.ForeignKey(CompanyProfile, on_delete=models.SET_NULL, null=True, verbose_name=_(
+    company = models.ForeignKey(CompanyProfile, on_delete=models.CASCADE, null=True, verbose_name=_(
         "Company"), related_name="reportfiles")
 
     month = models.CharField(
@@ -252,7 +252,7 @@ class BaseRequest(models.Model):
     ]
 
     company = models.ForeignKey(
-        CompanyProfile, on_delete=models.SET_NULL, verbose_name=_("Company"), null=True)
+        CompanyProfile, on_delete=models.CASCADE, verbose_name=_("Company"), null=True)
 
     status = models.CharField(verbose_name=_(
         "Status"), max_length=10, choices=REQUEST_STATUS_CHOICES, default=REQUEST_STATUS_NEW)
@@ -279,6 +279,9 @@ class DiagnosticRequest(BaseRequest):
 
     balance_record = models.ForeignKey(BalanceReport, on_delete=models.CASCADE, verbose_name=_(
         "Balance Record"), null=True, blank=True)
+
+    def __str__(self) -> str:
+        return f"{self.company.company_title} › {self.status}"
 
     class Meta:
         verbose_name = _("Diagnostic Request")

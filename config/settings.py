@@ -57,7 +57,7 @@ PROJECT_APPS = [
 ]
 
 THIRED_PARTY_APPS = [
-    # 'django_celery_beat',
+    'django_celery_beat',
     'drf_spectacular',
     'corsheaders',
     'rest_framework',
