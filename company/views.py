@@ -22,8 +22,7 @@ from .serializers import (
     BalanceReportSerializer,
     CompanyProfileSerializer,
     CompanyProfileCreateSerializer,
-    DiagnosticBaseRequestSerializer,
-    # DiagnosticRequestSerializer,
+    DiagnosticRequestSerializer,
     TaxDeclarationCreateSerializer,
     TaxDeclarationSerializer
 )
@@ -68,10 +67,7 @@ class DashboardViewSet(APIView):
             report_files_count = report_files.count()
 
             diagnostic_requests = DiagnosticRequest.objects.filter(
-                company=company).order_by('-updated_at')[:4]
-
-            diagnostic_requests_data = DiagnosticBaseRequestSerializer(
-                diagnostic_requests, many=True).data
+                company=company).count()
 
             # Serialize the data
             # tax_files_data = TaxDeclarationSerializer(
@@ -85,7 +81,7 @@ class DashboardViewSet(APIView):
                 'report_files_count': report_files_count*4,
                 'all_uploaded_files': tax_files_count + report_files_count*4,
                 "tickets": tickets,
-                "diagnostic_requests": diagnostic_requests_data,
+                "diagnostic_requests": diagnostic_requests,
                 "management_requests": 0,
                 "marketing_requests": 0,
                 "mis_requests": 0,
@@ -155,7 +151,7 @@ class TaxDeclarationViewSet(viewsets.ModelViewSet):
 
         response = FileResponse(open(pdf_path, 'rb'),
                                 content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="{
+        response['Content-Disposition'] = f'inline; filename="{
             tax_declaration.tax_file.name}"'
         # Customize X-Frame-Options if needed for frontend embedding compatibility
         response['X-Frame-Options'] = 'ALLOWALL'
@@ -246,7 +242,7 @@ class BalanceReportViewSet(viewsets.ModelViewSet):
         # Serve the requested file
         response = FileResponse(open(file_path, 'rb'),
                                 content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="{
+        response['Content-Disposition'] = f'inline; filename="{
             file_name}.pdf"'
         response['X-Frame-Options'] = 'ALLOWALL'
 
@@ -329,3 +325,25 @@ class BalanceReportViewSet(viewsets.ModelViewSet):
             {"success": f"{updated_count} files marked as sent."},
             status=status.HTTP_200_OK,
         )
+
+
+class RequestViewSet(viewsets.ModelViewSet):
+    REQUEST_TYPES = {
+        'diagnostic': DiagnosticRequestSerializer,
+    }
+
+    permission_classes = [IsAuthenticated]
+
+    # serializer_class = DiagnosticRequestSerializer
+
+    def get_queryset(self):
+        company = self.request.user.company
+        return DiagnosticRequest.objects.filter(company=company).order_by('-updated_at')
+
+    def get_serializer_class(self):
+        request_type = self.request.query_params.get('type')
+
+        if request_type in self.REQUEST_TYPES:
+            return self.REQUEST_TYPES[request_type]
+        else:
+            raise NotFound("The requested type doesn't exist")

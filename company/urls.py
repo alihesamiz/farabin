@@ -1,6 +1,6 @@
 from rest_framework.routers import DefaultRouter
 from django.urls import path, include
-from .views import BalanceReportViewSet, CompanyProfileViewSet, DashboardViewSet, TaxDeclarationViewSet
+from .views import BalanceReportViewSet, CompanyProfileViewSet, DashboardViewSet, RequestViewSet, TaxDeclarationViewSet,DiagnosticRequest
 
 router = DefaultRouter()
 
@@ -13,6 +13,8 @@ router.register(r'tax-declarations', TaxDeclarationViewSet,
 
 router.register(r'balance-reports',
                 BalanceReportViewSet, basename='balance-report')
+
+router.register(r'requests', RequestViewSet,basename='requests')
 
 
 urlpatterns = router.urls

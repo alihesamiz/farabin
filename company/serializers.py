@@ -3,112 +3,14 @@ from datetime import datetime
 from core.models import Service
 from django.db import IntegrityError
 from rest_framework.exceptions import ValidationError
-
 from rest_framework import serializers
-
 from django.contrib.auth import get_user_model
-
 from django.utils.translation import gettext_lazy as _
-
 from .models import BalanceReport, BaseRequest, CompanyProfile, CompanyService, DiagnosticRequest, TaxDeclaration
-
 User = get_user_model()
 
 
-# class DashboardSerializer(serializers.ModelSerializer):
-#     company_title = serializers.CharField(
-#         source='company_service.company.company_title', read_only=True)
-#     service_name = serializers.CharField(
-#         source='company_service.service.name', read_only=True)
-#     is_active = serializers.BooleanField(
-#         source='company_service.is_active', read_only=True)
-#     purchased_date = serializers.DateTimeField(
-#         source='company_service.purchased_date', read_only=True)
-
-#     class Meta:
-#         model = Dashboard
-#         fields = ['id', 'company_title', 'service_name',
-#                   'is_active', 'purchased_date']
-
-
-# class CompanyServiceSerializer(serializers.ModelSerializer):
-#     service_name = serializers.CharField(source='service.name', read_only=True)
-
-
-#     class Meta:
-#         model = CompanyService
-#         fields = ['id', 'service_name', 'is_active', 'purchased_date']
-
-
-# class CompanyServiceSerializer(serializers.ModelSerializer):
-#     all_services = serializers.SerializerMethodField()
-
-#     class Meta:
-#         model = CompanyService
-#         fields = ['all_services']
-
-#     def get_all_services(self, obj):
-#         # Get all services
-#         all_services = Service.objects.all()
-
-#         # Retrieve company-specific services for the related company
-#         company_services = CompanyService.objects.filter(company=obj.company)
-
-#         # Map active services by service ID to their activation details
-#         active_services = {cs.service_id: cs for cs in company_services}
-
-#         # Build a list of all services with their active status and purchase date
-#         services_data = []
-#         for service in all_services:
-#             service_data = {
-#                 'service_name': service.name,
-#                 'description': service.description,
-#                 'price': service.price,
-#                 'is_active': service.id in active_services,
-#                 'purchased_date': active_services[service.id].purchased_date if service.id in active_services else None
-#             }
-#             services_data.append(service_data)
-
-#         return services_data
-
-
-# class CompanyProfileSerializer(serializers.ModelSerializer):
-#     user_national_code = serializers.CharField(
-#         source='user.national_code', read_only=True)
-#     services = CompanyServiceSerializer(
-#         many=True, read_only=True)  # Remove `source='services'`
-
-#     class Meta:
-#         model = CompanyProfile
-#         fields = [
-
-#             'user_national_code', 'id',
-#             'company_title',  'social_code', 'email', 'manager_name',
-#             'license', 'special_field', 'tech_field',  'province', 'city',
-#             'insurance_list', 'capital_providing_method',
-#             'profile_active', 'services', 'address'
-#         ]
-#         # read_only_fields = ['user_national_code']
-
-#     def update(self, instance, validated_data):
-#         # Handle the many-to-many field separately
-#         capital_providing_methods = validated_data.pop(
-#             'capital_providing_method', [])
-
-#         # Update the fields of the instance
-#         for attr, value in validated_data.items():
-#             setattr(instance, attr, value)
-
-#         # Save the instance
-#         instance.save()
-
-#         # Update the many-to-many field after saving the instance
-#         if capital_providing_methods:
-#             instance.capital_providing_method.set(capital_providing_methods)
-
-#         return instance
 class CompanyServiceSerializer(serializers.Serializer):
-    # Directly define the fields for each service entry
     service_name = serializers.CharField()
     description = serializers.CharField()
     price = serializers.DecimalField(max_digits=20, decimal_places=0)
@@ -120,7 +22,6 @@ class CompanyProfileSerializer(serializers.ModelSerializer):
     user_national_code = serializers.CharField(
         source='user.national_code', read_only=True
     )
-    # Single call to fetch all services
     services = serializers.SerializerMethodField()
 
     class Meta:
@@ -274,12 +175,16 @@ class BalanceReportCreateSerializer(serializers.ModelSerializer):
 
 
 class BalanceReportSerializer(serializers.ModelSerializer):
-    # id = serializers.IntegerField()
-
     class Meta:
         model = BalanceReport
         fields = ['id', 'year', 'month', 'balance_report_file',
                   'profit_loss_file', 'sold_product_file', 'account_turnover_file', 'is_saved', 'is_sent']
+
+
+class SimpleBalanceReportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BalanceReport
+        fields = ['id', 'year', 'month',]
 
 
 class TaxDeclarationCreateSerializer(serializers.ModelSerializer):
@@ -304,8 +209,6 @@ class TaxDeclarationCreateSerializer(serializers.ModelSerializer):
         if existing_report:
             raise ValidationError(
                 {"error": "This years' file already exists"})
-
-        # Create the TaxDeclaration
         return super().create(validated_data)
 
 
@@ -315,10 +218,16 @@ class TaxDeclarationSerializer(serializers.ModelSerializer):
         fields = ['id',  'year', 'tax_file', 'is_saved', 'is_sent']
 
 
+class SimpleTaxDeclarationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TaxDeclaration
+        fields = ['id',  'year']
+
+
 class BaseRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = BaseRequest
-        fields = ['id', 'status', 'created_at', 'updated_at']
+        fields = ['id', 'status', 'subject', 'created_at', 'updated_at']
 
     def update(self, instance, validated_data):
         # Custom update logic if needed
@@ -328,32 +237,11 @@ class BaseRequestSerializer(serializers.ModelSerializer):
         return instance
 
 
-class DiagnosticBaseRequestSerializer(BaseRequestSerializer):
-    # tax_record = serializers.PrimaryKeyRelatedField(
-    #     queryset=TaxDeclaration.objects.all(), required=False)
-    # balance_record = serializers.PrimaryKeyRelatedField(
-    #     queryset=BalanceReport.objects.all(), required=False)
-
-    class Meta(BaseRequestSerializer.Meta):
-        model = DiagnosticRequest
-        fields = BaseRequestSerializer.Meta.fields
-
-    def validate(self, attrs):
-        # You can add custom validation logic if needed
-        return attrs
-
-
 class DiagnosticRequestSerializer(BaseRequestSerializer):
-    # tax_record = serializers.PrimaryKeyRelatedField(
-    #     queryset=TaxDeclaration.objects.all(), required=False)
-    # balance_record = serializers.PrimaryKeyRelatedField(
-    #     queryset=BalanceReport.objects.all(), required=False)
+    tax_record = SimpleTaxDeclarationSerializer()
+    balance_record = SimpleBalanceReportSerializer()
 
     class Meta(BaseRequestSerializer.Meta):
         model = DiagnosticRequest
         fields = BaseRequestSerializer.Meta.fields + \
             ['tax_record', 'balance_record']
-
-    def validate(self, attrs):
-        # You can add custom validation logic if needed
-        return attrs

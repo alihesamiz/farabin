@@ -62,7 +62,7 @@ class DiagnosticAnalysisViewSet(ModelViewSet):
             financial_asset__company=company,
             financial_asset__is_tax_record=True,
             is_published=True
-        )
+        ).order_by('financial_asset__year', 'financial_asset__month')
         if not queryset.exists():
             raise NotFound(detail="No financial data found.")
         return queryset

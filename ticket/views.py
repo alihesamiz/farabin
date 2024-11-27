@@ -8,33 +8,6 @@ from ticket.serializers import TicketCommentCreateSerializer, TicketCommentSeria
 from .models import Ticket, Department, Agent, TicketAnswer
 
 
-# class TicketViewSet(viewsets.ModelViewSet):
-#     permission_classes = [IsAuthenticated]
-
-#     serializer_class = TicketSerializer
-
-#     def get_queryset(self):
-#         company = self.request.user.company
-#         return Ticket.objects.prefetch_related('answers').filter(issuer=company).all()
-
-#     def perform_create(self, serializer):
-#         # Assuming `company` is the related company of the current user
-#         company = self.request.user.company
-#         serializer.save(issuer=company)
-
-#     @action(detail=False, methods=['get', 'post', 'delete', 'put', 'patch'], url_path='^(?P<pk>[^/.]+)/comment', url_name='comments')
-#     def comments(self, request, pk=None):
-#         ticket = get_object_or_404(Ticket, pk=pk)
-#         print(ticket)
-#         if request.method == 'GET':
-#             print('lksjahdjklshad')
-#             serializer = TicketSerializer(ticket)
-#             return Response(serializer.data)
-#         elif request.method == 'POST':
-#             serializer = TicketCommentSerializer(ticket)
-#             return Response(serializer.data)
-
-
 class TicketViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = TicketSerializer

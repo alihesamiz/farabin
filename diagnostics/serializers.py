@@ -290,3 +290,5 @@ class MonthDataSerializer(serializers.ModelSerializer):
 class YearlyFinanceDataSerializer(serializers.Serializer):
     year = serializers.IntegerField()
     months = serializers.ListField(child=MonthDataSerializer())
+
+

@@ -1,19 +1,13 @@
-from django.utils import timezone
-from datetime import timedelta
 from uuid import uuid4
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.db import models
-from core.utils import GeneralUtils
 from core.validators import pdf_file_validator
+from core.utils import GeneralUtils
 # Create your models here.
 
 
 User = get_user_model()
-
-
-####################################
-"""Life Cycle"""
 
 
 class LifeCycle(models.Model):
@@ -37,10 +31,6 @@ class LifeCycle(models.Model):
         return self.get_capital_providing_display()
 
 
-####################################
-"""Special tech Model"""
-
-
 class SpecialTech(models.Model):
     name = models.CharField(max_length=255, verbose_name=_("Name"))
 
@@ -50,10 +40,6 @@ class SpecialTech(models.Model):
     class Meta:
         verbose_name = _("Special Tech")
         verbose_name_plural = _("Special Techs")
-
-
-####################################
-"""tech field Model"""
 
 
 class TechField(models.Model):
@@ -66,9 +52,6 @@ class TechField(models.Model):
         verbose_name = _("Tech Field")
         verbose_name_plural = _("Tech Fields")
 
-
-####################################
-"""Company Model"""
 
 
 class CompanyProfile(models.Model):
@@ -135,9 +118,6 @@ class CompanyProfile(models.Model):
         return f"{self.company_title} › {self.user.national_code}"
 
 
-####################################
-"""Company service"""
-
 
 class CompanyService(models.Model):
     company = models.ForeignKey(CompanyProfile, on_delete=models.CASCADE,
@@ -156,10 +136,6 @@ class CompanyService(models.Model):
 
     def __str__(self) -> str:
         return f"{self.company.company_title} › {self.service.name} ({'Active' if self.is_active else 'Inactive'})"
-
-
-######################
-"""Company Files"""
 
 
 class CompanyFileAbstract(models.Model):
@@ -239,6 +215,7 @@ class BalanceReport(CompanyFileAbstract):
 
 
 class BaseRequest(models.Model):
+    
     REQUEST_STATUS_NEW = 'new'
     REQUEST_STATUS_PENDING = 'pending'
     REQUEST_STATUS_ACCEPTED = 'accepted'
@@ -253,6 +230,9 @@ class BaseRequest(models.Model):
 
     company = models.ForeignKey(
         CompanyProfile, on_delete=models.CASCADE, verbose_name=_("Company"), null=True)
+
+    subject = models.TextField(
+        blank=True, null=True, verbose_name=_("Subject"))
 
     status = models.CharField(verbose_name=_(
         "Status"), max_length=10, choices=REQUEST_STATUS_CHOICES, default=REQUEST_STATUS_NEW)
@@ -286,9 +266,3 @@ class DiagnosticRequest(BaseRequest):
     class Meta:
         verbose_name = _("Diagnostic Request")
         verbose_name_plural = _("Diagnostic Requests")
-
-    def check_and_update_status(self):
-        # Check if status is "new" and more than 30 minutes have passed since creation
-        if self.status == self.REQUEST_STATUS_NEW and timezone.now() >= self.created_at + timedelta(minutes=30):
-            self.status = self.REQUEST_STATUS_PENDING
-            self.save()

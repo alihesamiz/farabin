@@ -17,7 +17,12 @@ def trigger_calculation_task(sender, instance, **kwargs):
     else:
         financial_asset_ids = FinancialAsset.objects.filter(
             company=instance.company
-        ).order_by('year', 'month').values_list('id', flat=True)
+        ).prefetch_related('sold_product_fees',
+                           'profit_loss_statements',
+                           'balance_reports',
+                           'account_turnovers',).order_by('year', 'month')
+
+        print(financial_asset_ids)
 
         financial_calculator = FinancialCalculations(instance).process_assets()
 
