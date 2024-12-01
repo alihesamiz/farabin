@@ -148,6 +148,7 @@ class LiquidityChartSerializer(BaseChartSerializer):
 
     instant_ratio = serializers.DecimalField(
         max_digits=20, decimal_places=0)
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, chart_name=AnalysisReport.LIQUIDITY_CHART, **kwargs)
 
@@ -190,7 +191,13 @@ class ProfitChartSerializer(BaseChartSerializer):
 class AnalysisReportSerializer(serializers.ModelSerializer):
     class Meta:
         model = AnalysisReport
-        fields = ['chart_name', 'text']
+        fields = ['chart_name', 'text', 'created_at', 'updated_at']
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        # Limit the 'text' field to 20 characters
+        representation['text'] = instance.text[:15]
+        return representation
 
 
 class FinancialAssetSerializer(serializers.ModelSerializer):
@@ -290,5 +297,3 @@ class MonthDataSerializer(serializers.ModelSerializer):
 class YearlyFinanceDataSerializer(serializers.Serializer):
     year = serializers.IntegerField()
     months = serializers.ListField(child=MonthDataSerializer())
-
-
