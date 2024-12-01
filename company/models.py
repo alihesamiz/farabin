@@ -1,3 +1,5 @@
+import os
+from django.core.files.storage import default_storage
 from uuid import uuid4
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
@@ -51,7 +53,6 @@ class TechField(models.Model):
     class Meta:
         verbose_name = _("Tech Field")
         verbose_name_plural = _("Tech Fields")
-
 
 
 class CompanyProfile(models.Model):
@@ -118,7 +119,6 @@ class CompanyProfile(models.Model):
         return f"{self.company_title} › {self.user.national_code}"
 
 
-
 class CompanyService(models.Model):
     company = models.ForeignKey(CompanyProfile, on_delete=models.CASCADE,
                                 related_name='services', verbose_name=_("Company"))
@@ -176,6 +176,22 @@ class TaxDeclaration(CompanyFileAbstract):
         verbose_name_plural = _("Tax Declarations")
         unique_together = [['company', 'year']]
 
+    def save(self, *args, **kwargs):
+        # Check if the tax_file is being updated
+        if self.pk:
+            # Fetch the current instance
+            existing_instance = TaxDeclaration.objects.get(pk=self.pk)
+
+            # If the tax_file is being changed, delete the old file
+            if existing_instance.tax_file != self.tax_file:
+                # Delete the old file if it exists
+                old_file_path = existing_instance.tax_file.path if existing_instance.tax_file else None
+                if old_file_path and os.path.exists(old_file_path):
+                    default_storage.delete(old_file_path)
+
+        # Now save the new instance (either a new one or an update)
+        super(TaxDeclaration, self).save(*args, **kwargs)
+
 
 def get_non_tax_file_upload_path(instance, filename):
     path = GeneralUtils(
@@ -212,10 +228,36 @@ class BalanceReport(CompanyFileAbstract):
         verbose_name = _("Balance Report")
         verbose_name_plural = _("Balance Reports")
         unique_together = [['company', 'month', 'year'],]
+        
+    def save(self, *args, **kwargs):
+        if self.pk:  # Only check if updating an existing instance
+            existing_instance = BalanceReport.objects.get(pk=self.pk)
+
+            # Loop through each file field to check if it has been updated
+            file_fields = [
+                'balance_report_file',
+                'profit_loss_file',
+                'sold_product_file',
+                'account_turnover_file'
+            ]
+
+            for field in file_fields:
+                old_file = getattr(existing_instance, field)
+                new_file = getattr(self, field)
+                
+                # If the file has changed (new file uploaded)
+                if old_file != new_file:
+                    old_file_path = old_file.path if old_file else None
+                    if old_file_path and os.path.exists(old_file_path):
+                        # Delete the old file
+                        default_storage.delete(old_file_path)
+
+        # Save the new instance (either a new one or an update)
+        super(BalanceReport, self).save(*args, **kwargs)
 
 
 class BaseRequest(models.Model):
-    
+
     REQUEST_STATUS_NEW = 'new'
     REQUEST_STATUS_PENDING = 'pending'
     REQUEST_STATUS_ACCEPTED = 'accepted'
