@@ -10,7 +10,7 @@ class SoldProductFee(models.Model):
     consuming_material = models.DecimalField(default=0,
                                              max_digits=20, decimal_places=0, verbose_name=_('Consuming Material'))
     direct_wage = models.DecimalField(default=0,
-                                         max_digits=20, decimal_places=0, verbose_name=_('Direct Wage'))
+                                      max_digits=20, decimal_places=0, verbose_name=_('Direct Wage'))
     construction_overhead = models.DecimalField(default=0,
                                                 max_digits=20, decimal_places=0, verbose_name=_('Construction Overhead'))
     production_total_price = models.DecimalField(
@@ -33,7 +33,8 @@ class SoldProductFee(models.Model):
         max_digits=20, decimal_places=0, default=0, verbose_name=_('Other Product'))
     sold_product_total_price = models.DecimalField(default=0,
                                                    max_digits=20, decimal_places=0, verbose_name=_('Sold Product Total Price'))
-
+    def __str__(self):
+        return f"{self.financial_asset}"
     class Meta:
         unique_together = ('financial_asset',)
         verbose_name = _("Sold Product Fee")
@@ -107,7 +108,8 @@ class ProfitLossStatement(models.Model):
                                                max_digits=20, decimal_places=0, verbose_name=_('Previous Year Income Tax'))
     profit_after_tax = models.DecimalField(default=0,
                                            max_digits=20, decimal_places=0, verbose_name=_('Profit After Tax'))
-
+    def __str__(self):
+        return f"{self.financial_asset}"
     class Meta:
         unique_together = ('financial_asset',)
         verbose_name = _("Profit And Loss Statement")
@@ -212,7 +214,8 @@ class BalanceReport(models.Model):
                                    max_digits=20, decimal_places=0, verbose_name=_('Net Sale'))
     net_profit = models.DecimalField(default=0,
                                      max_digits=20, decimal_places=0, verbose_name=_('Net Profit'))
-
+    def __str__(self):  
+        return f"{self.financial_asset}"
     class Meta:
         unique_together = [['financial_asset',]]
         verbose_name = _("Balance Report")
@@ -263,6 +266,9 @@ class AccountTurnOver(models.Model):
     end_year_accumulated_profit = models.DecimalField(
         default=0, max_digits=20, decimal_places=0, verbose_name=_('End Year`s Accumulated profit'))
 
+    def __str__(self):
+        return f"{self.financial_asset}"
+
     class Meta:
         unique_together = ('financial_asset',)
         verbose_name = _("Account TurnOver")
@@ -289,7 +295,9 @@ class FinancialAsset(models.Model):
         verbose_name_plural = _('Financial Assets')
 
     def __str__(self):
-        return f"{self.company.company_title} › {self.year}({self.month})"
+        if self.month:
+            return f"{self.company.company_title} › {self.year} › {self.month}"
+        return f"{self.company.company_title} › {self.year}"
 
 
 class FinancialData(models.Model):
@@ -372,8 +380,16 @@ class FinancialData(models.Model):
     altman_bankrupsy_ratio = models.DecimalField(
         default=0, max_digits=20, decimal_places=2, verbose_name=_('Altman Bankruptcy Ratio'))
 
+    created_at = models.DateTimeField(
+        auto_now_add=True, verbose_name=_('Created At'))
+
+    updated_at = models.DateTimeField(
+        auto_now=True, verbose_name=_('Updated At'))
+
     def __str__(self) -> str:
-        return f"{self.financial_asset.company.company_title} › {self.financial_asset.year} › {self.financial_asset.month if self.financial_asset.month else '-'}"
+        if self.financial_asset.month:
+            return f"{self.financial_asset.company.company_title} › {self.financial_asset.year} › {self.financial_asset.month}"
+        return f"{self.financial_asset.company.company_title} › {self.financial_asset.year}"
 
     class Meta:
         verbose_name = _("Financial Data")
@@ -413,10 +429,21 @@ class AnalysisReport(models.Model):
         (COST_CHART, _("Cost Chart")),
         (PROFIT_CHART, _("Profit Chart")),
     ]
+    MONTHLY_PERIOD = 'm'
+    YEARLY_PERIOD = 'y'
+    PERIOD_CHOICES = [
+        (MONTHLY_PERIOD, _("Monthly")),
 
-    monthly = models.BooleanField(default=False, verbose_name=_("Monthly"))
+        (YEARLY_PERIOD, _("Yearly")),
 
-    yearly = models.BooleanField(default=False, verbose_name=_("Yearly"))
+    ]
+
+    period = models.CharField(max_length=7, default=YEARLY_PERIOD, verbose_name=_(
+        "Period"), choices=PERIOD_CHOICES)
+
+    # monthly = models.BooleanField(default=False, verbose_name=_("Monthly"))
+
+    # yearly = models.BooleanField(default=False, verbose_name=_("Yearly"))
 
     calculated_data = models.ForeignKey(
         FinancialData, on_delete=models.CASCADE, related_name='analysis_reports', verbose_name=_('Calculated Data'), help_text=_("Select company assosiated with the year for entering the analysis text report. it would be better to only choose the last yaer of each company"))
@@ -427,16 +454,19 @@ class AnalysisReport(models.Model):
     text = models.TextField(verbose_name=_('Analysis Text'), help_text=_(
         "Enter the analysis text for each chart"))
 
-    created_at = models.DateTimeField(auto_now_add=True,verbose_name=_("Created At"))
-    
-    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
-    
+    created_at = models.DateTimeField(
+        auto_now_add=True, verbose_name=_("Created At"))
+
+    updated_at = models.DateTimeField(
+        auto_now=True, verbose_name=_("Updated At"))
+
     is_published = models.BooleanField(default=False, verbose_name=_(
         'Published'), help_text=_("Select to publish the analysis report"))
 
     class Meta:
         verbose_name = _("Analysis Report")
         verbose_name_plural = _("Analysis Reports")
+        unique_together = ['chart_name', 'calculated_data']
 
     def __str__(self):
         return f"{self.calculated_data.financial_asset.company.company_title} › {self.calculated_data.financial_asset.year} › {self.chart_name}"
