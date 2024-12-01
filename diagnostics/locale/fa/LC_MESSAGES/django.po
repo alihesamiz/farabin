@@ -2,13 +2,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-01 08:38+0330\n"
+"POT-Creation-Date: 2024-12-01 12:18+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,23 +18,23 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: diagnostics/admin.py:57 diagnostics/admin.py:76
+#: diagnostics/admin.py:58 diagnostics/admin.py:77
 msgid "Company Title"
 msgstr "نام شرکت"
 
-#: diagnostics/admin.py:81 diagnostics/models.py:278
+#: diagnostics/admin.py:82 diagnostics/models.py:278
 msgid "Year"
 msgstr "سال"
 
-#: diagnostics/admin.py:85 diagnostics/models.py:281
+#: diagnostics/admin.py:86 diagnostics/models.py:281
 msgid "Month"
 msgstr "ماه"
 
-#: diagnostics/admin.py:129
+#: diagnostics/admin.py:151
 msgid "No data available"
 msgstr "داده‌ای موجود نیست"
 
-#: diagnostics/admin.py:130
+#: diagnostics/admin.py:152
 msgid "Chart"
 msgstr "نمودار"
 
@@ -612,83 +612,95 @@ msgstr "گردش حساب‌ها"
 msgid "Altman Bankruptcy Ratio"
 msgstr "نسبت ورشکستگی آلتمن"
 
-#: diagnostics/models.py:379
+#: diagnostics/models.py:376 diagnostics/models.py:450
+msgid "Created At"
+msgstr "ساخته شده در"
+
+#: diagnostics/models.py:379 diagnostics/models.py:453
+msgid "Updated At"
+msgstr "بروزرسانی شده در"
+
+#: diagnostics/models.py:387
 msgid "Financial Data"
 msgstr "داده مالی"
 
-#: diagnostics/models.py:380
+#: diagnostics/models.py:388
 msgid "Financial Datas"
 msgstr "داده‌های مالی"
 
-#: diagnostics/models.py:401
+#: diagnostics/models.py:409
 msgid "Debt Chart"
 msgstr "نمودار بدهی"
 
-#: diagnostics/models.py:402
+#: diagnostics/models.py:410
 msgid "Asset Chart"
 msgstr "نمودار دارایی"
 
-#: diagnostics/models.py:403
+#: diagnostics/models.py:411
 msgid "Sale Chart"
 msgstr "نمودار فروش"
 
-#: diagnostics/models.py:404
+#: diagnostics/models.py:412
 msgid "Equity Chart"
 msgstr "نمودار حقوق صاحبان سهام"
 
-#: diagnostics/models.py:405
+#: diagnostics/models.py:413
 msgid "Life Cycle Chart"
 msgstr "نمودار چرخه عخمر"
 
-#: diagnostics/models.py:406
+#: diagnostics/models.py:414
 msgid "Bankrupsy Chart"
 msgstr "نمودار ورشکستگی آلتمن"
 
-#: diagnostics/models.py:407
+#: diagnostics/models.py:415
 msgid "Profitability Chart"
 msgstr "نمودار سودآوری"
 
-#: diagnostics/models.py:408
+#: diagnostics/models.py:416
 msgid "Salary Chart"
 msgstr "نمودار دستمزد"
 
-#: diagnostics/models.py:409
+#: diagnostics/models.py:417
 msgid "Inventory Chart"
 msgstr "نمودار انبار"
 
-#: diagnostics/models.py:410
+#: diagnostics/models.py:418
 msgid "Agility Chart"
 msgstr "نمودار چابکی"
 
-#: diagnostics/models.py:411
+#: diagnostics/models.py:419
 msgid "Liquidity Chart"
 msgstr "نمودار نقدینگی"
 
-#: diagnostics/models.py:412
+#: diagnostics/models.py:420
 msgid "Leverage Chart"
 msgstr "نمودار اهرمی"
 
-#: diagnostics/models.py:413
+#: diagnostics/models.py:421
 msgid "Cost Chart"
 msgstr "نمودار هزینه"
 
-#: diagnostics/models.py:414
+#: diagnostics/models.py:422
 msgid "Profit Chart"
 msgstr "نمودار سود"
 
-#: diagnostics/models.py:417
+#: diagnostics/models.py:427
 msgid "Monthly"
 msgstr "ماهانه"
 
-#: diagnostics/models.py:419
+#: diagnostics/models.py:429
 msgid "Yearly"
 msgstr "سالانه"
 
-#: diagnostics/models.py:422
+#: diagnostics/models.py:434
+msgid "Period"
+msgstr "دوره"
+
+#: diagnostics/models.py:441
 msgid "Calculated Data"
 msgstr "داده‌ محاسباتی"
 
-#: diagnostics/models.py:422
+#: diagnostics/models.py:441
 msgid ""
 "Select company assosiated with the year for entering the analysis text "
 "report. it would be better to only choose the last yaer of each company"
@@ -696,43 +708,35 @@ msgstr ""
 "شرکت مرتبط با سال را برای ورود متن تحلیلات وارد کنید.(بهتر است تنها سال اخر "
 "را انتخاب کنید) "
 
-#: diagnostics/models.py:425
+#: diagnostics/models.py:444
 msgid "Chart Name"
 msgstr "اسم نمودار"
 
-#: diagnostics/models.py:425
+#: diagnostics/models.py:444
 msgid "Enter the name of each chart"
 msgstr "نام هر نمودار را وارد کنید"
 
-#: diagnostics/models.py:427
+#: diagnostics/models.py:446
 msgid "Analysis Text"
 msgstr "توضیح تحلیلات"
 
-#: diagnostics/models.py:428
+#: diagnostics/models.py:447
 msgid "Enter the analysis text for each chart"
 msgstr "تحلیل  هر نمودار را وارد کنید"
 
-#: diagnostics/models.py:430
-msgid "Created At"
-msgstr "ساخته شده در"
-
-#: diagnostics/models.py:432
-msgid "Updated At"
-msgstr "بروزرسانی شده در"
-
-#: diagnostics/models.py:435
+#: diagnostics/models.py:456
 msgid "Published"
 msgstr "منتشر شود؟"
 
-#: diagnostics/models.py:435
+#: diagnostics/models.py:456
 msgid "Select to publish the analysis report"
 msgstr "برای انتشار گزارش تحلیل انتخاب کنید"
 
-#: diagnostics/models.py:438
+#: diagnostics/models.py:459
 msgid "Analysis Report"
 msgstr "تحلیل"
 
-#: diagnostics/models.py:439 diagnostics/views.py:168
+#: diagnostics/models.py:460 diagnostics/views.py:168
 msgid "Analysis Reports"
 msgstr "تحلیل‌ها"
 

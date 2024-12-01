@@ -2,13 +2,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-01 08:38+0330\n"
+"POT-Creation-Date: 2024-12-01 12:18+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,11 +22,11 @@ msgstr ""
 msgid "National Code"
 msgstr "کد ثبت ملی شرکت"
 
-#: company/admin.py:50 company/models.py:96
+#: company/admin.py:50 company/models.py:97
 msgid "Special Field"
 msgstr "حوزه تخصصی"
 
-#: company/admin.py:52 company/models.py:103
+#: company/admin.py:52 company/models.py:104
 msgid "Capital Providing Method"
 msgstr "راه‌های تامین سرمایه"
 
@@ -46,124 +46,124 @@ msgstr "غیرفعالسازی سرویس‌های انتخابی"
 msgid "{} service(s) were successfully marked as deactive."
 msgstr "{} سرویس با موفقیت غیرفعال شدند"
 
-#: company/admin.py:100 company/admin.py:140 company/models.py:76
+#: company/admin.py:100 company/admin.py:140 company/models.py:77
 msgid "Company Title"
 msgstr "عنوان شرکت"
 
 #: company/apps.py:8 company/models.py:124 company/models.py:144
-#: company/models.py:166 company/models.py:191 company/models.py:232
+#: company/models.py:166 company/models.py:207 company/models.py:274
 msgid "Company"
 msgstr "شرکت"
 
-#: company/models.py:19
+#: company/models.py:21
 msgid "Operational"
 msgstr "عملیاتی"
 
-#: company/models.py:20
+#: company/models.py:22
 msgid "Finance"
 msgstr "تسهیلات مالی"
 
-#: company/models.py:21
+#: company/models.py:23
 msgid "Invest"
 msgstr "سرمایه‌گذاری"
 
-#: company/models.py:24
+#: company/models.py:26
 msgid "Capital Providing"
 msgstr "تامین سرمایه"
 
-#: company/models.py:27
+#: company/models.py:29
 msgid "Life Cycle"
 msgstr "چرخه عمر"
 
-#: company/models.py:28
+#: company/models.py:30
 msgid "Life Cycles"
 msgstr "چرخه‌های عمر"
 
-#: company/models.py:35 company/models.py:46
+#: company/models.py:37 company/models.py:48
 msgid "Name"
 msgstr "نام"
 
-#: company/models.py:41
+#: company/models.py:43
 msgid "Special Tech"
 msgstr "حوزه تخصصی"
 
-#: company/models.py:42
+#: company/models.py:44
 msgid "Special Techs"
 msgstr "حوزه‌های تخصصی"
 
-#: company/models.py:52
+#: company/models.py:54
 msgid "Tech Field"
 msgstr "حوزه فناوری"
 
-#: company/models.py:53
+#: company/models.py:55
 msgid "Tech Fields"
 msgstr "حوزه‌های فناوری"
 
-#: company/models.py:64
+#: company/models.py:65
 msgid "Newbie"
 msgstr "نوپا"
 
-#: company/models.py:65
+#: company/models.py:66
 msgid "Innovative"
 msgstr "نوآور"
 
-#: company/models.py:66
+#: company/models.py:67
 msgid "Technological"
 msgstr "فناور"
 
-#: company/models.py:70
+#: company/models.py:71
 msgid "User"
 msgstr "کاربر"
 
-#: company/models.py:73
+#: company/models.py:74
 msgid "Profile Active"
 msgstr "فعالسازی"
 
-#: company/models.py:79
+#: company/models.py:80
 msgid "Email"
 msgstr "ایمیل"
 
-#: company/models.py:82
+#: company/models.py:83
 msgid "Social Code"
 msgstr "کد ملی"
 
-#: company/models.py:85
+#: company/models.py:86
 msgid "Manager Full Name"
 msgstr "نام کامل مدیرعامل"
 
-#: company/models.py:88
+#: company/models.py:89
 msgid "License Type"
 msgstr "نوع گواهی"
 
-#: company/models.py:92
+#: company/models.py:93
 msgid "Technical Field"
 msgstr "حوزه فناوری"
 
-#: company/models.py:100
+#: company/models.py:101
 msgid "Insurance List"
 msgstr "تعداد لیست بیمه‌شدگان"
 
-#: company/models.py:106
+#: company/models.py:107
 msgid "Province"
 msgstr "استان"
 
-#: company/models.py:109
+#: company/models.py:110
 msgid "City"
 msgstr "شهر"
 
-#: company/models.py:111
+#: company/models.py:112
 msgid "Address"
 msgstr "آدرس"
 
-#: company/models.py:114
+#: company/models.py:115
 msgid "Company Profile"
 msgstr "پروفایل شرکت"
 
-#: company/models.py:115
+#: company/models.py:116
 msgid "Company Profiles"
 msgstr "پروفایل شرکت‌ها"
 
-#: company/models.py:126 company/models.py:247
+#: company/models.py:126 company/models.py:289
 msgid "Service"
 msgstr "خدمت"
 
@@ -207,91 +207,87 @@ msgstr "اظهارنامه"
 msgid "Tax Declarations"
 msgstr "اظهارنامه‌ها"
 
-#: company/models.py:194
+#: company/models.py:210
 msgid "Month"
 msgstr "ماه"
 
-#: company/models.py:197
+#: company/models.py:213
 msgid "Balance Report File"
 msgstr "فایل ترایزنامه"
 
-#: company/models.py:200
+#: company/models.py:216
 msgid "Profit Loss File"
 msgstr "فایل صورت سود و زیان"
 
-#: company/models.py:203
+#: company/models.py:219
 msgid "Sold Product File"
 msgstr "فایل هزینه کالای فروش رفته"
 
-#: company/models.py:206
+#: company/models.py:222
 msgid "Account Turn Over File"
 msgstr "فایل گردش حساب"
 
-#: company/models.py:212
+#: company/models.py:228
 msgid "Balance Report"
 msgstr "ترازنامه‌"
 
-#: company/models.py:213
+#: company/models.py:229
 msgid "Balance Reports"
 msgstr "ترازنامه‌ها"
 
-#: company/models.py:225
+#: company/models.py:267
 msgid "New"
 msgstr "جدید"
 
-#: company/models.py:226
+#: company/models.py:268
 msgid "Pending"
 msgstr "در حال بررسی"
 
-#: company/models.py:227
+#: company/models.py:269
 msgid "Accepted"
 msgstr "تایید شده"
 
-#: company/models.py:228
+#: company/models.py:270
 msgid "Rejected"
 msgstr "رد شده"
 
-#: company/models.py:235
+#: company/models.py:277
 msgid "Subject"
 msgstr "عنوان"
 
-#: company/models.py:238
+#: company/models.py:280
 msgid "Status"
 msgstr "وضعیت"
 
-#: company/models.py:241
+#: company/models.py:283
 msgid "Created At"
 msgstr "ایجاد شده در"
 
-#: company/models.py:244
+#: company/models.py:286
 msgid "Updated At"
 msgstr "بروزرسانی شده در"
 
-#: company/models.py:251
-#, fuzzy
-#| msgid "Request"
+#: company/models.py:293
 msgid "BaseRequest"
 msgstr "درخواست"
 
-#: company/models.py:252
-#, fuzzy
-#| msgid "Requests"
+#: company/models.py:294
 msgid "BaseRequests"
 msgstr "درخواست‌ها"
 
-#: company/models.py:258
+#: company/models.py:300
 msgid "Tax Record"
 msgstr "اظهارنامه"
 
-#: company/models.py:261
+#: company/models.py:303
 msgid "Balance Record"
 msgstr "ترازنامه‌"
 
-#: company/models.py:267
+#: company/models.py:309
 msgid "Diagnostic Request"
 msgstr "درخواست مالی"
 
-#: company/models.py:268
+#: company/models.py:310
 msgid "Diagnostic Requests"
 msgstr "درخواست های مالی"
 
