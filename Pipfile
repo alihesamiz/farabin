@@ -28,7 +28,6 @@ djangorestframework-simplejwt = "*"
 tornado = "*"
 django-celery-beat = "*"
 celery = {extras = ["redis"], version = "*"}
-pypdf2 = "*"
 pdf2image = "*"
 
 [dev-packages]
