@@ -72,7 +72,7 @@ THIRED_PARTY_APPS = [
 INSTALLED_APPS += PROJECT_APPS + THIRED_PARTY_APPS
 
 MIDDLEWARE = [
-    # 'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
