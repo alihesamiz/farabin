@@ -269,20 +269,20 @@ class BalanceReportViewSet(viewsets.ModelViewSet):
 
                 folder_path = os.path.dirname(file_paths[0])
 
+                # Delete each file if it exists
                 for file_path in file_paths:
                     if file_path and default_storage.exists(file_path):
                         default_storage.delete(file_path)
 
-                if file_path and default_storage.exists(file_path):
-                    default_storage.delete(file_path)
-
+                # If the folder is empty, delete the folder
                 if folder_path and not os.listdir(folder_path):
                     os.rmdir(folder_path)
 
+                # Delete the instance
                 instance.delete()
 
         except Exception as e:
-            pass
+            pass  # Log the error or handle it as necessary
 
     @action(detail=False, methods=['get'])
     def year(self, request):

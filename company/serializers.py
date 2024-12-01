@@ -151,27 +151,30 @@ class BalanceReportCreateSerializer(serializers.ModelSerializer):
                   'profit_loss_file', 'sold_product_file', 'account_turnover_file', 'is_saved', 'is_sent']
 
     def create(self, validated_data):
-        # Get the current user
         user = self.context['request'].user
-
-        # Get the user's company
         company = CompanyProfile.objects.get(user=user)
-
-        # Assign the company to the BalanceReport
         validated_data['company'] = company
 
-        # Check if a report for the same company and year exists
         year = validated_data.get('year')
         month = validated_data.get('month')
-        existing_report = BalanceReport.objects.filter(
-            company=company, year=year, month=month).first()
+        existing_report = BalanceReport.objects.filter(company=company, year=year, month=month).first()
 
         if existing_report:
-            raise ValidationError(
-                {"error": "This months' file already exists"})
-
-        # Create a new report if it doesn't exist
+            raise ValidationError({"error": "This months' file already exists"})
+        
         return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        # Handle file updates
+        for field in ['balance_report_file', 'profit_loss_file', 'sold_product_file', 'account_turnover_file']:
+            new_file = validated_data.get(field)
+            if new_file and getattr(instance, field) != new_file:
+                # Delete old file before saving the new one
+                old_file = getattr(instance, field)
+                if old_file:
+                    old_file.delete()  # Delete the old file
+
+        return super().update(instance, validated_data)
 
 
 class BalanceReportSerializer(serializers.ModelSerializer):
@@ -193,23 +196,27 @@ class TaxDeclarationCreateSerializer(serializers.ModelSerializer):
         fields = ['year', 'tax_file']
 
     def create(self, validated_data):
-        # Get the current user
         user = self.context['request'].user
-
-        # Get the user's company
         company = CompanyProfile.objects.get(user=user)
-
-        # Assign the company to the TaxDeclaration
         validated_data['company'] = company
 
         year = validated_data.get('year')
-        existing_report = TaxDeclaration.objects.filter(
-            company=company, year=year).first()
+        existing_report = TaxDeclaration.objects.filter(company=company, year=year).first()
 
         if existing_report:
-            raise ValidationError(
-                {"error": "This years' file already exists"})
+            raise ValidationError({"error": "This years' file already exists"})
         return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        # Handle file update
+        tax_file = validated_data.get('tax_file', None)
+        if tax_file and instance.tax_file != tax_file:
+            # Optionally, you can handle file replacement here too
+            old_file = instance.tax_file
+            if old_file:
+                old_file.delete()  # Delete the old file before saving the new one
+
+        return super().update(instance, validated_data)
 
 
 class TaxDeclarationSerializer(serializers.ModelSerializer):
