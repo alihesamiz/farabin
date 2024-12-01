@@ -1,3 +1,4 @@
+from django.db.models import Max
 from django.utils.translation import gettext_lazy as _
 from django.utils.html import format_html
 from django.contrib import admin
@@ -89,8 +90,8 @@ class CalculatedDataAdmin(admin.ModelAdmin):
 class AnalysisReportAdmin(admin.ModelAdmin):
     list_display = [
         "calculated_data",
-        # "chart",  # Updated to be a link to the financial data
         "chart_name",
+        'period',
         "text",
     ]
 
@@ -98,14 +99,36 @@ class AnalysisReportAdmin(admin.ModelAdmin):
     search_fields = [
         'calculated_data__financial_asset__company__company_title',]
 
+    def get_search_results(self, request, queryset, search_term):
+        """
+        Customize search to return only the last report for each company
+        based on the search term.
+        """
+        company_id = request.GET.get('company')
+
+        company_queryset = CompanyProfile.objects.filter(
+            company_title__icontains=search_term)
+
+        if company_id:
+            company = CompanyProfile.objects.get(id=company_id)
+            queryset = FinancialData.objects.filter(
+                calculated_data__financial_asset__company=company
+            ).order_by('-created_at')
+        else:
+            queryset = AnalysisReport.objects.filter(
+                calculated_data__financial_asset__company__in=company_queryset
+            ).annotate(
+                latest_report=Max('created_at')
+            ).order_by('-latest_report')
+
+        return queryset, False
+
     def changelist_view(self, request, extra_context=None):
-        # Fetching CompanyProfiles and their related FinancialData via the FinancialAsset model
         companies = CompanyProfile.objects.all()
 
         company_financial_data = []
 
         for company in companies:
-            # Filter FinancialData based on related company
             financial_data = AnalysisReport.objects.filter(
                 calculated_data__financial_asset__company=company
             ).last()
@@ -120,7 +143,6 @@ class AnalysisReportAdmin(admin.ModelAdmin):
         return super().changelist_view(request, extra_context=extra_context)
 
     def chart(self, obj):
-        # Reverse the URL with the company id (assuming it's a UUID)
         if obj and obj.calculated_data and obj.calculated_data.financial_asset:
             company = obj.calculated_data.financial_asset.company
             if company:

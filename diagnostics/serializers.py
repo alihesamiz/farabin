@@ -10,11 +10,16 @@ class BaseChartSerializer(serializers.Serializer):
         super().__init__(*args, **kwargs)
         self.chart_name = chart_name
 
+
     def get_financial_asset(self, obj):
-        return {
-            "year": obj.financial_asset.year,
-            "month": obj.financial_asset.month if obj.financial_asset.month else '-'
-        }
+        # Start with the year always being included
+        financial_asset_data = {"year": obj.financial_asset.year}
+
+        # Only add the 'month' if it exists
+        if obj.financial_asset.month:
+            financial_asset_data["month"] = obj.financial_asset.month
+
+        return financial_asset_data
 
     def get_report(self, obj):
         # Filter reports to only include those corresponding to the specified chart
@@ -189,6 +194,13 @@ class ProfitChartSerializer(BaseChartSerializer):
 
 
 class AnalysisReportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AnalysisReport
+        fields = ['chart_name', 'text', 'created_at', 'updated_at']
+
+
+    
+class AnalysisReportListSerializer(serializers.ModelSerializer):
     class Meta:
         model = AnalysisReport
         fields = ['chart_name', 'text', 'created_at', 'updated_at']

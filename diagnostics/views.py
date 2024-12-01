@@ -16,7 +16,7 @@ from rest_framework import status
 from .models import AnalysisReport, FinancialData
 from company.models import CompanyProfile
 from .serializers import (
-    AgilityChartSerializer, AnalysisReportSerializer, AssetChartSerializer, BankrupsyChartSerializer, CostChartSerializer, DebtChartSerializer, EquityChartSerializer, FinancialDataSerializer,
+    AgilityChartSerializer, AnalysisReportListSerializer, AnalysisReportSerializer, AssetChartSerializer, BankrupsyChartSerializer, CostChartSerializer, DebtChartSerializer, EquityChartSerializer, FinancialDataSerializer,
     InventoryChartSerializer, LeverageChartSerializer, LiquidityChartSerializer, FinancialDataSerializer, MonthDataSerializer,  ProfitChartSerializer, ProfitibilityChartSerializer, SaleChartSerializer, YearlyFinanceDataSerializer
 )
 
@@ -84,9 +84,9 @@ class DiagnosticAnalysisViewSet(ModelViewSet):
             item for item in analysis if item.calculated_data.financial_asset.is_tax_record]
 
         # Serialize results
-        monthly_serializer = AnalysisReportSerializer(
+        monthly_serializer = AnalysisReportListSerializer(
             monthly_analysis, many=True)
-        yearly_serializer = AnalysisReportSerializer(
+        yearly_serializer = AnalysisReportListSerializer(
             yearly_analysis, many=True)
 
         return Response({"monthly_analysis": monthly_serializer.data, "yearly_analysis": yearly_serializer.data})
