@@ -9,15 +9,15 @@ class SoldProductFee(models.Model):
         'FinancialAsset', on_delete=models.CASCADE, related_name='sold_product_fees', verbose_name=_('Financial Asset'))
     consuming_material = models.DecimalField(default=0,
                                              max_digits=20, decimal_places=0, verbose_name=_('Consuming Material'))
-    production_fee = models.DecimalField(default=0,
-                                         max_digits=20, decimal_places=0, verbose_name=_('Production Fee'))
+    direct_wage = models.DecimalField(default=0,
+                                         max_digits=20, decimal_places=0, verbose_name=_('Direct Wage'))
     construction_overhead = models.DecimalField(default=0,
                                                 max_digits=20, decimal_places=0, verbose_name=_('Construction Overhead'))
     production_total_price = models.DecimalField(
         max_digits=20, decimal_places=0, default=0, verbose_name=_('Production Total Price'))
-    current_constructing_product_first_period_inventory = models.DecimalField(
+    first_period_constructing_product_inventory = models.DecimalField(
         max_digits=20, decimal_places=0, default=0, verbose_name=_('Current Constructing Product First Period'))
-    current_constructing_product_end_period_inventory = models.DecimalField(
+    end_period_constructing_product_inventory = models.DecimalField(
         max_digits=20, decimal_places=0, default=0, verbose_name=_('Current Constructing Product End Period'))
     produced_product_total_price = models.DecimalField(
         max_digits=20, decimal_places=0, default=0, verbose_name=_('Produced Product Total Price'))
@@ -300,77 +300,77 @@ class FinancialData(models.Model):
     financial_asset = models.ForeignKey(
         FinancialAsset, on_delete=models.CASCADE, related_name='calculated_data', verbose_name=_('Financial Asset'))
     current_asset = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Current Asset'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Current Asset'))
     non_current_asset = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Non-Current Asset'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Non-Current Asset'))
     total_asset = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Total Asset'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Total Asset'))
     current_debt = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Current Debt'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Current Debt'))
     non_current_debt = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Non-Current Debt'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Non-Current Debt'))
     total_debt = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Total Debt'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Total Debt'))
     total_equity = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Total Equity'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Total Equity'))
     total_sum_equity_debt = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Total Equity and Debt Sum'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Total Equity and Debt Sum'))
     gross_profit = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Gross Profit'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Gross Profit'))
     net_sale = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Net Sale'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Net Sale'))
     inventory = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Inventory'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Inventory'))
     operational_profit = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Operational Profit'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Operational Profit'))
     proceed_profit = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Proceed Profit'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Proceed Profit'))
     net_profit = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Net Profit'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Net Profit'))
     consuming_material = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Consuming Material'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Consuming Material'))
     production_fee = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Production Fee'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Production Fee'))
     construction_overhead = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Construction Overhead'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Construction Overhead'))
     production_total_price = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Total Production Price'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Total Production Price'))
     salary_fee = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Salary Fee'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Salary Fee'))
     salary_production_fee = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Production Salary Fee'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Production Salary Fee'))
     usability = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Usability'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Usability'))
     efficiency = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Efficiency'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Efficiency'))
     roa = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Return on Assets (ROA)'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Return on Assets (ROA)'))
     roab = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Return on Assets Before Tax (ROAB)'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Return on Assets Before Tax (ROAB)'))
     roe = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Return on Equity (ROE)'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Return on Equity (ROE)'))
     gross_profit_margin = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Gross Profit Margin'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Gross Profit Margin'))
     profit_margin_ratio = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Profit Margin Ratio'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Profit Margin Ratio'))
     debt_ratio = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Debt Ratio'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Debt Ratio'))
     capital_ratio = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Capital Ratio'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Capital Ratio'))
     proprietary_ratio = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Proprietary Ratio'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Proprietary Ratio'))
     equity_per_total_debt_ratio = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Equity to Total Debt Ratio'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Equity to Total Debt Ratio'))
     equity_per_total_non_current_asset_ratio = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Equity to Non-Current Asset Ratio'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Equity to Non-Current Asset Ratio'))
     current_ratio = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Current Ratio'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Current Ratio'))
     instant_ratio = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Instant Ratio'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Instant Ratio'))
     stock_turnover = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Stock Turnover'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Stock Turnover'))
     altman_bankrupsy_ratio = models.DecimalField(
-        default=0, max_digits=20, decimal_places=0, verbose_name=_('Altman Bankruptcy Ratio'))
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Altman Bankruptcy Ratio'))
 
     def __str__(self) -> str:
         return f"{self.financial_asset.company.company_title} › {self.financial_asset.year} › {self.financial_asset.month if self.financial_asset.month else '-'}"
@@ -387,7 +387,7 @@ class AnalysisReport(models.Model):
     SALE_CHART = 'sale'
     EQUITY_CHART = 'equity'
     LIFE_CYCLE_CHART = 'life_cycle'
-    BANKRUPSY_CHART = 'bankruptcy'
+    BANKRUPSY_CHART = 'bankrupsy'
     PROFITIBILITY_CHART = 'profitability'
     SALARY_CHART = 'salary'
     INVENTORY_CHART = 'inventory'
@@ -403,7 +403,7 @@ class AnalysisReport(models.Model):
         (SALE_CHART, _("Sale Chart")),
         (EQUITY_CHART, _("Equity Chart")),
         (LIFE_CYCLE_CHART, _("Life Cycle Chart")),
-        (BANKRUPSY_CHART, _("Bankruptcy Chart")),
+        (BANKRUPSY_CHART, _("Bankrupsy Chart")),
         (PROFITIBILITY_CHART, _("Profitability Chart")),
         (SALARY_CHART, _("Salary Chart")),
         (INVENTORY_CHART, _("Inventory Chart")),
@@ -427,6 +427,10 @@ class AnalysisReport(models.Model):
     text = models.TextField(verbose_name=_('Analysis Text'), help_text=_(
         "Enter the analysis text for each chart"))
 
+    created_at = models.DateTimeField(auto_now_add=True,verbose_name=_("Created At"))
+    
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
+    
     is_published = models.BooleanField(default=False, verbose_name=_(
         'Published'), help_text=_("Select to publish the analysis report"))
 
