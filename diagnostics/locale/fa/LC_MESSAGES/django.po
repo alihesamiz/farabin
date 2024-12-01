@@ -2,13 +2,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-16 21:01+0330\n"
+"POT-Creation-Date: 2024-12-01 08:38+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,7 +38,7 @@ msgstr "داده‌ای موجود نیست"
 msgid "Chart"
 msgstr "نمودار"
 
-#: diagnostics/apps.py:8 diagnostics/views.py:134
+#: diagnostics/apps.py:8 diagnostics/views.py:167
 msgid "Diagnostic"
 msgstr "عارضه‌یابی(سرآمد)"
 
@@ -52,9 +52,9 @@ msgstr "دارایی مالی"
 msgid "Consuming Material"
 msgstr "مواد اولیه مصرفی"
 
-#: diagnostics/models.py:13 diagnostics/models.py:333
-msgid "Production Fee"
-msgstr "هزینه مستقیم"
+#: diagnostics/models.py:13
+msgid "Direct Wage"
+msgstr "دستمزد مستقیم"
 
 #: diagnostics/models.py:15 diagnostics/models.py:335
 msgid "Construction Overhead"
@@ -536,6 +536,10 @@ msgstr "مجموع حقوق سهام داران"
 msgid "Total Equity and Debt Sum"
 msgstr "جمع بدهی‌های جاری"
 
+#: diagnostics/models.py:333
+msgid "Production Fee"
+msgstr "هزینه مستقیم"
+
 #: diagnostics/models.py:337
 msgid "Total Production Price"
 msgstr "جمع هزینه کالای فروخته شده"
@@ -554,15 +558,15 @@ msgstr "اثربخشی"
 
 #: diagnostics/models.py:347
 msgid "Return on Assets (ROA)"
-msgstr "بازگشت دارایی"
+msgstr "ROA"
 
 #: diagnostics/models.py:349
 msgid "Return on Assets Before Tax (ROAB)"
-msgstr "بازگشت دارایی"
+msgstr "ROA`"
 
 #: diagnostics/models.py:351
 msgid "Return on Equity (ROE)"
-msgstr ""
+msgstr "ROE"
 
 #: diagnostics/models.py:353
 msgid "Gross Profit Margin"
@@ -637,7 +641,7 @@ msgid "Life Cycle Chart"
 msgstr "نمودار چرخه عخمر"
 
 #: diagnostics/models.py:406
-msgid "Bankruptcy Chart"
+msgid "Bankrupsy Chart"
 msgstr "نمودار ورشکستگی آلتمن"
 
 #: diagnostics/models.py:407
@@ -672,11 +676,19 @@ msgstr "نمودار هزینه"
 msgid "Profit Chart"
 msgstr "نمودار سود"
 
-#: diagnostics/models.py:418
+#: diagnostics/models.py:417
+msgid "Monthly"
+msgstr "ماهانه"
+
+#: diagnostics/models.py:419
+msgid "Yearly"
+msgstr "سالانه"
+
+#: diagnostics/models.py:422
 msgid "Calculated Data"
 msgstr "داده‌ محاسباتی"
 
-#: diagnostics/models.py:418
+#: diagnostics/models.py:422
 msgid ""
 "Select company assosiated with the year for entering the analysis text "
 "report. it would be better to only choose the last yaer of each company"
@@ -684,75 +696,88 @@ msgstr ""
 "شرکت مرتبط با سال را برای ورود متن تحلیلات وارد کنید.(بهتر است تنها سال اخر "
 "را انتخاب کنید) "
 
-#: diagnostics/models.py:421
+#: diagnostics/models.py:425
 msgid "Chart Name"
 msgstr "اسم نمودار"
 
-#: diagnostics/models.py:421
+#: diagnostics/models.py:425
 msgid "Enter the name of each chart"
 msgstr "نام هر نمودار را وارد کنید"
 
-#: diagnostics/models.py:423
+#: diagnostics/models.py:427
 msgid "Analysis Text"
 msgstr "توضیح تحلیلات"
 
-#: diagnostics/models.py:424
+#: diagnostics/models.py:428
 msgid "Enter the analysis text for each chart"
 msgstr "تحلیل  هر نمودار را وارد کنید"
 
-#: diagnostics/models.py:427
+#: diagnostics/models.py:430
+msgid "Created At"
+msgstr "ساخته شده در"
+
+#: diagnostics/models.py:432
+msgid "Updated At"
+msgstr "بروزرسانی شده در"
+
+#: diagnostics/models.py:435
+msgid "Published"
+msgstr "منتشر شود؟"
+
+#: diagnostics/models.py:435
+msgid "Select to publish the analysis report"
+msgstr "برای انتشار گزارش تحلیل انتخاب کنید"
+
+#: diagnostics/models.py:438
 msgid "Analysis Report"
 msgstr "تحلیل"
 
-#: diagnostics/models.py:428 diagnostics/views.py:135
+#: diagnostics/models.py:439 diagnostics/views.py:168
 msgid "Analysis Reports"
 msgstr "تحلیل‌ها"
 
-#: diagnostics/utils.py:8
+#: diagnostics/utils.py:9
 msgid "Start"
 msgstr "شروع"
 
-#: diagnostics/utils.py:8
+#: diagnostics/utils.py:9
 msgid "Introduction"
 msgstr "معرفی"
 
-#: diagnostics/utils.py:8
+#: diagnostics/utils.py:9
 msgid "Growth"
 msgstr "رشد"
 
-#: diagnostics/utils.py:8
+#: diagnostics/utils.py:9
 msgid "Maturity"
 msgstr "بلوغ"
 
-#: diagnostics/utils.py:9
+#: diagnostics/utils.py:10
 msgid "Recession 1"
 msgstr "رکود ۱"
 
-#: diagnostics/utils.py:9
+#: diagnostics/utils.py:10
 msgid "Recession 2"
 msgstr "رکود ۲"
 
-#: diagnostics/utils.py:9
+#: diagnostics/utils.py:10
 msgid "Recession 3"
 msgstr "رکود ۳"
 
-#: diagnostics/utils.py:10
+#: diagnostics/utils.py:11
 msgid "Decline 1"
 msgstr "افول ۱"
 
-#: diagnostics/utils.py:10
+#: diagnostics/utils.py:11
 msgid "Decline 2"
 msgstr "افول ۲"
 
-#: diagnostics/views.py:133
+#: diagnostics/views.py:166
 msgid "Home"
 msgstr "شروع"
 
 #~ msgid "View Charts"
 #~ msgstr "دیدن نمودار"
-
-#~ msgid "Is Published"
-#~ msgstr "منتشر شود؟"
 
 #~ msgid "Calculated Datas"
 #~ msgstr "داده‌های محاسباتی"
