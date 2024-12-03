@@ -34,6 +34,7 @@ django-environ = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"
+pyjwt = "*"
 
 [requires]
 python_version = "3.12"
