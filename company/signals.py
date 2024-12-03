@@ -8,7 +8,6 @@ from .tasks import send_file_uploading_notification
 @receiver(post_save, sender=BalanceReport)
 def create_request_if_sent(sender, instance, created, **kwargs):
     if instance.is_sent:
-        print(instance)
         try:
             service_instance = CompanyService.objects.get(id=1)
         except CompanyService.DoesNotExist:

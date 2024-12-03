@@ -455,8 +455,6 @@ class FinancialCalculations:
 
     def salary_production_fee_function(self):
         for i in range(self.length):
-            print(self.direct_wage[i] + self.salary_fee[i])
-            print('asdasdasd')
             self.salary_production_fee.append(
                 self.direct_wage[i] + self.salary_fee[i])
 

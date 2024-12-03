@@ -23,3 +23,5 @@ channels-redis
 matplotlib 
 django-seed 
 requests 
+django-environ
+environ

@@ -19,6 +19,7 @@ from .serializers import (
     AgilityChartSerializer, AnalysisReportListSerializer, AnalysisReportSerializer, AssetChartSerializer, BankrupsyChartSerializer, CostChartSerializer, DebtChartSerializer, EquityChartSerializer, FinancialDataSerializer,
     InventoryChartSerializer, LeverageChartSerializer, LiquidityChartSerializer, FinancialDataSerializer, MonthDataSerializer,  ProfitChartSerializer, ProfitibilityChartSerializer, SaleChartSerializer, YearlyFinanceDataSerializer
 )
+from collections import defaultdict
 
 
 class DiagnosticAnalysisViewSet(ModelViewSet):
@@ -67,29 +68,87 @@ class DiagnosticAnalysisViewSet(ModelViewSet):
             raise NotFound(detail="No financial data found.")
         return queryset
 
+    # @action(detail=False, methods=['get'], url_path='analysis', url_name='analysis')
+    # def analysis(self, request):
+    #     company = self.request.user.company
+
+    #     analysis = AnalysisReport.objects.select_related("calculated_data").prefetch_related("calculated_data__financial_asset").filter(
+    #         calculated_data__financial_asset__company=company,
+    #         calculated_data__is_published=True
+    #     ).order_by('calculated_data__financial_asset__year', 'calculated_data__financial_asset__month')
+    #     monthly_analysis = [
+    #         item for item in analysis if not item.calculated_data.financial_asset.is_tax_record]
+    #     yearly_analysis = [
+    #         item for item in analysis if item.calculated_data.financial_asset.is_tax_record]
+
+    #     # Serialize results
+    #     monthly_serializer = AnalysisReportListSerializer(
+    #         monthly_analysis[:-1], many=True)
+    #     yearly_serializer = AnalysisReportListSerializer(
+    #         yearly_analysis[:-1], many=True)
+
+    #     return Response({"monthly_analysis": monthly_serializer.data, "yearly_analysis": yearly_serializer.data})
+
     @action(detail=False, methods=['get'], url_path='analysis', url_name='analysis')
     def analysis(self, request):
         company = self.request.user.company
 
-        analysis = AnalysisReport.objects.select_related("calculated_data").prefetch_related("calculated_data__financial_asset").filter(
-            calculated_data__financial_asset__company=company,
-            calculated_data__is_published=True
-        ).filter(
-            Q(calculated_data__financial_asset__is_tax_record=False) |
-            Q(calculated_data__financial_asset__is_tax_record=True)
+        # Query to get analysis reports
+        analysis = AnalysisReport.objects.select_related("calculated_data")\
+            .prefetch_related("calculated_data__financial_asset")\
+            .filter(
+                calculated_data__financial_asset__company=company,
+                calculated_data__is_published=True
         ).order_by('calculated_data__financial_asset__year', 'calculated_data__financial_asset__month')
+
+        # Separate monthly and yearly analysis
         monthly_analysis = [
             item for item in analysis if not item.calculated_data.financial_asset.is_tax_record]
         yearly_analysis = [
             item for item in analysis if item.calculated_data.financial_asset.is_tax_record]
 
-        # Serialize results
-        monthly_serializer = AnalysisReportListSerializer(
-            monthly_analysis, many=True)
-        yearly_serializer = AnalysisReportListSerializer(
-            yearly_analysis, many=True)
+        # Initialize dictionaries to hold the first entry per topic
+        monthly_topic_data = defaultdict(list)
+        yearly_topic_data = defaultdict(list)
 
-        return Response({"monthly_analysis": monthly_serializer.data, "yearly_analysis": yearly_serializer.data})
+        # Go through monthly analysis and filter by topic
+        for item in monthly_analysis:
+            # For each topic defined in CHART_SERIALIZER_MAP, check if the topic matches
+            for topic in self.CHART_SERIALIZER_MAP.keys():
+                # Check if the item has a matching topic
+                if topic in item.calculated_data.topics:  # Assuming topics is a list of strings in the calculated data
+                    monthly_topic_data[topic].append(item)
+                    break  # Stop once we add the data for this topic
+
+        # Go through yearly analysis and filter by topic
+        for item in yearly_analysis:
+            for topic in self.CHART_SERIALIZER_MAP.keys():
+                if topic in item.calculated_data.topics:
+                    yearly_topic_data[topic].append(item)
+                    break  # Stop once we add the data for this topic
+
+        # Now serialize only one entry for each topic
+        monthly_serializer_data = {}
+        yearly_serializer_data = {}
+
+        # Serialize the first data entry for each topic from monthly and yearly data
+        for topic, items in monthly_topic_data.items():
+            if items:
+                # Pick the first item for each topic
+                monthly_serializer_data[topic] = AnalysisReportListSerializer(
+                    items[0]).data
+
+        for topic, items in yearly_topic_data.items():
+            if items:
+                # Pick the first item for each topic
+                yearly_serializer_data[topic] = AnalysisReportListSerializer(
+                    items[0]).data
+
+        # Combine the results into a single response
+        return Response({
+            "monthly_analysis": monthly_serializer_data,
+            "yearly_analysis": yearly_serializer_data
+        })
 
     @action(detail=False, methods=['get'], url_path='chart/(?P<slug>[^/.]+)', url_name='chart')
     def chart(self, request, slug=None):
@@ -124,7 +183,6 @@ class DiagnosticAnalysisViewSet(ModelViewSet):
     @action(detail=False, methods=['get'], url_path='month', url_name='month')
     def month(self, request):
         company = self.request.user.company
-        print(company)
         queryset = FinancialData.objects.select_related('financial_asset').filter(
             financial_asset__company=company,
             financial_asset__is_tax_record=False,

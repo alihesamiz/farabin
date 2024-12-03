@@ -12,25 +12,26 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from django.utils.translation import gettext_lazy as _
 from datetime import timedelta
-from dotenv import load_dotenv
 from pathlib import Path
+import environ
 import os
 
 
-load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
+env = environ.Env(DEBUG=(bool,True))
+environ.Env.read_env(BASE_DIR)
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("FARABIN_SECRET_KEY")
+SECRET_KEY = env("FARABIN_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = os.getenv("FARABIN_DEBUG", 'False') == "True"
-DEBUG = True
+DEBUG = env('FARABIN_DEBUG')
 
 ALLOWED_HOSTS = ['*']
 
@@ -109,6 +110,10 @@ ASGI_APPLICATION = 'config.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+
+# DATABASES = {
+#     'default': env.db('FARABIN_DATABASE_URL')
+# }
 
 DATABASES = {
     'default': {

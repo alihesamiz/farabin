@@ -25,8 +25,6 @@ def trigger_calculation_task(sender, instance, **kwargs):
         results = financial_calculator.get_results()['data']
         data = []
         for idx, asset in enumerate(financial_assets):
-            print( results['current_asset'])
-
             current_asset = results['current_asset'][idx]
             non_current_asset = results['non_current_asset'][idx]
             total_asset = results['total_asset'][idx]
@@ -46,9 +44,6 @@ def trigger_calculation_task(sender, instance, **kwargs):
             construction_overhead = results['construction_overhead'][idx]
             production_total_price = results['production_total_price'][idx]
             salary_fee = results['salary_fee'][idx]
-            print(results['salary_production_fee'])
-            print(results['production_fee'])
-            print(results['salary_fee'])
             salary_production_fee = results['salary_production_fee'][idx]
             usability = results['usability'][idx]
             efficiency = results['efficiency'][idx]

@@ -9,7 +9,6 @@ djangorestframework = "*"
 django-cors-headers = "*"
 numpy = "*"
 drf-spectacular = "*"
-psycopg2-binary = "*"
 python-magic = "*"
 redis = "*"
 flower = "*"
@@ -29,6 +28,9 @@ tornado = "*"
 django-celery-beat = "*"
 celery = {extras = ["redis"], version = "*"}
 pdf2image = "*"
+psycopg2 = "*"
+psycopg2-binary = "*"
+django-environ = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"
