@@ -24,6 +24,7 @@ def trigger_calculation_task(sender, instance, **kwargs):
         financial_calculator = FinancialCalculations(financial_assets)
         results = financial_calculator.get_results()['data']
         data = []
+        print(results['stock_turnover'])
         for idx, asset in enumerate(financial_assets):
             current_asset = results['current_asset'][idx]
             non_current_asset = results['non_current_asset'][idx]
@@ -43,6 +44,8 @@ def trigger_calculation_task(sender, instance, **kwargs):
             production_fee = results['production_fee'][idx]
             construction_overhead = results['construction_overhead'][idx]
             production_total_price = results['production_total_price'][idx]
+            equity_per_total_debt_ratio = results['equity_per_total_debt_ratio'][idx]
+            equity_per_total_non_current_asset_ratio = results['equity_per_total_non_current_asset_ratio'][idx]
             salary_fee = results['salary_fee'][idx]
             salary_production_fee = results['salary_production_fee'][idx]
             usability = results['usability'][idx]
@@ -55,9 +58,6 @@ def trigger_calculation_task(sender, instance, **kwargs):
             debt_ratio = results['debt_ratio'][idx]
             capital_ratio = results['capital_ratio'][idx]
             proprietary_ratio = results['proprietary_ratio'][idx]
-            equity_per_total_debt_ratio = results['equity_per_total_debt_ratio'][idx]
-            equity_per_total_non_current_asset_ratio = results[
-                'equity_per_total_non_current_asset_ratio'][idx]
             current_ratio = results['current_ratio'][idx]
             instant_ratio = results['instant_ratio'][idx]
             stock_turnover = results['stock_turnover'][idx]
