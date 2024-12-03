@@ -38,19 +38,19 @@ class AssetChartSerializer(BaseChartSerializer):
 
 
 class SaleChartSerializer(BaseChartSerializer):
-    net_sale = serializers.DecimalField(max_digits=20, decimal_places=0)
+    net_sale = serializers.DecimalField(max_digits=20, decimal_places=2)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, chart_name=AnalysisReport.SALE_CHART, **kwargs)
 
 
 class EquityChartSerializer(BaseChartSerializer):
-    total_equity = serializers.DecimalField(max_digits=20, decimal_places=0)
+    total_equity = serializers.DecimalField(max_digits=20, decimal_places=2)
 
-    total_debt = serializers.DecimalField(max_digits=20, decimal_places=0)
+    total_debt = serializers.DecimalField(max_digits=20, decimal_places=2)
 
     total_sum_equity_debt = serializers.DecimalField(
-        max_digits=20, decimal_places=0)
+        max_digits=20, decimal_places=2)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, chart_name=AnalysisReport.DEBT_CHART, **kwargs)
@@ -59,29 +59,29 @@ class EquityChartSerializer(BaseChartSerializer):
 class BankrupsyChartSerializer(BaseChartSerializer):
 
     altman_bankrupsy_ratio = serializers.DecimalField(
-        max_digits=5, decimal_places=0)
+        max_digits=5, decimal_places=2)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, chart_name=AnalysisReport.BANKRUPSY_CHART, **kwargs)
 
 
 class ProfitibilityChartSerializer(BaseChartSerializer):
-    roa = serializers.DecimalField(max_digits=20, decimal_places=0)
+    roa = serializers.DecimalField(max_digits=20, decimal_places=2)
 
     roab = serializers.DecimalField(
-        max_digits=20, decimal_places=0)
+        max_digits=20, decimal_places=2)
 
-    usability = serializers.DecimalField(max_digits=20, decimal_places=0)
+    usability = serializers.DecimalField(max_digits=20, decimal_places=2)
 
-    efficiency = serializers.DecimalField(max_digits=20, decimal_places=0)
+    efficiency = serializers.DecimalField(max_digits=20, decimal_places=2)
 
     gross_profit_margin = serializers.DecimalField(
-        max_digits=20, decimal_places=0)
+        max_digits=20, decimal_places=2)
 
     profit_margin_ratio = serializers.DecimalField(
-        max_digits=20, decimal_places=0)
+        max_digits=20, decimal_places=2)
 
-    roe = serializers.DecimalField(max_digits=20, decimal_places=0)
+    roe = serializers.DecimalField(max_digits=20, decimal_places=2)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, chart_name=AnalysisReport.PROFITIBILITY_CHART, **kwargs)
@@ -89,17 +89,17 @@ class ProfitibilityChartSerializer(BaseChartSerializer):
 
 class InventoryChartSerializer(BaseChartSerializer):
 
-    inventory = serializers.DecimalField(max_digits=20, decimal_places=0)
+    inventory = serializers.DecimalField(max_digits=20, decimal_places=2)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, chart_name=AnalysisReport.INVENTORY_CHART, **kwargs)
 
 
 class AgilityChartSerializer(BaseChartSerializer):
-    instant_ratio = serializers.DecimalField(max_digits=20, decimal_places=0)
+    instant_ratio = serializers.DecimalField(max_digits=20, decimal_places=2)
 
     stock_turnover = serializers.DecimalField(
-        max_digits=20, decimal_places=0)
+        max_digits=20, decimal_places=2)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, chart_name=AnalysisReport.AGILITY_CHART, **kwargs)
@@ -119,10 +119,10 @@ class DebtChartSerializer(BaseChartSerializer):
 
 class LiquidityChartSerializer(BaseChartSerializer):
 
-    current_ratio = serializers.DecimalField(max_digits=20, decimal_places=0)
+    current_ratio = serializers.DecimalField(max_digits=20, decimal_places=2)
 
     instant_ratio = serializers.DecimalField(
-        max_digits=20, decimal_places=0)
+        max_digits=20, decimal_places=2)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, chart_name=AnalysisReport.LIQUIDITY_CHART, **kwargs)
@@ -130,18 +130,18 @@ class LiquidityChartSerializer(BaseChartSerializer):
 
 class LeverageChartSerializer(BaseChartSerializer):
 
-    debt_ratio = serializers.DecimalField(max_digits=20, decimal_places=0)
+    debt_ratio = serializers.DecimalField(max_digits=20, decimal_places=2)
 
-    capital_ratio = serializers.DecimalField(max_digits=20, decimal_places=0)
+    capital_ratio = serializers.DecimalField(max_digits=20, decimal_places=2)
 
     proprietary_ratio = serializers.DecimalField(
-        max_digits=20, decimal_places=0)
+        max_digits=20, decimal_places=2)
 
     equity_per_total_debt_ratio = serializers.DecimalField(
-        max_digits=20, decimal_places=0)
+        max_digits=20, decimal_places=2)
 
     equity_per_total_non_current_asset_ratio = serializers.DecimalField(
-        max_digits=20, decimal_places=0)
+        max_digits=20, decimal_places=2)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, chart_name=AnalysisReport.LEVERAGE_CHART, **kwargs)
@@ -149,10 +149,10 @@ class LeverageChartSerializer(BaseChartSerializer):
 
 class LiquidityChartSerializer(BaseChartSerializer):
 
-    current_ratio = serializers.DecimalField(max_digits=20, decimal_places=0)
+    current_ratio = serializers.DecimalField(max_digits=20, decimal_places=2)
 
     instant_ratio = serializers.DecimalField(
-        max_digits=20, decimal_places=0)
+        max_digits=20, decimal_places=2)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, chart_name=AnalysisReport.LIQUIDITY_CHART, **kwargs)
@@ -161,33 +161,33 @@ class LiquidityChartSerializer(BaseChartSerializer):
 class CostChartSerializer(BaseChartSerializer):
 
     consuming_material = serializers.DecimalField(
-        max_digits=20, decimal_places=0)
+        max_digits=20, decimal_places=2)
 
     production_fee = serializers.DecimalField(
-        max_digits=20, decimal_places=0)
+        max_digits=20, decimal_places=2)
 
     construction_overhead = serializers.DecimalField(
-        max_digits=20, decimal_places=0)
+        max_digits=20, decimal_places=2)
 
     production_total_price = serializers.DecimalField(
-        max_digits=20, decimal_places=0)
+        max_digits=20, decimal_places=2)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, chart_name=AnalysisReport.COST_CHART, **kwargs)
 
 
 class ProfitChartSerializer(BaseChartSerializer):
-    gross_profit = serializers.DecimalField(max_digits=20, decimal_places=0)
+    gross_profit = serializers.DecimalField(max_digits=20, decimal_places=2)
 
-    net_sale = serializers.DecimalField(max_digits=20, decimal_places=0)
+    net_sale = serializers.DecimalField(max_digits=20, decimal_places=2)
 
     operational_profit = serializers.DecimalField(
-        max_digits=20, decimal_places=0)
+        max_digits=20, decimal_places=2)
 
-    proceed_profit = serializers.DecimalField(max_digits=20, decimal_places=0)
+    proceed_profit = serializers.DecimalField(max_digits=20, decimal_places=2)
 
     net_profit = serializers.DecimalField(
-        max_digits=20, decimal_places=0)
+        max_digits=20, decimal_places=2)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, chart_name=AnalysisReport.PROFIT_CHART, **kwargs)
