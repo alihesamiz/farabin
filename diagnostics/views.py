@@ -83,9 +83,10 @@ class DiagnosticAnalysisViewSet(ModelViewSet):
 
     #     # Serialize results
     #     monthly_serializer = AnalysisReportListSerializer(
-    #         monthly_analysis[:-1], many=True)
+    #         monthly_analysis, many=True)
+        
     #     yearly_serializer = AnalysisReportListSerializer(
-    #         yearly_analysis[:-1], many=True)
+    #         yearly_analysis, many=True)
 
     #     return Response({"monthly_analysis": monthly_serializer.data, "yearly_analysis": yearly_serializer.data})
 
@@ -99,57 +100,46 @@ class DiagnosticAnalysisViewSet(ModelViewSet):
             .filter(
                 calculated_data__financial_asset__company=company,
                 calculated_data__is_published=True
-        ).order_by('calculated_data__financial_asset__year', 'calculated_data__financial_asset__month')
+            ).order_by('calculated_data__financial_asset__year', 'calculated_data__financial_asset__month', '-created_at')  # Order by date (latest first)
 
         # Separate monthly and yearly analysis
-        monthly_analysis = [
-            item for item in analysis if not item.calculated_data.financial_asset.is_tax_record]
-        yearly_analysis = [
-            item for item in analysis if item.calculated_data.financial_asset.is_tax_record]
+        monthly_analysis = [item for item in analysis if item.calculated_data.financial_asset.is_tax_record is False]
+        yearly_analysis = [item for item in analysis if item.calculated_data.financial_asset.is_tax_record is True]
 
-        # Initialize dictionaries to hold the first entry per topic
-        monthly_topic_data = defaultdict(list)
-        yearly_topic_data = defaultdict(list)
+        # Initialize dictionaries to hold the most recent entry per chart type
+        monthly_topic_data = {}
+        yearly_topic_data = {}
 
-        # Go through monthly analysis and filter by topic
-        for item in monthly_analysis:
-            # For each topic defined in CHART_SERIALIZER_MAP, check if the topic matches
-            for topic in self.CHART_SERIALIZER_MAP.keys():
-                # Check if the item has a matching topic
-                if topic in item.calculated_data.topics:  # Assuming topics is a list of strings in the calculated data
-                    monthly_topic_data[topic].append(item)
-                    break  # Stop once we add the data for this topic
+        # Group monthly data by chart_name, keeping the most recent (since we ordered by -created_at)
+        for item in monthly_analysis[::-1]:
+            if item.chart_name not in monthly_topic_data:
+                monthly_topic_data[item.chart_name] = item
 
-        # Go through yearly analysis and filter by topic
-        for item in yearly_analysis:
-            for topic in self.CHART_SERIALIZER_MAP.keys():
-                if topic in item.calculated_data.topics:
-                    yearly_topic_data[topic].append(item)
-                    break  # Stop once we add the data for this topic
+        # Group yearly data by chart_name, keeping the most recent (since we ordered by -created_at)
+        for item in yearly_analysis[::-1]:
+            if item.chart_name not in yearly_topic_data:
+                yearly_topic_data[item.chart_name] = item
 
-        # Now serialize only one entry for each topic
+        # Serialize only one entry for each topic from monthly and yearly data
         monthly_serializer_data = {}
         yearly_serializer_data = {}
 
-        # Serialize the first data entry for each topic from monthly and yearly data
-        for topic, items in monthly_topic_data.items():
-            if items:
-                # Pick the first item for each topic
-                monthly_serializer_data[topic] = AnalysisReportListSerializer(
-                    items[0]).data
+        # Serialize the first data entry for each topic from monthly data
+        for topic, item in monthly_topic_data.items():
+            if topic in self.CHART_SERIALIZER_MAP:  # Ensure the chart is one of the valid topics
+                monthly_serializer_data[topic] = AnalysisReportListSerializer(item).data
 
-        for topic, items in yearly_topic_data.items():
-            if items:
-                # Pick the first item for each topic
-                yearly_serializer_data[topic] = AnalysisReportListSerializer(
-                    items[0]).data
+        # Serialize the first data entry for each topic from yearly data
+        for topic, item in yearly_topic_data.items():
+            if topic in self.CHART_SERIALIZER_MAP:  # Ensure the chart is one of the valid topics
+                yearly_serializer_data[topic] = AnalysisReportListSerializer(item).data
 
         # Combine the results into a single response
         return Response({
             "monthly_analysis": monthly_serializer_data,
             "yearly_analysis": yearly_serializer_data
         })
-
+    
     @action(detail=False, methods=['get'], url_path='chart/(?P<slug>[^/.]+)', url_name='chart')
     def chart(self, request, slug=None):
         company = self.request.user.company
