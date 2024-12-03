@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "738e7caa5464eb6ccb7348c110f2c5db2081db09f90cebde1b0a72225b58d1d6"
+            "sha256": "f29adf0c0685f42138d58384939fc9bf1e7e9992c1e9a8167c0c7c59608b0a9d"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -1040,7 +1040,6 @@
                 "sha256:3cc5772eb20009233caf06e9d8a0577824723b44e6648ee0a2aedb6cf9381953",
                 "sha256:dcdd193e30abefd5debf142f9adfcdd2b58004e644f25406ffaebd50bd98dacb"
             ],
-            "index": "pypi",
             "markers": "python_version >= '3.9'",
             "version": "==2.10.1"
         },
@@ -1192,6 +1191,15 @@
             "index": "pypi",
             "markers": "python_version >= '3.8'",
             "version": "==2.32.3"
+        },
+        "rest-framework-simplejwt": {
+            "hashes": [
+                "sha256:035187ce5380e18e8b966610a89b6460fb4b73cd179979343888fb190328125d",
+                "sha256:620c56826ff4791c4aaa730ec52aed1f4c74b9c20ea15b9fc1a39bdf99a29a30"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.0'",
+            "version": "==0.0.2"
         },
         "rpds-py": {
             "hashes": [

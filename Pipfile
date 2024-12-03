@@ -23,7 +23,6 @@ channels-redis = "*"
 matplotlib = "*"
 django-seed = "*"
 requests = "*"
-djangorestframework-simplejwt = "*"
 tornado = "*"
 django-celery-beat = "*"
 celery = {extras = ["redis"], version = "*"}
@@ -31,6 +30,8 @@ pdf2image = "*"
 psycopg2 = "*"
 psycopg2-binary = "*"
 django-environ = "*"
+rest-framework-simplejwt = "*"
+djangorestframework-simplejwt = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"
