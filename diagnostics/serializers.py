@@ -117,15 +117,14 @@ class DebtChartSerializer(BaseChartSerializer):
         super().__init__(*args, chart_name=AnalysisReport.DEBT_CHART, **kwargs)
 
 
-class LiquidityChartSerializer(BaseChartSerializer):
+class SalaryChartSerializer(BaseChartSerializer):
 
-    current_ratio = serializers.DecimalField(max_digits=20, decimal_places=2)
-
-    instant_ratio = serializers.DecimalField(
-        max_digits=20, decimal_places=2)
+    production_total_price= serializers.DecimalField(max_digits=20, decimal_places=2)
+    salary_fee= serializers.DecimalField(max_digits=20, decimal_places=2)
+    salary_production_fee = serializers.DecimalField(max_digits=20, decimal_places=2)
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, chart_name=AnalysisReport.LIQUIDITY_CHART, **kwargs)
+        super().__init__(*args, chart_name=AnalysisReport.SALARY_CHART, **kwargs)
 
 
 class LeverageChartSerializer(BaseChartSerializer):

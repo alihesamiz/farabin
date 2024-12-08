@@ -17,7 +17,7 @@ from .models import AnalysisReport, FinancialData
 from company.models import CompanyProfile
 from .serializers import (
     AgilityChartSerializer, AnalysisReportListSerializer, AnalysisReportSerializer, AssetChartSerializer, BankrupsyChartSerializer, CostChartSerializer, DebtChartSerializer, EquityChartSerializer, FinancialDataSerializer,
-    InventoryChartSerializer, LeverageChartSerializer, LiquidityChartSerializer, FinancialDataSerializer, MonthDataSerializer,  ProfitChartSerializer, ProfitibilityChartSerializer, SaleChartSerializer, YearlyFinanceDataSerializer
+    InventoryChartSerializer, LeverageChartSerializer, LiquidityChartSerializer, FinancialDataSerializer, MonthDataSerializer,  ProfitChartSerializer, ProfitibilityChartSerializer, SalaryChartSerializer, SaleChartSerializer, YearlyFinanceDataSerializer
 )
 from collections import defaultdict
 
@@ -30,13 +30,14 @@ class DiagnosticAnalysisViewSet(ModelViewSet):
         "sale": SaleChartSerializer,
         "equity": EquityChartSerializer,
         "bankrupsy": BankrupsyChartSerializer,
-        "profitibility": ProfitibilityChartSerializer,
+        "profitability": ProfitibilityChartSerializer,
         "inventory": InventoryChartSerializer,
         "agility": AgilityChartSerializer,
         "liquidity": LiquidityChartSerializer,
         "leverage": LeverageChartSerializer,
         "cost": CostChartSerializer,
         "profit": ProfitChartSerializer,
+        "salary": SalaryChartSerializer,
     }
 
     http_method_names = ['get']
@@ -148,6 +149,7 @@ class DiagnosticAnalysisViewSet(ModelViewSet):
             financial_asset__is_tax_record=True,
             is_published=True
         ).order_by('financial_asset__year', 'financial_asset__month')
+        print(slug)
         if not queryset.exists():
             raise NotFound(detail="No financial data found.")
 
