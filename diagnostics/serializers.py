@@ -28,10 +28,10 @@ class BaseChartSerializer(serializers.Serializer):
 
 
 class AssetChartSerializer(BaseChartSerializer):
-    current_asset = serializers.DecimalField(max_digits=10, decimal_places=2)
+    current_asset = serializers.DecimalField(max_digits=20, decimal_places=2)
     non_current_asset = serializers.DecimalField(
-        max_digits=10, decimal_places=2)
-    total_asset = serializers.DecimalField(max_digits=10, decimal_places=2)
+        max_digits=20, decimal_places=2)
+    total_asset = serializers.DecimalField(max_digits=20, decimal_places=2)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, chart_name=AnalysisReport.ASSET_CHART, **kwargs)
@@ -106,12 +106,12 @@ class AgilityChartSerializer(BaseChartSerializer):
 
 
 class DebtChartSerializer(BaseChartSerializer):
-    current_debt = serializers.DecimalField(max_digits=10, decimal_places=2)
+    current_debt = serializers.DecimalField(max_digits=20, decimal_places=2)
 
     non_current_debt = serializers.DecimalField(
-        max_digits=10, decimal_places=2)
+        max_digits=20, decimal_places=2)
 
-    total_debt = serializers.DecimalField(max_digits=10, decimal_places=2)
+    total_debt = serializers.DecimalField(max_digits=20, decimal_places=2)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, chart_name=AnalysisReport.DEBT_CHART, **kwargs)
