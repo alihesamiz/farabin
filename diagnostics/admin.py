@@ -84,6 +84,15 @@ class CalculatedDataAdmin(admin.ModelAdmin):
     def financial_month(self, obj):
         return obj.financial_asset.month if obj.financial_asset.month else '-'
     financial_month.short_description = _("Month")
+    
+    def make_published(self, request, queryset):
+        updated_count = queryset.update(is_published=True)
+        self.message_user(request, _(f'{updated_count} record(s) were successfully marked as published.'))
+
+    make_published.short_description = _('Mark selected as Published')
+
+    # Add the custom action to the admin
+    actions = ['make_published']
 
 
 @admin.register(AnalysisReport)
