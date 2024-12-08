@@ -489,7 +489,7 @@ class FinancialCalculations:
         """Equity Per Total Debt Ratio calculation"""
         for i in range(self.length):
             self.equity_per_total_debt_ratio.append(
-                self.ownership_right_total[i]/self.total_debt[i] if self.total_debt[i] != 0 else 0)
+                self.total_debt[i]/self.ownership_right_total[i] if self.ownership_right_total[i] != 0 else 0)
 
     def equity_per_total_fixed_asset_ratio_function(self):
         """Equity Per Total Fixed Asset Ratio calculation"""
