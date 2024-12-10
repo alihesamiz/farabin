@@ -9,5 +9,7 @@
 # python manage.py migrate
 # python manage.py runserver 0.0.0.0:8000
 
+
+
 sh run_celery.sh
 sh run_server.sh

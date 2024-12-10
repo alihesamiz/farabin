@@ -1,6 +1,6 @@
 python manage.py makemigrations
 python manage.py migrate
-# python manage.py load_departments
+python manage.py load_departments
 python manage.py load_cities
 python manage.py load_special_fields
 python manage.py load_tech_fields
