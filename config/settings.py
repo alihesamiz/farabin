@@ -51,10 +51,10 @@ INSTALLED_APPS = [
 ]
 
 PROJECT_APPS = [
+    'ticket',
     'diagnostics',
     'core',
     'company',
-    'ticket',
 ]
 
 THIRED_PARTY_APPS = [

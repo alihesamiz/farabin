@@ -66,7 +66,7 @@ class DashboardViewSet(APIView):
             tax_files_count = tax_files.count()
             report_files_count = report_files.count()
 
-            diagnostic_requests = DiagnosticRequest.objects.filter(
+            diagnostic_requests_count = DiagnosticRequest.objects.filter(
                 company=company).count()
 
             # Serialize the data
@@ -81,7 +81,7 @@ class DashboardViewSet(APIView):
                 'report_files_count': report_files_count*4,
                 'all_uploaded_files': tax_files_count + report_files_count*4,
                 "tickets": tickets,
-                "diagnostic_requests": diagnostic_requests,
+                "diagnostic_requests": diagnostic_requests_count,
                 "management_requests": 0,
                 "marketing_requests": 0,
                 "mis_requests": 0,
