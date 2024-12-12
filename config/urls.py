@@ -24,7 +24,7 @@ from django.conf.urls.static import static
 admin.site.site_header = "مدیریت وبسایت فرابین"
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('farabin-admin/', admin.site.urls),
 
     path('diagnostic/', include('diagnostics.urls')),
 
@@ -34,24 +34,14 @@ urlpatterns = [
 
     path('tickets/', include('ticket.urls')),
 
-    # Schema generation
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
 
-    # Swagger UI
     path('api/schema/swagger-ui/',
          SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
 
-    # Redoc UI
     path('api/schema/redoc/',
          SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 
-    # path('check/notification', check_notification_view,
-    #      name="check_notifications"),
-
-
-    # path(r'^jet/', include('jet.urls', 'jet')),  # Django JET URLS
-    # path(r'^jet/dashboard/', include('jet.dashboard.urls',
-    #      'jet-dashboard')),  # Django JET dashboard URLS
 
 ]
 
