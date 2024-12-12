@@ -32,6 +32,8 @@ psycopg2-binary = "*"
 django-environ = "*"
 rest-framework-simplejwt = "*"
 djangorestframework-simplejwt = "*"
+gunicorn = "*"
+waitress = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"

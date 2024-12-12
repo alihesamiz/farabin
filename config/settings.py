@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
-env = environ.Env(DEBUG=(bool,True))
+env = environ.Env(DEBUG=(bool,False))
 environ.Env.read_env(BASE_DIR)
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -240,3 +240,8 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # HELPDESK_TEAMS_MODE_ENABLED = False
 
 # NOTIFICATION_MODELS = 'ticket.Ticket'
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+# SECURE_SSL_REDIRECT = True  # Requires HTTPS
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
