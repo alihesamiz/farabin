@@ -2,6 +2,7 @@ from celery import shared_task
 from django.contrib.auth import get_user_model
 from .models import OTP
 from .utils import GeneralUtils
+from django.utils import timezone
 
 User = get_user_model()
 
@@ -16,4 +17,18 @@ def send_otp_task(user_id,phone_number):
     util.send_otp(phone_number, otp_code)
     
     
+    
+@shared_task(bind=True)
+def delete_expiered_otp(self):
+        try:
+        # Calculate the time threshold
+            thirty_minutes_ago = timezone.now() - timezone.timedelta(minutes=30)
+
+            otps=OTP.objects.filter(created_at__lt=thirty_minutes_ago)
+            otps.delete()
+
+        except Exception as e:
+            # Retry the task in case of an exception
+            self.retry(exc=e, countdown=60, max_retries=3)
+
 #TODO: define a new sms sending 
