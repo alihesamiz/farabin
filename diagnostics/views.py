@@ -69,28 +69,6 @@ class DiagnosticAnalysisViewSet(ModelViewSet):
             raise NotFound(detail="No financial data found.")
         return queryset
 
-    # @action(detail=False, methods=['get'], url_path='analysis', url_name='analysis')
-    # def analysis(self, request):
-    #     company = self.request.user.company
-
-    #     analysis = AnalysisReport.objects.select_related("calculated_data").prefetch_related("calculated_data__financial_asset").filter(
-    #         calculated_data__financial_asset__company=company,
-    #         calculated_data__is_published=True
-    #     ).order_by('calculated_data__financial_asset__year', 'calculated_data__financial_asset__month')
-    #     monthly_analysis = [
-    #         item for item in analysis if not item.calculated_data.financial_asset.is_tax_record]
-    #     yearly_analysis = [
-    #         item for item in analysis if item.calculated_data.financial_asset.is_tax_record]
-
-    #     # Serialize results
-    #     monthly_serializer = AnalysisReportListSerializer(
-    #         monthly_analysis, many=True)
-        
-    #     yearly_serializer = AnalysisReportListSerializer(
-    #         yearly_analysis, many=True)
-
-    #     return Response({"monthly_analysis": monthly_serializer.data, "yearly_analysis": yearly_serializer.data})
-
     @action(detail=False, methods=['get'], url_path='analysis', url_name='analysis')
     def analysis(self, request):
         company = self.request.user.company

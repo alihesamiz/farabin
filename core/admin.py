@@ -47,44 +47,6 @@ class UserAdmin(admin.ModelAdmin):
     # Remove 'groups' from list_filter
     list_filter = ('is_active', 'is_staff', 'is_superuser')
 
-
-# @admin.register(Institute)
-# class InstituteAdmin(admin.ModelAdmin):
-#     list_display = ['title', 'province']
-#     autocomplete_fields = ['province']
-#     search_fields = ['title']
-
-# Admin for Province
-
-
-# class CityAdminInline(admin.StackedInline):
-#     model = City
-#     extra = 0
-#     min_num = 0
-
-
-# @admin.register(Province)
-# class ProvinceAdmin(admin.ModelAdmin):
-#     list_display = ['name']
-#     search_fields = ['name']
-#     ordering = ['name']
-#     inlines = [CityAdminInline]
-
-
-# # Admin for City
-
-
-# @admin.register(City)
-# class CityAdmin(admin.ModelAdmin):
-#     list_display = ['name', 'province_name']
-#     search_fields = ['name']
-
-#     @admin.display(ordering=['province_name'])
-#     def province_name(self, city: City):
-#         return city.province.name
-#     province_name.short_description = _("Province Name")
-
-
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
     list_display = ['name', 'description', 'get_price', 'service_active']

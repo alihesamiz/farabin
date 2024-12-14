@@ -94,12 +94,7 @@ class GeneralUtils:
         # Ensure the filename is not empty
         if not base_filename:
             base_filename = 'file'
-
-        # Create the path for the file upload: financial_files/company_name/year/
-        # current_company_title = getattr(
-        #     instance.company, 'company_title', 'default-company')
-        # current_slug = self.persian_slugify(current_company_title)
-
+            
         try:
             if hasattr(instance.company, 'id'):
                 current_slug = instance.company.id

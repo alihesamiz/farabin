@@ -7,23 +7,6 @@ from .models import Ticket, Department, Agent, TicketAnswer, TicketComment
 import nested_admin
 # Register your models here.
 
-
-# @admin.register(Department)
-# class DepartmentAdmin(admin.ModelAdmin):
-#     list_display = ['name', 'population']
-
-#     @admin.display(description=_('Members count'))
-#     def population(self, department: Department):
-#         return department.agents.count()
-#     population.short_description = _('Members count')
-
-#     class AgentInline(nested_admin.NestedStackedInline):
-#         model = Agent
-#         extra = 0  # Show no extra empty rows
-#         fields = ['first_name', 'last_name', 'email',
-#                   'user']  # Customize fields as necessary
-
-#     inlines = [AgentInline]
 @admin.register(Department)
 class DepartmentAdmin(admin.ModelAdmin):
     list_display = ['name', 'get_agents_count']
@@ -38,9 +21,7 @@ class DepartmentAdmin(admin.ModelAdmin):
         model = Agent
         extra = 0  # Show no extra empty rows
         fields = ['first_name', 'last_name', 'email',
-                  'user']  # Customize fields as necessary
-        # Optionally add a filter for the department (if you have many agents)
-        # list_filter = ['department']
+                  'user']  
 
     inlines = [AgentInline]
 
@@ -130,9 +111,7 @@ class TicketAdmin(nested_admin.NestedModelAdmin):
         for instance in instances:
             # Only apply this logic to TicketAnswer instances
 
-            print('بیلیسل')
             if isinstance(instance, TicketAnswer) and not instance.agent_id:
-                print('kasjhdkjsahdk')
                 try:
                     # Set the agent as the current logged-in user
                     instance.agent = Agent.objects.get(user=request.user)
