@@ -21,7 +21,7 @@ SECRET_KEY = env("FARABIN_SECRET_KEY")
 # DEBUG = os.getenv("FARABIN_DEBUG", 'False') == "True"
 DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['saramad.farabinbrand.com','localhost','127.0.0.1']
 
 
 # Application definition
@@ -102,12 +102,12 @@ ASGI_APPLICATION = 'config.asgi.application'
 #     'default': env.db('FARABIN_DATABASE_URL')
 # }
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 DATABASES = {
     'default': {
@@ -218,6 +218,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     "http://redis:6379",
     "http://redis:6379",
+    "https://saramad.farabinbrand.com"
+    "http://saramad.farabinbrand.com"
 ]
 
 
