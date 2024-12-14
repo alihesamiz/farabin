@@ -63,9 +63,7 @@ class OTPViewSet(viewsets.ViewSet):
             send_otp_task.delay(user.id, phone_number)
 
             return Response({'message': 'OTP sent successfully.'}, status=status.HTTP_200_OK)
-        # otp = OTP.objects.create(user=user, otp_code=OTP.generate_otp(self))
 
-        # self.util.send_otp(phone_number, otp.otp_code)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -82,10 +80,13 @@ class OTPViewSet(viewsets.ViewSet):
             user = User.objects.get(phone_number=phone_number)
 
             otp = OTP.objects.filter(user=user).last()
-
+            
             if otp and otp.is_valid() and otp.otp_code == otp_code:
-                company, created = CompanyProfile.objects.get_or_create(
-                    user=user)
+                if not user.is_superuser:
+                    company, created = CompanyProfile.objects.get_or_create(
+                        user=user)
+                
+                    
                 
                 if not user.is_active:
                     raise AuthenticationFailed('User account is disabled.')
@@ -101,11 +102,7 @@ class OTPViewSet(viewsets.ViewSet):
                     'refresh': str(refresh),
                     'access': access_token
                 }, status=status.HTTP_200_OK)
-
-            # else:
-            #     if otp:
-            #         otp.delete()
-            #     return Response({'error': 'Invalid or expired OTP.Try again after 3 Minutes'}, status=status.HTTP_400_BAD_REQUEST)
-
+            else:
+                return Response({'error': 'Invalid OTP.'}, status=status.HTTP_400_BAD_REQUEST)
         except User.DoesNotExist:
             return Response({'error': 'User does not exist.'}, status=status.HTTP_404_NOT_FOUND)
