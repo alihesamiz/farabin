@@ -2,6 +2,8 @@ from django.conf import settings
 from ticket.models import Ticket
 from .paginations import FilePagination
 from django.db.transaction import atomic
+from django.db.models import Count
+
 from django.core.files.storage import default_storage
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.utils.decorators import method_decorator
@@ -47,6 +49,46 @@ class CompanyProfileViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
+# class DashboardViewSet(APIView):
+#     permission_classes = [IsAuthenticated]
+
+#     def get(self, request, *args, **kwargs):
+#         try:
+#             # Fetch the company profile associated with the authenticated user
+#             company = CompanyProfile.objects.get(user=self.request.user)
+
+#             # Retrieve TaxDeclaration and BalanceReport files related to this company
+#             tax_files = TaxDeclaration.objects.filter(company=company)
+
+#             report_files = BalanceReport.objects.filter(
+#                 company=company)
+
+#             tickets = Ticket.objects.filter(issuer=company).count()
+
+#             tax_files_count = tax_files.count()
+#             report_files_count = report_files.count()
+
+#             diagnostic_requests_count = DiagnosticRequest.objects.filter(
+#                 company=company).count()
+
+#             response_data = {
+#                 'tax_files_count': tax_files_count,
+#                 'report_files_count': report_files_count*4,
+#                 'all_uploaded_files': tax_files_count + report_files_count*4,
+#                 "tickets": tickets,
+#                 "diagnostic_requests": diagnostic_requests_count,
+#                 "management_requests": 0,
+#                 "marketing_requests": 0,
+#                 "mis_requests": 0,
+#                 "rad_requests": 0,
+#                 "production_requests": 0,
+#             }
+
+#             return Response(response_data)
+
+#         except CompanyProfile.DoesNotExist:
+#             return Response({"error": "Company profile not found"}, status=404)
+
 class DashboardViewSet(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -55,31 +97,25 @@ class DashboardViewSet(APIView):
             # Fetch the company profile associated with the authenticated user
             company = CompanyProfile.objects.get(user=self.request.user)
 
-            # Retrieve TaxDeclaration and BalanceReport files related to this company
-            tax_files = TaxDeclaration.objects.filter(company=company)
+            # Use annotate to count the related TaxDeclaration and BalanceReport files
+            company_data = CompanyProfile.objects.annotate(
+                tax_files_count=Count('taxdeclaration'),
+                report_files_count=Count('balancereport'),
+                diagnostic_requests_count=Count('diagnosticrequest')
+            ).get(id=company.id)
 
-            report_files = BalanceReport.objects.filter(
-                company=company)
-
+            # Calculate the values for response_data
+            tax_files_count = company_data.tax_files_count
+            report_files_count = company_data.report_files_count * 4  # Custom multiplier
+            all_uploaded_files = tax_files_count + report_files_count
             tickets = Ticket.objects.filter(issuer=company).count()
+            diagnostic_requests_count = company_data.diagnostic_requests_count
 
-            tax_files_count = tax_files.count()
-            report_files_count = report_files.count()
-
-            diagnostic_requests_count = DiagnosticRequest.objects.filter(
-                company=company).count()
-
-            # Serialize the data
-            # tax_files_data = TaxDeclarationSerializer(
-            #     tax_files, many=True).data
-            # report_files_data = BalanceReportSerializer(
-            #     report_files, many=True).data
-
-            # Return a structured JSON response with both file types
+            # Assuming the other request types are fixed at 0 for now
             response_data = {
                 'tax_files_count': tax_files_count,
-                'report_files_count': report_files_count*4,
-                'all_uploaded_files': tax_files_count + report_files_count*4,
+                'report_files_count': report_files_count,
+                'all_uploaded_files': all_uploaded_files,
                 "tickets": tickets,
                 "diagnostic_requests": diagnostic_requests_count,
                 "management_requests": 0,
@@ -93,7 +129,6 @@ class DashboardViewSet(APIView):
 
         except CompanyProfile.DoesNotExist:
             return Response({"error": "Company profile not found"}, status=404)
-
 
 class TaxDeclarationViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
