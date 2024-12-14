@@ -19,7 +19,7 @@ SECRET_KEY = env("FARABIN_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = os.getenv("FARABIN_DEBUG", 'False') == "True"
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['saramad.farabinbrand.com','localhost','0.0.0.0','127.0.0.1']
 
