@@ -80,7 +80,7 @@ class CompanyProfile(models.Model):
         max_length=255, unique=True, verbose_name=_("Email"))
 
     social_code = models.CharField(
-        max_length=10, unique=True, verbose_name=_("Social Code"))
+        max_length=10, unique=True, verbose_name=_("Social Code"),blank=True,null=True)
 
     manager_name = models.CharField(
         max_length=255, verbose_name=_("Manager Full Name"))
