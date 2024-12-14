@@ -99,8 +99,8 @@ class DashboardViewSet(APIView):
 
             # Use annotate to count the related TaxDeclaration and BalanceReport files
             company_data = CompanyProfile.objects.annotate(
-                tax_files_count=Count('taxdeclaration'),
-                report_files_count=Count('balancereport'),
+                tax_files_count=Count('taxfiles'),
+                report_files_count=Count('reportfiles'),
                 diagnostic_requests_count=Count('diagnosticrequest')
             ).get(id=company.id)
 
