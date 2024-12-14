@@ -1,16 +1,3 @@
-# python manage.py makemigrations
-# python manage.py migrate
-# python manage.py load_departments
-# python manage.py load_cities
-# python manage.py load_special_fields
-# python manage.py load_tech_fields
-# python manage.py load_services
-# python manage.py collectstatic --noinput
-# python manage.py makemigrations
-# python manage.py migrate
-# python manage.py runserver 0.0.0.0:8000
-
-
 #!/bin/bash
 
 # Make migrations
@@ -39,3 +26,4 @@ python manage.py migrate
 # You may need to adjust the number of workers (workers=3) depending on your app's needs
 # Adjust the app_name (usually it's the name of your Django project, for example, myproject.wsgi:application)
 gunicorn --bind 0.0.0.0:8000 --workers 3 config.wsgi:application
+# python manage.py runserver 127.0.0.1:8000
