@@ -36,6 +36,6 @@ RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir -r /a
 
 COPY . /app/
 
-EXPOSE 8000 6379
+EXPOSE 8000 6379 5432
 
 CMD ["sh", "entrypoint.sh"]
