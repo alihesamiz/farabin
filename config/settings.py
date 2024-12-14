@@ -19,9 +19,9 @@ SECRET_KEY = env("FARABIN_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = os.getenv("FARABIN_DEBUG", 'False') == "True"
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['saramad.farabinbrand.com','localhost','127.0.0.1']
+ALLOWED_HOSTS = ['saramad.farabinbrand.com','localhost','0.0.0.0','127.0.0.1']
 
 
 # Application definition
@@ -211,20 +211,22 @@ X_FRAME_OPTIONS = 'ALLOWALL'
 
 # production
 CORS_ALLOWED_ORIGINS = [
+    
     "http://127.0.0.1:3000",
-    "http://192.168.1.10:3000",
     "http://localhost:3000",
     "http://127.0.0.1:8000",
     "http://localhost:8000",
+    "http://0.0.0.0:3000",
+    "http://localhost:3000",
+    "http://0.0.0.0:8000",
+    "http://localhost:8000",
     "http://redis:6379",
     "http://redis:6379",
-    "https://saramad.farabinbrand.com"
+    "https://saramad.farabinbrand.com",
     "http://saramad.farabinbrand.com"
 ]
 
 
-# settings.py
-# Configure Redis URL or RabbitMQ URL here
 CELERY_BROKER_URL = f'redis://{env("FARABIN_REDIS_HOST")}:{env("FARABIN_REDIS_PORT")}/0'
 CELERY_RESULT_BACKEND = f'redis://{env("FARABIN_REDIS_HOST")}:{env("FARABIN_REDIS_PORT")}/0'
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
