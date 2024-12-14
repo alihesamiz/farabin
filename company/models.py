@@ -77,7 +77,7 @@ class CompanyProfile(models.Model):
         max_length=255, verbose_name=_("Company Title"))
 
     email = models.EmailField(
-        max_length=255, unique=True, verbose_name=_("Email"))
+        max_length=255, unique=True, verbose_name=_("Email"),null=True,blank=True)
 
     social_code = models.CharField(
         max_length=10, unique=True, verbose_name=_("Social Code"),blank=True,null=True)
