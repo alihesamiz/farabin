@@ -1,87 +1,21 @@
-# version: '3.8'
-
-# services:
-#   web:
-#     build:
-#       context: .
-#       dockerfile: Dockerfile
-#     command: sh run_server.sh
-#     ports:
-#       - "8000:8000"  # Expose port 8000
-#     volumes:
-#       - .:/app  # Mount the current directory
-#     env_file:
-#       - .env
-#     depends_on:
-#       # - db
-#       - redis
-#     environment:
-#       # - DB_HOST=${DB_HOST}
-#       - CELERY_BROKER_URL=redis://redis:6379/0
-#       - CELERY_RESULT_BACKEND=redis://redis:6379/0
-
-#   celery:
-#     build:
-#       context: .
-#       dockerfile: Dockerfile
-#     command: sh run_celery.sh
-#     volumes:
-#       - .:/app
-#     depends_on:
-#       - redis
-    
-#     env_file:
-#       - .env
-#     environment:
-#       - CELERY_BROKER_URL=redis://redis:6379/0
-#       - CELERY_RESULT_BACKEND=redis://redis:6379/0
-
-#   redis:
-#     image: "redis:latest"
-#     ports:
-#       - "6379:6379"
-
-# #   db:
-# #     image: postgres:17  # Use the latest PostgreSQL version (or your desired version)
-# #     container_name: farabin_database
-# #     environment:
-# #       POSTGRES_DB: farabin  # Default database name
-# #       POSTGRES_USER: madassandd     # Default username
-# #       POSTGRES_PASSWORD: 13801121  # Default password
-# #     ports:
-# #       - "5432:5432"  # Expose PostgreSQL port for external access
-# #     volumes:
-# #       - pg_data:/var/lib/postgresql/data  # Persist PostgreSQL data
-# #     networks:
-# #       - default
-# #     env_file:
-# #       - .env
-
-
-# # volumes:
-# #   pg_data:  # This volume will store PostgreSQL data persistently
-
-# # networks:
-# #   default:
-# #     driver: bridge
-
-
-version: '3.8'
-
 services:
   web:
     build:
       context: .
       dockerfile: Dockerfile
-    command: sh run_server.sh
+
+    command: 
+      - sh run_server.sh
+
     ports:
-      - "8000:8000"  # Expose port 8000
+      - "8000:8000"
+      
     volumes:
-      - .:/app  # Mount the current directory
+      - .:/app
+      
     env_file:
-      - .env  # Load environment variables from .env file
-    # depends_on:
-    #   - redis  # Only depends on redis now, but using a local Redis instance
+      - .env
+      
     environment:
       - CELERY_BROKER_URL=redis://${FARABIN_REDIS_HOST}:${FARABIN_REDIS_PORT}/0  # Connect to the local Redis using environment variables
       - CELERY_RESULT_BACKEND=redis://${FARABIN_REDIS_HOST}:${FARABIN_REDIS_PORT}/0
@@ -91,13 +25,16 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: sh run_celery.sh
+
+    command: 
+      - sh run_celery.sh
+
     volumes:
       - .:/app
-    # depends_on:
-    #   - redis  # Only depends on redis now, but using a local Redis instance
+      
     env_file:
-      - .env  # Load environment variables from .env file
+      - .env  
+      
     environment:
       - CELERY_BROKER_URL=redis://${FARABIN_REDIS_HOST}:${FARABIN_REDIS_PORT}/0  # Connect to the local Redis using environment variables
       - CELERY_RESULT_BACKEND=redis://${FARABIN_REDIS_HOST}:${FARABIN_REDIS_PORT}/0
