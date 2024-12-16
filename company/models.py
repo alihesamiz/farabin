@@ -123,7 +123,7 @@ class CompanyService(models.Model):
     company = models.ForeignKey(CompanyProfile, on_delete=models.CASCADE,
                                 related_name='services', verbose_name=_("Company"))
     service = models.ForeignKey(
-        'core.Service', on_delete=models.CASCADE, verbose_name=_("Service"))
+        'core.Service', on_delete=models.CASCADE, verbose_name=_("Service"),related_name='services')
     is_active = models.BooleanField(default=False, verbose_name=_("Activate"))
 
     purchased_date = models.DateField(
