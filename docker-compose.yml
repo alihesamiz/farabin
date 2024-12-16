@@ -4,8 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
 
-    command: 
-      - sh run_server.sh
+    command: sh run_server.sh
 
     ports:
       - "8000:8000"
@@ -26,8 +25,7 @@ services:
       context: .
       dockerfile: Dockerfile
 
-    command: 
-      - sh run_celery.sh
+    command: sh run_celery.sh
 
     volumes:
       - .:/app
