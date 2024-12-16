@@ -5,8 +5,8 @@ meta {
 }
 
 get {
-  url: 192.168.1.9:8000/company/tax-declarations/
-  body: multipartForm
+  url: 127.0.0.1:8000/company/dashboard
+  body: json
   auth: bearer
 }
 
@@ -19,13 +19,21 @@ headers {
 }
 
 auth:bearer {
-  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMxODMyMDg1LCJpYXQiOjE3MzE3NDU2ODUsImp0aSI6ImJlMmQxZDkxMDZmZTQ3OGY4MWU5OTU1MDI2ODMzOTVkIiwidXNlcl9pZCI6MX0.ZDZDEjyl_-ccecdXcDPhEK9Lkpx-aY99FJYxIbNnwWA
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM0MjQ2NjM0LCJpYXQiOjE3MzQxNjAyMzQsImp0aSI6Ijg5ZTIxNDMwODEwMjRhYTFiNzA4NDA4ZDJiZGE0OWM2IiwidXNlcl9pZCI6MzV9._ozat7s6QmhhImwfJXedniIeqvm-p_YQC9iuN6TSWvs
+}
+
+body:json {
+  {
+    "phone_number": "09353692494",
+    "national_code": "12736700278",
+    "otp_code": "825425"
+  }
 }
 
 body:multipart-form {
-  phone_number: 09138038121
-  national_code: 12736700277
-  otp_code: 635881
+  phone_number: 09353592494
+  national_code: 12736700278
+  otp_code: 191437
   subject: lkjlkjlk
   comment: lkjklj
   service: 1
