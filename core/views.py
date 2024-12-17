@@ -74,9 +74,9 @@ class OTPViewSet(viewsets.ViewSet):
             otp = OTP.objects.filter(
                 user__phone_number=phone_number, otp_code=otp_code).select_related('user').last()
 
-            user = otp.user
-            
             if otp and otp.is_valid() and otp.otp_code == otp_code:
+                user = otp.user 
+                
                 if not user.is_active:
                     raise AuthenticationFailed('User account is disabled.')
 

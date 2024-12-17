@@ -1,96 +1,98 @@
-# services:
-#   web:
-#     build:
-#       context: .
-#       dockerfile: Dockerfile
-
-#     command: sh run_server.sh
-
-#     ports:
-#       - "8000:8000"
-      
-#     volumes:
-#       - .:/app
-      
-#     env_file:
-#       - .env
-      
-#     environment:
-#       - CELERY_BROKER_URL=redis://${FARABIN_REDIS_HOST}:${FARABIN_REDIS_PORT}/0  # Connect to the local Redis using environment variables
-#       - CELERY_RESULT_BACKEND=redis://${FARABIN_REDIS_HOST}:${FARABIN_REDIS_PORT}/0
-#       - DATABASE_URL=postgres://${FARABIN_DB_USER}:${FARABIN_DB_PASSWORD}@${FARABIN_DB_HOST}:${FARABIN_DB_PORT}/${FARABIN_DB_NAME}  # Connect to the local PostgreSQL using environment variables
-
-#   celery:
-#     build:
-#       context: .
-#       dockerfile: Dockerfile
-
-#     command: sh run_celery.sh
-
-#     volumes:
-#       - .:/app
-      
-#     env_file:
-#       - .env  
-      
-#     environment:
-#       - CELERY_BROKER_URL=redis://${FARABIN_REDIS_HOST}:${FARABIN_REDIS_PORT}/0  # Connect to the local Redis using environment variables
-#       - CELERY_RESULT_BACKEND=redis://${FARABIN_REDIS_HOST}:${FARABIN_REDIS_PORT}/0
-#       - DATABASE_URL=postgres://${FARABIN_DB_USER}:${FARABIN_DB_PASSWORD}@${FARABIN_DB_HOST}:${FARABIN_DB_PORT}/${FARABIN_DB_NAME}  # Connect to the local PostgreSQL using environment variables
-
-
-
-version: '3.8'
-
 services:
-  # Web service (e.g., for your Django or Flask app)
   web:
     build:
       context: .
       dockerfile: Dockerfile
+
     command: sh run_server.sh
+
     ports:
       - "8000:8000"
+      
     volumes:
       - .:/app
+      
     env_file:
       - .env
+      
     environment:
       - CELERY_BROKER_URL=redis://${FARABIN_REDIS_HOST}:${FARABIN_REDIS_PORT}/0  # Connect to the local Redis using environment variables
       - CELERY_RESULT_BACKEND=redis://${FARABIN_REDIS_HOST}:${FARABIN_REDIS_PORT}/0
       - DATABASE_URL=postgres://${FARABIN_DB_USER}:${FARABIN_DB_PASSWORD}@${FARABIN_DB_HOST}:${FARABIN_DB_PORT}/${FARABIN_DB_NAME}  # Connect to the local PostgreSQL using environment variables
-    depends_on:
-      - redis  # Ensure Redis service starts before the web service
 
-  # Celery worker service
   celery:
     build:
       context: .
       dockerfile: Dockerfile
+
     command: sh run_celery.sh
+
     volumes:
       - .:/app
+      
     env_file:
-      - .env
+      - .env  
+    
+    restart: always
+      
     environment:
       - CELERY_BROKER_URL=redis://${FARABIN_REDIS_HOST}:${FARABIN_REDIS_PORT}/0  # Connect to the local Redis using environment variables
       - CELERY_RESULT_BACKEND=redis://${FARABIN_REDIS_HOST}:${FARABIN_REDIS_PORT}/0
       - DATABASE_URL=postgres://${FARABIN_DB_USER}:${FARABIN_DB_PASSWORD}@${FARABIN_DB_HOST}:${FARABIN_DB_PORT}/${FARABIN_DB_NAME}  # Connect to the local PostgreSQL using environment variables
-    depends_on:
-      - redis  # Ensure Redis service starts before the celery service
 
-  # Redis service
-  redis:
-    image: redis:alpine  # Use the official Redis image (small version for efficiency)
-    container_name: redis
-    ports:
-      - "6379:6379"  # Expose Redis on port 6379 (default Redis port)
-    environment:
-      - REDIS_PASSWORD=${REDIS_PASSWORD}  # Optional: if you're using Redis authentication
-    volumes:
-      - redis_data:/data  # Persist Redis data
 
-# Optional: Volumes to persist Redis data
-volumes:
-  redis_data:
+
+# version: '3.8'
+
+# services:
+#   # Web service (e.g., for your Django or Flask app)
+#   web:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile
+#     command: sh run_server.sh
+#     ports:
+#       - "8000:8000"
+#     volumes:
+#       - .:/app
+#     env_file:
+#       - .env
+#     environment:
+#       - CELERY_BROKER_URL=redis://${FARABIN_REDIS_HOST}:${FARABIN_REDIS_PORT}/0  # Connect to the local Redis using environment variables
+#       - CELERY_RESULT_BACKEND=redis://${FARABIN_REDIS_HOST}:${FARABIN_REDIS_PORT}/0
+#       - DATABASE_URL=postgres://${FARABIN_DB_USER}:${FARABIN_DB_PASSWORD}@${FARABIN_DB_HOST}:${FARABIN_DB_PORT}/${FARABIN_DB_NAME}  # Connect to the local PostgreSQL using environment variables
+#     depends_on:
+#       - redis  # Ensure Redis service starts before the web service
+
+#   # Celery worker service
+#   celery:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile
+#     command: sh run_celery.sh
+#     volumes:
+#       - .:/app
+#     env_file:
+#       - .env
+#     environment:
+#       - CELERY_BROKER_URL=redis://${FARABIN_REDIS_HOST}:${FARABIN_REDIS_PORT}/0  # Connect to the local Redis using environment variables
+#       - CELERY_RESULT_BACKEND=redis://${FARABIN_REDIS_HOST}:${FARABIN_REDIS_PORT}/0
+#       - DATABASE_URL=postgres://${FARABIN_DB_USER}:${FARABIN_DB_PASSWORD}@${FARABIN_DB_HOST}:${FARABIN_DB_PORT}/${FARABIN_DB_NAME}  # Connect to the local PostgreSQL using environment variables
+#     depends_on:
+#       - redis  # Ensure Redis service starts before the celery service
+#     restart: always
+#   # Redis service
+#   redis:
+#     image: redis:alpine  # Use the official Redis image (small version for efficiency)
+#     container_name: redis
+#     ports:
+#       - "6379:6379"  # Expose Redis on port 6379 (default Redis port)
+#     environment:
+#       - REDIS_PASSWORD=${REDIS_PASSWORD}  # Optional: if you're using Redis authentication
+#     volumes:
+#       - redis_data:/data  # Persist Redis data
+
+# # Optional: Volumes to persist Redis data
+# volumes:
+#   redis_data:
 
