@@ -11,14 +11,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
-env = environ.Env(DEBUG=(bool,False))
+env = environ.Env(DEBUG=(bool, False))
 environ.Env.read_env(BASE_DIR)
 
 SECRET_KEY = env("FARABIN_SECRET_KEY")
 
 DEBUG = env("FARABIN_DEBUG")
 
-ALLOWED_HOSTS = ['saramad.farabinbrand.com','localhost','0.0.0.0','127.0.0.1']
+ALLOWED_HOSTS = [
+    'saramad.farabinbrand.com',
+    'localhost',
+    '0.0.0.0',
+    '127.0.0.1',
+    '192.168.1.4',
+    ]
 
 
 INSTALLED_APPS = [
@@ -190,7 +196,7 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 # production
 CORS_ALLOWED_ORIGINS = [
     "https://saramad.farabinbrand.com",
-    "http://saramad.farabinbrand.com"
+    "http://saramad.farabinbrand.com",
     "http://127.0.0.1:3000",
     "http://localhost:3000",
     "http://127.0.0.1:8000",
@@ -202,10 +208,11 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 
-CELERY_RESULT_BACKEND = f'redis://{env("FARABIN_REDIS_HOST")}:{env("FARABIN_REDIS_PORT")}/0'
-CELERY_BROKER_URL = f'redis://{env("FARABIN_REDIS_HOST")}:{env("FARABIN_REDIS_PORT")}/0'
+CELERY_RESULT_BACKEND = f'redis://{env("FARABIN_REDIS_HOST")}:{
+    env("FARABIN_REDIS_PORT")}/0'
+CELERY_BROKER_URL = f'redis://{env("FARABIN_REDIS_HOST")
+                               }:{env("FARABIN_REDIS_PORT")}/0'
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
-
 
 
 # HTTPS settings
