@@ -44,8 +44,6 @@ class OTPViewSet(viewsets.ViewSet):
             if not user.is_active:
                 raise AuthenticationFailed('User account is disabled.')
 
-        
-        
             if not created and user.national_code != national_code:
                 return Response({'error': 'The national code does not match the phone number.'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -64,7 +62,6 @@ class OTPViewSet(viewsets.ViewSet):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
     @action(detail=False, methods=['get', 'post'], url_path='verify')
     def verify_otp(self, request):
         serializer = OTPVerifySerializer(data=request.data)
@@ -74,19 +71,18 @@ class OTPViewSet(viewsets.ViewSet):
         otp_code = serializer.validated_data['otp_code']
 
         try:
-            user = User.objects.get(phone_number=phone_number)
+            otp = OTP.objects.filter(
+                user__phone_number=phone_number, otp_code=otp_code).select_related('user').last()
 
-            otp = OTP.objects.filter(user=user).last()
+            user = otp.user
             
             if otp and otp.is_valid() and otp.otp_code == otp_code:
+                if not user.is_active:
+                    raise AuthenticationFailed('User account is disabled.')
+
                 if not user.is_superuser:
                     company, created = CompanyProfile.objects.get_or_create(
                         user=user)
-                
-                    
-                
-                if not user.is_active:
-                    raise AuthenticationFailed('User account is disabled.')
 
                 refresh = RefreshToken.for_user(user)
 
