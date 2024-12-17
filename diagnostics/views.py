@@ -19,7 +19,6 @@ from .serializers import (
     AgilityChartSerializer, AnalysisReportListSerializer, AnalysisReportSerializer, AssetChartSerializer, BankrupsyChartSerializer, CostChartSerializer, DebtChartSerializer, EquityChartSerializer, FinancialDataSerializer,
     InventoryChartSerializer, LeverageChartSerializer, LiquidityChartSerializer, FinancialDataSerializer, MonthDataSerializer,  ProfitChartSerializer, ProfitibilityChartSerializer, SalaryChartSerializer, SaleChartSerializer, YearlyFinanceDataSerializer
 )
-from collections import defaultdict
 
 
 class DiagnosticAnalysisViewSet(ModelViewSet):

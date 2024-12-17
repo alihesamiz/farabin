@@ -14,17 +14,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env(DEBUG=(bool,False))
 environ.Env.read_env(BASE_DIR)
 
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("FARABIN_SECRET_KEY")
 
-# SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = os.getenv("FARABIN_DEBUG", 'False') == "True"
-DEBUG = False
+DEBUG = env("FARABIN_DEBUG")
 
 ALLOWED_HOSTS = ['saramad.farabinbrand.com','localhost','0.0.0.0','127.0.0.1']
 
-
-# Application definition
 
 INSTALLED_APPS = [
     "admin_interface",
@@ -95,39 +90,18 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 ASGI_APPLICATION = 'config.asgi.application'
 
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-# DATABASES = {
-#     'default': env.db('FARABIN_DATABASE_URL')
-# }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
+        'PASSWORD': env("FARABIN_DB_PASSWORD"),
         'NAME': env("FARABIN_DB_NAME"),
         'USER': env("FARABIN_DB_USER"),
-        'PASSWORD': env("FARABIN_DB_PASSWORD"),
         'HOST': env("FARABIN_DB_HOST"),
-        # 'HOST': 'localhost',
         'PORT': env("FARABIN_DB_PORT")
     }
 }
 
-
-
-
-
-
-# Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -171,6 +145,8 @@ LOCALE_PATHS = [
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 STATIC_ROOT = BASE_DIR / 'static'
 
 STATIC_URL = '/static/'
@@ -194,6 +170,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
 }
+
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(weeks=1),
@@ -205,41 +182,38 @@ SIMPLE_JWT = {
 }
 
 
-# development
-
-X_FRAME_OPTIONS = 'ALLOWALL'
+# Browser protections
+X_FRAME_OPTIONS = 'DENY'
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
 
 # production
 CORS_ALLOWED_ORIGINS = [
-    
+    "https://saramad.farabinbrand.com",
+    "http://saramad.farabinbrand.com"
     "http://127.0.0.1:3000",
     "http://localhost:3000",
     "http://127.0.0.1:8000",
     "http://localhost:8000",
     "http://0.0.0.0:3000",
-    "http://localhost:3000",
     "http://0.0.0.0:8000",
-    "http://localhost:8000",
     "http://redis:6379",
     "http://redis:6379",
-    "https://saramad.farabinbrand.com",
-    "http://saramad.farabinbrand.com"
 ]
 
 
-CELERY_BROKER_URL = f'redis://{env("FARABIN_REDIS_HOST")}:{env("FARABIN_REDIS_PORT")}/0'
 CELERY_RESULT_BACKEND = f'redis://{env("FARABIN_REDIS_HOST")}:{env("FARABIN_REDIS_PORT")}/0'
+CELERY_BROKER_URL = f'redis://{env("FARABIN_REDIS_HOST")}:{env("FARABIN_REDIS_PORT")}/0'
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# HELPDESK_TEAMS_MODE_ENABLED = False
 
-# NOTIFICATION_MODELS = 'ticket.Ticket'
-SECURE_BROWSER_XSS_FILTER = True
+# HTTPS settings
+SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
-# SECURE_SSL_REDIRECT = True  # Requires HTTPS
+SECURE_BROWSER_XSS_FILTER = True
 SESSION_COOKIE_SECURE = True
+SECURE_SSL_REDIRECT = True
+SECURE_HSTS_PRELOAD = True
 CSRF_COOKIE_SECURE = True
-
-

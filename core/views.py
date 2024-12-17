@@ -1,10 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from datetime import timedelta
-#
-from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
-from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
-from rest_framework_simplejwt.tokens import RefreshToken, TokenError
+
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.decorators import action
 from rest_framework.response import Response

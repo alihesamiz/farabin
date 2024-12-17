@@ -6,8 +6,6 @@ router = DefaultRouter()
 
 router.register(r'profile', CompanyProfileViewSet, basename='profile')
 
-# router.register(r'dashboard', DashboardViewSet, basename='dashboard')
-
 router.register(r'tax-declarations', TaxDeclarationViewSet,
                 basename='tax-declaration')
 

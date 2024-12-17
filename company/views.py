@@ -49,46 +49,6 @@ class CompanyProfileViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-# class DashboardViewSet(APIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def get(self, request, *args, **kwargs):
-#         try:
-#             # Fetch the company profile associated with the authenticated user
-#             company = CompanyProfile.objects.get(user=self.request.user)
-
-#             # Retrieve TaxDeclaration and BalanceReport files related to this company
-#             tax_files = TaxDeclaration.objects.filter(company=company)
-
-#             report_files = BalanceReport.objects.filter(
-#                 company=company)
-
-#             tickets = Ticket.objects.filter(issuer=company).count()
-
-#             tax_files_count = tax_files.count()
-#             report_files_count = report_files.count()
-
-#             diagnostic_requests_count = DiagnosticRequest.objects.filter(
-#                 company=company).count()
-
-#             response_data = {
-#                 'tax_files_count': tax_files_count,
-#                 'report_files_count': report_files_count*4,
-#                 'all_uploaded_files': tax_files_count + report_files_count*4,
-#                 "tickets": tickets,
-#                 "diagnostic_requests": diagnostic_requests_count,
-#                 "management_requests": 0,
-#                 "marketing_requests": 0,
-#                 "mis_requests": 0,
-#                 "rad_requests": 0,
-#                 "production_requests": 0,
-#             }
-
-#             return Response(response_data)
-
-#         except CompanyProfile.DoesNotExist:
-#             return Response({"error": "Company profile not found"}, status=404)
-
 class DashboardViewSet(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -369,7 +329,6 @@ class RequestViewSet(viewsets.ModelViewSet):
 
     permission_classes = [IsAuthenticated]
 
-    # serializer_class = DiagnosticRequestSerializer
 
     def get_queryset(self):
         company = self.request.user.company
