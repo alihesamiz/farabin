@@ -33,7 +33,7 @@ class CompanyProfileSerializer(serializers.ModelSerializer):
             'address', 'services',
         ]
 
-    def get_services(self, company):
+    def get_services(self, company)-> list[str]:
         # Retrieve all services available
         all_services = Service.objects.filter(service_active=True)
 
