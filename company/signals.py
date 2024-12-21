@@ -6,6 +6,7 @@ from .models import BalanceReport, CompanyProfile, CompanyService, TaxDeclaratio
 from .tasks import send_file_uploading_notification
 
 
+# TODO: Update the folowing signal handler
 @receiver(post_save, sender=TaxDeclaration)
 @receiver(post_save, sender=BalanceReport)
 def create_diagnostic_request(sender, instance, created, **kwargs):
@@ -26,7 +27,8 @@ def create_diagnostic_request(sender, instance, created, **kwargs):
 
                 if not service_instance:
                     # If no active "DIAGNOSTIC" service exists for the company, log or handle accordingly
-                    print(f"No active 'DIAGNOSTIC' service found for company: {company}")
+                    print(
+                        f"No active 'DIAGNOSTIC' service found for company: {company}")
                     return
 
                 # Create the DiagnosticRequest
