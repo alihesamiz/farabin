@@ -25,10 +25,11 @@ class Command(BaseCommand):
                 # Get or create the province
                 service, created = Service.objects.get_or_create(
                     name=service_name,
-                    description=service_description,
-                    price=service_price,
-                    service_active=service_active,
-                )
+                    defaults={
+                    "description":service_description,
+                    "price":service_price,
+                    "service_active":service_active,
+                })
 
         self.stdout.write(self.style.SUCCESS(
             'Successfully populated Services'))
