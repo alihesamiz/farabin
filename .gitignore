@@ -105,9 +105,9 @@ venv.bak/
 
 # Rope project settings
 .ropeproject
-!db.sqlite3
+# db.sqlite3
 
-farabin-api/
+/farabin-api/
 *.bru
 *bruno.json
 *.pdf
