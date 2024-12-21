@@ -13,9 +13,8 @@ class TicketViewSet(viewsets.ModelViewSet):
     pagination_class = TicketPagination
 
     def get_queryset(self):
-        print(Ticket.objects.select_related('issuer').prefetch_related('answers__comments').filter(issuer=company))
         company = self.request.user.company
-        return Ticket.objects.prefetch_related('answers__comments').filter(issuer=company)
+        return Ticket.objects.select_related('issuer').prefetch_related('answers__comments').filter(issuer=company)
 
     def perform_create(self, serializer):
         company = self.request.user.company
