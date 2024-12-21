@@ -17,7 +17,8 @@ environ.Env.read_env(BASE_DIR)
 
 SECRET_KEY = env("FARABIN_SECRET_KEY")
 
-DEBUG = env("FARABIN_DEBUG")
+# DEBUG = env("FARABIN_DEBUG")
+DEBUG = True
 
 ALLOWED_HOSTS = [
     'saramad.farabinbrand.com',
@@ -53,9 +54,7 @@ THIRED_PARTY_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
-    'django_seed',
     'nested_admin',
-    'channels',
 ]
 
 
@@ -101,8 +100,12 @@ ASGI_APPLICATION = 'config.asgi.application'
 if DEBUG:
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+            'ENGINE': 'django.db.backends.postgresql',
+            'PASSWORD': env("FARABIN_DB_PASSWORD"),
+            'NAME': env("FARABIN_DB_NAME"),
+            'USER': env("FARABIN_DB_USER"),
+            'HOST': 'localhost',
+            # 'PORT': env("FARABIN_DB_PORT")
         }
     }
 if not DEBUG:
