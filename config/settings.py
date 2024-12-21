@@ -14,6 +14,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env(DEBUG=(bool, False))
 environ.Env.read_env(BASE_DIR)
 
+
 SECRET_KEY = env("FARABIN_SECRET_KEY")
 
 DEBUG = env("FARABIN_DEBUG")
@@ -97,16 +98,24 @@ WSGI_APPLICATION = 'config.wsgi.application'
 ASGI_APPLICATION = 'config.asgi.application'
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'PASSWORD': env("FARABIN_DB_PASSWORD"),
-        'NAME': env("FARABIN_DB_NAME"),
-        'USER': env("FARABIN_DB_USER"),
-        'HOST': env("FARABIN_DB_HOST"),
-        'PORT': env("FARABIN_DB_PORT")
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+if not DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'PASSWORD': env("FARABIN_DB_PASSWORD"),
+            'NAME': env("FARABIN_DB_NAME"),
+            'USER': env("FARABIN_DB_USER"),
+            'HOST': env("FARABIN_DB_HOST"),
+            'PORT': env("FARABIN_DB_PORT")
+        }
+    }
 
 
 AUTH_PASSWORD_VALIDATORS = [
