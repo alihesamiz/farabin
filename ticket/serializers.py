@@ -8,7 +8,6 @@ class TicketCommentCreateSerializer(serializers.ModelSerializer):
         model = TicketComment
         fields = ["comment"]
 
-
     def create(self, validated_data):
         # 'ticket' and 'answer' are provided via the context
         ticket = self.context.get('ticket')
@@ -34,7 +33,7 @@ class TicketAnswerSerializer(serializers.ModelSerializer):
         read_only_fields = ["created_at", "updated_at",]
 
 
-class TicketSerializer(serializers.ModelSerializer):
+class TicketDetailSerializer(serializers.ModelSerializer):
     answers = TicketAnswerSerializer(many=True, read_only=True)
 
     class Meta:
@@ -42,3 +41,11 @@ class TicketSerializer(serializers.ModelSerializer):
         fields = ["id", "subject", "comment", "service",
                   "department", "status", "priority", "answers"]
         read_only_fields = ["answers"]
+
+
+        
+class TicketListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ticket
+        fields = ["id", "subject", "service",
+                  "department", "status", "priority"]
