@@ -3,13 +3,13 @@
     "name": "MANAGEMENT",
     "description": "Management service",
     "price": 98888,
-    "service_active": true
+    "service_active": false
     },
     {
     "name": "MARKETING",
     "description": "This is a detailed description of the example service.",
     "price": 99555,
-    "service_active": true
+    "service_active": false
     },
     {
     "name": "DIAGNOSTIC",
@@ -21,18 +21,18 @@
     "name": "RAD",
     "description": "This is a detailed description of the example service.",
     "price": 9999,
-    "service_active": true
+    "service_active": false
     },
     {
     "name": "MIS",
     "description": "This is a detailed description of the example service.",
-    "price": 99.99,
-    "service_active": true
+    "price": 9999,
+    "service_active": false
     },
     {
     "name": "PRODUCTION",
     "description": "This is a detailed description of the example service.",
     "price": 9999,
-    "service_active": true
+    "service_active": false
     }
 ]
