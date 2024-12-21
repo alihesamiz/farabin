@@ -1,3 +1,4 @@
+from django.db.models.signals import post_save
 from django.conf import settings
 from ticket.models import Ticket
 from .paginations import FilePagination
@@ -90,6 +91,7 @@ class DashboardViewSet(APIView):
         except CompanyProfile.DoesNotExist:
             return Response({"error": "Company profile not found"}, status=404)
 
+
 class TaxDeclarationViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     # pagination_class = FilePagination
@@ -180,7 +182,9 @@ class TaxDeclarationViewSet(viewsets.ModelViewSet):
 
         # Perform the bulk update
         updated_count = queryset.update(is_sent=True)
-
+        for instance in queryset:
+            post_save.send(sender=TaxDeclaration,
+                           instance=instance, created=False)
         return Response(
             {"success": f"{updated_count} files marked as sent."},
             status=status.HTTP_200_OK,
@@ -316,6 +320,9 @@ class BalanceReportViewSet(viewsets.ModelViewSet):
         # Perform the bulk update
         updated_count = queryset.update(is_saved=True, is_sent=True)
 
+        for instance in queryset:
+            post_save.send(sender=BalanceReport,
+                           instance=instance, created=False)
         return Response(
             {"success": f"{updated_count} files marked as sent."},
             status=status.HTTP_200_OK,
@@ -328,7 +335,6 @@ class RequestViewSet(viewsets.ModelViewSet):
     }
 
     permission_classes = [IsAuthenticated]
-
 
     def get_queryset(self):
         company = self.request.user.company
