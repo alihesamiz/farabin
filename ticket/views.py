@@ -14,7 +14,7 @@ class TicketViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         company = self.request.user.company
-        return Ticket.objects.select_related('issuer').prefetch_related('answers__comments').filter(issuer=company)
+        return Ticket.objects.select_related('issuer').prefetch_related('answers__comments').filter(issuer=company).order_by("updated_at")
 
     def perform_create(self, serializer):
         company = self.request.user.company
