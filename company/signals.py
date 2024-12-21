@@ -13,8 +13,7 @@ def create_diagnostic_request(sender, instance, created, **kwargs):
     """
     Create a DiagnosticRequest if a TaxDeclaration or BalanceReport is sent.
     """
-    if instance.is_sent:  # Only for new objects where is_sent is True
-        print('klasjdklasjdklsjd')
+    if instance.is_sent: 
         try:
             with transaction.atomic():
                 # Get the company and corresponding service
