@@ -4,13 +4,14 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 
-from ticket.serializers import TicketCommentCreateSerializer, TicketCommentSerializer, TicketSerializer
+from .serializers import TicketCommentCreateSerializer, TicketCommentSerializer, TicketSerializer
 from .models import Ticket, Department, Agent, TicketAnswer
-
+from .paginations import TicketPagination
 
 class TicketViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = TicketSerializer
+    pagination_class = TicketPagination
 
     def get_queryset(self):
         company = self.request.user.company
