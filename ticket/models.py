@@ -107,7 +107,7 @@ class Ticket(models.Model):
         return f"{self.subject} : {self.priority}"
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ['-updated_at']
         verbose_name = _("Ticket")
         verbose_name_plural = _("Tickets")
 
