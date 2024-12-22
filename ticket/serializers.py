@@ -51,7 +51,7 @@ class TicketDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
         fields = ["id", "subject", "comment", "service",
-                  "department", "status", "priority", "answers"]
+                  "department", "status", "priority", "answers","updated_at"]
         read_only_fields = ["answers"]
 
 
@@ -61,6 +61,25 @@ class TicketListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
         fields = ["id", "subject", "service",
-                  "department", "status", "priority"]
+                  "department", "status", "priority","updated_at"]
 
 
+class TicketCreateSerializer(serializers.ModelSerializer):
+    service = ServiceSerializer()
+    department = DepartmentSerializer()
+
+    class Meta:
+        model = Ticket
+        fields = ["subject", "comment", "service", "department", "status", "priority"]
+
+    def create(self, validated_data):
+        service_data = validated_data.pop('service')
+        department_data = validated_data.pop('department')
+
+        # Get or create the related service and department
+        service = Service.objects.get_or_create(name=service_data['name'])[0]
+        department = Department.objects.get_or_create(name=department_data['name'])[0]
+
+        # Create the ticket with related fields
+        ticket = Ticket.objects.create(service=service, department=department, **validated_data)
+        return ticket
