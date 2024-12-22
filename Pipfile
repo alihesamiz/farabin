@@ -31,6 +31,7 @@ rest-framework-simplejwt = "*"
 djangorestframework-simplejwt = "*"
 gunicorn = "*"
 waitress = "*"
+openai = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"
