@@ -104,8 +104,9 @@ if DEBUG:
             'PASSWORD': env("FARABIN_DB_PASSWORD"),
             'NAME': env("FARABIN_DB_NAME"),
             'USER': env("FARABIN_DB_USER"),
-            'HOST': 'localhost',
-            # 'PORT': env("FARABIN_DB_PORT")
+            # 'HOST': 'localhost',
+            'HOST': env("FARABIN_DB_HOST"),
+            'PORT': env("FARABIN_DB_PORT")
         }
     }
 if not DEBUG:
@@ -201,7 +202,7 @@ SIMPLE_JWT = {
 
 
 # Browser protections
-X_FRAME_OPTIONS = 'DENY'
+X_FRAME_OPTIONS = 'SAMEORIGIN'
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
