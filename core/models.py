@@ -128,7 +128,6 @@ class Province(models.Model):
 ####################################
 """Services model"""
 
-
 class Service(models.Model):
 
     name = models.CharField(max_length=255, verbose_name=_("Service Name"))
