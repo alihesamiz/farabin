@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from rest_framework import serializers
+
+from core.models import Service
 from .models import Ticket, Agent, Department, TicketAnswer, TicketComment
 
 
@@ -31,9 +33,19 @@ class TicketAnswerSerializer(serializers.ModelSerializer):
         fields = ["id", "agent", "comment",
                   "created_at", "updated_at", "comments"]
         read_only_fields = ["created_at", "updated_at",]
+class ServiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Service
+        fields = ['name']  # Or any other relevant fields
 
+class DepartmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Department
+        fields = ['name']
 
 class TicketDetailSerializer(serializers.ModelSerializer):
+    service = ServiceSerializer()
+    department = DepartmentSerializer()
     answers = TicketAnswerSerializer(many=True, read_only=True)
 
     class Meta:
@@ -43,9 +55,12 @@ class TicketDetailSerializer(serializers.ModelSerializer):
         read_only_fields = ["answers"]
 
 
-        
 class TicketListSerializer(serializers.ModelSerializer):
+    service = ServiceSerializer()
+    department = DepartmentSerializer()
     class Meta:
         model = Ticket
         fields = ["id", "subject", "service",
                   "department", "status", "priority"]
+
+

@@ -8,18 +8,26 @@ from .serializers import TicketCommentCreateSerializer, TicketCommentSerializer,
 from .models import Ticket, Department, Agent, TicketAnswer
 from .paginations import TicketPagination
 
+
 class TicketViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     pagination_class = TicketPagination
 
     def get_queryset(self):
         company = self.request.user.company
-        return Ticket.objects.select_related('issuer').prefetch_related('answers__comments').filter(issuer=company)
+        queryset = Ticket.objects.select_related('issuer').prefetch_related(
+            'answers__comments').filter(issuer=company)
+
+        department = self.request.query_params.get('department')
+        if department:
+            queryset = queryset.filter(department__name=department)
+
+        return queryset
 
     def perform_create(self, serializer):
         company = self.request.user.company
         serializer.save(issuer=company)
-        
+
     def get_serializer_class(self):
         # Select serializer based on the action type
         if self.action == 'list':
@@ -42,7 +50,8 @@ class TicketViewSet(viewsets.ModelViewSet):
             if not answer_id:
                 return Response({"error": "Answer ID is required"}, status=status.HTTP_400_BAD_REQUEST)
 
-            answer = get_object_or_404(TicketAnswer, pk=answer_id, ticket=ticket)
+            answer = get_object_or_404(
+                TicketAnswer, pk=answer_id, ticket=ticket)
             serializer = TicketCommentCreateSerializer(
                 data=request.data,
                 context={'ticket': ticket, 'answer': answer}
