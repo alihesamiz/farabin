@@ -1,12 +1,12 @@
-from rest_framework import viewsets, status
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework import viewsets, status
 
-from .serializers import TicketCommentCreateSerializer, TicketCommentSerializer, TicketListSerializer, TicketDetailSerializer
-from .models import Ticket, Department, Agent, TicketAnswer
+from .serializers import TicketCommentCreateSerializer, TicketCreateSerializer, TicketListSerializer, TicketDetailSerializer
 from .paginations import TicketPagination
+from .models import Ticket, TicketAnswer
 
 
 class TicketViewSet(viewsets.ModelViewSet):
@@ -18,10 +18,9 @@ class TicketViewSet(viewsets.ModelViewSet):
         queryset = Ticket.objects.select_related('issuer').prefetch_related(
             'answers__comments').filter(issuer=company)
 
-        department = self.request.query_params.get('department')
-        if department:
-            queryset = queryset.filter(department__name=department)
-
+        service = self.request.query_params.get('service')
+        if service:
+            queryset = queryset.filter(service__name=service)
         return queryset
 
     def perform_create(self, serializer):
@@ -34,6 +33,8 @@ class TicketViewSet(viewsets.ModelViewSet):
             return TicketListSerializer
         elif self.action == 'retrieve':
             return TicketDetailSerializer
+        elif self.action == 'create':
+            return TicketCreateSerializer
         return TicketListSerializer
 
     @action(detail=True, methods=['get', 'post'], url_path='comments', url_name='comments')
