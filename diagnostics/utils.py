@@ -126,7 +126,6 @@ class FinancialCalculations:
                 self.sold_product_total_fee_function(sold_product_fee)
                 self.direct_wage_function(sold_product_fee)
 
-
             self.usability_function()
             self.efficiency_function()
             self.roa_function()
@@ -334,7 +333,7 @@ class FinancialCalculations:
                 sold_product_fee.sold_product_total_price)
         else:
             self.sold_product_total_fee.append(0)
-            
+
     def accumulated_profit_function(self, balance_report):
         """
         Accumulated Profit/Loss calculation
@@ -516,8 +515,11 @@ class FinancialCalculations:
         avg_inventory = np.mean(
             self.inventory)
         for i in range(self.length):
-            self.stock_turnover.append(
-                self.sold_product_total_fee[i] / avg_inventory)
+            if avg_inventory != 0:
+                self.stock_turnover.append(
+                    self.sold_product_total_fee[i] / avg_inventory)
+            else:
+                self.stock_turnover.append(0)
 
     def received_turn_over_ratio_function(self):
         """Received Turnover Ratio calculation"""
@@ -593,7 +595,7 @@ class FinancialCalculations:
                 (Decimal(1.4) * self.accumulated_profit_to_asset_ratio[i]) +
                 (Decimal(3.3) * self.before_tax_profit_to_asset_ratio[i]) +
                 (Decimal(0.6) * self.equity_per_total_debt_ratio[i]) +
-                self.sale_to_asset_ratio[i]
+                (Decimal(.999)*self.sale_to_asset_ratio[i])
             )
 
     def get_results(self):
@@ -638,4 +640,3 @@ class FinancialCalculations:
                 'altman_bankrupsy_ratio': self.altman_bankrupsy_ratio,
             }
         }
-
