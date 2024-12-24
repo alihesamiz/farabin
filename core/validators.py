@@ -15,7 +15,7 @@ def pdf_file_validator(value):
     FileExtensionValidator(['pdf'])(value)
 
     # Check file size (1 MB limit)
-    max_file_size = 1 * 1024 * 1024  # 1 MB in bytes
+    max_file_size = 2 * 1024 * 1024  # 1 MB in bytes
     if value.size > max_file_size:
         raise ValidationError(
             f"File size should not exceed 1 MB. Current size: {value.size / (1024 * 1024):.2f} MB.")
@@ -25,6 +25,13 @@ def image_file_validator(value):
     
     FileExtensionValidator(['jpg','png','jpeg'])(value)
     
+    max_file_size = 2 * 1024 * 1024 
+    if value.size> max_file_size :
+        raise ValidationError(_(f"File size should be less than {max_file_size}"))
+    
+    
+def ticket_file_validator(value):
+    FileExtensionValidator(['pdf','jpg','png','jpeg'])(value)
     max_file_size = 2 * 1024 * 1024 
     if value.size> max_file_size :
         raise ValidationError(_(f"File size should be less than {max_file_size}"))
