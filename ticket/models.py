@@ -88,7 +88,7 @@ class Ticket(models.Model):
     comment = models.TextField(verbose_name=_("Comment"))
 
     attached_file = models.FileField(verbose_name=_(
-        "Attached File"), upload_to=get_attachment_upload_path, null=True, blank=True,validators=[validators.image_file_validator,validators.pdf_file_validator])
+        "Attached File"), upload_to=get_attachment_upload_path, null=True, blank=True,validators=[validators.ticket_file_validator])
 
     service = models.ForeignKey(
         'core.Service', on_delete=models.CASCADE, verbose_name=_("Service"))
