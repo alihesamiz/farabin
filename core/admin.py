@@ -2,13 +2,13 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
-from .models import Service
+from .models import Service,OTP
 
 # Register your models here.
 
 User = get_user_model()
 
-
+admin.site.register(OTP)
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     list_display = ('phone_number', 'national_code',
