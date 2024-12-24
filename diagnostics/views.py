@@ -183,7 +183,7 @@ class CompanyFinancialDataView(View):
         # Fetch the company profile
         company = CompanyProfile.objects.get(id=company_id)
 
-        financial_data = FinancialData.objects.filter(
+        financial_data = FinancialData.objects.select_related("financial_asset").filter(
             financial_asset__company=company).order_by('financial_asset__year', 'financial_asset__month')
 
         admin_context = admin_site.each_context(request)
@@ -215,6 +215,7 @@ class CompanyFinancialDataView(View):
         roa = []
         roab = []
         roe = []
+        usability=[]
         efficiency = []
         gross_profit_margin = []
         profit_margin_ratio = []
@@ -243,7 +244,7 @@ class CompanyFinancialDataView(View):
             total_asset.append(float(data.total_asset))
             non_current_debt.append(float(data.non_current_debt))
             current_debt.append(float(data.current_debt))
-            total_debt.append(float(data.total_debt))
+            # total_debt.append(float(data.total_debt))
             altman_bankrupsy_ratio.append(float(data.altman_bankrupsy_ratio))
             total_equity.append(float(data.total_equity))
             total_debt.append(float(data.total_debt))
@@ -255,6 +256,7 @@ class CompanyFinancialDataView(View):
             roa.append(float(data.roa))
             roab.append(float(data.roab))
             roe.append(float(data.roe))
+            usability.append(float(data.usability))
             efficiency.append(float(data.efficiency))
             gross_profit_margin.append(float(data.gross_profit_margin))
             profit_margin_ratio.append(float(data.profit_margin_ratio))
@@ -290,7 +292,6 @@ class CompanyFinancialDataView(View):
             'total_debt': total_debt,
             'altman_bankrupsy_ratio': altman_bankrupsy_ratio,
             'total_equity': total_equity,
-            'total_debt': total_debt,
             'total_sum_equity_debt': total_sum_equity_debt,
             'inventory': inventory,
             'salary_fee': salary_fee,
