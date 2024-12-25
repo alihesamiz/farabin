@@ -327,6 +327,13 @@ class FinancialData(models.Model):
         default=0, max_digits=20, decimal_places=2, verbose_name=_('Gross Profit'))
     net_sale = models.DecimalField(
         default=0, max_digits=20, decimal_places=2, verbose_name=_('Net Sale'))
+    
+    operational_income_expense =models.DecimalField(
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Operational Income Expense'))
+    
+    marketing_fee =models.DecimalField(
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Marketing Fee'))
+    
     inventory = models.DecimalField(
         default=0, max_digits=20, decimal_places=2, verbose_name=_('Inventory'))
     operational_profit = models.DecimalField(
