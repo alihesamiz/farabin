@@ -60,7 +60,10 @@ class FinancialCalculations:
         self.production_total_price = []
         self.direct_wage = []
         self.accumulated_profit = []
-
+        #saddfsf
+        self.operational_income_expense=[]
+        self.marketing_fee=[]
+#sdfsdf
         self.gross_profit_margin_ratio = []
         self.net_profit_margin_ratio = []
         self.total_sum_equity_debt = []
@@ -119,6 +122,8 @@ class FinancialCalculations:
                 self.gross_profit_function(profit_loss_statement)
                 self.proceed_profit_function(profit_loss_statement)
                 self.salary_fee_function(profit_loss_statement)
+                self.operational_income_expense_function(profit_loss_statement)
+                self.marketing_fee_function(profit_loss_statement)
 
                 self.consuming_material_function(sold_product_fee)
                 self.construction_overhead_function(sold_product_fee)
@@ -296,6 +301,22 @@ class FinancialCalculations:
             self.salary_fee.append(profit_loss_statement.salary_fee)
         else:
             self.salary_fee.append(0)
+            
+    def operational_income_expense_function(self,profit_loss_statement):
+        """Operational Income Expense calculation"""
+        if profit_loss_statement:
+            self.operational_income_expense.append(
+                profit_loss_statement.operational_income_expense)
+        else:
+            self.operational_income_expense.append(0)
+            
+    def marketing_fee_function(self,profit_loss_statement):
+        """Marketing Fee calculation"""
+        if profit_loss_statement:
+            self.marketing_fee.append(
+                profit_loss_statement.marketing_fee)
+        else:
+            self.marketing_fee.append(0)
 
     def construction_overhead_function(self, sold_product_fee):
         """
@@ -612,6 +633,8 @@ class FinancialCalculations:
                 'total_sum_equity_debt': self.total_sum_equity_debt,
                 'gross_profit': self.gross_profit,
                 'net_sale': self.net_sale,
+                'operational_income_expense':self.operational_income_expense,
+                'marketing_fee':self.marketing_fee,                
                 'inventory': self.inventory,
                 'operational_profit': self.operational_profit,
                 'proceed_profit': self.proceed_profit,
