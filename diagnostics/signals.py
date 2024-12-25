@@ -1,8 +1,7 @@
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
-from .models import FinancialAsset, FinancialData
-from .tasks import perform_calculations
-from celery.result import AsyncResult
+from .models import AnalysisReport, FinancialAsset, FinancialData
+from .tasks import generate_analysis
 from .utils import FinancialCalculations
 
 # Trigger task after FinancialAsset is saved or deleted
@@ -24,7 +23,6 @@ def trigger_calculation_task(sender, instance, **kwargs):
         financial_calculator = FinancialCalculations(financial_assets)
         results = financial_calculator.get_results()['data']
         data = []
-        print(results['stock_turnover'])
         for idx, asset in enumerate(financial_assets):
             current_asset = results['current_asset'][idx]
             non_current_asset = results['non_current_asset'][idx]
@@ -45,11 +43,14 @@ def trigger_calculation_task(sender, instance, **kwargs):
             construction_overhead = results['construction_overhead'][idx]
             production_total_price = results['production_total_price'][idx]
             equity_per_total_debt_ratio = results['equity_per_total_debt_ratio'][idx]
-            equity_per_total_non_current_asset_ratio = results['equity_per_total_non_current_asset_ratio'][idx]
+            equity_per_total_non_current_asset_ratio = results[
+                'equity_per_total_non_current_asset_ratio'][idx]
             salary_fee = results['salary_fee'][idx]
             salary_production_fee = results['salary_production_fee'][idx]
             usability = results['usability'][idx]
             efficiency = results['efficiency'][idx]
+            operational_income_expense = results['operational_income_expense'][idx]
+            marketing_fee = results['marketing_fee'][idx]
             roa = results['roa'][idx]
             roab = results['roab'][idx]
             roe = results['roe'][idx]
@@ -63,7 +64,7 @@ def trigger_calculation_task(sender, instance, **kwargs):
             stock_turnover = results['stock_turnover'][idx]
             altman_bankrupsy_ratio = results['altman_bankrupsy_ratio'][idx]
 
-            financial_data, created= FinancialData.objects.update_or_create(
+            financial_data, created = FinancialData.objects.update_or_create(
                 financial_asset=asset,
                 defaults={
                     'is_published': False,
@@ -92,6 +93,8 @@ def trigger_calculation_task(sender, instance, **kwargs):
                     'roa': roa,
                     'roab': roab,
                     'roe': roe,
+                    'operational_income_expense':operational_income_expense,
+                    'marketing_fee':marketing_fee,
                     'gross_profit_margin': gross_profit_margin,
                     'profit_margin_ratio': profit_margin_ratio,
                     'debt_ratio': debt_ratio,
@@ -107,3 +110,14 @@ def trigger_calculation_task(sender, instance, **kwargs):
             )
 
         print("Update/Creation complete.")
+
+
+@receiver(post_save, sender=FinancialData)
+def populating_reports(sender, instance, **kwargs):
+    company = instance.financial_asset.company.id
+    if instance.is_published:
+        # for chart_name, _ in AnalysisReport.CHART_CHOICES:
+        #     if chart_name != "life_cycle":
+        # for chart_name in ['sale','debt','asset']:
+                generate_analysis.delay(company,"sale")
+        
