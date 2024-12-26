@@ -106,8 +106,8 @@ if DEBUG:
             'PASSWORD': env("FARABIN_DB_PASSWORD"),
             'NAME': env("FARABIN_DB_NAME"),
             'USER': env("FARABIN_DB_USER"),
-            'HOST': 'localhost',
-            # 'HOST': env("FARABIN_DB_HOST"),
+            # 'HOST': 'localhost',
+            'HOST': env("FARABIN_DB_HOST"),
             'PORT': env("FARABIN_DB_PORT")
         }
     }
@@ -223,12 +223,10 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 
-# CELERY_RESULT_BACKEND = f'redis://{env("FARABIN_REDIS_HOST")}:{
-#     env("FARABIN_REDIS_PORT")}/0'
-# CELERY_BROKER_URL = f'redis://{env("FARABIN_REDIS_HOST")
-#                                }:{env("FARABIN_REDIS_PORT")}/0'
-CELERY_RESULT_BACKEND = f'redis://localhost:6379/0'
-CELERY_BROKER_URL = f'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = f'redis://{env("FARABIN_REDIS_HOST")}:{env("FARABIN_REDIS_PORT")}/0'
+CELERY_BROKER_URL = f'redis://{env("FARABIN_REDIS_HOST")}:{env("FARABIN_REDIS_PORT")}/0'
+# CELERY_RESULT_BACKEND = f'redis://localhost:6379/0'
+# CELERY_BROKER_URL = f'redis://localhost:6379/0'
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
 
