@@ -26,4 +26,4 @@ python manage.py migrate
 # You may need to adjust the number of workers (workers=3) depending on your app's needs
 # Adjust the app_name (usually it's the name of your Django project, for example, myproject.wsgi:application)
 # gunicorn --bind 0.0.0.0:8000 --workers 2 config.wsgi:application
-python manage.py runserver 127.0.0.1:8000
+python manage.py runserver 0.0.0.0:8000
