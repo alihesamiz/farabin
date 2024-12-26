@@ -24,7 +24,7 @@ app.conf.beat_schedule = {
 app.conf.beat_schedule = {
     'delete_expiered_otp': {
         'task': 'core.tasks.delete_expiered_otp',
-        'schedule': crontab(minute='*/30'),
+        'schedule': crontab(minute='*/60'),
     }}
 
 
