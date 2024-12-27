@@ -106,7 +106,6 @@ if DEBUG:
             'PASSWORD': env("FARABIN_DB_PASSWORD"),
             'NAME': env("FARABIN_DB_NAME"),
             'USER': env("FARABIN_DB_USER"),
-            # 'HOST': 'localhost',
             'HOST': env("FARABIN_DB_HOST"),
             'PORT': env("FARABIN_DB_PORT")
         }
