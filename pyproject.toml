@@ -86,6 +86,7 @@ whitenoise = "6.8.2"
 pydantic = "^2.10.4"
 cohere = "^5.13.4"
 openai = "^1.58.1"
+environ = "^1.0"
 
 
 [build-system]

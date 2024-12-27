@@ -744,6 +744,16 @@ offline = ["drf-spectacular-sidecar"]
 sidecar = ["drf-spectacular-sidecar"]
 
 [[package]]
+name = "environ"
+version = "1.0"
+description = "Stack Based Globals Management"
+optional = false
+python-versions = "*"
+files = [
+    {file = "environ-1.0.tar.gz", hash = "sha256:4df7f1dfeb7d1c988d2e19a8bd5d547a526e0400aeb35adf732032472f35dcb0"},
+]
+
+[[package]]
 name = "faker"
 version = "33.1.0"
 description = "Faker is a Python package that generates fake data for you."
@@ -2579,4 +2589,4 @@ brotli = ["brotli"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "525c3c58c264d9afefc9f1e65108bbd002317fb47cddd5edd0f45cbdca5da383"
+content-hash = "cba30e8091d324852e796da9ce44867e438276e5ab684b6195c8148f1e305d66"
