@@ -1,13 +1,10 @@
+from getpass import getpass
+import os
+from django.contrib.auth.models import Group, Permission
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group, Permission
-from django.contrib.contenttypes.models import ContentType
-from django.core.management import CommandError
-from django.core.exceptions import ValidationError
-from getpass import getpass
 
 User = get_user_model()
-
 
 class Command(BaseCommand):
     help = 'Create a staff user and assign specific permissions'
@@ -48,30 +45,39 @@ class Command(BaseCommand):
             'Group (leave blank for default "Editor"): ') or 'Editor'
 
         try:
-            # Try to get the group by name
+            # Try to get or create the group by name
             group, created = Group.objects.get_or_create(name=group_name)
-            group.permissions
+
+            if created:
+                self.stdout.write(self.style.SUCCESS(f'Group "{group_name}" created successfully.'))
+
+                # Load permissions from a file and assign them to the group
+                try:
+                    script_dir = os.path.dirname(os.path.abspath(__file__))
+                    file_path = os.path.join(script_dir, 'staff_permissions.txt')
+                    with open(file_path, 'r') as file:
+                        for line in file:
+                            codename = line.strip()
+                            try:
+                                permission = Permission.objects.filter(codename=codename).first()
+                                if permission:
+                                    group.permissions.add(permission)
+                                    self.stdout.write(self.style.SUCCESS(f'Permission "{codename}" added to group "{group_name}".'))
+                                else:
+                                    self.stderr.write(self.style.ERROR(f'Permission "{codename}" does not exist.'))
+                            except Exception as e:
+                                self.stderr.write(self.style.ERROR(f'Error adding permission "{codename}": {str(e)}'))
+                except FileNotFoundError:
+                    self.stderr.write(self.style.ERROR('Permissions file not found. No permissions were added.'))
+
+            else:
+                self.stdout.write(self.style.SUCCESS(f'Group "{group_name}" already exists.'))
+
+            # Add the group to the user
             user.groups.add(group)
-        except Group.DoesNotExist:
-            self.stderr.write(self.style.ERROR(
-                f'Group {group_name} does not exist.'))
-            return
 
-        # Assign permissions to view users (for Editor or other groups)
-        try:
-            user_ct = ContentType.objects.get_for_model(User)
-            view_user_permission = Permission.objects.get(
-                codename='view_user', content_type=user_ct)
-
-            # Add 'view_user' permission to the user's group
-            group.permissions.add(view_user_permission)
-
-            self.stdout.write(
-                self.style.SUCCESS(f'Successfully created staff user {phone_number}, added to {group_name}, and granted view user permission.'))
-
-        except Permission.DoesNotExist:
-            self.stderr.write(self.style.ERROR(
-                f'Permission "view_user" does not exist.'))
+        except Exception as e:
+            self.stderr.write(self.style.ERROR(f'An error occurred: {str(e)}'))
 
     def get_password(self):
         password = getpass('Password: ')
