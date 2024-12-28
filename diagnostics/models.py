@@ -33,8 +33,10 @@ class SoldProductFee(models.Model):
         max_digits=20, decimal_places=0, default=0, verbose_name=_('Other Product'))
     sold_product_total_price = models.DecimalField(default=0,
                                                    max_digits=20, decimal_places=0, verbose_name=_('Sold Product Total Price'))
+
     def __str__(self):
         return f"{self.financial_asset}"
+
     class Meta:
         unique_together = ('financial_asset',)
         verbose_name = _("Sold Product Fee")
@@ -108,8 +110,10 @@ class ProfitLossStatement(models.Model):
                                                max_digits=20, decimal_places=0, verbose_name=_('Previous Year Income Tax'))
     profit_after_tax = models.DecimalField(default=0,
                                            max_digits=20, decimal_places=0, verbose_name=_('Profit After Tax'))
+
     def __str__(self):
         return f"{self.financial_asset}"
+
     class Meta:
         unique_together = ('financial_asset',)
         verbose_name = _("Profit And Loss Statement")
@@ -123,8 +127,10 @@ class BalanceReport(models.Model):
 
     advance_payment = models.DecimalField(default=0,
                                           max_digits=20, decimal_places=0, verbose_name=_('Advance Payment'))
-    inventory = models.DecimalField(default=0,
-                                    max_digits=20, decimal_places=0, verbose_name=_('Inventory'))
+    first_period_inventory = models.DecimalField(default=0,
+                                                 max_digits=20, decimal_places=0, verbose_name=_('First Period Inventory'))
+    end_period_inventory = models.DecimalField(default=0,
+                                               max_digits=20, decimal_places=0, verbose_name=_('End Period Inventory'))
     trade_receivable = models.DecimalField(
         default=0, max_digits=20, decimal_places=0, verbose_name=_('Recievable Trade Account'))
     short_term_investment = models.DecimalField(
@@ -214,8 +220,10 @@ class BalanceReport(models.Model):
                                    max_digits=20, decimal_places=0, verbose_name=_('Net Sale'))
     net_profit = models.DecimalField(default=0,
                                      max_digits=20, decimal_places=0, verbose_name=_('Net Profit'))
-    def __str__(self):  
+
+    def __str__(self):
         return f"{self.financial_asset}"
+
     class Meta:
         unique_together = [['financial_asset',]]
         verbose_name = _("Balance Report")
@@ -327,15 +335,15 @@ class FinancialData(models.Model):
         default=0, max_digits=20, decimal_places=2, verbose_name=_('Gross Profit'))
     net_sale = models.DecimalField(
         default=0, max_digits=20, decimal_places=2, verbose_name=_('Net Sale'))
-    
-    operational_income_expense =models.DecimalField(
+
+    operational_income_expense = models.DecimalField(
         default=0, max_digits=20, decimal_places=2, verbose_name=_('Operational Income Expense'))
-    
-    marketing_fee =models.DecimalField(
+
+    marketing_fee = models.DecimalField(
         default=0, max_digits=20, decimal_places=2, verbose_name=_('Marketing Fee'))
-    
-    inventory = models.DecimalField(
-        default=0, max_digits=20, decimal_places=2, verbose_name=_('Inventory'))
+
+    inventory_average = models.DecimalField(
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Inventory Average'))
     operational_profit = models.DecimalField(
         default=0, max_digits=20, decimal_places=2, verbose_name=_('Operational Profit'))
     proceed_profit = models.DecimalField(
