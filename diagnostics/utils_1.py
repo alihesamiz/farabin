@@ -1,7 +1,6 @@
-import decimal
-import numpy as np
 from django.utils.translation import gettext_lazy as _
 from math import log2
+import numpy as np
 
 
 def get_life_cycle(company):
@@ -48,7 +47,7 @@ class FinancialCalculations:
         self.current_debt = []
         self.non_current_debt = []
         self.ownership_right_total = []
-        self.inventory_average = []
+        self.inventory = []
         self.net_sale = []
         self.operational_profit = []
         self.net_profit = []
@@ -113,7 +112,7 @@ class FinancialCalculations:
                 self.non_current_debt_function(balance_report)
                 self.total_debt_function(balance_report)
                 self.ownership_right_total_function(balance_report)
-                self.inventory_average_function(balance_report)
+                self.inventory_function(balance_report)
                 self.net_sale_function(balance_report)
                 self.net_profit_function(balance_report)
                 self.accumulated_profit_function(balance_report)
@@ -230,15 +229,14 @@ class FinancialCalculations:
         else:
             self.total_debt.append(0)
 
-    def inventory_average_function(self, balance_report):
+    def inventory_function(self, balance_report):
         """
         Inventory calculation
         """
         if balance_report:
-            average = (balance_report.first_period_inventory+balance_report.end_period_inventory)/2
-            self.inventory_average.append(average)
+            self.inventory.append(balance_report.inventory)
         else:
-            self.inventory_average.append(0)
+            self.inventory.append(0)
 
     def net_sale_function(self, balance_report):
         """
@@ -526,7 +524,7 @@ class FinancialCalculations:
         """Current Ratio calculation"""
         for i in range(self.length):
             self.instant_ratio.append(
-                (self.current_asset[i]-self.inventory_average[i])/self.current_debt[i] if self.current_debt[i] != 0 else 0)
+                (self.current_asset[i]-self.inventory[i])/self.current_debt[i] if self.current_debt[i] != 0 else 0)
 
     def liquidity_ratio_function(self):
         """Liquidity Ratio calculation"""
@@ -534,12 +532,12 @@ class FinancialCalculations:
 
     def stock_turn_over_ratio_function(self):
         """Stock Turnover Ratio calculation"""
-        inventory = np.mean(
-            self.inventory_average)
+        avg_inventory = np.mean(
+            self.inventory)
         for i in range(self.length):
-            if inventory != 0:
+            if avg_inventory != 0:
                 self.stock_turnover.append(
-                    self.sold_product_total_fee[i] / inventory)
+                    self.sold_product_total_fee[i] / avg_inventory)
             else:
                 self.stock_turnover.append(0)
 
@@ -636,7 +634,7 @@ class FinancialCalculations:
                 'net_sale': self.net_sale,
                 'operational_income_expense':self.operational_income_expense,
                 'marketing_fee':self.marketing_fee,                
-                'inventory': self.inventory_average,
+                'inventory': self.inventory,
                 'operational_profit': self.operational_profit,
                 'proceed_profit': self.proceed_profit,
                 'net_profit': self.net_profit,
