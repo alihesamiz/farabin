@@ -2,13 +2,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-08 11:42+0330\n"
+"POT-Creation-Date: 2024-12-28 08:50+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,24 +18,24 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: ticket/admin.py:31 ticket/admin.py:35
+#: ticket/admin.py:14 ticket/admin.py:18
 msgid "Members count"
 msgstr "تعداد اعضا"
 
-#: ticket/admin.py:54 ticket/models.py:96 ticket/models.py:123
+#: ticket/admin.py:35 ticket/models.py:96 ticket/models.py:123
 #: ticket/models.py:141
 msgid "Department"
 msgstr "دپارتمان"
 
-#: ticket/admin.py:55 ticket/models.py:124
+#: ticket/admin.py:36 ticket/models.py:124
 msgid "Departments"
 msgstr "دپارتمان‌ها"
 
-#: ticket/admin.py:77
+#: ticket/admin.py:58
 msgid "Phone Number"
 msgstr "شماره تلفن"
 
-#: ticket/admin.py:107
+#: ticket/admin.py:88
 msgid "Company Title"
 msgstr "نام شرکت"
 

@@ -2,13 +2,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-08 11:42+0330\n"
+"POT-Creation-Date: 2024-12-28 08:50+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,7 +30,7 @@ msgstr "اجازه‌ها"
 msgid "Important dates"
 msgstr "تاریخ‌های مهم"
 
-#: core/admin.py:94 core/models.py:139
+#: core/admin.py:56 core/models.py:138
 msgid "Price"
 msgstr "قیمت"
 
@@ -92,23 +92,23 @@ msgstr "شهرها"
 msgid "Provinces"
 msgstr "استان‌ها"
 
-#: core/models.py:134
+#: core/models.py:133
 msgid "Service Name"
 msgstr "نام سرویس"
 
-#: core/models.py:136
+#: core/models.py:135
 msgid "Service Description"
 msgstr "شرح سرویس"
 
-#: core/models.py:142
+#: core/models.py:141
 msgid "Service Active"
 msgstr "فعالسازی"
 
-#: core/models.py:145
+#: core/models.py:144
 msgid "Service"
 msgstr "سرویس"
 
-#: core/models.py:146
+#: core/models.py:145
 msgid "Services"
 msgstr "سرویس‌ها"
 
@@ -144,7 +144,7 @@ msgstr "شماره تلفن را به صورت صحیح وارد نمایید."
 msgid "Invalid_phone_number"
 msgstr "شماره تلفن نامعتبر"
 
-#: core/validators.py:30
+#: core/validators.py:30 core/validators.py:37
 #, python-brace-format
 msgid "File size should be less than {max_file_size}"
 msgstr "حجم فایل باید کمتر از {max_file_size} باشد."
