@@ -20,13 +20,6 @@ SECRET_KEY = env("FARABIN_SECRET_KEY")
 # DEBUG = env("FARABIN_DEBUG")
 DEBUG = True
 
-# ALLOWED_HOSTS = [
-#     'saramad.farabinbrand.com',
-#     'localhost',
-#     '0.0.0.0',
-#     '127.0.0.1',
-#     '192.168.1.4',
-#     ]
 
 ALLOWED_HOSTS = ["*"]
 
