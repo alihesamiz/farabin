@@ -78,11 +78,14 @@ class DiagnosticAnalysisViewSet(ModelViewSet):
             .filter(
                 calculated_data__financial_asset__company=company,
                 calculated_data__is_published=True
-            ).order_by('calculated_data__financial_asset__year', 'calculated_data__financial_asset__month', '-created_at')  # Order by date (latest first)
+            # Order by date (latest first)
+        ).order_by('calculated_data__financial_asset__year', 'calculated_data__financial_asset__month', '-created_at')
 
         # Separate monthly and yearly analysis
-        monthly_analysis = [item for item in analysis if item.calculated_data.financial_asset.is_tax_record is False]
-        yearly_analysis = [item for item in analysis if item.calculated_data.financial_asset.is_tax_record is True]
+        monthly_analysis = [
+            item for item in analysis if item.calculated_data.financial_asset.is_tax_record is False]
+        yearly_analysis = [
+            item for item in analysis if item.calculated_data.financial_asset.is_tax_record is True]
 
         # Initialize dictionaries to hold the most recent entry per chart type
         monthly_topic_data = {}
@@ -105,19 +108,21 @@ class DiagnosticAnalysisViewSet(ModelViewSet):
         # Serialize the first data entry for each topic from monthly data
         for topic, item in monthly_topic_data.items():
             if topic in self.CHART_SERIALIZER_MAP:  # Ensure the chart is one of the valid topics
-                monthly_serializer_data[topic] = AnalysisReportListSerializer(item).data
+                monthly_serializer_data[topic] = AnalysisReportListSerializer(
+                    item).data
 
         # Serialize the first data entry for each topic from yearly data
         for topic, item in yearly_topic_data.items():
             if topic in self.CHART_SERIALIZER_MAP:  # Ensure the chart is one of the valid topics
-                yearly_serializer_data[topic] = AnalysisReportListSerializer(item).data
+                yearly_serializer_data[topic] = AnalysisReportListSerializer(
+                    item).data
 
         # Combine the results into a single response
         return Response({
             "monthly_analysis": monthly_serializer_data,
             "yearly_analysis": yearly_serializer_data
         })
-    
+
     @action(detail=False, methods=['get'], url_path='chart/(?P<slug>[^/.]+)', url_name='chart')
     def chart(self, request, slug=None):
         company = self.request.user.company
@@ -215,7 +220,7 @@ class CompanyFinancialDataView(View):
         roa = []
         roab = []
         roe = []
-        usability=[]
+        usability = []
         efficiency = []
         gross_profit_margin = []
         profit_margin_ratio = []
@@ -249,7 +254,7 @@ class CompanyFinancialDataView(View):
             total_equity.append(float(data.total_equity))
             total_debt.append(float(data.total_debt))
             total_sum_equity_debt.append(float(data.total_sum_equity_debt))
-            inventory.append(float(data.inventory))
+            inventory.append(float(data.inventory_average))
             salary_fee.append(float(data.salary_fee))
             production_fee.append(float(data.production_fee))
             salary_production_fee.append(float(data.salary_production_fee))
