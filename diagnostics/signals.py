@@ -34,7 +34,7 @@ def trigger_calculation_task(sender, instance, **kwargs):
             total_sum_equity_debt = results['total_sum_equity_debt'][idx]
             gross_profit = results['gross_profit'][idx]
             net_sale = results['net_sale'][idx]
-            inventory = results['inventory'][idx]
+            inventory_average = results['inventory'][idx]
             operational_profit = results['operational_profit'][idx]
             proceed_profit = results['proceed_profit'][idx]
             net_profit = results['net_profit'][idx]
@@ -78,7 +78,7 @@ def trigger_calculation_task(sender, instance, **kwargs):
                     'total_sum_equity_debt': total_sum_equity_debt,
                     'gross_profit': gross_profit,
                     'net_sale': net_sale,
-                    'inventory': inventory,
+                    'inventory_average': inventory_average,
                     'operational_profit': operational_profit,
                     'proceed_profit': proceed_profit,
                     'net_profit': net_profit,
