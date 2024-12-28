@@ -225,7 +225,7 @@ class FinancialDataSerializer(serializers.ModelSerializer):
         fields = [
             'financial_asset', 'current_asset', 'non_current_asset', 'total_asset',
             'current_debt', 'non_current_debt', 'total_debt', 'total_equity',
-            'total_sum_equity_debt', 'gross_profit', 'net_sale', 'inventory',
+            'total_sum_equity_debt', 'gross_profit', 'net_sale', 'inventory_average',
             'operational_profit', 'proceed_profit', 'net_profit', 'consuming_material',
             'production_fee', 'construction_overhead', 'production_total_price',
             'salary_fee', 'salary_production_fee', 'usability', 'efficiency', 'roa',
@@ -256,7 +256,7 @@ class MonthlyFinancialDataSerializer(serializers.ModelSerializer):
             'total_sum_equity_debt',
             'gross_profit',
             'net_sale',
-            'inventory',
+            'inventory_average',
             'operational_profit',
             'proceed_profit',
             'net_profit',
@@ -296,7 +296,7 @@ class MonthDataSerializer(serializers.ModelSerializer):
         fields = [
             'month', 'current_asset', 'non_current_asset', 'total_asset', 'current_debt',
             'non_current_debt', 'total_debt', 'total_equity', 'gross_profit', 'net_sale',
-            'inventory', 'operational_profit', 'proceed_profit', 'net_profit',
+            'inventory_average', 'operational_profit', 'proceed_profit', 'net_profit',
             'consuming_material', 'production_fee', 'construction_overhead', 'production_total_price',
             'salary_fee', 'salary_production_fee', 'usability', 'efficiency', 'roa', 'roab', 'roe',
             'gross_profit_margin', 'profit_margin_ratio', 'debt_ratio', 'capital_ratio',
