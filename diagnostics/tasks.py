@@ -13,23 +13,23 @@ def generate_analysis(company, chart_name, *args, **kwargs):
 
     charts: dict[str, dict[Union[str, List[float]]]] = {
         "sale": {
-            "prompt": "Using the provided net sales, gross profit,operational income expense and marketing fee values, provide a comprehensive analysis of the company's sales performance in Persian.Ensure the analysis is detailed, insightful, and highlights key trends and observations",
+            "prompt": "Using the provided net sales, gross profit,operational income expense and marketing fee values, provide a comprehensive analysis of the company's sales performance.Ensure the analysis is detailed, insightful, and highlights key trends and observations then translate the results to persian",
             "net_sale": [],
             "gross_profit": [],
             "operational_income_expense": [],
             "marketing_fee": [],
         },
         "debt": {
-            "prompt": "Using the provided trade payable ,advance payment, reserves, long term payable, long term financial,  employee termination benefit reserve  values, provide a comprehensive analysis of the company's sales performance in Persian.Ensure the analysis is detailed, insightful, and highlights key trends and observations",
+            "prompt": "Using the provided trade payable ,advance payment, reserves, long term payable, employee termination benefit reserve  values, provide a comprehensive analysis of the company's sales performance.Ensure the analysis is detailed, insightful, and highlights key trends and observations then translate the results to persian",
             "trade_payable": [],
             "advance": [],
             "reserves": [],
             "long_term_payable": [],
-            "long_term_financial": [],
+            # "long_term_financial": [],
             "employee_termination_benefit_reserve": [],
         },
         "asset": {
-            "prompt": "Using the provided cash balance ,trade receivable, inventory, property investment, intangible asset, long term investment values, provide a comprehensive analysis of the company's sales performance in Persian.Ensure the analysis is detailed, insightful, and highlights key trends and observations",
+            "prompt": "Using the provided cash balance ,trade receivable, inventory, property investment, intangible asset, long term investment values, provide a comprehensive analysis of the company's sales performance.Ensure the analysis is detailed, insightful, and highlights key trends and observations then translate the results to persian",
             "cash_balance": [],
             "trade_receivable": [],
             "inventory": [],
@@ -46,7 +46,6 @@ def generate_analysis(company, chart_name, *args, **kwargs):
         if field != "prompt":
             for values in data:
                 charts[chart_name][field].append(float(getattr(values, field)))
-
     formatted_prompt = "act as a professional financial management and analyst and" + \
         charts[chart_name]["prompt"]
     for field in charts[chart_name]:
@@ -64,9 +63,9 @@ def generate_analysis(company, chart_name, *args, **kwargs):
 
     AnalysisReport.objects.update_or_create(
         calculated_data=last_data,
+        chart_name=chart_name,
         defaults={
             "period": "y" if last_data.financial_asset.is_tax_record else "m",
-            "chart_name": chart_name,
             "text": response,
         }
     )
