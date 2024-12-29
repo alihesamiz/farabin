@@ -2,7 +2,7 @@ from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from .models import AnalysisReport, FinancialAsset, FinancialData
 from .tasks import generate_analysis
-from .utils import FinancialCalculations
+from .utils_1 import FinancialCalculations
 
 # Trigger task after FinancialAsset is saved or deleted
 
@@ -35,6 +35,11 @@ def trigger_calculation_task(sender, instance, **kwargs):
             gross_profit = results['gross_profit'][idx]
             net_sale = results['net_sale'][idx]
             inventory_average = results['inventory'][idx]
+            trade_payable = results['trade_payable'][idx]
+            advance = results['advance'][idx]
+            reserves = results['reserves'][idx]
+            long_term_payable = results['long_term_payable'][idx]
+            employee_termination_benefit_reserve = results['employee_termination_benefit_reserve'][idx]
             operational_profit = results['operational_profit'][idx]
             proceed_profit = results['proceed_profit'][idx]
             net_profit = results['net_profit'][idx]
@@ -64,6 +69,7 @@ def trigger_calculation_task(sender, instance, **kwargs):
             stock_turnover = results['stock_turnover'][idx]
             altman_bankrupsy_ratio = results['altman_bankrupsy_ratio'][idx]
 
+
             financial_data, created = FinancialData.objects.update_or_create(
                 financial_asset=asset,
                 defaults={
@@ -78,6 +84,11 @@ def trigger_calculation_task(sender, instance, **kwargs):
                     'total_sum_equity_debt': total_sum_equity_debt,
                     'gross_profit': gross_profit,
                     'net_sale': net_sale,
+                    'trade_payable':trade_payable,
+                    'advance':advance,
+                    'reserves':reserves,
+                    'long_term_payable':long_term_payable,
+                    'employee_termination_benefit_reserve':employee_termination_benefit_reserve,
                     'inventory_average': inventory_average,
                     'operational_profit': operational_profit,
                     'proceed_profit': proceed_profit,
@@ -118,6 +129,6 @@ def populating_reports(sender, instance, **kwargs):
     if instance.is_published:
         # for chart_name, _ in AnalysisReport.CHART_CHOICES:
         #     if chart_name != "life_cycle":
-        # for chart_name in ['sale','debt','asset']:
-                generate_analysis.delay(company,"sale")
+        for chart_name in ['sale','debt']:#,'asset']:
+                generate_analysis.delay(company,chart_name)
         
