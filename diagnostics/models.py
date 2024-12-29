@@ -394,7 +394,16 @@ class FinancialData(models.Model):
         default=0, max_digits=20, decimal_places=2, verbose_name=_('Stock Turnover'))
     altman_bankrupsy_ratio = models.DecimalField(
         default=0, max_digits=20, decimal_places=2, verbose_name=_('Altman Bankruptcy Ratio'))
-
+    trade_payable = models.DecimalField(
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Trade Payable'))
+    advance = models.DecimalField(
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Advance'))
+    reserves = models.DecimalField(
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Reserves'))
+    long_term_payable = models.DecimalField(
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Long Term Payable'))
+    employee_termination_benefit_reserve = models.DecimalField(
+        default=0, max_digits=20, decimal_places=2, verbose_name=_('Employee Termination Benefit Reserve'))
     created_at = models.DateTimeField(
         auto_now_add=True, verbose_name=_('Created At'))
 
