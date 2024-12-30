@@ -1,9 +1,9 @@
-from django.utils.translation import gettext_lazy as _
 from datetime import timedelta
 from pathlib import Path
 import environ
 import os
 
+from django.utils.translation import gettext_lazy as _
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -17,8 +17,8 @@ environ.Env.read_env(BASE_DIR)
 
 SECRET_KEY = env("FARABIN_SECRET_KEY")
 
-# DEBUG = env("FARABIN_DEBUG")
-DEBUG = True
+DEBUG = env("FARABIN_DEBUG")
+# DEBUG = True
 
 
 ALLOWED_HOSTS = ["*"]
@@ -206,28 +206,34 @@ CORS_ALLOWED_ORIGINS = [
     "http://saramad.farabinbrand.com",
     "http://127.0.0.1:3000",
     "http://localhost:3000",
-    "http://127.0.0.1:8000",
-    "http://localhost:8000",
-    "http://0.0.0.0:3000",
-    "http://0.0.0.0:8000",
-    "http://redis:6379",
-    "http://redis:6379",
 ]
 
 
-CELERY_RESULT_BACKEND = f'redis://{env("FARABIN_REDIS_HOST")}:{env("FARABIN_REDIS_PORT")}/0'
-CELERY_BROKER_URL = f'redis://{env("FARABIN_REDIS_HOST")}:{env("FARABIN_REDIS_PORT")}/0'
-# CELERY_RESULT_BACKEND = f'redis://localhost:6379/0'
-# CELERY_BROKER_URL = f'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = f'redis://{env("FARABIN_REDIS_HOST")}:{env("FARABIN_REDIS_PORT")}/{env("FARABIN_REDIS_ASYNC_DATABASE")}'
+CELERY_BROKER_URL = f'redis://{env("FARABIN_REDIS_HOST")}:{env("FARABIN_REDIS_PORT")}/{env("FARABIN_REDIS_ASYNC_DATABASE")}'
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+CELERY_TASK_REJECT_ON_WORKER_LOST = True
+CELERY_TASK_RESULT_EXPIRES = 3600
+CELERY_TASK_ACKS_LATE = True
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': f'redis://{env("FARABIN_REDIS_HOST")}:{env("FARABIN_REDIS_PORT")}/{env("FARABIN_REDIS_CACHE_DATABASE")}',  # Use database 1
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'KEY_PREFIX': 'farabin_cache',
+        },
+        'TIMEOUT': 30*60,
+    }
+}
 
 # HTTPS settings
-# SECURE_HSTS_SECONDS = 31536000
-# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-# SECURE_CONTENT_TYPE_NOSNIFF = True
-# SECURE_BROWSER_XSS_FILTER = True
-# SESSION_COOKIE_SECURE = True
-# SECURE_SSL_REDIRECT = True
-# SECURE_HSTS_PRELOAD = True
-# CSRF_COOKIE_SECURE = True
+SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+SESSION_COOKIE_SECURE = True
+SECURE_SSL_REDIRECT = True
+SECURE_HSTS_PRELOAD = True
+CSRF_COOKIE_SECURE = True
