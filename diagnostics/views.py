@@ -1,18 +1,21 @@
 from itertools import groupby
+
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.translation import gettext_lazy as _
 from django.utils.decorators import method_decorator
 from django.contrib.admin import site as admin_site
+from django.core.cache import cache
 from django.shortcuts import render
 from django.urls import reverse
-from django.db.models import Q
 from django.views import View
+
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework import status
+
 from .models import AnalysisReport, FinancialData
 from company.models import CompanyProfile
 from .serializers import (
@@ -126,6 +129,11 @@ class DiagnosticAnalysisViewSet(ModelViewSet):
     @action(detail=False, methods=['get'], url_path='chart/(?P<slug>[^/.]+)', url_name='chart')
     def chart(self, request, slug=None):
         company = self.request.user.company
+        cache_key = f"diagnostic_analysis_chart_yearly_{slug}_{company.id}"
+        cached_data = cache.get(cache_key)
+        if cached_data:
+            return Response(cached_data)
+
         queryset = FinancialData.objects.select_related('financial_asset').filter(
             financial_asset__company=company,
             financial_asset__is_tax_record=True,
@@ -136,6 +144,7 @@ class DiagnosticAnalysisViewSet(ModelViewSet):
 
         try:
             serializer = self.get_serializer(queryset, many=True)
+            cache.set(cache_key, serializer.data, 3600)
             return Response(serializer.data)
         except Exception as e:
             raise NotFound(detail="Error fetching data: {}".format(str(e)))
@@ -143,6 +152,10 @@ class DiagnosticAnalysisViewSet(ModelViewSet):
     @action(detail=False, methods=['get'], url_path='chart/(?P<slug>[^/.]+)/month', url_name='chart-month')
     def chart_month(self, request, slug=None):
         company = self.request.user.company
+        cache_key = f"diagnostic_analysis_chart_monthly_{slug}_{company.id}"
+        cached_data = cache.get(cache_key)
+        if cached_data:
+            return Response(cached_data)
         queryset = FinancialData.objects.select_related('financial_asset').filter(
             financial_asset__company=company,
             financial_asset__is_tax_record=False,
@@ -150,8 +163,12 @@ class DiagnosticAnalysisViewSet(ModelViewSet):
         ).order_by('financial_asset__year', 'financial_asset__month')
         if not queryset.exists():
             raise NotFound(detail="No financial data found.")
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+        try:
+            serializer = self.get_serializer(queryset, many=True)
+            cache.set(cache_key, serializer.data, 3600)
+            return Response(serializer.data)
+        except Exception as e:
+            raise NotFound(detail="Error fetching data: {}".format(str(e)))
 
     @action(detail=False, methods=['get'], url_path='month', url_name='month')
     def month(self, request):
@@ -249,7 +266,6 @@ class CompanyFinancialDataView(View):
             total_asset.append(float(data.total_asset))
             non_current_debt.append(float(data.non_current_debt))
             current_debt.append(float(data.current_debt))
-            # total_debt.append(float(data.total_debt))
             altman_bankrupsy_ratio.append(float(data.altman_bankrupsy_ratio))
             total_equity.append(float(data.total_equity))
             total_debt.append(float(data.total_debt))
