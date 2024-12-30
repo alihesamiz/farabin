@@ -1,24 +1,22 @@
+import os
+from django.views.decorators.clickjacking import xframe_options_exempt
+from django.core.files.storage import default_storage
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
 from django.db.models.signals import post_save
-from django.conf import settings
-from ticket.models import Ticket
-from .paginations import FilePagination
+from django.shortcuts import get_object_or_404
 from django.db.transaction import atomic
+from django.core.cache import cache
+from django.http import FileResponse
 from django.db.models import Count
 
-from django.core.files.storage import default_storage
-from django.views.decorators.clickjacking import xframe_options_exempt
-from django.utils.decorators import method_decorator
-from django.http import FileResponse, HttpResponse
-from django.shortcuts import get_object_or_404
-from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
-from rest_framework.exceptions import NotFound, ValidationError
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework import status, viewsets
 from rest_framework.views import APIView
-from rest_framework import status
-from rest_framework.pagination import PageNumberPagination
-import os
+
 from .models import BalanceReport,  CompanyProfile, DiagnosticRequest, TaxDeclaration
 from .serializers import (
     BalanceReportCreateSerializer,
@@ -29,6 +27,7 @@ from .serializers import (
     TaxDeclarationCreateSerializer,
     TaxDeclarationSerializer
 )
+from ticket.models import Ticket
 
 
 class CompanyProfileViewSet(viewsets.ModelViewSet):
@@ -54,12 +53,19 @@ class DashboardViewSet(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
+        
+        cache_key = f"dashboard_data_{self.request.user.id}"
+        cached_data = cache.get(cache_key)
+        
+        if cached_data:
+            return Response(cached_data)
+        
         try:
             # Fetch the company profile associated with the authenticated user
             company = CompanyProfile.objects.get(user=self.request.user)
 
             # Use annotate to count the related TaxDeclaration and BalanceReport files
-            company_data = CompanyProfile.objects.annotate(
+            company_data = CompanyProfile.objects.prefetch_related("taxfiles","reportfiles","diagnosticrequest").annotate(
                 tax_files_count=Count('taxfiles'),
                 report_files_count=Count('reportfiles'),
                 diagnostic_requests_count=Count('diagnosticrequest')
@@ -85,7 +91,9 @@ class DashboardViewSet(APIView):
                 "rad_requests": 0,
                 "production_requests": 0,
             }
-
+            
+            cache.set(cache_key, Response(response_data), 60 * 15)
+            
             return Response(response_data)
 
         except CompanyProfile.DoesNotExist:
