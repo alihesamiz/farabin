@@ -1,9 +1,10 @@
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
-from .models import AnalysisReport, FinancialAsset, FinancialData
-from .tasks import generate_analysis
-from .utils_1 import FinancialCalculations
+from django.core.cache import cache
 
+from .models import FinancialAsset, FinancialData
+from .utils_1 import FinancialCalculations
+from .tasks import generate_analysis
 # Trigger task after FinancialAsset is saved or deleted
 
 
@@ -69,7 +70,6 @@ def trigger_calculation_task(sender, instance, **kwargs):
             stock_turnover = results['stock_turnover'][idx]
             altman_bankrupsy_ratio = results['altman_bankrupsy_ratio'][idx]
 
-
             financial_data, created = FinancialData.objects.update_or_create(
                 financial_asset=asset,
                 defaults={
@@ -84,11 +84,11 @@ def trigger_calculation_task(sender, instance, **kwargs):
                     'total_sum_equity_debt': total_sum_equity_debt,
                     'gross_profit': gross_profit,
                     'net_sale': net_sale,
-                    'trade_payable':trade_payable,
-                    'advance':advance,
-                    'reserves':reserves,
-                    'long_term_payable':long_term_payable,
-                    'employee_termination_benefit_reserve':employee_termination_benefit_reserve,
+                    'trade_payable': trade_payable,
+                    'advance': advance,
+                    'reserves': reserves,
+                    'long_term_payable': long_term_payable,
+                    'employee_termination_benefit_reserve': employee_termination_benefit_reserve,
                     'inventory_average': inventory_average,
                     'operational_profit': operational_profit,
                     'proceed_profit': proceed_profit,
@@ -104,8 +104,8 @@ def trigger_calculation_task(sender, instance, **kwargs):
                     'roa': roa,
                     'roab': roab,
                     'roe': roe,
-                    'operational_income_expense':operational_income_expense,
-                    'marketing_fee':marketing_fee,
+                    'operational_income_expense': operational_income_expense,
+                    'marketing_fee': marketing_fee,
                     'gross_profit_margin': gross_profit_margin,
                     'profit_margin_ratio': profit_margin_ratio,
                     'debt_ratio': debt_ratio,
@@ -129,6 +129,27 @@ def populating_reports(sender, instance, **kwargs):
     if instance.is_published:
         # for chart_name, _ in AnalysisReport.CHART_CHOICES:
         #     if chart_name != "life_cycle":
-        for chart_name in ['sale','debt']:#,'asset']:
-                generate_analysis.delay(company,chart_name)
-        
+        for chart_name in ['sale', 'debt']:  # ,'asset']:
+            generate_analysis.delay(company, chart_name)
+
+
+@receiver(post_save, sender=FinancialData)
+@receiver(post_delete, sender=FinancialData)
+def clear_chart_yearly_cache(sender, instance, **kwargs):
+    company = instance.financial_asset.company.id
+    chart_types = ['debt', 'asset', 'sale', 'equity', 'bankrupsy', 'profitability',
+                   'inventory', 'agility', 'liquidity', 'leverage', 'cost', 'profit', 'salary']
+    for chart in chart_types:
+        cache_key = f"diagnostic_analysis_chart_yearly_{chart}_{company}"
+        cache.delete(cache_key)
+
+
+@receiver(post_save, sender=FinancialData)
+@receiver(post_delete, sender=FinancialData)
+def clear_chart_monthly_cache(sender, instance, **kwargs):
+    company = instance.financial_asset.company.id
+    chart_types = ['debt', 'asset', 'sale', 'equity', 'bankrupsy', 'profitability',
+                   'inventory', 'agility', 'liquidity', 'leverage', 'cost', 'profit', 'salary']
+    for chart in chart_types:
+        cache_key = f"diagnostic_analysis_chart_monthly_{chart}_{company}"
+        cache.delete(cache_key)
