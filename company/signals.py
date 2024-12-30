@@ -1,9 +1,11 @@
-from django.db.models.signals import pre_save, post_save
-from django.db import transaction
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
-from core.models import Service
-from .models import BalanceReport, CompanyProfile, CompanyService, TaxDeclaration, DiagnosticRequest
-from .tasks import send_file_uploading_notification
+from django.core.cache import cache
+from django.db import transaction
+
+from .models import BalanceReport, CompanyService, TaxDeclaration, DiagnosticRequest
+from ticket.models import Ticket
+
 
 
 # TODO: Update the folowing signal handler
@@ -13,7 +15,7 @@ def create_diagnostic_request(sender, instance, created, **kwargs):
     """
     Create a DiagnosticRequest if a TaxDeclaration or BalanceReport is sent.
     """
-    if instance.is_sent: 
+    if instance.is_sent:
         try:
             with transaction.atomic():
                 # Get the company and corresponding service
@@ -67,3 +69,17 @@ def set_the_file_available(sender, instance, created, **kwargs):
             instance.balance_record.save()  # Save the change to persist it in the database
             print(f"Updated balance_record {
                   instance.balance_record.pk} is_sent to False.")
+
+
+@receiver(post_save, sender=TaxDeclaration)
+@receiver(post_delete, sender=TaxDeclaration)
+@receiver(post_save, sender=BalanceReport)
+@receiver(post_delete, sender=BalanceReport)
+@receiver(post_save, sender=Ticket)
+@receiver(post_delete, sender=Ticket)
+def clear_dashboard_cache(sender, instance, **kwargs):
+    """
+    Signal to clear the cache when a Service instance is updated.
+    """
+    cache_key = f"dashboard_data_{instance.user.id}"
+    cache.delete(cache_key)
