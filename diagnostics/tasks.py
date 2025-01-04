@@ -20,7 +20,7 @@ def generate_analysis(company, chart_name, *args, **kwargs):
             "marketing_fee": [],
         },
         "debt": {
-            "prompt": "Using the provided trade payable ,advance payment, reserves, long term payable, employee termination benefit reserve  values, provide a comprehensive analysis of the company's sales performance.Ensure the analysis is detailed, insightful, and highlights key trends and observations then translate the results to persian",
+            "prompt": "Using the provided trade payable ,advance payment, reserves, long term payable, employee termination benefit reserve  values, provide a comprehensive analysis of the company's debts performance.Ensure the analysis is detailed, insightful, and highlights key trends and observations then translate the results to persian",
             "trade_payable": [],
             "advance": [],
             "reserves": [],
@@ -29,7 +29,7 @@ def generate_analysis(company, chart_name, *args, **kwargs):
             "employee_termination_benefit_reserve": [],
         },
         "asset": {
-            "prompt": "Using the provided cash balance ,trade receivable, inventory, property investment, intangible asset, long term investment values, provide a comprehensive analysis of the company's sales performance.Ensure the analysis is detailed, insightful, and highlights key trends and observations then translate the results to persian",
+            "prompt": "Using the provided cash balance ,trade receivable, inventory, property investment, intangible asset, long term investment values, provide a comprehensive analysis of the company's assets performance.Ensure the analysis is detailed, insightful, and highlights key trends and observations then translate the results to persian",
             "cash_balance": [],
             "trade_receivable": [],
             "inventory": [],
