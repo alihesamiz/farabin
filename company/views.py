@@ -53,19 +53,18 @@ class DashboardViewSet(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        
+
         cache_key = f"dashboard_data_{self.request.user.id}"
         cached_data = cache.get(cache_key)
-        
+
         if cached_data:
             return Response(cached_data)
-        
+
         try:
             # Fetch the company profile associated with the authenticated user
             company = CompanyProfile.objects.get(user=self.request.user)
-
             # Use annotate to count the related TaxDeclaration and BalanceReport files
-            company_data = CompanyProfile.objects.prefetch_related("taxfiles","reportfiles","diagnosticrequest").annotate(
+            company_data = CompanyProfile.objects.prefetch_related("taxfiles", "reportfiles").annotate(
                 tax_files_count=Count('taxfiles'),
                 report_files_count=Count('reportfiles'),
                 diagnostic_requests_count=Count('diagnosticrequest')
@@ -91,9 +90,9 @@ class DashboardViewSet(APIView):
                 "rad_requests": 0,
                 "production_requests": 0,
             }
-            
-            cache.set(cache_key, Response(response_data), 60 * 15)
-            
+
+            cache.set(cache_key, response_data, 60 * 15)
+
             return Response(response_data)
 
         except CompanyProfile.DoesNotExist:
