@@ -196,7 +196,7 @@ SIMPLE_JWT = {
 
 
 # Browser protections
-X_FRAME_OPTIONS = 'SAMEORIGIN'
+X_FRAME_OPTIONS = 'ALLOWANY'
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
@@ -206,6 +206,12 @@ CORS_ALLOWED_ORIGINS = [
     "http://saramad.farabinbrand.com",
     "http://127.0.0.1:3000",
     "http://localhost:3000",
+    "https://127.0.0.1:3000",
+    "https://localhost:3000",
+    "http://127.0.0.1:8000",
+    "http://localhost:8000",
+    "https://127.0.0.1:8000",
+    "https://localhost:8000",
 ]
 
 

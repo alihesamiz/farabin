@@ -81,5 +81,5 @@ def clear_dashboard_cache(sender, instance, **kwargs):
     """
     Signal to clear the cache when a Service instance is updated.
     """
-    cache_key = f"dashboard_data_{instance.user.id}"
+    cache_key = f"dashboard_data_{instance.company.user.id}"
     cache.delete(cache_key)
