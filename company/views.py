@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404
 from django.db.transaction import atomic
 from django.core.cache import cache
 from django.http import FileResponse
-from django.db.models import Count
+from django.db.models import Count,Sum
 
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import NotFound
@@ -34,8 +34,16 @@ class CompanyProfileViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return CompanyProfile.objects.filter(user=self.request.user)
-
+        cache_key = f"company_profile_{self.request.user.id}"
+        cached_data = cache.get(cache_key)
+        if cached_data:
+            return cached_data
+        try:
+            profile= CompanyProfile.objects.filter(user=self.request.user)
+            cache.set(cache_key, profile)
+            return profile
+        except Exception as e:
+            raise NotFound(detail="Company profile not found.")
     def get_serializer_class(self):
         if self.action in ['create', 'update', 'partial_update']:
             return CompanyProfileCreateSerializer
@@ -43,10 +51,25 @@ class CompanyProfileViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['get'])
     def retrieve_profile(self, request, pk=None):
-        queryset = self.get_queryset()
-        company_profile = get_object_or_404(queryset, pk=pk)
-        serializer = CompanyProfileSerializer(company_profile)
-        return Response(serializer.data)
+        # cache_key = f"company_profile_{self.request.user.id}"
+        # cached_data = cache.get(cache_key)
+        # if cached_data:
+        #     return Response(cached_data)
+
+        # try:
+        #     instance = self.get_object()
+        #     serializer = self.get_serializer(instance)
+        #     cache.set(cache_key, serializer.data, 60 * 15)
+        #     return Response(serializer.data)
+        # except Exception as e:
+        #     raise NotFound(detail=f"Company profile not found.{e}",code=status.HTTP_404_NOT_FOUND)
+        try:
+            queryset = self.get_queryset()
+            company_profile = get_object_or_404(queryset, pk=pk)
+            serializer = CompanyProfileSerializer(company_profile)
+            return Response(serializer.data)
+        except Exception as e:
+            raise NotFound(detail=f"Company profile not found.{e}",code=status.HTTP_404_NOT_FOUND)
 
 
 class DashboardViewSet(APIView):
@@ -65,19 +88,20 @@ class DashboardViewSet(APIView):
             company = CompanyProfile.objects.get(user=self.request.user)
             # Use annotate to count the related TaxDeclaration and BalanceReport files
             company_data = CompanyProfile.objects.prefetch_related("taxfiles", "reportfiles").annotate(
-                tax_files_count=Count('taxfiles'),
-                report_files_count=Count('reportfiles'),
-                diagnostic_requests_count=Count('diagnosticrequest')
+                tax_files_count=Sum('taxfiles'),
+                report_files_count=Sum('reportfiles'),
+                diagnostic_requests_count=Sum('diagnosticrequest')
             ).get(id=company.id)
-
+            print(company_data)
             # Calculate the values for response_data
             tax_files_count = company_data.tax_files_count
-            report_files_count = company_data.report_files_count * 4  # Custom multiplier
+            report_files_count = company_data.report_files_count * 4 if company_data.report_files_count else 0 # Custom multiplier
             all_uploaded_files = tax_files_count + report_files_count
             tickets = Ticket.objects.filter(issuer=company).count()
             diagnostic_requests_count = company_data.diagnostic_requests_count
 
             # Assuming the other request types are fixed at 0 for now
+            #TODO : Update these section
             response_data = {
                 'tax_files_count': tax_files_count,
                 'report_files_count': report_files_count,
@@ -91,7 +115,7 @@ class DashboardViewSet(APIView):
                 "production_requests": 0,
             }
 
-            cache.set(cache_key, response_data, 60 * 15)
+            cache.set(cache_key, response_data)
 
             return Response(response_data)
 
