@@ -49,88 +49,122 @@ class DiagnosticAnalysisViewSet(ModelViewSet):
     serializer_class = FinancialDataSerializer
 
     def get_serializer_class(self):
+
         if self.action == "month":
             return YearlyFinanceDataSerializer
+
         elif self.action in ["chart", "chart_month"]:
             chart = self.kwargs.get('slug')
+
             serializer_class = self.CHART_SERIALIZER_MAP.get(chart)
+
             if serializer_class is None:
                 raise NotFound(
                     detail=f"No serializer found for slug '{chart}'.")
+
             return serializer_class
+
         return super().get_serializer_class()
 
     def get_queryset(self):
         company = self.request.user.company
-        queryset = FinancialData.objects.select_related('financial_asset').filter(
-            financial_asset__company=company,
-            financial_asset__is_tax_record=True,
-            is_published=True
-        ).order_by('financial_asset__year', 'financial_asset__month')
-        if not queryset.exists():
-            raise NotFound(detail="No financial data found.")
-        return queryset
+
+        cache_key = f"diagnostic_data_{company.id}"
+
+        cached_data = cache.get(cache_key)
+
+        if cached_data:
+            return cached_data
+        try:
+            queryset = FinancialData.objects.select_related('financial_asset').filter(
+                financial_asset__company=company,
+                financial_asset__is_tax_record=True,
+                is_published=True
+            ).order_by('financial_asset__year', 'financial_asset__month')
+
+            cache.set(cache_key, queryset)
+
+            if not queryset.exists():
+                raise NotFound(detail="No financial data found.")
+
+            return queryset
+
+        except Exception as e:
+            raise NotFound(detail=f"Error retrieving financial data.{
+                           e}", code=status.HTTP_404_NOT_FOUND)
 
     @action(detail=False, methods=['get'], url_path='analysis', url_name='analysis')
     def analysis(self, request):
         company = self.request.user.company
+        data_cache_key = f"diagnostic_analysis_{company.id}"
+        cached_data = cache.get(data_cache_key)
 
-        # Query to get analysis reports
-        analysis = AnalysisReport.objects.select_related("calculated_data")\
-            .prefetch_related("calculated_data__financial_asset")\
-            .filter(
+        if cached_data:
+            analysis = cached_data
+
+        else:
+            analysis = AnalysisReport.objects.select_related("calculated_data")\
+                .prefetch_related("calculated_data__financial_asset")\
+                .filter(
                 calculated_data__financial_asset__company=company,
                 calculated_data__is_published=True
-            # Order by date (latest first)
-        ).order_by('calculated_data__financial_asset__year', 'calculated_data__financial_asset__month', '-created_at')
-
-        # Separate monthly and yearly analysis
+                # Order by date (latest first)
+            ).order_by('calculated_data__financial_asset__year', 'calculated_data__financial_asset__month', '-created_at')
+            cache.set(data_cache_key, analysis)
+        
+        cache_key = f"diagnostic_analysis_data_{company.id}"
+        cached_data = cache.get(cache_key)
+        
+        if cached_data:
+            return Response(cached_data)
+        
         monthly_analysis = [
             item for item in analysis if item.calculated_data.financial_asset.is_tax_record is False]
+
         yearly_analysis = [
             item for item in analysis if item.calculated_data.financial_asset.is_tax_record is True]
 
-        # Initialize dictionaries to hold the most recent entry per chart type
         monthly_topic_data = {}
+
         yearly_topic_data = {}
 
-        # Group monthly data by chart_name, keeping the most recent (since we ordered by -created_at)
         for item in monthly_analysis[::-1]:
             if item.chart_name not in monthly_topic_data:
                 monthly_topic_data[item.chart_name] = item
 
-        # Group yearly data by chart_name, keeping the most recent (since we ordered by -created_at)
         for item in yearly_analysis[::-1]:
             if item.chart_name not in yearly_topic_data:
                 yearly_topic_data[item.chart_name] = item
 
-        # Serialize only one entry for each topic from monthly and yearly data
         monthly_serializer_data = {}
         yearly_serializer_data = {}
 
-        # Serialize the first data entry for each topic from monthly data
         for topic, item in monthly_topic_data.items():
             if topic in self.CHART_SERIALIZER_MAP:  # Ensure the chart is one of the valid topics
                 monthly_serializer_data[topic] = AnalysisReportListSerializer(
                     item).data
 
-        # Serialize the first data entry for each topic from yearly data
         for topic, item in yearly_topic_data.items():
             if topic in self.CHART_SERIALIZER_MAP:  # Ensure the chart is one of the valid topics
                 yearly_serializer_data[topic] = AnalysisReportListSerializer(
                     item).data
 
-        # Combine the results into a single response
-        return Response({
+        result={
             "monthly_analysis": monthly_serializer_data,
             "yearly_analysis": yearly_serializer_data
-        })
+        }
+        cache.set(cache_key, result)
+        # Combine the results into a single response
+        return Response(result)
 
     @action(detail=False, methods=['get'], url_path='chart/(?P<slug>[^/.]+)', url_name='chart')
     def chart(self, request, slug=None):
         company = self.request.user.company
+
         cache_key = f"diagnostic_analysis_chart_yearly_{slug}_{company.id}"
+
         cached_data = cache.get(cache_key)
+
         if cached_data:
             return Response(cached_data)
 
@@ -139,40 +173,54 @@ class DiagnosticAnalysisViewSet(ModelViewSet):
             financial_asset__is_tax_record=True,
             is_published=True
         ).order_by('financial_asset__year', 'financial_asset__month')
+
         if not queryset.exists():
             raise NotFound(detail="No financial data found.")
 
         try:
             serializer = self.get_serializer(queryset, many=True)
+
             cache.set(cache_key, serializer.data, 3600)
+
             return Response(serializer.data)
+
         except Exception as e:
             raise NotFound(detail="Error fetching data: {}".format(str(e)))
 
     @action(detail=False, methods=['get'], url_path='chart/(?P<slug>[^/.]+)/month', url_name='chart-month')
     def chart_month(self, request, slug=None):
         company = self.request.user.company
+
         cache_key = f"diagnostic_analysis_chart_monthly_{slug}_{company.id}"
+
         cached_data = cache.get(cache_key)
+
         if cached_data:
             return Response(cached_data)
+
         queryset = FinancialData.objects.select_related('financial_asset').filter(
             financial_asset__company=company,
             financial_asset__is_tax_record=False,
             is_published=True
         ).order_by('financial_asset__year', 'financial_asset__month')
+
         if not queryset.exists():
             raise NotFound(detail="No financial data found.")
+
         try:
             serializer = self.get_serializer(queryset, many=True)
+
             cache.set(cache_key, serializer.data, 3600)
+
             return Response(serializer.data)
+
         except Exception as e:
             raise NotFound(detail="Error fetching data: {}".format(str(e)))
 
     @action(detail=False, methods=['get'], url_path='month', url_name='month')
     def month(self, request):
         company = self.request.user.company
+
         queryset = FinancialData.objects.select_related('financial_asset').filter(
             financial_asset__company=company,
             financial_asset__is_tax_record=False,
@@ -182,7 +230,6 @@ class DiagnosticAnalysisViewSet(ModelViewSet):
         if not queryset.exists():
             return Response({'detail': 'No monthly data found.'}, status=status.HTTP_404_NOT_FOUND)
 
-        # Group data by year
         data_by_year = {
             year: list(month_data)
             for year, month_data in groupby(queryset, key=lambda x: x.financial_asset.year)
@@ -202,21 +249,33 @@ class DiagnosticAnalysisViewSet(ModelViewSet):
 @method_decorator(staff_member_required, name='dispatch')
 class CompanyFinancialDataView(View):
     def get(self, request, company_id):
-        # Fetch the company profile
+
         company = CompanyProfile.objects.get(id=company_id)
+
+        cache_key = f"company_admin_financial_data_{company_id}"
+        cached_data = cache.get(cache_key)
+
+        if cached_data:
+            financial_data = cached_data
 
         financial_data = FinancialData.objects.select_related("financial_asset").filter(
             financial_asset__company=company).order_by('financial_asset__year', 'financial_asset__month')
 
+        cache.set(cache_key, financial_data)
+
         admin_context = admin_site.each_context(request)
-        # admin_context['title'] = _("Company Financial Data")
         admin_context['breadcrumbs'] = [
             {"name": _("Home"), "url": reverse('admin:index')},
+
             {"name": _("Diagnostic"), "url": '/admin/diagnostics/'},
+
             {"name": _("Analysis Reports"), "url": reverse(
                 'admin:diagnostics_analysisreport_changelist')},
+
             {"name": company.company_title, "url": ""},
+
         ]
+            
         year = []
         month = []
         net_sale = []
@@ -256,6 +315,7 @@ class CompanyFinancialDataView(View):
         construction_overhead = []
         consuming_material = []
         production_total_price = []
+
         for data in financial_data:
             year.append(float(data.financial_asset.year))
             month.append(float(data.financial_asset.month)
