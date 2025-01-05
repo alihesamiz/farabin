@@ -8,10 +8,11 @@ from ticket.models import Agent, Department
 from django.contrib.auth import get_user_model
 
 
-@shared_task
-def update_request_status():
-    for request in BaseRequest.objects.filter(status=BaseRequest.REQUEST_STATUS_NEW):
-        request.check_and_update_status()
+# @shared_task
+# def update_request_status():
+#     all_requests=BaseRequest.objects.filter(status=BaseRequest.REQUEST_STATUS_NEW)
+#     for request in all_requests:
+#         request.check_and_update_status()
 
 
 @shared_task

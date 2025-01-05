@@ -233,7 +233,7 @@ CACHES = {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
             'KEY_PREFIX': 'farabin_cache',
         },
-        'TIMEOUT': 30*60,
+        'TIMEOUT': 3*60,
     }
 }
 
