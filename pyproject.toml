@@ -87,7 +87,11 @@ pydantic = "^2.10.4"
 cohere = "^5.13.4"
 openai = "^1.58.1"
 environ = "^1.0"
+<<<<<<< HEAD
 django-redis = "^5.4.0"
+=======
+pandas = "^2.2.3"
+>>>>>>> 79d55aa (Install pandas)
 
 
 [build-system]
