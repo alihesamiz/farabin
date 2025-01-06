@@ -1,4 +1,4 @@
-#!/bin/zsh  
+#!/bin/zsh
 
 # Make migrations
 python manage.py makemigrations

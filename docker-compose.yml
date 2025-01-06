@@ -8,17 +8,17 @@ services:
 
     ports:
       - "8000:8000"
-      
+
     volumes:
       - .:/app
-      
+
     env_file:
       - .env
-      
+
     environment:
-      - CELERY_BROKER_URL=redis://${FARABIN_REDIS_HOST}:${FARABIN_REDIS_PORT}/0  # Connect to the local Redis using environment variables
+      - CELERY_BROKER_URL=redis://${FARABIN_REDIS_HOST}:${FARABIN_REDIS_PORT}/0 # Connect to the local Redis using environment variables
       - CELERY_RESULT_BACKEND=redis://${FARABIN_REDIS_HOST}:${FARABIN_REDIS_PORT}/0
-      - DATABASE_URL=postgres://${FARABIN_DB_USER}:${FARABIN_DB_PASSWORD}@${FARABIN_DB_HOST}:${FARABIN_DB_PORT}/${FARABIN_DB_NAME}  # Connect to the local PostgreSQL using environment variables
+      - DATABASE_URL=postgres://${FARABIN_DB_USER}:${FARABIN_DB_PASSWORD}@${FARABIN_DB_HOST}:${FARABIN_DB_PORT}/${FARABIN_DB_NAME} # Connect to the local PostgreSQL using environment variables
 
   celery:
     build:
@@ -29,18 +29,16 @@ services:
 
     volumes:
       - .:/app
-      
+
     env_file:
-      - .env  
-    
+      - .env
+
     restart: always
-      
+
     environment:
-      - CELERY_BROKER_URL=redis://${FARABIN_REDIS_HOST}:${FARABIN_REDIS_PORT}/0  # Connect to the local Redis using environment variables
+      - CELERY_BROKER_URL=redis://${FARABIN_REDIS_HOST}:${FARABIN_REDIS_PORT}/0 # Connect to the local Redis using environment variables
       - CELERY_RESULT_BACKEND=redis://${FARABIN_REDIS_HOST}:${FARABIN_REDIS_PORT}/0
-      - DATABASE_URL=postgres://${FARABIN_DB_USER}:${FARABIN_DB_PASSWORD}@${FARABIN_DB_HOST}:${FARABIN_DB_PORT}/${FARABIN_DB_NAME}  # Connect to the local PostgreSQL using environment variables
-
-
+      - DATABASE_URL=postgres://${FARABIN_DB_USER}:${FARABIN_DB_PASSWORD}@${FARABIN_DB_HOST}:${FARABIN_DB_PORT}/${FARABIN_DB_NAME} # Connect to the local PostgreSQL using environment variables
 
 # version: '3.8'
 
