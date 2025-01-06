@@ -89,6 +89,7 @@ openai = "^1.58.1"
 environ = "^1.0"
 django-redis = "^5.4.0"
 pandas = "^2.2.3"
+supervisor = "^4.2.5"
 
 [build-system]
 requires = ["poetry-core"]
