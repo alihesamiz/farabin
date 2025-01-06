@@ -7,7 +7,7 @@ from django.utils import timezone
 User = get_user_model()
 
 
-@shared_task
+@shared_task(queue='high_priority')
 def send_otp_task(user_id, phone_number):
     user = User.objects.get(id=user_id)
     otp = OTP(user=user)

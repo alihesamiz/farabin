@@ -1,3 +1,4 @@
+from kombu import Queue
 from datetime import timedelta
 from pathlib import Path
 import environ
@@ -214,6 +215,17 @@ CORS_ALLOWED_ORIGINS = [
     "https://localhost:8000",
 ]
 
+
+CELERY_QUEUES = (
+    Queue('default', routing_key='task.default'),
+    Queue('high_priority', routing_key='task.high_priority'),
+)
+CELERY_DEFAULT_QUEUE = 'default'
+
+# CELERY_ROUTES = {
+#     'tasks.high_priority_task': {'queue': 'high_priority', 'routing_key': 'task.high_priority'},
+#     'tasks.default': {'queue': 'default', 'routing_key': 'task.default'},
+# }
 
 CELERY_RESULT_BACKEND = f'redis://{env("FARABIN_REDIS_HOST")}:{env(
     "FARABIN_REDIS_PORT")}/{env("FARABIN_REDIS_ASYNC_DATABASE")}'
