@@ -27,6 +27,6 @@ python manage.py migrate
 # Adjust the app_name (usually it's the name of your Django project, for example, myproject.wsgi:application)
 # gunicorn --bind 0.0.0.0:8000 --workers 2 config.wsgi:application
 # gunicorn --workers=3 --worker-class=sync --timeout=30 config.wsgi:application
-gunicorn --log-level=debug config.wsgi:application
+# gunicorn --log-level=debug config.wsgi:application
 
-# python manage.py runserver 0.0.0.0:8000
+python manage.py runserver
