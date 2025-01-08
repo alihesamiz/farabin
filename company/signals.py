@@ -75,11 +75,20 @@ def set_the_file_available(sender, instance, created, **kwargs):
 @receiver(post_delete, sender=TaxDeclaration)
 @receiver(post_save, sender=BalanceReport)
 @receiver(post_delete, sender=BalanceReport)
+def clear_dashboard_cache(sender, instance, **kwargs):
+    """
+    Signal to clear the cache when a Service instance is updated.
+    """
+    cache_key = f"dashboard_data_{instance.company.user.id}"
+    cache.delete(cache_key)
+
+
+
 @receiver(post_save, sender=Ticket)
 @receiver(post_delete, sender=Ticket)
 def clear_dashboard_cache(sender, instance, **kwargs):
     """
     Signal to clear the cache when a Service instance is updated.
     """
-    cache_key = f"dashboard_data_{instance.company.user.id}"
+    cache_key = f"dashboard_data_{instance.issuer.user.id}"
     cache.delete(cache_key)
