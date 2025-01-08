@@ -33,15 +33,19 @@ class TicketAnswerSerializer(serializers.ModelSerializer):
         fields = ["id", "agent", "comment",
                   "created_at", "updated_at", "comments"]
         read_only_fields = ["created_at", "updated_at",]
+
+
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
         fields = ['name']  # Or any other relevant fields
 
+
 class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Department
         fields = ['name']
+
 
 class TicketDetailSerializer(serializers.ModelSerializer):
     service = ServiceSerializer()
@@ -51,17 +55,18 @@ class TicketDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
         fields = ["id", "subject", "comment", "service",
-                  "department", "status", "priority", "answers","updated_at"]
+                  "department", "status", "priority", "answers", "updated_at", "attached_file"]
         read_only_fields = ["answers"]
 
 
 class TicketListSerializer(serializers.ModelSerializer):
     service = ServiceSerializer()
     department = DepartmentSerializer()
+
     class Meta:
         model = Ticket
         fields = ["id", "subject", "service",
-                  "department", "status", "priority","updated_at"]
+                  "department", "status", "priority", "updated_at"]
 
 
 class TicketCreateSerializer(serializers.ModelSerializer):
@@ -70,7 +75,8 @@ class TicketCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ticket
-        fields = ["subject", "comment", "service", "department", "status", "priority"]
+        fields = ["subject", "comment", "service",
+                  "department", "status", "priority", "attached_file"]
 
     def create(self, validated_data):
         service_data = validated_data.pop('service')
@@ -78,8 +84,10 @@ class TicketCreateSerializer(serializers.ModelSerializer):
 
         # Get or create the related service and department
         service = Service.objects.get_or_create(name=service_data['name'])[0]
-        department = Department.objects.get_or_create(name=department_data['name'])[0]
+        department = Department.objects.get_or_create(
+            name=department_data['name'])[0]
 
         # Create the ticket with related fields
-        ticket = Ticket.objects.create(service=service, department=department, **validated_data)
+        ticket = Ticket.objects.create(
+            service=service, department=department, **validated_data)
         return ticket
