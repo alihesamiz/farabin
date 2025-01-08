@@ -4,6 +4,7 @@
 sudo apt install -y supervisor
 
 # Shutdown any existing Supervisor instance (if running)
+supervisorctl -c supervisord.conf stop all
 supervisorctl -c supervisord.conf shutdown
 
 sudo kill -9 $(sudo lsof -t -i :8000)
