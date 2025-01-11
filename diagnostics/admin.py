@@ -84,10 +84,11 @@ class CalculatedDataAdmin(admin.ModelAdmin):
     def financial_month(self, obj):
         return obj.financial_asset.month if obj.financial_asset.month else '-'
     financial_month.short_description = _("Month")
-    
+
     def make_published(self, request, queryset):
         updated_count = queryset.update(is_published=True)
-        self.message_user(request, _(f'{updated_count} record(s) were successfully marked as published.'))
+        self.message_user(request, _(
+            f'{updated_count} record(s) were successfully marked as published.'))
 
     make_published.short_description = _('Mark selected as Published')
 
@@ -106,7 +107,11 @@ class AnalysisReportAdmin(admin.ModelAdmin):
 
     autocomplete_fields = ['calculated_data']
     search_fields = [
-        'calculated_data__financial_asset__company__company_title',]
+        'calculated_data__financial_asset__company__company_title', 'chart_name', 'period']
+    # list_filter = [
+    #     'calculated_data__financial_asset__company__company_title', 'is_published', 'period', 'chart_name']
+
+    actions = ['mark_as_published', 'mark_as_unpublished']
 
     def get_search_results(self, request, queryset, search_term):
         """
@@ -159,3 +164,21 @@ class AnalysisReportAdmin(admin.ModelAdmin):
                 return format_html('<a href="{}">{}</a>', url, company.company_title)
         return format_html('<a href="#">{}</a>', _("No data available"))
     chart.short_description = _("Chart")
+
+    @admin.action(description=_("Mark selected reports as Published"))
+    def mark_as_published(self, request, queryset):
+        queryset = queryset.order_by()  # Remove ordering to allow updates
+        updated_count = queryset.update(is_published=True)
+        self.message_user(
+            request,
+            _("%d analysis report(s) marked as published.") % updated_count
+        )
+
+    @admin.action(description=_("Mark selected reports as Unpublished"))
+    def mark_as_unpublished(self, request, queryset):
+        queryset = queryset.order_by()  # Remove ordering to allow updates
+        updated_count = queryset.update(is_published=False)
+        self.message_user(
+            request,
+            _("%d analysis report(s) marked as unpublished.") % updated_count
+        )
