@@ -1,8 +1,9 @@
+import time
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.core.cache import cache
 
-from .models import FinancialAsset, FinancialData
+from .models import AnalysisReport, FinancialAsset, FinancialData
 from .utils_1 import FinancialCalculations
 from .tasks import generate_analysis
 # Trigger task after FinancialAsset is saved or deleted
@@ -127,10 +128,17 @@ def trigger_calculation_task(sender, instance, **kwargs):
 def populating_reports(sender, instance, **kwargs):
     company = instance.financial_asset.company.id
     if instance.is_published:
-        # for chart_name, _ in AnalysisReport.CHART_CHOICES:
-        #     if chart_name != "life_cycle":
-        for chart_name in ['sale', 'debt']:  # ,'asset']:
-            generate_analysis.delay(company, chart_name)
+        i = 0
+        for chart_name, _ in AnalysisReport.CHART_CHOICES:
+            if chart_name != "life_cycle":
+                # for chart_name in AnalysisReport.CHART_CHOICES:
+                # i += 1
+                # if i != 10:
+                print(chart_name)
+                generate_analysis.delay(company, chart_name)
+                # else:
+                #     i=0
+                #     time.sleep(60)
 
 
 @receiver(post_save, sender=FinancialData)
