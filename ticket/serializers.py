@@ -83,9 +83,9 @@ class TicketCreateSerializer(serializers.ModelSerializer):
         department_data = validated_data.pop('department')
 
         # Get or create the related service and department
-        service = Service.objects.get_or_create(name=service_data['name'])[0]
+        service = Service.objects.get_or_create(name=service_data["name"])[0]
         department = Department.objects.get_or_create(
-            name=department_data['name'])[0]
+            name=department_data["name"])[0]
 
         # Create the ticket with related fields
         ticket = Ticket.objects.create(

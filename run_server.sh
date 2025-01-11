@@ -25,8 +25,8 @@ python manage.py migrate
 # Start the application using Gunicorn
 # You may need to adjust the number of workers (workers=3) depending on your app's needs
 # Adjust the app_name (usually it's the name of your Django project, for example, myproject.wsgi:application)
-# gunicorn --bind 0.0.0.0:8000 --workers 2 config.wsgi:application
+gunicorn --bind 0.0.0.0:8000 --workers 2 config.wsgi:application
 # gunicorn --workers=3 --worker-class=sync --timeout=30 config.wsgi:application
 # gunicorn --log-level=debug config.wsgi:application
 
-python manage.py runserver
+# python manage.py runserver
