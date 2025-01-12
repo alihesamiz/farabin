@@ -51,12 +51,13 @@ class TicketDetailSerializer(serializers.ModelSerializer):
     service = ServiceSerializer()
     department = DepartmentSerializer()
     answers = TicketAnswerSerializer(many=True, read_only=True)
+    comments = TicketCommentSerializer(many=True, read_only=True)
 
     class Meta:
         model = Ticket
         fields = ["id", "subject", "comment", "service",
-                  "department", "status", "priority", "answers", "updated_at", "attached_file"]
-        read_only_fields = ["answers"]
+                  "department", "status", "priority", "answers", "comments", "updated_at", "attached_file"]
+        read_only_fields = ["answers", "comments"]
 
 
 class TicketListSerializer(serializers.ModelSerializer):

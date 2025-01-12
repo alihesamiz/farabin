@@ -15,8 +15,7 @@ class TicketViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         company = self.request.user.company
-        queryset = Ticket.objects.select_related('issuer').prefetch_related(
-            'answers__comments').filter(issuer=company)
+        queryset = Ticket.objects.select_related('issuer').filter(issuer=company)#.prefetch_related('answers__comments')
 
         service = self.request.query_params.get('service')
         if service:
@@ -47,17 +46,17 @@ class TicketViewSet(viewsets.ModelViewSet):
 
         elif request.method == 'POST':
             # Create a new comment for a specific TicketAnswer
-            answer_id = request.data.get("answer_id")
-            if not answer_id:
-                return Response({"error": "Answer ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+            # answer_id = request.data.get("answer_id")
+            # if not answer_id:
+            #     return Response({"error": "Answer ID is required"}, status=status.HTTP_400_BAD_REQUEST)
 
-            answer = get_object_or_404(
-                TicketAnswer, pk=answer_id, ticket=ticket)
+            # answer = get_object_or_404(
+            #     TicketAnswer, pk=answer_id, ticket=ticket)
             serializer = TicketCommentCreateSerializer(
                 data=request.data,
-                context={'ticket': ticket, 'answer': answer}
+                context={'ticket': ticket}#, 'answer': answer}
             )
             if serializer.is_valid():
-                serializer.save(answer=answer)
+                serializer.save()#answer=answer)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

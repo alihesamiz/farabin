@@ -45,7 +45,6 @@ class AgentAdmin(admin.ModelAdmin):
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         # Check if the field is 'user'
         if db_field.name == "user":
-            print('lkasdlkas;djlkasjd')
             group = Group.objects.get(name='Editor')
             # Filter users to show only those who are staff
             kwargs['queryset'] = get_user_model().objects.filter(
@@ -70,7 +69,7 @@ class TicketAnswerInline(nested_admin.NestedTabularInline):
     fields = ('agent', 'comment', 'created_at', 'updated_at')
     readonly_fields = ('created_at', 'updated_at')
     extra = 0
-    inlines = [TicketCommentInline]
+    # inlines = [TicketCommentInline]
 
 
 @admin.register(Ticket)
@@ -81,7 +80,7 @@ class TicketAdmin(nested_admin.NestedModelAdmin):
     list_filter = ('status', 'priority', 'department')
     readonly_fields = ('created_at', 'updated_at')
     date_hierarchy = 'created_at'
-    inlines = [TicketAnswerInline]
+    inlines = [TicketAnswerInline,TicketCommentInline]
 
     def company_title(self, ticket: Ticket):
         return f"{ticket.issuer.company_title}"

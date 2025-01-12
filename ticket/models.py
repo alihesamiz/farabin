@@ -6,10 +6,10 @@ from core import (utils, validators)
 User = get_user_model()
 
 
-def get_attachment_upload_path(instance, filename):
-    path = utils.GeneralUtils(path="ticket_attachments", fields=[
-        'service', 'created_at']).rename_folder(instance, filename)
-    return path
+# def get_attachment_upload_path(instance, filename):
+#     path = utils.GeneralUtils(path="ticket_attachments", fields=[
+#         'service', 'created_at']).rename_folder(instance, filename)
+#     return path
 
 
 class TicketAnswer(models.Model):
@@ -37,9 +37,9 @@ class TicketComment(models.Model):
     ticket = models.ForeignKey(
         'Ticket', on_delete=models.CASCADE, verbose_name=_("Ticket"), related_name='comments')
 
-    answer = models.ForeignKey(
-        'TicketAnswer', on_delete=models.CASCADE, verbose_name=_("Answer"), related_name='comments', null=True
-    )
+    # answer = models.ForeignKey(
+    #     'TicketAnswer', on_delete=models.CASCADE, verbose_name=_("Answer"), related_name='comments', null=True
+    # )
     comment = models.TextField(verbose_name=_("Comment"))
 
     created_at = models.DateTimeField(
@@ -87,8 +87,8 @@ class Ticket(models.Model):
 
     comment = models.TextField(verbose_name=_("Comment"))
 
-    attached_file = models.FileField(verbose_name=_(
-        "Attached File"), upload_to=get_attachment_upload_path, null=True, blank=True,validators=[validators.ticket_file_validator])
+    # attached_file = models.FileField(verbose_name=_(
+    #     "Attached File"), upload_to=get_attachment_upload_path, null=True, blank=True,validators=[validators.ticket_file_validator])
 
     service = models.ForeignKey(
         'core.Service', on_delete=models.CASCADE, verbose_name=_("Service"))
