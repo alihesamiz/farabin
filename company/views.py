@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404
 from django.db.transaction import atomic
 from django.core.cache import cache
 from django.http import FileResponse
-from django.db.models import Count,Sum
+from django.db.models import Count, Sum
 
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import NotFound
@@ -39,11 +39,12 @@ class CompanyProfileViewSet(viewsets.ModelViewSet):
         if cached_data:
             return cached_data
         try:
-            profile= CompanyProfile.objects.filter(user=self.request.user)
+            profile = CompanyProfile.objects.filter(user=self.request.user)
             cache.set(cache_key, profile)
             return profile
         except Exception as e:
             raise NotFound(detail="Company profile not found.")
+
     def get_serializer_class(self):
         if self.action in ['create', 'update', 'partial_update']:
             return CompanyProfileCreateSerializer
@@ -69,7 +70,8 @@ class CompanyProfileViewSet(viewsets.ModelViewSet):
             serializer = CompanyProfileSerializer(company_profile)
             return Response(serializer.data)
         except Exception as e:
-            raise NotFound(detail=f"Company profile not found.{e}",code=status.HTTP_404_NOT_FOUND)
+            raise NotFound(detail=f"Company profile not found.{
+                           e}", code=status.HTTP_404_NOT_FOUND)
 
 
 class DashboardViewSet(APIView):
@@ -81,31 +83,38 @@ class DashboardViewSet(APIView):
         cached_data = cache.get(cache_key)
 
         if cached_data:
+            print('asdasd')
             return Response(cached_data)
 
         try:
-            # Fetch the company profile associated with the authenticated user
-            company = CompanyProfile.objects.get(user=self.request.user)
-            # Use annotate to count the related TaxDeclaration and BalanceReport files
-            company_data = CompanyProfile.objects.prefetch_related("taxfiles", "reportfiles").annotate(
-                tax_files_count=Sum('taxfiles'),
-                report_files_count=Sum('reportfiles'),
-                diagnostic_requests_count=Sum('diagnosticrequest')
-            ).get(id=company.id)
-            print(company_data)
-            # Calculate the values for response_data
-            tax_files_count = company_data.tax_files_count
-            report_files_count = company_data.report_files_count * 4 if company_data.report_files_count else 0 # Custom multiplier
-            all_uploaded_files = tax_files_count + report_files_count
-            tickets = Ticket.objects.filter(issuer=company).count()
-            diagnostic_requests_count = company_data.diagnostic_requests_count
+            # Aggregate data for the authenticated user's company
+            company = CompanyProfile.objects.filter(
+                user=self.request.user).first()
+            
+            # Retrieve TaxDeclaration and BalanceReport files related to this company
+            tax_files = TaxDeclaration.objects.filter(company=company)
 
-            # Assuming the other request types are fixed at 0 for now
-            #TODO : Update these section
+            report_files = BalanceReport.objects.filter(
+                company=company)
+
+            tickets = Ticket.objects.filter(issuer=company).count()
+
+            tax_files_count = tax_files.count()
+            report_files_count = report_files.count()
+
+            diagnostic_requests_count = DiagnosticRequest.objects.filter(
+                company=company).count()
+
+            total_uploaded_files = tax_files_count + report_files_count
+
+            # Count tickets issued by the company
+            tickets = Ticket.objects.filter(
+                issuer__user=self.request.user).count()
+
             response_data = {
                 'tax_files_count': tax_files_count,
                 'report_files_count': report_files_count,
-                'all_uploaded_files': all_uploaded_files,
+                'all_uploaded_files': total_uploaded_files,
                 "tickets": tickets,
                 "diagnostic_requests": diagnostic_requests_count,
                 "management_requests": 0,
