@@ -32,7 +32,7 @@ app.conf.beat_schedule = {
 app.conf.update(
     CELERY_QUEUES=settings.CELERY_QUEUES,
     # CELERY_ROUTES=settings.CELERY_ROUTES,
-    CELERY_DEFAULT_QUEUE='default',
+    CELERY_DEFAULT_QUEUE=settings.CELERY_DEFAULT_QUEUE,
     CELERY_DEFAULT_EXCHANGE='tasks',
     CELERY_DEFAULT_ROUTING_KEY='task.default',
 )
