@@ -89,7 +89,7 @@ class ProfitibilityChartSerializer(BaseChartSerializer):
 
 class InventoryChartSerializer(BaseChartSerializer):
 
-    inventory = serializers.DecimalField(max_digits=20, decimal_places=2)
+    inventory_average = serializers.DecimalField(max_digits=20, decimal_places=2)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, chart_name=AnalysisReport.INVENTORY_CHART, **kwargs)
