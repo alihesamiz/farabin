@@ -136,21 +136,20 @@ class TicketChatSerializer(serializers.Serializer):
 class TicketDetailSerializer(serializers.ModelSerializer):
     service = ServiceSerializer()
     department = DepartmentSerializer()
-    chats = serializers.SerializerMethodField()
+    # chats = serializers.SerializerMethodField()
 
     class Meta:
         model = Ticket
         fields = [
             "id", "subject", "comment", "service", "department", "status",
-            "priority", "chats", "updated_at"
-        ]
+            "priority", "updated_at", "created_at"]#"chats",]
 
-    def get_chats(self, obj):
-        # Combine answers and comments
-        answers = obj.answers.all()
-        comments = obj.comments.all()
-        combined = sorted(
-            list(answers) + list(comments), key=lambda x: x.created_at, reverse=False
-        )
-        serializer = TicketChatSerializer(combined, many=True)
-        return serializer.data
+    # def get_chats(self, obj):
+    #     # Combine answers and comments
+    #     answers = obj.answers.all()
+    #     comments = obj.comments.all()
+    #     combined = sorted(
+    #         list(answers) + list(comments), key=lambda x: x.created_at, reverse=False
+    #     )
+    #     serializer = TicketChatSerializer(combined, many=True)
+    #     return serializer.data
