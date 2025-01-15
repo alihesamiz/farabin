@@ -6,7 +6,7 @@ import cohere
 from openai import OpenAI
 
 
-@shared_task(rate_limit='9/m') 
+@shared_task(rate_limit='5/m') 
 def generate_analysis(company, chart_name, *args, **kwargs):
     COHERE_KEY = "BMzAnLb3lWY2Pkj4UqIh3n3tUZt8fiTIw2v5AdVF"
     generator = cohere.ClientV2(COHERE_KEY)  # Synchronous client for tasks
@@ -138,7 +138,14 @@ def generate_analysis(company, chart_name, *args, **kwargs):
                 "role": "user",
                 "content": f"{formatted_prompt}"}],
     ).message.content[0].text
-    print(response)
+    
+    response = generator.chat(
+        model="command-r-plus",
+        messages=[
+            {
+                "role": "user",
+                "content": f"fix any issues in the following persian text. also check and fix if there are any grammaricall issues: {response}"}],
+    ).message.content[0].text
 
     AnalysisReport.objects.update_or_create(
         calculated_data=last_data,
