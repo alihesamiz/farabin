@@ -205,16 +205,12 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 CORS_ALLOWED_ORIGINS = [
     "https://saramad.farabinbrand.com",
     "http://saramad.farabinbrand.com",
-    "http://127.0.0.1:3000",
     "http://localhost:3000",
-    "https://127.0.0.1:3000",
-    "https://localhost:3000",
-    "http://127.0.0.1:8000",
     "http://localhost:8000",
-    "https://127.0.0.1:8000",
-    "https://localhost:8000",
+    "https://192.168.1.2:3000",
+    "https://192.168.1.4:3000",
+    "https://192.168.1.8:3000",
 ]
-
 
 CELERY_QUEUES = (
     Queue('default', routing_key='task.default'),

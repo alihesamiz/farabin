@@ -30,7 +30,6 @@ staticfiles/
 
 # Django migrations
 */migrations/*.py
-!*/migrations/__init__.py
 
 # IDEs and editors
 .idea/
@@ -89,9 +88,6 @@ coverage.xml
 # Celery stuff
 celerybeat-schedule
 
-# dotenv
-# .env
-
 # virtualenv
 venv/
 ENV/
@@ -105,9 +101,5 @@ venv.bak/
 
 # Rope project settings
 .ropeproject
-# db.sqlite3
 
-farabin-api/
-*.bru
-*bruno.json
-*.pdf
+*/farabin-api/
