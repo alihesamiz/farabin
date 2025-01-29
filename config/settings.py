@@ -201,16 +201,22 @@ X_FRAME_OPTIONS = 'ALLOWANY'
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
-# production
+
 CORS_ALLOWED_ORIGINS = [
     "https://saramad.farabinbrand.com",
     "http://saramad.farabinbrand.com",
     "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://192.168.1.4:3000",  # Add your frontend origin
     "http://localhost:8000",
+    "http://127.0.0.1:8000",
     "https://192.168.1.2:3000",
     "https://192.168.1.4:3000",
     "https://192.168.1.8:3000",
 ]
+
+# Allow all origins for development only (not recommended for production):
+CORS_ALLOW_ALL_ORIGINS = DEBUG
 
 CELERY_QUEUES = (
     Queue('default', routing_key='task.default'),
