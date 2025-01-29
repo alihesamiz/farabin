@@ -18,8 +18,7 @@ environ.Env.read_env(BASE_DIR)
 
 SECRET_KEY = env("FARABIN_SECRET_KEY")
 
-DEBUG = env("FARABIN_DEBUG")
-# DEBUG = True
+DEBUG = False
 
 
 ALLOWED_HOSTS = ["*"]
@@ -215,20 +214,11 @@ CORS_ALLOWED_ORIGINS = [
     "https://192.168.1.8:3000",
 ]
 
-# Allow all origins for development only (not recommended for production):
-CORS_ALLOW_ALL_ORIGINS = DEBUG
-
 CELERY_QUEUES = (
     Queue('default', routing_key='task.default'),
     Queue('high_priority', routing_key='task.high_priority'),
 )
 CELERY_DEFAULT_QUEUE = 'default'
-
-# CELERY_ROUTES = {
-#     'tasks.high_priority_task': {'queue': 'high_priority', 'routing_key': 'task.high_priority'},
-#     'tasks.default': {'queue': 'default', 'routing_key': 'task.default'},
-# }
-
 CELERY_RESULT_BACKEND = f'redis://{env("FARABIN_REDIS_HOST")}:{env(
     "FARABIN_REDIS_PORT")}/{env("FARABIN_REDIS_ASYNC_DATABASE")}'
 CELERY_BROKER_URL = f'redis://{env("FARABIN_REDIS_HOST")}:{env(
@@ -241,7 +231,6 @@ CELERY_TASK_ACKS_LATE = True
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        # Use database 1
         'LOCATION': f'redis://{env("FARABIN_REDIS_HOST")}:{env("FARABIN_REDIS_PORT")}/{env("FARABIN_REDIS_CACHE_DATABASE")}',
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
