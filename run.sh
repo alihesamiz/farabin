@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Install Supervisor
-# sudo apt install -y supervisor
+Install Supervisor
+sudo apt install -y supervisor
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
