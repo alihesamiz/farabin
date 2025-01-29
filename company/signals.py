@@ -3,9 +3,8 @@ from django.dispatch import receiver
 from django.core.cache import cache
 from django.db import transaction
 
-from .models import BalanceReport, CompanyService, TaxDeclaration, DiagnosticRequest
+from .models import BalanceReport, CompanyService, TaxDeclaration, DiagnosticRequest, CompanyProfile
 from ticket.models import Ticket
-
 
 
 # TODO: Update the folowing signal handler
@@ -83,7 +82,6 @@ def clear_dashboard_cache(sender, instance, **kwargs):
     cache.delete(cache_key)
 
 
-
 @receiver(post_save, sender=Ticket)
 @receiver(post_delete, sender=Ticket)
 def clear_dashboard_cache(sender, instance, **kwargs):
@@ -91,4 +89,13 @@ def clear_dashboard_cache(sender, instance, **kwargs):
     Signal to clear the cache when a Service instance is updated.
     """
     cache_key = f"dashboard_data_{instance.issuer.user.id}"
+    cache.delete(cache_key)
+
+
+@receiver(post_save, sender=CompanyProfile)
+def clear_profile_cache(sender, instance, **kwargs):
+    """
+    Signal to clear the cache when a CompanyProfile instance is updated.
+    """
+    cache_key = f"company_profile_{instance.user.id}"
     cache.delete(cache_key)
