@@ -22,16 +22,27 @@ def pdf_file_validator(value):
 
 
 def image_file_validator(value):
-    
-    FileExtensionValidator(['jpg','png','jpeg'])(value)
-    
-    max_file_size = 2 * 1024 * 1024 
-    if value.size> max_file_size :
-        raise ValidationError(_(f"File size should be less than {max_file_size}"))
-    
-    
+
+    FileExtensionValidator(['jpg', 'png', 'jpeg'])(value)
+
+    max_file_size = 2 * 1024 * 1024
+    if value.size > max_file_size:
+        raise ValidationError(
+            _(f"File size should be less than {max_file_size}"))
+
+
 def ticket_file_validator(value):
-    FileExtensionValidator(['pdf','jpg','png','jpeg'])(value)
-    max_file_size = 2 * 1024 * 1024 
-    if value.size> max_file_size :
-        raise ValidationError(_(f"File size should be less than {max_file_size}"))
+    FileExtensionValidator(['pdf', 'jpg', 'png', 'jpeg'])(value)
+    max_file_size = 2 * 1024 * 1024
+    if value.size > max_file_size:
+        raise ValidationError(
+            _(f"File size should be less than {max_file_size}"))
+
+
+def excel_file_validator(value):
+    FileExtensionValidator(['xlsx', 'xls', 'csv'])(value)
+    max_file_size = 10 * 1024 * 1024
+
+    if value.size > max_file_size:
+        raise ValidationError(
+            _(f"File size should be less than {max_file_size}"))
