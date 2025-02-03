@@ -11,14 +11,13 @@ urlpatterns = [
 
     path('diagnostic/', include('diagnostics.urls')),
 
+    path('management/', include('management.urls')),
+    
     path('company/', include('company.urls')),
 
     path('tickets/', include('ticket.urls')),
 
     path('auth/', include('core.urls')),
-
-    path('human-resource/', include('management.urls')),
-
 
 ]
 
