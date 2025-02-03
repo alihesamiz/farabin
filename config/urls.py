@@ -16,6 +16,10 @@ urlpatterns = [
     path('tickets/', include('ticket.urls')),
 
     path('auth/', include('core.urls')),
+
+    path('human-resource/', include('management.urls')),
+
+
 ]
 
 
