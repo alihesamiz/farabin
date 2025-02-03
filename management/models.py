@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
-from core import (utils,validators)
+from core import (utils, validators)
 # Create your models here.
 
 
@@ -14,10 +14,10 @@ def get_hr_file_upload_path(instance, filename):
 
 class HumanResource(models.Model):
     excel_file = models.FileField(verbose_name=_(
-        "Excel File"), blank=False, null=False, upload_to=get_hr_file_upload_path(),validators=[validators.excel_file_validator])
+        "Excel File"), blank=False, null=False, upload_to=get_hr_file_upload_path, validators=[validators.excel_file_validator])
 
     company = models.ForeignKey('company.CompanyProfile', verbose_name=_(
-        "Company"), null=False, blank=False)
+        "Company"), null=False, blank=False, on_delete=models.CASCADE, related_name="hrfiles")
 
     create_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -25,9 +25,16 @@ class HumanResource(models.Model):
     class Meta:
         verbose_name = _("Human Resource")
         verbose_name_plural = _("Human Resources")
+        constraints = [
+            models.UniqueConstraint(
+                fields=['company'], name='unique_company_hr')
+        ]
 
 
 class PersonelInformation(models.Model):
+
+    company = models.ForeignKey('company.CompanyProfile', verbose_name=_(
+        "Company"), null=False, blank=False, on_delete=models.CASCADE,related_name='personelinformation')
 
     name = models.CharField(verbose_name=_("Full Name"),
                             max_length=250, null=False, blank=False)
