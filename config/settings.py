@@ -37,19 +37,20 @@ INSTALLED_APPS = [
 ]
 
 PROJECT_APPS = [
-    'ticket',
     'diagnostics',
-    'core',
+    'management',
     'company',
+    'ticket',
+    'core',
 ]
 
 THIRED_PARTY_APPS = [
+    'rest_framework_simplejwt',
     'django_celery_beat',
     'drf_spectacular',
-    'corsheaders',
     'rest_framework',
-    'rest_framework_simplejwt',
     'nested_admin',
+    'corsheaders',
 ]
 
 
