@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
-from core import utils
+from core import (utils,validators)
 # Create your models here.
 
 
@@ -14,7 +14,7 @@ def get_hr_file_upload_path(instance, filename):
 
 class HumanResource(models.Model):
     excel_file = models.FileField(verbose_name=_(
-        "Excel File"), blank=False, null=False, upload_to=get_hr_file_upload_path())
+        "Excel File"), blank=False, null=False, upload_to=get_hr_file_upload_path(),validators=[validators.excel_file_validator])
 
     company = models.ForeignKey('company.CompanyProfile', verbose_name=_(
         "Company"), null=False, blank=False)
