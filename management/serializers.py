@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 
-from management.models import HumanResource
+from management.models import HumanResource,PersonelInformation,OrganizationChartBase
 from company.models import CompanyProfile
 
 
@@ -39,3 +39,46 @@ class HumanResourceSerializer(serializers.ModelSerializer):
         fields = ['id', 'excel_file', 'company',
                   'company_name', 'create_at', 'updated_at']
         read_only_fields = ['id', 'create_at', 'updated_at']
+
+
+
+
+class PersonelInformationSerializer(serializers.ModelSerializer):
+
+    human_resource_id = serializers.PrimaryKeyRelatedField(
+        source="human_resource", read_only=True
+    )
+
+    class Meta:
+        model = PersonelInformation
+        fields = ["id", "human_resource_id", "name",
+                  "unit", "position", "reports_to"]
+        read_only_fields = ["id", "human_resource_id"]
+
+
+class PersonelInformationCreateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PersonelInformation
+        fields = ["human_resource", "name", "unit", "position", "reports_to"]
+
+
+class PersonelInformationUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PersonelInformation
+        fields = ["name", "unit", "position", "reports_to"]
+        extra_kwargs = {
+            "name": {"required": False},
+            "unit": {"required": False},
+            "position": {"required": False},
+            "reports_to": {"required": False},
+        }
+
+
+class OrganizationChartFileSerializer(serializers.ModelSerializer):
+    position_excel_url = serializers.FileField(
+        source="position_excel", read_only=True)
+
+    class Meta:
+        model = OrganizationChartBase
+        fields = ["id", "position_excel_url"]

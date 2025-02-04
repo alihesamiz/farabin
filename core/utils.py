@@ -24,7 +24,7 @@ class GeneralUtils:
     
     RESET = "\033[0m"
 
-    EXCEPTION_MODELS=["OrganizationChart"]
+    EXCEPTION_MODELS=["OrganizationChartBase"]
     
     SMS_AUTH_HEADER = {
         'apikey': os.getenv('FARABIN_SMS_API_KEY','BXb2ovSeYtiAbfVT26gEb50Dmix_-nhAAQRp2v5yfXs='),
@@ -73,7 +73,6 @@ class GeneralUtils:
         Dynamically rename the file based on the company's name, year, and the field name.
         If the company's name has changed, rename the folder structure accordingly.
         """
-        
         ext = filename.split('.')[-1].lower()
 
         field_values = []
@@ -96,7 +95,7 @@ class GeneralUtils:
 
         if not base_filename:
             base_filename = 'file'
-            
+                    
         if instance._meta.model.__name__ not in self.EXCEPTION_MODELS:
             try:
                 if hasattr(instance.company, 'id'):

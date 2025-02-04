@@ -3,7 +3,7 @@ from pathlib import Path
 from django.core.management import BaseCommand
 from django.core.files import File
 from django.db import transaction
-from management.models import OrganizationChart
+from management.models import OrganizationChartBase
 
 
 class Command(BaseCommand):
@@ -20,9 +20,12 @@ class Command(BaseCommand):
             if file.is_file() and file.suffix == '.xlsx':
                 with transaction.atomic():
                     with file.open('rb') as f:
-                        org_chart = OrganizationChart(position_excel=File(f, name=file.name))
+                        org_chart = OrganizationChartBase(
+                            position_excel=File(f, name=file.name))
                         org_chart.save()
 
-                    self.stdout.write(self.style.SUCCESS(f"Uploaded: {file.name}"))
+                    self.stdout.write(self.style.SUCCESS(
+                        f"Uploaded: {file.name}"))
 
-        self.stdout.write(self.style.SUCCESS("\nAll files processed successfully!"))
+        self.stdout.write(self.style.SUCCESS(
+            "\nAll files processed successfully!"))
