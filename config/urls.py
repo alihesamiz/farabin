@@ -19,6 +19,8 @@ urlpatterns = [
 
     path('auth/', include('core.urls')),
 
+    path('management/', include('management.urls')),
+
 ]
 
 

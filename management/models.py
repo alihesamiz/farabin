@@ -33,9 +33,9 @@ class HumanResource(models.Model):
 
 class PersonelInformation(models.Model):
 
-    company = models.ForeignKey('company.CompanyProfile', verbose_name=_(
-        "Company"), null=False, blank=False, on_delete=models.CASCADE,related_name='personelinformation')
-
+    human_resource = models.ForeignKey(HumanResource, verbose_name=_(
+        "Human Resource"), null=False, blank=False, on_delete=models.CASCADE, related_name='personelinformation')
+    
     name = models.CharField(verbose_name=_("Full Name"),
                             max_length=250, null=False, blank=False)
 
@@ -51,3 +51,16 @@ class PersonelInformation(models.Model):
     class Meta:
         verbose_name = _("Personel Information")
         verbose_name_plural = _("Personels Information")
+
+
+def get_chart_excel_file_upload_path(instance,filename):
+    path = utils.GeneralUtils(
+        path="chart_excel_files", fields=['']).rename_folder(instance, filename)
+    return path
+    
+class OrganizationChart(models.Model):
+    position_excel=models.FileField(verbose_name=_("Position Excel"),max_length=150,null=False,blank=False,upload_to=get_chart_excel_file_upload_path,validators=[validators.excel_file_validator]) 
+    
+    class Meta:
+        verbose_name=_("Organization Chart")
+        verbose_name_plural=_("Organization Charts")

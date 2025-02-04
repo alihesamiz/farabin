@@ -7,7 +7,8 @@ from management.views import HumanResourceViewSet
 
 router = DefaultRouter()
 
-router.register(r'human-resource', HumanResourceViewSet, basename='tickets')
+router.register(r'human-resource', HumanResourceViewSet, basename='human-resource')
+
 
 
 urlpatterns = router.urls
