@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-28 08:50+0330\n"
+"POT-Creation-Date: 2025-02-04 08:54+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -144,7 +144,7 @@ msgstr "شماره تلفن را به صورت صحیح وارد نمایید."
 msgid "Invalid_phone_number"
 msgstr "شماره تلفن نامعتبر"
 
-#: core/validators.py:30 core/validators.py:37
+#: core/validators.py:31 core/validators.py:39 core/validators.py:47
 #, python-brace-format
 msgid "File size should be less than {max_file_size}"
 msgstr "حجم فایل باید کمتر از {max_file_size} باشد."

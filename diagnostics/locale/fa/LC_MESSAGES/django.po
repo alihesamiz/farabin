@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-11 13:32+0330\n"
+"POT-Creation-Date: 2025-02-04 08:54+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -52,6 +52,7 @@ msgid "Mark selected reports as Published"
 msgstr "انتشار برای کاربر"
 
 #: diagnostics/admin.py:174
+#, python-format
 msgid "%d analysis report(s) marked as published."
 msgstr "%d انتشار یافتند"
 
