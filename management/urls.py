@@ -10,4 +10,5 @@ router = DefaultRouter()
 router.register(r'human-resource', HumanResourceViewSet, basename='human-resource')
 
 
+
 urlpatterns = router.urls
