@@ -8,8 +8,9 @@ from rest_framework import viewsets
 from management.serializers import (HumanResourceSerializer, HumanResourceCreateSerializer, HumanResourceUpdateSerializer,
                                     PersonelInformationSerializer, PersonelInformationUpdateSerializer, PersonelInformationCreateSerializer, OrganizationChartFileSerializer)
 from management.models import HumanResource, PersonelInformation, OrganizationChartBase
+from management.paginations import PersonelPagination
 
-# Create your views here.
+
 
 
 class HumanResourceViewSet(viewsets.ModelViewSet):
@@ -36,26 +37,41 @@ class HumanResourceViewSet(viewsets.ModelViewSet):
 
 class PersonelInformationViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
+    pagination_class = PersonelPagination
 
     def get_queryset(self):
         company = self.request.user.company
-        return PersonelInformation.objects.select_related("human_resource").filter(human_resource__company=company)
+        
+        human_resource_id = self.kwargs.get("human_resource_pk")
 
+        if human_resource_id:
+            return PersonelInformation.objects.select_related("human_resource").filter(
+                human_resource__id=human_resource_id,
+                human_resource__company=company
+            )
+        
+        return PersonelInformation.objects.none()  
+    
     def get_serializer_class(self):
-        if self.action == 'create':
+        if self.action == "create":
             return PersonelInformationCreateSerializer
-        elif self.action in ['update', 'partial_update']:
+        elif self.action in ["update", "partial_update"]:
             return PersonelInformationUpdateSerializer
         return PersonelInformationSerializer
 
     def perform_create(self, serializer):
         company = self.request.user.company
-        human_resource = company.hrfiles.order_by(
-            "-create_at").first()  # Ensure latest HR file is used
+        
+        human_resource_id = self.kwargs.get("human_resource_pk")  
+        human_resource = company.hrfiles.filter(id=human_resource_id).first()
+
         if not human_resource:
             raise serializers.ValidationError(
-                {"human_resource": "No HumanResource record found for this company."})
+                {"human_resource": "Invalid or missing HumanResource record for this company."}
+            )
+
         serializer.save(human_resource=human_resource)
+
 
 
 class OrganizationChartFileViewSet(viewsets.ReadOnlyModelViewSet):

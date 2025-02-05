@@ -1,27 +1,29 @@
 #!/bin/bash
 
-# Install Supervisor
-sudo apt install -y supervisor
+
+if ! command -v supervisord &> /dev/null; then
+    echo "Supervisor is not installed. Installing..."
+    sudo apt install -y supervisor
+fi
+
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Check if .env exists in the script directory
+
 if [ -f "$SCRIPT_DIR/.env" ]; then
-    echo "Loading environment variables from .env file in $SCRIPT_DIR..."
-    export $(grep -v '^#' "$SCRIPT_DIR/.env" | xargs)
-    echo "Done Loading..."
+    echo "Loading environment variables from .env file..."
+    set -a
+    source "$SCRIPT_DIR/.env"
+    set +a
+    echo "Environment variables loaded."
 else
     echo "No .env file found in $SCRIPT_DIR."
     exit 1
 fi
 
-# Shutdown any existing Supervisor instance (if running)
-supervisorctl -c supervisord.conf stop all
-supervisorctl -c supervisord.conf shutdown
 
-sudo kill -9 $(sudo lsof -t -i :8000)
+bash "$SCRIPT_DIR/stop.sh"
 
-# Start Supervisor with the specified configuration file
 supervisord -c supervisord.conf
 
 supervisorctl -c supervisord.conf status
