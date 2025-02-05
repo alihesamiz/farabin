@@ -1,25 +1,32 @@
-#!/bin/zsh
+#!/bin/bash
 
-# Make migrations
-python manage.py makemigrations
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Apply migrations
-python manage.py migrate
+if [ -f "$SCRIPT_DIR/.env" ]; then
+    echo "Loading environment variables from .env file in $SCRIPT_DIR..."
+    export $(grep -v '^#' "$SCRIPT_DIR/.env" | xargs)
+    echo "Done Loading..."
+else
+    echo "No .env file found in $SCRIPT_DIR."
+    exit 1
+fi
 
-# Load necessary data
+
+python manage.py makemigrations --noinput
+
+python manage.py migrate --noinput
+
 python manage.py load_departments
 python manage.py load_cities
 python manage.py load_special_fields
 python manage.py load_tech_fields
-python manage.py load_services
+python manage.py load_services 
+python manage.py load_excel_files --noinput
 
-# Collect static files
 python manage.py collectstatic --noinput
 
-# Make migrations again (just to be sure)
 python manage.py makemigrations
 
-# Apply migrations again (in case new migrations were created)
 python manage.py migrate
 
 # Start the application using Gunicorn
