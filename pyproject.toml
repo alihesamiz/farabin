@@ -95,6 +95,7 @@ graphviz = "^0.20.3"
 pygraphviz = "^1.14"
 sqlalchemy = "^2.0.37"
 openpyxl = "^3.1.5"
+drf-nested-routers = "^0.94.1"
 
 [build-system]
 requires = ["poetry-core"]
