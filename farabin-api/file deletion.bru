@@ -4,8 +4,8 @@ meta {
   seq: 2
 }
 
-get {
-  url: http://127.0.0.1:8000/management/organization-chart-files/position_excel_url
+post {
+  url: http://127.0.0.1:8000/management/human-resources/
   body: multipartForm
   auth: bearer
 }
@@ -19,7 +19,7 @@ headers {
 }
 
 auth:bearer {
-  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM4NzQyMDY4LCJpYXQiOjE3Mzg2NTU2NjgsImp0aSI6Ijc1ZWI3MTczMjY1YTQ2ODI4OWEyN2MyNzc2Zjg4OGQxIiwidXNlcl9pZCI6MX0.bRlaufFaA1iK2q9KeYcKrh5CJkLSDXz6ce73JEKKroI
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM4ODQ0ODIxLCJpYXQiOjE3Mzg3NTg0MjEsImp0aSI6IjRkYjVhNWQ2ZWM5MjQ2MmM5ODg5ZjUyMjBjMDcwMTdhIiwidXNlcl9pZCI6MX0.upnqo8BR6A9Ly_J6VmQQbsXSf8Q2xcPxZJ-ZPUbN5Ws
 }
 
 body:json {
@@ -33,7 +33,7 @@ body:json {
 body:multipart-form {
   phone_number: 09138038121
   national_code: 12736700277
-  otp_code: 935622
+  otp_code: 318070
   subject: lkjlkjlk
   comment: lkjklj
   service: 1
@@ -41,7 +41,7 @@ body:multipart-form {
   priority: low
   answer_id: 1
   answer_id: 4
-  excel_file: @file(/home/madassandd/Downloads/Untitled 1.xlsx)
+  excel_file: @file(/home/madassandd/Downloads/general.xlsx)
   insurance_list: 80
   ~year: 2020
   ~tax_file: @file(/home/madassandd/Downloads/Telegram Desktop/TG030801-استخدام افسری نیروی دریایی.pdf)
