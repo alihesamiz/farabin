@@ -1,5 +1,6 @@
+from finance.models import AnalysisReport, FinancialAsset, FinancialData
+
 from rest_framework import serializers
-from .models import AnalysisReport, FinancialAsset, FinancialData
 
 
 class BaseChartSerializer(serializers.Serializer):
@@ -9,7 +10,6 @@ class BaseChartSerializer(serializers.Serializer):
     def __init__(self, *args, chart_name=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.chart_name = chart_name
-
 
     def get_financial_asset(self, obj):
         # Start with the year always being included
@@ -89,7 +89,8 @@ class ProfitibilityChartSerializer(BaseChartSerializer):
 
 class InventoryChartSerializer(BaseChartSerializer):
 
-    inventory_average = serializers.DecimalField(max_digits=20, decimal_places=2)
+    inventory_average = serializers.DecimalField(
+        max_digits=20, decimal_places=2)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, chart_name=AnalysisReport.INVENTORY_CHART, **kwargs)
@@ -119,9 +120,11 @@ class DebtChartSerializer(BaseChartSerializer):
 
 class SalaryChartSerializer(BaseChartSerializer):
 
-    production_total_price= serializers.DecimalField(max_digits=20, decimal_places=2)
-    salary_fee= serializers.DecimalField(max_digits=20, decimal_places=2)
-    salary_production_fee = serializers.DecimalField(max_digits=20, decimal_places=2)
+    production_total_price = serializers.DecimalField(
+        max_digits=20, decimal_places=2)
+    salary_fee = serializers.DecimalField(max_digits=20, decimal_places=2)
+    salary_production_fee = serializers.DecimalField(
+        max_digits=20, decimal_places=2)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, chart_name=AnalysisReport.SALARY_CHART, **kwargs)
@@ -198,7 +201,6 @@ class AnalysisReportSerializer(serializers.ModelSerializer):
         fields = ['chart_name', 'text', 'created_at', 'updated_at']
 
 
-    
 class AnalysisReportListSerializer(serializers.ModelSerializer):
     class Meta:
         model = AnalysisReport
