@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-04 09:00+0330\n"
+"POT-Creation-Date: 2025-02-09 14:37+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -62,14 +62,42 @@ msgstr "اطلاعات کارکنان"
 msgid "Personels Information"
 msgstr "اطلاعات کارکنان"
 
-#: management/models.py:62
+#: management/models.py:64
+msgid "Field"
+msgstr "نام حوزه"
+
+#: management/models.py:66
 msgid "Position Excel"
 msgstr "اکسل موقعیت‌ها"
 
-#: management/models.py:65
+#: management/models.py:70
 msgid "Organization Chart"
 msgstr "فایل چارت سازمانی"
 
-#: management/models.py:66
+#: management/models.py:71
 msgid "Organization Charts"
 msgstr "فایل‌های چارت سازمانی"
+
+#: management/views.py:43
+msgid ""
+"Each company can only have one Human Resource record. To replace, you must "
+"first delete the previous record."
+msgstr "هر شرکت تنها میتواند یک فایل منابع انسانی را بارگذاری کند. برای جایگزینی ابتدا فایل قبلی را حذف کنید."
+
+#: management/views.py:78
+msgid "Invalid or missing Human Resource record for this company."
+msgstr "رکورد منابع انسانی مناسبی برای شرکت پیدا نشد."
+
+#: management/views.py:98
+msgid "Not found an associated file with your profile"
+msgstr "فایلی متناسب با پروفایل شرکت شما یافت نشد. باپشتیبانی تماس بگیرید."
+
+#: management/views.py:107
+msgid ""
+"Processing started. Check back later for the file. Proceed to 'download' "
+"action for getting the file"
+msgstr "برای بارگیری به صفحه دانلود مراجعه کنید."
+
+#: management/views.py:119
+msgid "Company name is required"
+msgstr "نام شرکت لازم است."
