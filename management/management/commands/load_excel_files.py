@@ -21,7 +21,7 @@ class Command(BaseCommand):
                 with transaction.atomic():
                     with file.open('rb') as f:
                         org_chart = OrganizationChartBase(
-                            position_excel=File(f, name=file.name))
+                            position_excel=File(f, name=file.name),field = file.name.split(".")[0])
                         org_chart.save()
 
                     self.stdout.write(self.style.SUCCESS(
