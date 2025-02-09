@@ -102,6 +102,6 @@ venv.bak/
 # Rope project settings
 .ropeproject
 
-*/farabin-api/
+/farabin-api/
+/notebooks/
 *.xlsx
-*.bru
