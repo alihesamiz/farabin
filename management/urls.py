@@ -8,10 +8,12 @@ from management.views import HumanResourceViewSet, OrganizationChartFileViewSet,
 
 router = DefaultRouter()
 router.register(r'human-resources', HumanResourceViewSet,
-                   basename='human-resources')
+                basename='human-resources')
 
-personel_router = NestedDefaultRouter(router, r'human-resources', lookup='human_resource')
-personel_router.register(r'personel', PersonelInformationViewSet, basename='human-resource-personel')
+personel_router = NestedDefaultRouter(
+    router, r'human-resources', lookup='human_resource')
+personel_router.register(
+    r'personel', PersonelInformationViewSet, basename='human-resource-personel')
 
 chart_file_router = DefaultRouter()
 chart_file_router.register(r'organization-chart-files',
