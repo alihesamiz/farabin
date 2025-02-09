@@ -1,9 +1,9 @@
-from celery import shared_task
-# from pydantic import BaseModel
 from typing import List, Union
-from diagnostics.models import AnalysisReport, FinancialData
+
+from celery import shared_task
 import cohere
-from openai import OpenAI
+
+from finance.models import AnalysisReport, FinancialData
 
 
 @shared_task(rate_limit='5/m') 

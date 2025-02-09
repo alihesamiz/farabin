@@ -1,11 +1,10 @@
-import time
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.core.cache import cache
 
-from .models import AnalysisReport, FinancialAsset, FinancialData
-from .utils_1 import FinancialCalculations
-from .tasks import generate_analysis
+from finance.models import AnalysisReport, FinancialAsset, FinancialData
+from finance.utils_1 import FinancialCalculations
+from finance.tasks import generate_analysis
 # Trigger task after FinancialAsset is saved or deleted
 
 
@@ -148,7 +147,7 @@ def clear_chart_yearly_cache(sender, instance, **kwargs):
     chart_types = ['debt', 'asset', 'sale', 'equity', 'bankrupsy', 'profitability',
                    'inventory', 'agility', 'liquidity', 'leverage', 'cost', 'profit', 'salary']
     for chart in chart_types:
-        cache_key = f"diagnostic_analysis_chart_yearly_{chart}_{company}"
+        cache_key = f"finance_analysis_chart_yearly_{chart}_{company}"
         cache.delete(cache_key)
 
 
@@ -159,5 +158,5 @@ def clear_chart_monthly_cache(sender, instance, **kwargs):
     chart_types = ['debt', 'asset', 'sale', 'equity', 'bankrupsy', 'profitability',
                    'inventory', 'agility', 'liquidity', 'leverage', 'cost', 'profit', 'salary']
     for chart in chart_types:
-        cache_key = f"diagnostic_analysis_chart_monthly_{chart}_{company}"
+        cache_key = f"finance_analysis_chart_monthly_{chart}_{company}"
         cache.delete(cache_key)

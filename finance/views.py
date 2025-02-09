@@ -24,7 +24,7 @@ from .serializers import (
 )
 
 
-class DiagnosticAnalysisViewSet(ModelViewSet):
+class FinanceAnalysisViewSet(ModelViewSet):
 
     CHART_SERIALIZER_MAP = {
         "debt": DebtChartSerializer,
@@ -69,7 +69,7 @@ class DiagnosticAnalysisViewSet(ModelViewSet):
     def get_queryset(self):
         company = self.request.user.company
 
-        cache_key = f"diagnostic_data_{company.id}"
+        cache_key = f"finance_data_{company.id}"
 
         cached_data = cache.get(cache_key)
 
@@ -96,7 +96,7 @@ class DiagnosticAnalysisViewSet(ModelViewSet):
     @action(detail=False, methods=['get'], url_path='analysis', url_name='analysis')
     def analysis(self, request):
         company = self.request.user.company
-        data_cache_key = f"diagnostic_analysis_{company.id}"
+        data_cache_key = f"finance_analysis_{company.id}"
         cached_data = cache.get(data_cache_key)
 
         if cached_data:
@@ -112,7 +112,7 @@ class DiagnosticAnalysisViewSet(ModelViewSet):
             ).order_by('calculated_data__financial_asset__year', 'calculated_data__financial_asset__month', '-created_at')
             cache.set(data_cache_key, analysis)
         
-        cache_key = f"diagnostic_analysis_data_{company.id}"
+        cache_key = f"finance_analysis_data_{company.id}"
         cached_data = cache.get(cache_key)
         
         if cached_data:
@@ -161,7 +161,7 @@ class DiagnosticAnalysisViewSet(ModelViewSet):
     def chart(self, request, slug=None):
         company = self.request.user.company
 
-        cache_key = f"diagnostic_analysis_chart_yearly_{slug}_{company.id}"
+        cache_key = f"finance_analysis_chart_yearly_{slug}_{company.id}"
 
         cached_data = cache.get(cache_key)
 
@@ -191,7 +191,7 @@ class DiagnosticAnalysisViewSet(ModelViewSet):
     def chart_month(self, request, slug=None):
         company = self.request.user.company
 
-        cache_key = f"diagnostic_analysis_chart_monthly_{slug}_{company.id}"
+        cache_key = f"finance_analysis_chart_monthly_{slug}_{company.id}"
 
         cached_data = cache.get(cache_key)
 
@@ -267,10 +267,10 @@ class CompanyFinancialDataView(View):
         admin_context['breadcrumbs'] = [
             {"name": _("Home"), "url": reverse('admin:index')},
 
-            {"name": _("Diagnostic"), "url": '/admin/diagnostics/'},
+            {"name": _("finance"), "url": '/admin/finance/'},
 
             {"name": _("Analysis Reports"), "url": reverse(
-                'admin:diagnostics_analysisreport_changelist')},
+                'admin:finance_analysisreport_changelist')},
 
             {"name": company.company_title, "url": ""},
 
@@ -359,7 +359,7 @@ class CompanyFinancialDataView(View):
             consuming_material.append(float(data.consuming_material))
             production_total_price.append(float(data.production_total_price))
 
-        return render(request, 'diagnostics/company_financial_data.html', {
+        return render(request, 'finance/company_financial_data.html', {
             'company': company,
             'financial_data': financial_data,
             'year': year,
