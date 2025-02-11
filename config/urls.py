@@ -9,17 +9,15 @@ admin.site.site_header = "مدیریت وبسایت فرابین"
 urlpatterns = [
     path('farabin-admin/', admin.site.urls),
 
-    path('diagnostic/', include('diagnostics.urls')),
-
     path('management/', include('management.urls')),
+
+    path('finance/', include('finance.urls')),
     
     path('company/', include('company.urls')),
 
     path('tickets/', include('ticket.urls')),
 
     path('auth/', include('core.urls')),
-
-    path('management/', include('management.urls')),
 
 ]
 
