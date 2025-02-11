@@ -37,6 +37,7 @@ PROJECT_APPS = [
     'management',
     'finance',
     'company',
+    'request',
     'ticket',
     'core',
 ]
@@ -312,7 +313,7 @@ LOGGING = {
     },
 }
 
-APPS_TO_LOG = ["core", "company", "finance", "management", "ticket"]
+APPS_TO_LOG = PROJECT_APPS
 
 for app in APPS_TO_LOG:
     LOGGING["handlers"][f"{app}_logs_file"] = {
@@ -347,3 +348,5 @@ LOGGING["handlers"]["rotating_file"] = {
     "backupCount": 5,
     "formatter": "verbose",
 }
+
+APP_REQUEST_TYPES = ['finance', 'management']
