@@ -1,12 +1,21 @@
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
-from core.models import Service
+
+
+from django.utils.translation import gettext_lazy as _
+from django.contrib.auth import get_user_model
 from django.db import IntegrityError
+
+
 from rest_framework.exceptions import ValidationError
 from rest_framework import serializers
-from django.contrib.auth import get_user_model
-from django.utils.translation import gettext_lazy as _
-from .models import BalanceReport, BaseRequest, CompanyProfile, CompanyService, DiagnosticRequest, TaxDeclaration
+
+
+from company.models import CompanyProfile, CompanyService
+
+from core.models import Service
+
+
 User = get_user_model()
 
 
@@ -144,111 +153,3 @@ class CompanyProfileCreateSerializer(serializers.ModelSerializer):
                 {"email": "A company profile with this email already exists."})
 
 
-class BalanceReportCreateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = BalanceReport
-        fields = ['year', 'month', 'balance_report_file',
-                  'profit_loss_file', 'sold_product_file', 'account_turnover_file', 'is_saved', 'is_sent']
-
-    def create(self, validated_data):
-        user = self.context['request'].user
-        company = CompanyProfile.objects.get(user=user)
-        validated_data['company'] = company
-
-        year = validated_data.get('year')
-        month = validated_data.get('month')
-        existing_report = BalanceReport.objects.filter(company=company, year=year, month=month).first()
-
-        if existing_report:
-            raise ValidationError({"error": "This months' file already exists"})
-        
-        return super().create(validated_data)
-
-    def update(self, instance, validated_data):
-        # Handle file updates
-        for field in ['balance_report_file', 'profit_loss_file', 'sold_product_file', 'account_turnover_file']:
-            new_file = validated_data.get(field)
-            if new_file and getattr(instance, field) != new_file:
-                # Delete old file before saving the new one
-                old_file = getattr(instance, field)
-                if old_file:
-                    old_file.delete()  # Delete the old file
-
-        return super().update(instance, validated_data)
-
-
-class BalanceReportSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = BalanceReport
-        fields = ['id', 'year', 'month', 'balance_report_file',
-                  'profit_loss_file', 'sold_product_file', 'account_turnover_file', 'is_saved', 'is_sent']
-
-
-class SimpleBalanceReportSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = BalanceReport
-        fields = ['id', 'year', 'month',]
-
-
-class TaxDeclarationCreateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TaxDeclaration
-        fields = ['year', 'tax_file']
-
-    def create(self, validated_data):
-        user = self.context['request'].user
-        company = CompanyProfile.objects.get(user=user)
-        validated_data['company'] = company
-
-        year = validated_data.get('year')
-        existing_report = TaxDeclaration.objects.filter(company=company, year=year).first()
-
-        if existing_report:
-            raise ValidationError({"error": "This years' file already exists"})
-        return super().create(validated_data)
-
-    def update(self, instance, validated_data):
-        # Handle file update
-        tax_file = validated_data.get('tax_file', None)
-        if tax_file and instance.tax_file != tax_file:
-            # Optionally, you can handle file replacement here too
-            old_file = instance.tax_file
-            if old_file:
-                old_file.delete()  # Delete the old file before saving the new one
-
-        return super().update(instance, validated_data)
-
-
-class TaxDeclarationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TaxDeclaration
-        fields = ['id',  'year', 'tax_file', 'is_saved', 'is_sent']
-
-
-class SimpleTaxDeclarationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TaxDeclaration
-        fields = ['id',  'year']
-
-
-class BaseRequestSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = BaseRequest
-        fields = ['id', 'status', 'subject', 'created_at', 'updated_at']
-
-    def update(self, instance, validated_data):
-        # Custom update logic if needed
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-        instance.save()
-        return instance
-
-
-class DiagnosticRequestSerializer(BaseRequestSerializer):
-    tax_record = SimpleTaxDeclarationSerializer()
-    balance_record = SimpleBalanceReportSerializer()
-
-    class Meta(BaseRequestSerializer.Meta):
-        model = DiagnosticRequest
-        fields = BaseRequestSerializer.Meta.fields + \
-            ['tax_record', 'balance_record']
