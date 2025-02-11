@@ -37,8 +37,8 @@ INSTALLED_APPS = [
 ]
 
 PROJECT_APPS = [
-    'diagnostics',
     'management',
+    'finance',
     'company',
     'ticket',
     'core',

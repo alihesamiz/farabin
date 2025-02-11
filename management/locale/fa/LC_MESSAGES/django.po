@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-09 14:37+0330\n"
+"POT-Creation-Date: 2025-02-09 15:19+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -82,10 +82,12 @@ msgstr "فایل‌های چارت سازمانی"
 msgid ""
 "Each company can only have one Human Resource record. To replace, you must "
 "first delete the previous record."
-msgstr "هر شرکت تنها میتواند یک فایل منابع انسانی را بارگذاری کند. برای جایگزینی ابتدا فایل قبلی را حذف کنید."
+msgstr ""
+"هر شرکت تنها میتواند یک فایل منابع انسانی را بارگذاری کند. برای جایگزینی "
+"ابتدا فایل قبلی را حذف کنید."
 
 #: management/views.py:78
-msgid "Invalid or missing Human Resource record for this company."
+msgid "Invalid or missing HumanResource record for this company."
 msgstr "رکورد منابع انسانی مناسبی برای شرکت پیدا نشد."
 
 #: management/views.py:98
