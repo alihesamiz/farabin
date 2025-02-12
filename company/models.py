@@ -142,18 +142,3 @@ class CompanyService(models.Model):
         return f"{self.company.company_title} › {self.service.name} ({'Active' if self.is_active else 'Inactive'})"
 
 
-class CompanyFileAbstract(models.Model):
-
-    company = models.ForeignKey(CompanyProfile, on_delete=models.SET_NULL, null=True, verbose_name=_(
-        "Company"))
-
-    year = models.PositiveSmallIntegerField(verbose_name=_("Year"))
-
-    is_saved = models.BooleanField(default=True, verbose_name=_("Is Saved"))
-
-    is_sent = models.BooleanField(default=False, verbose_name=_("Is Sent"))
-
-    class Meta:
-
-        abstract = True
-

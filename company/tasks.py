@@ -3,7 +3,7 @@ import json
 from django.db.transaction import atomic
 from django.utils import timezone
 from celery import shared_task
-from .models import BaseRequest, DiagnosticRequest
+from request.models import BaseRequest, FinanceRequest
 from ticket.models import Agent, Department
 from django.contrib.auth import get_user_model
 
@@ -50,15 +50,12 @@ def send_file_uploading_notification(name):
 @shared_task(bind=True)
 def update_request_status_task(self):
     try:
-        # Calculate the time threshold
         fifteen_minutes_ago = timezone.now() - timezone.timedelta(minutes=15)
 
-        # Update the status of relevant requests
-        DiagnosticRequest.objects.filter(
-            status=DiagnosticRequest.REQUEST_STATUS_NEW,
+        FinanceRequest.objects.filter(
+            status=FinanceRequest.REQUEST_STATUS_NEW,
             created_at__lte=fifteen_minutes_ago
-        ).update(status=DiagnosticRequest.REQUEST_STATUS_PENDING)
+        ).update(status=FinanceRequest.REQUEST_STATUS_PENDING)
 
     except Exception as e:
-        # Retry the task in case of an exception
         self.retry(exc=e, countdown=60, max_retries=3)

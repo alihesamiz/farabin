@@ -21,7 +21,7 @@ from company.models import CompanyProfile
 from company.serializers import CompanyProfileSerializer,CompanyProfileCreateSerializer
 
 from ticket.models import Ticket
-from finance.models import TaxDeclaration,BalanceReport
+from finance.models import TaxDeclarationFile,BalanceReportFile
 from request.models import FinanceRequest
 
 logger = logging.getLogger("company")
@@ -102,8 +102,8 @@ class DashboardViewSet(APIView):
                                extra={"user_id": user_id})
                 return Response({"error": "Company profile not found"}, status=404)
 
-            tax_files = TaxDeclaration.objects.filter(company=company)
-            report_files = BalanceReport.objects.filter(
+            tax_files = TaxDeclarationFile.objects.filter(company=company)
+            report_files = BalanceReportFile.objects.filter(
                 company=company)
             tickets = Ticket.objects.filter(issuer=company).count()
             tax_files_count = tax_files.count()
