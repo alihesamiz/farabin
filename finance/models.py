@@ -1,6 +1,134 @@
+import os
+
+
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils.translation import gettext_lazy as _
+from django.core.files.storage import default_storage
 from django.db import models
+
+
+from company.models import CompanyProfile
+
+from core.validators import pdf_file_validator
+from core.utils import GeneralUtils
+
+class CompanyFileAbstract(models.Model):
+
+    company = models.ForeignKey(CompanyProfile, on_delete=models.SET_NULL, null=True, verbose_name=_(
+        "Company"))
+
+    year = models.PositiveSmallIntegerField(verbose_name=_("Year"))
+
+    is_saved = models.BooleanField(default=True, verbose_name=_("Is Saved"))
+
+    is_sent = models.BooleanField(default=False, verbose_name=_("Is Sent"))
+
+    class Meta:
+
+        abstract = True
+
+
+
+def get_tax_file_upload_path(instance, filename):
+    path = GeneralUtils(path="tax_files", fields=[
+                        'year']).rename_folder(instance, filename)
+    return path
+
+
+class TaxDeclarationFile(CompanyFileAbstract):
+
+    company = models.ForeignKey(CompanyProfile, on_delete=models.CASCADE, null=True, verbose_name=_(
+        "Company"), related_name="taxfiles")
+
+    tax_file = models.FileField(verbose_name=_(
+        "File"), upload_to=get_tax_file_upload_path, blank=True, null=True)
+
+    def __str__(self) -> str:
+        return f"{self.company.company_title} › {self.year}"
+
+    class Meta:
+        verbose_name = _("Tax Declaration")
+        verbose_name_plural = _("Tax Declarations")
+        unique_together = [['company', 'year']]
+
+    def save(self, *args, **kwargs):
+        # Check if the tax_file is being updated
+        if self.pk:
+            # Fetch the current instance
+            existing_instance = TaxDeclaration.objects.get(pk=self.pk)
+
+            # If the tax_file is being changed, delete the old file
+            if existing_instance.tax_file != self.tax_file:
+                # Delete the old file if it exists
+                old_file_path = existing_instance.tax_file.path if existing_instance.tax_file else None
+                if old_file_path and os.path.exists(old_file_path):
+                    default_storage.delete(old_file_path)
+
+        # Now save the new instance (either a new one or an update)
+        super(TaxDeclaration, self).save(*args, **kwargs)
+
+
+def get_non_tax_file_upload_path(instance, filename):
+    path = GeneralUtils(
+        path="non-tax_files", fields=['year', 'month']).rename_folder(instance, filename)
+    return path
+
+
+class BalanceReportFile(CompanyFileAbstract):
+
+    MONTH_CHOICES = [(str(i), f"{i}") for i in range(1, 14)]
+
+    company = models.ForeignKey(CompanyProfile, on_delete=models.CASCADE, null=True, verbose_name=_(
+        "Company"), related_name="reportfiles")
+
+    month = models.CharField(
+        max_length=2, choices=MONTH_CHOICES, verbose_name=_("Month"))
+
+    balance_report_file = models.FileField(verbose_name=_(
+        "Balance Report File"), validators=[pdf_file_validator], upload_to=get_non_tax_file_upload_path, blank=True, null=True)
+
+    profit_loss_file = models.FileField(verbose_name=_(
+        "Profit Loss File"), validators=[pdf_file_validator], upload_to=get_non_tax_file_upload_path, blank=True, null=True)
+
+    sold_product_file = models.FileField(verbose_name=_(
+        "Sold Product File"), validators=[pdf_file_validator], upload_to=get_non_tax_file_upload_path, blank=True, null=True)
+
+    account_turnover_file = models.FileField(verbose_name=_(
+        "Account Turn Over File"), validators=[pdf_file_validator], upload_to=get_non_tax_file_upload_path, blank=True, null=True)
+
+    def __str__(self) -> str:
+        return f"{self.company.company_title} › {self.year}"
+
+    class Meta:
+        verbose_name = _("Balance Report")
+        verbose_name_plural = _("Balance Reports")
+        unique_together = [['company', 'month', 'year'],]
+        
+    def save(self, *args, **kwargs):
+        if self.pk:  # Only check if updating an existing instance
+            existing_instance = BalanceReport.objects.get(pk=self.pk)
+
+            # Loop through each file field to check if it has been updated
+            file_fields = [
+                'balance_report_file',
+                'profit_loss_file',
+                'sold_product_file',
+                'account_turnover_file'
+            ]
+
+            for field in file_fields:
+                old_file = getattr(existing_instance, field)
+                new_file = getattr(self, field)
+                
+                # If the file has changed (new file uploaded)
+                if old_file != new_file:
+                    old_file_path = old_file.path if old_file else None
+                    if old_file_path and os.path.exists(old_file_path):
+                        # Delete the old file
+                        default_storage.delete(old_file_path)
+
+        # Save the new instance (either a new one or an update)
+        super(BalanceReport, self).save(*args, **kwargs)
 
 
 class SoldProductFee(models.Model):
@@ -285,7 +413,7 @@ class AccountTurnOver(models.Model):
 class FinancialAsset(models.Model):
 
     company = models.ForeignKey(
-        'company.CompanyProfile', on_delete=models.CASCADE, related_name='financial_records',
+        CompanyProfile, on_delete=models.CASCADE, related_name='financial_records',
         verbose_name=_('Company'))
 
     year = models.PositiveIntegerField(verbose_name=_('Year'))
