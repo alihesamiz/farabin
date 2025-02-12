@@ -44,10 +44,10 @@ class BaseRequest(models.Model):
 
 class FinanceRequest(BaseRequest):
 
-    tax_record = models.ForeignKey("finance.TaxDeclaration", on_delete=models.CASCADE, verbose_name=_(
+    tax_record = models.ForeignKey("finance.TaxDeclarationFile", on_delete=models.CASCADE, verbose_name=_(
         "Tax Record"), null=True, blank=True)
 
-    balance_record = models.ForeignKey("finance.BalanceReport", on_delete=models.CASCADE, verbose_name=_(
+    balance_record = models.ForeignKey("finance.BalanceReportFile", on_delete=models.CASCADE, verbose_name=_(
         "Balance Record"), null=True, blank=True)
 
     def __str__(self) -> str:

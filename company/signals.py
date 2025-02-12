@@ -6,8 +6,9 @@ from django.core.cache import cache
 from django.db import transaction
 
 
-from company.models import (
-    BalanceReport, CompanyService, TaxDeclaration, DiagnosticRequest, CompanyProfile)
+from company.models import  CompanyService, CompanyProfile
+from finance.models import TaxDeclarationFile, BalanceReportFile
+from request.models import FinanceRequest
 from ticket.models import Ticket
 
 
@@ -16,11 +17,11 @@ logger = logging.getLogger("company")
 
 # TODO: Update the folowing signal handler
 
-@receiver(post_save, sender=TaxDeclaration)
-@receiver(post_save, sender=BalanceReport)
+@receiver(post_save, sender=TaxDeclarationFile)
+@receiver(post_save, sender=BalanceReportFile)
 def create_diagnostic_request(sender, instance, created, **kwargs):
     """
-    Create a DiagnosticRequest if a TaxDeclaration or BalanceReport is sent.
+    Create a FinanceRequest if a TaxDeclarationFile or BalanceReportFile is sent.
     """
 
     if instance.is_sent:
@@ -38,29 +39,29 @@ def create_diagnostic_request(sender, instance, created, **kwargs):
                         f"No active 'DIAGNOSTIC' service found for company: {company.id}")
                     return
 
-                # Create the DiagnosticRequest
-                DiagnosticRequest.objects.create(
+                # Create the FinanceRequest
+                FinanceRequest.objects.create(
                     company=company,
                     service=service_instance,
-                    tax_record=instance if sender is TaxDeclaration else None,
-                    balance_record=instance if sender is BalanceReport else None,
+                    tax_record=instance if sender is TaxDeclarationFile else None,
+                    balance_record=instance if sender is BalanceReportFile else None,
                 )
                 logger.info(
-                    f"DiagnosticRequest created for company {company.id}, triggered by {sender.__name__} {instance.id}")
+                    f"FinanceRequest created for company {company.id}, triggered by {sender.__name__} {instance.id}")
 
         except Exception as e:
             logger.error(
-                f"Error creating DiagnosticRequest for company {company.id}: {e}", exc_info=True)
+                f"Error creating FinanceRequest for company {company.id}: {e}", exc_info=True)
 
 
-@receiver(post_save, sender=DiagnosticRequest)
+@receiver(post_save, sender=FinanceRequest)
 def set_the_file_available(sender, instance, created, **kwargs):
     """
-    Signal to handle updates when a DiagnosticRequest's status is changed to 'rejected'.
+    Signal to handle updates when a FinanceRequest's status is changed to 'rejected'.
     """
 
-    if instance.status == DiagnosticRequest.REQUEST_STATUS_REJECTED:
-        logger.info(f"DiagnosticRequest {instance.pk} is rejected.")
+    if instance.status == FinanceRequest.REQUEST_STATUS_REJECTED:
+        logger.info(f"FinanceRequest {instance.pk} is rejected.")
 
         # Handle tax record
 
@@ -79,10 +80,10 @@ def set_the_file_available(sender, instance, created, **kwargs):
                 f"Updated balance_record {instance.balance_record.pk} is_sent to False.")
 
 
-@receiver(post_save, sender=TaxDeclaration)
-@receiver(post_delete, sender=TaxDeclaration)
-@receiver(post_save, sender=BalanceReport)
-@receiver(post_delete, sender=BalanceReport)
+@receiver(post_save, sender=TaxDeclarationFile)
+@receiver(post_delete, sender=TaxDeclarationFile)
+@receiver(post_save, sender=BalanceReportFile)
+@receiver(post_delete, sender=BalanceReportFile)
 def clear_dashboard_cache(sender, instance, **kwargs):
     """
     Signal to clear the cache when a Service instance is updated.

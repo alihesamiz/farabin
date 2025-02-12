@@ -22,6 +22,9 @@ class HumanResource(models.Model):
     create_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return f"{self.company.company_title}"# › {self.excel_file}"
+    
     class Meta:
         verbose_name = _("Human Resource")
         verbose_name_plural = _("Human Resources")
@@ -47,7 +50,9 @@ class PersonelInformation(models.Model):
 
     reports_to = models.CharField(verbose_name=_(
         "Reports to(Position)"), max_length=150, null=True, blank=True)
-
+    
+    def __str__(self):
+        return f"{self.human_resource.company.company_title} › {self.position}"
     class Meta:
         verbose_name = _("Personel Information")
         verbose_name_plural = _("Personels Information")
@@ -66,6 +71,9 @@ class OrganizationChartBase(models.Model):
     position_excel = models.FileField(verbose_name=_("Position Excel"), max_length=150, null=False, blank=False,
                                       upload_to=get_chart_excel_file_upload_path, validators=[validators.excel_file_validator])
 
+    def __str__(self):
+        return f"{self.field.title()}"
+    
     class Meta:
         verbose_name = _("Organization Chart")
         verbose_name_plural = _("Organization Charts")

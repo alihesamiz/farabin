@@ -5,12 +5,13 @@ meta {
 }
 
 get {
-  url: http://127.0.0.1:8000/management/organization-chart-files/
+  url: http://127.0.0.1:8000/company/requests/?type=diagnostic
   body: multipartForm
   auth: bearer
 }
 
 params:query {
+  type: diagnostic
   ~answer_id: 1
 }
 
@@ -19,7 +20,7 @@ headers {
 }
 
 auth:bearer {
-  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM4ODQ0ODIxLCJpYXQiOjE3Mzg3NTg0MjEsImp0aSI6IjRkYjVhNWQ2ZWM5MjQ2MmM5ODg5ZjUyMjBjMDcwMTdhIiwidXNlcl9pZCI6MX0.upnqo8BR6A9Ly_J6VmQQbsXSf8Q2xcPxZJ-ZPUbN5Ws
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM5MzU0NjUzLCJpYXQiOjE3MzkyNjgyNTMsImp0aSI6IjM4NmJkY2E2NzY1NTQ2MGViNzRmZTM5OTA5NDI2YTc0IiwidXNlcl9pZCI6MX0.sPlkirtGRTGDVVw7yZSSkdRHgyb1lWo8FC_g-F0YzI0
 }
 
 body:json {
@@ -33,7 +34,7 @@ body:json {
 body:multipart-form {
   phone_number: 09138038121
   national_code: 12736700277
-  otp_code: 318070
+  otp_code: 136224
   subject: lkjlkjlk
   comment: lkjklj
   service: 1
