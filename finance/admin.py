@@ -1,14 +1,23 @@
+from typing import Any
+
+
 from django.utils.translation import gettext_lazy as _
+from django.db.models.query import QuerySet
 from django.utils.html import format_html
+from django.db.transaction import atomic
+from django.http import HttpRequest
+from django.db import transaction
 from django.db.models import Max
 from django.contrib import admin
 from django.urls import reverse
 
 from finance.models import (
     AccountTurnOver, AnalysisReport, FinancialData, FinancialAsset,
-    ProfitLossStatement, SoldProductFee, BalanceReport
+    ProfitLossStatement, SoldProductFee, BalanceReport,TaxDeclarationFile,BalanceReportFile
 )
 from company.models import CompanyProfile
+
+
 
 
 class ProfitStatementInline(admin.StackedInline):
@@ -25,18 +34,106 @@ class SaledProductInline(admin.StackedInline):
     max_num = 1
 
 
-class BalanceReportInline(admin.StackedInline):
+class AccountTurnOverInline(admin.StackedInline):
+    model = AccountTurnOver
+    extra = 0
+    min_num = 1
+    max_num = 1
+
+
+class BalanceReportInline(admin.TabularInline):
     model = BalanceReport
     extra = 0
     min_num = 1
     max_num = 1
 
 
-class AccountTurnOverInline(admin.StackedInline):
-    model = AccountTurnOver
-    extra = 0
-    min_num = 1
-    max_num = 1
+    
+@admin.register(TaxDeclarationFile)
+class TaxFileAdmin(admin.ModelAdmin):
+    list_display = ['company_title', 'year', 'tax_file',
+                    'is_saved',
+                    'is_sent',]
+
+    search_fields = ['company__company_title', 'year']
+
+    @admin.display(ordering='company__company_title')
+    def company_title(self, tax_declaration: TaxDeclarationFile):
+        return tax_declaration.company.company_title if tax_declaration.company.company_title else '-'
+    company_title.short_description = _("Company Title")
+
+    def delete_model(self, request: HttpRequest, obj: Any):
+        with atomic():
+            if obj.tax_file:
+                obj.tax_file.delete(save=False)
+            return super().delete_model(request, obj)
+
+    def delete_queryset(self, request: HttpRequest, queryset: QuerySet) -> None:
+        for obj in queryset:
+            with atomic():
+                if obj.tax_file:
+                    obj.tax_file.delete(save=False)
+        return super().delete_queryset(request, queryset)
+
+    def get_queryset(self, request):
+        # Get the original queryset
+        qs = super().get_queryset(request)
+
+        # Allow superuser to view all tickets
+        if request.user.is_superuser:
+            return qs
+
+        # Filter tickets based on the agent's department
+        return qs.filter(is_sent=True)
+
+
+@admin.register(BalanceReportFile)
+class BalanceReportFileAdmin(admin.ModelAdmin):
+    list_display = ['company_title', 'month', 'year', 'balance_report_file', 'profit_loss_file',
+                    'sold_product_file',
+                    'account_turnover_file',
+                    'is_saved',
+                    'is_sent',]
+
+    search_fields = ['company__company_title', 'year', 'month']
+
+    @admin.display(ordering='company__company_title')
+    def company_title(self, tax_declaration: TaxDeclarationFile):
+        return tax_declaration.company.company_title
+    company_title.short_description = _("Company Title")
+
+    def delete_model(self, request: HttpRequest, obj: Any) -> None:
+
+        if obj:
+            with transaction.atomic():
+                obj.balance_report_file.delete(save=False)
+                obj.profit_loss_file.delete(save=False)
+                obj.sold_product_file.delete(save=False)
+                obj.account_turnover_file.delete(save=False)
+
+        return super().delete_model(request, obj)
+
+    def delete_queryset(self, request: HttpRequest, queryset: QuerySet) -> None:
+
+        for obj in queryset:
+            with transaction.atomic():
+                obj.balance_report_file.delete(save=False)
+                obj.profit_loss_file.delete(save=False)
+                obj.sold_product_file.delete(save=False)
+                obj.account_turnover_file.delete(save=False)
+
+        return super().delete_queryset(request, queryset)
+
+    def get_queryset(self, request):
+        # Get the original queryset
+        qs = super().get_queryset(request)
+
+        # Allow superuser to view all tickets
+        if request.user.is_superuser:
+            return qs
+
+        # Filter tickets based on the agent's department
+        return qs.filter(is_sent=True)
 
 
 @admin.register(FinancialAsset)

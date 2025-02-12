@@ -1,25 +1,22 @@
-from kombu import Queue
 from datetime import timedelta
 from pathlib import Path
 import environ
 import os
 
+from kombu import Queue
+
 from django.utils.translation import gettext_lazy as _
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
-env = environ.Env(DEBUG=(bool, False))
+env = environ.Env(FARABIN_DEBUG=(bool, True))
 environ.Env.read_env(BASE_DIR)
 
 
-SECRET_KEY = env("FARABIN_SECRET_KEY")
+SECRET_KEY = env.get_value("FARABIN_SECRET_KEY")
 
-DEBUG = True
-
+DEBUG = True  # env.get_value("FARABIN_DEBUG")
 
 ALLOWED_HOSTS = ["*"]
 
@@ -40,6 +37,7 @@ PROJECT_APPS = [
     'management',
     'finance',
     'company',
+    'request',
     'ticket',
     'core',
 ]
@@ -97,22 +95,22 @@ if DEBUG:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'PASSWORD': env("FARABIN_DB_PASSWORD"),
-            'NAME': env("FARABIN_DB_NAME"),
-            'USER': env("FARABIN_DB_USER"),
-            'HOST': env("FARABIN_DB_HOST"),
-            'PORT': env("FARABIN_DB_PORT")
+            'PASSWORD': env.get_value("FARABIN_DB_PASSWORD"),
+            'NAME': env.get_value("FARABIN_DB_NAME"),
+            'USER': env.get_value("FARABIN_DB_USER"),
+            'HOST': env.get_value("FARABIN_DB_HOST"),
+            'PORT': env.get_value("FARABIN_DB_PORT")
         }
     }
 if not DEBUG:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'PASSWORD': env("FARABIN_DB_PASSWORD"),
-            'NAME': env("FARABIN_DB_NAME"),
-            'USER': env("FARABIN_DB_USER"),
-            'HOST': env("FARABIN_DB_HOST"),
-            'PORT': env("FARABIN_DB_PORT")
+            'PASSWORD': env.get_value("FARABIN_DB_PASSWORD"),
+            'NAME': env.get_value("FARABIN_DB_NAME"),
+            'USER': env.get_value("FARABIN_DB_USER"),
+            'HOST': env.get_value("FARABIN_DB_HOST"),
+            'PORT': env.get_value("FARABIN_DB_PORT")
         }
     }
 
@@ -133,9 +131,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
-
 LANGUAGE_CODE = 'fa'
 
 TIME_ZONE = 'Asia/Tehran'
@@ -154,10 +149,8 @@ LANGUAGES = [
 ]
 
 LOCALE_PATHS = [
-    BASE_DIR/'locale',  # Global locale directory
+    BASE_DIR/'locale',
 ]
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
@@ -168,10 +161,6 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 MEDIA_URL = '/media/'
-
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -196,7 +185,6 @@ SIMPLE_JWT = {
 }
 
 
-# Browser protections
 X_FRAME_OPTIONS = 'ALLOWANY'
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
@@ -207,7 +195,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://saramad.farabinbrand.com",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "http://192.168.1.4:3000",  # Add your frontend origin
+    "http://192.168.1.4:3000",
     "http://localhost:8000",
     "http://127.0.0.1:8000",
     "https://192.168.1.2:3000",
@@ -220,10 +208,10 @@ CELERY_QUEUES = (
     Queue('high_priority', routing_key='task.high_priority'),
 )
 CELERY_DEFAULT_QUEUE = 'default'
-CELERY_RESULT_BACKEND = f'redis://{env("FARABIN_REDIS_HOST")}:{env(
-    "FARABIN_REDIS_PORT")}/{env("FARABIN_REDIS_ASYNC_DATABASE")}'
-CELERY_BROKER_URL = f'redis://{env("FARABIN_REDIS_HOST")}:{env(
-    "FARABIN_REDIS_PORT")}/{env("FARABIN_REDIS_ASYNC_DATABASE")}'
+CELERY_RESULT_BACKEND = f'redis://{env.get_value("FARABIN_REDIS_HOST")}:{env.get_value(
+    "FARABIN_REDIS_PORT")}/{env.get_value("FARABIN_REDIS_ASYNC_DATABASE")}'
+CELERY_BROKER_URL = f'redis://{env.get_value("FARABIN_REDIS_HOST")}:{env.get_value(
+    "FARABIN_REDIS_PORT")}/{env.get_value("FARABIN_REDIS_ASYNC_DATABASE")}'
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_TASK_REJECT_ON_WORKER_LOST = True
 CELERY_TASK_RESULT_EXPIRES = 3600
@@ -232,7 +220,7 @@ CELERY_TASK_ACKS_LATE = True
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': f'redis://{env("FARABIN_REDIS_HOST")}:{env("FARABIN_REDIS_PORT")}/{env("FARABIN_REDIS_CACHE_DATABASE")}',
+        'LOCATION': f'redis://{env.get_value("FARABIN_REDIS_HOST")}:{env.get_value("FARABIN_REDIS_PORT")}/{env.get_value("FARABIN_REDIS_CACHE_DATABASE")}',
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
             'KEY_PREFIX': 'farabin_cache',
@@ -241,7 +229,6 @@ CACHES = {
     }
 }
 
-# HTTPS settings
 if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
@@ -251,3 +238,115 @@ if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SECURE_HSTS_PRELOAD = True
     CSRF_COOKIE_SECURE = True
+
+
+LOG_DIR = BASE_DIR / 'logs'
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "[{asctime}] {levelname} {name} {module} {process:d} {thread:d} - {message}",
+            "style": "{",
+        },
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
+        },
+        "json": {  # Structured JSON logging (useful for external logging systems)
+            "format": "{{\"timestamp\": \"{asctime}\", \"level\": \"{levelname}\", \"message\": \"{message}\"}}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+        },
+        "file": {
+            "level": "WARNING",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": LOG_DIR / "django.log",
+            "formatter": "verbose",
+            "maxBytes": 5 * 1024 * 1024,  # 5 MB
+            "backupCount": 3,
+        },
+        "error_file": {
+            "level": "ERROR",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": LOG_DIR / "errors.log",
+            "formatter": "verbose",
+            "maxBytes": 5 * 1024 * 1024,  # 5 MB
+            "backupCount": 3,
+        },
+        "json_file": {
+            "level": "INFO",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": LOG_DIR / "log.json",
+            "formatter": "json",
+            "maxBytes": 5 * 1024 * 1024,
+            "backupCount": 3,
+        },
+        "mail_admins": {
+            "level": "ERROR",
+            "class": "django.utils.log.AdminEmailHandler",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console", "file"],
+            "level": "INFO",
+            "propagate": True,
+        },
+        "django.request": {
+            "handlers": ["error_file", "mail_admins"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+        "config": {
+            "handlers": ["console", "file", "json_file"],
+            "level": "DEBUG",
+            "propagate": False,
+        },
+    },
+}
+
+APPS_TO_LOG = PROJECT_APPS
+
+for app in APPS_TO_LOG:
+    LOGGING["handlers"][f"{app}_logs_file"] = {
+        "level": "INFO",
+        "class": "logging.handlers.RotatingFileHandler",
+        "filename": LOG_DIR / f"{app}_logs.log",
+        "formatter": "verbose",
+        "maxBytes": 5 * 1024 * 1024,  # 5 MB
+        "backupCount": 3,
+    }
+
+    LOGGING["handlers"][f"{app}_errors_file"] = {
+        "level": "ERROR",
+        "class": "logging.handlers.RotatingFileHandler",
+        "filename": LOG_DIR / f"{app}_errors.log",
+        "formatter": "verbose",
+        "maxBytes": 5 * 1024 * 1024,  # 5 MB
+        "backupCount": 3,
+    }
+
+    LOGGING["loggers"][app] = {
+        "handlers": [f"{app}_logs_file", f"{app}_errors_file"],
+        "level": "INFO",
+        "propagate": False,
+    }
+
+LOGGING["handlers"]["rotating_file"] = {
+    "level": "INFO",
+    "class": "logging.handlers.RotatingFileHandler",
+    "filename":  LOG_DIR/"rotating.log",
+    "maxBytes": 1024 * 1024 * 5,
+    "backupCount": 5,
+    "formatter": "verbose",
+}
+
+APP_REQUEST_TYPES = ['finance', 'management']

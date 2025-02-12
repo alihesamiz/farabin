@@ -4,6 +4,7 @@ __pycache__/
 *.pyc
 
 # Django specific
+/logs/
 *.log
 *.pot
 *.pyc
@@ -21,7 +22,7 @@ media/tax_files
 /static/nested_admin/
 /static/rest_framework/
 /static/streamfield/
-!/static/diagnostics/
+!/static/finance/
 staticfiles/
 
 # Environment variables

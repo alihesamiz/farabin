@@ -1,14 +1,13 @@
+import logging
 import os
+
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.core.files.storage import default_storage
-from django.views.decorators.cache import cache_page
-from django.utils.decorators import method_decorator
 from django.db.models.signals import post_save
 from django.shortcuts import get_object_or_404
 from django.db.transaction import atomic
-from django.core.cache import cache
 from django.http import FileResponse
-from django.db.models import Count, Sum
+from django.core.cache import cache
 
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import NotFound
@@ -17,17 +16,15 @@ from rest_framework.decorators import action
 from rest_framework import status, viewsets
 from rest_framework.views import APIView
 
-from .models import BalanceReport,  CompanyProfile, DiagnosticRequest, TaxDeclaration
-from .serializers import (
-    BalanceReportCreateSerializer,
-    BalanceReportSerializer,
-    CompanyProfileSerializer,
-    CompanyProfileCreateSerializer,
-    DiagnosticRequestSerializer,
-    TaxDeclarationCreateSerializer,
-    TaxDeclarationSerializer
-)
+
+from company.models import CompanyProfile
+from company.serializers import CompanyProfileSerializer,CompanyProfileCreateSerializer
+
 from ticket.models import Ticket
+from finance.models import TaxDeclarationFile,BalanceReportFile
+from request.models import FinanceRequest
+
+logger = logging.getLogger("company")
 
 
 class CompanyProfileViewSet(viewsets.ModelViewSet):
@@ -37,12 +34,20 @@ class CompanyProfileViewSet(viewsets.ModelViewSet):
         cache_key = f"company_profile_{self.request.user.id}"
         cached_data = cache.get(cache_key)
         if cached_data:
+            logger.info("Cache hit for company profile", extra={
+                        "user_id": self.request.user.id})
             return cached_data
+
         try:
             profile = CompanyProfile.objects.filter(user=self.request.user)
             cache.set(cache_key, profile)
+            logger.info("Profile fetched from DB and cached",
+                        extra={"user_id": self.request.user.id})
             return profile
+
         except Exception as e:
+            logger.error("Failed to fetch profile", extra={
+                         "user_id": self.request.user.id, "error": str(e)}, exc_info=True)
             raise NotFound(detail="Company profile not found.")
 
     def get_serializer_class(self):
@@ -52,65 +57,62 @@ class CompanyProfileViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['get'])
     def retrieve_profile(self, request, pk=None):
-        # cache_key = f"company_profile_{self.request.user.id}"
-        # cached_data = cache.get(cache_key)
-        # if cached_data:
-        #     return Response(cached_data)
 
-        # try:
-        #     instance = self.get_object()
-        #     serializer = self.get_serializer(instance)
-        #     cache.set(cache_key, serializer.data, 60 * 15)
-        #     return Response(serializer.data)
-        # except Exception as e:
-        #     raise NotFound(detail=f"Company profile not found.{e}",code=status.HTTP_404_NOT_FOUND)
         try:
             queryset = self.get_queryset()
             company_profile = get_object_or_404(queryset, pk=pk)
             serializer = CompanyProfileSerializer(company_profile)
+            logger.info(
+                "Company profile retrieved successfully",
+                extra={"user_id": request.user.id, "profile_id": pk}
+            )
             return Response(serializer.data)
+
         except Exception as e:
+            logger.error(
+                "Failed to retrieve company profile",
+                extra={"user_id": request.user.id,
+                       "profile_id": pk, "error": str(e)},
+                exc_info=True
+            )
             raise NotFound(detail=f"Company profile not found.{
                            e}", code=status.HTTP_404_NOT_FOUND)
 
 
 class DashboardViewSet(APIView):
+
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-
-        cache_key = f"dashboard_data_{self.request.user.id}"
+        user_id = request.user.id
+        cache_key = f"dashboard_data_{user_id}"
         cached_data = cache.get(cache_key)
 
         if cached_data:
-            print('asdasd')
+            logger.info("Dashboard data retrieved from cache",
+                        extra={"user_id": user_id})
             return Response(cached_data)
 
         try:
-            # Aggregate data for the authenticated user's company
             company = CompanyProfile.objects.filter(
                 user=self.request.user).first()
-            
-            # Retrieve TaxDeclaration and BalanceReport files related to this company
-            tax_files = TaxDeclaration.objects.filter(company=company)
 
-            report_files = BalanceReport.objects.filter(
+            if not company:
+                logger.warning("Company profile not found",
+                               extra={"user_id": user_id})
+                return Response({"error": "Company profile not found"}, status=404)
+
+            tax_files = TaxDeclarationFile.objects.filter(company=company)
+            report_files = BalanceReportFile.objects.filter(
                 company=company)
-
             tickets = Ticket.objects.filter(issuer=company).count()
-
             tax_files_count = tax_files.count()
             report_files_count = report_files.count()
-
-            diagnostic_requests_count = DiagnosticRequest.objects.filter(
+            diagnostic_requests_count = FinanceRequest.objects.filter(
                 company=company).count()
-
             total_uploaded_files = tax_files_count + report_files_count
-
-            # Count tickets issued by the company
             tickets = Ticket.objects.filter(
                 issuer__user=self.request.user).count()
-
             response_data = {
                 'tax_files_count': tax_files_count,
                 'report_files_count': report_files_count,
@@ -125,265 +127,11 @@ class DashboardViewSet(APIView):
             }
 
             cache.set(cache_key, response_data)
-
+            logger.info("Dashboard data fetched from DB and cached",
+                        extra={"user_id": user_id})
             return Response(response_data)
 
-        except CompanyProfile.DoesNotExist:
-            return Response({"error": "Company profile not found"}, status=404)
-
-
-class TaxDeclarationViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
-    # pagination_class = FilePagination
-
-    def get_queryset(self):
-        return TaxDeclaration.objects.filter(company__user=self.request.user).order_by('-year').all()
-
-    def get_serializer_class(self):
-        if self.action in ['create', 'update']:
-            return TaxDeclarationCreateSerializer
-        return TaxDeclarationSerializer
-
-    def get_serializer_context(self):
-        # Pass the request to the serializer context
-        context = super().get_serializer_context()
-        context['request'] = self.request
-        return context
-
-    def destroy(self, request, *args, **kwargs):
-        try:
-            instance = self.get_object()
-            self.perform_destroy(instance)
-            return Response({"success": "file deleted"}, status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
-            return Response({"error": "Failed to delete file"}, status=status.HTTP_400_BAD_REQUEST)
-
-    def perform_destroy(self, instance):
-
-        try:
-            file_path = instance.tax_file.path
-
-            folder_path = os.path.dirname(file_path)
-
-            if file_path and default_storage.exists(file_path):
-                default_storage.delete(file_path)
-
-            if folder_path and not os.listdir(folder_path):
-                os.rmdir(folder_path)
-
-            instance.delete()
-
-        except Exception as e:
-            pass
-
-    @xframe_options_exempt
-    @action(detail=True, methods=['get'], url_path='pdf')
-    def pdf(self, request, pk=None,):
-        tax_declaration = self.get_object()
-        pdf_path = tax_declaration.tax_file.path  # Adjust based on your file field
-
-        # Ensure the file exists
-        if not os.path.exists(pdf_path):
-            return Response({"error": "File not found"}, status=status.HTTP_404_NOT_FOUND)
-
-        response = FileResponse(open(pdf_path, 'rb'),
-                                content_type='application/pdf')
-        response['Content-Disposition'] = f'inline; filename="{
-            tax_declaration.tax_file.name}"'
-        # Customize X-Frame-Options if needed for frontend embedding compatibility
-        response['X-Frame-Options'] = 'ALLOWALL'
-
-        return response
-
-    @action(detail=False, methods=['get'])
-    def year(self, request):
-        tax_declarations = self.get_queryset()
-        years = tax_declarations.values('year').distinct()
-        return Response(years, status=status.HTTP_200_OK)
-
-    @action(detail=False, methods=['put', 'patch'], url_path='send-experts')
-    def send(self, request):
-        """
-        Update the 'is_sent' field to True for multiple TaxDeclaration instances.
-        Expects a list of IDs in the request body.
-        """
-        ids = request.data.get('ids', [])
-
-        # Filter queryset to ensure only the user's tax declarations are updated
-        queryset = TaxDeclaration.objects.filter(
-            id__in=ids, company__user=self.request.user
-        )
-
-        if not queryset.exists():
-            return Response(
-                {"error": "No valid tax declarations found for the provided IDs."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-
-        # Perform the bulk update
-        updated_count = queryset.update(is_sent=True)
-        for instance in queryset:
-            post_save.send(sender=TaxDeclaration,
-                           instance=instance, created=False)
-        return Response(
-            {"success": f"{updated_count} files marked as sent."},
-            status=status.HTTP_200_OK,
-        )
-
-
-class BalanceReportViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
-    # pagination_class = FilePagination
-
-    def get_queryset(self):
-        return BalanceReport.objects.filter(company__user=self.request.user).order_by('-year', 'month').all()
-
-    def get_serializer_class(self):
-        if self.action in ['create', 'update']:
-            return BalanceReportCreateSerializer
-        return BalanceReportSerializer
-
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-
-        context['request'] = self.request
-
-        return context
-
-    @xframe_options_exempt
-    @action(detail=True, methods=['get'], url_path='pdf')
-    def pdf(self, request, pk=None):
-        balance_report = self.get_object()
-
-        # Get the query parameter for the file name
-        file_name = request.query_params.get('file_name')
-
-        if not file_name:
-            return Response({"error": "file_name query parameter is required."}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Map file names to file paths
-        file_paths = {
-            "balance_report_file": balance_report.balance_report_file.path,
-            "profit_loss_file": balance_report.profit_loss_file.path,
-            "sold_product_file": balance_report.sold_product_file.path,
-            "account_turnover_file": balance_report.account_turnover_file.path,
-        }
-
-        # Check if the requested file exists
-        if file_name not in file_paths:
-            return Response({"error": f"File {file_name} is not valid."}, status=status.HTTP_400_BAD_REQUEST)
-
-        file_path = file_paths[file_name]
-
-        if not os.path.exists(file_path):
-            return Response({"error": f"File {file_name} not found."}, status=status.HTTP_404_NOT_FOUND)
-
-        # Serve the requested file
-        response = FileResponse(open(file_path, 'rb'),
-                                content_type='application/pdf')
-        response['Content-Disposition'] = f'inline; filename="{
-            file_name}.pdf"'
-        response['X-Frame-Options'] = 'ALLOWALL'
-
-        return response
-
-    def destroy(self, request, *args, **kwargs):
-        try:
-            with atomic():
-                instance = self.get_object()
-                self.perform_destroy(instance)
-                return Response({"success": "files deleted"}, status=status.HTTP_204_NO_CONTENT)
-        except Exception as e:
-            return Response({"error": "Failed to delete files"}, status=status.HTTP_400_BAD_REQUEST)
-
-    def perform_destroy(self, instance):
-        try:
-            with atomic():
-                file_paths = [
-                    instance.balance_report_file.path,
-                    instance.profit_loss_file.path,
-                    instance.sold_product_file.path,
-                    instance.account_turnover_file.path,
-                ]
-
-                folder_path = os.path.dirname(file_paths[0])
-
-                # Delete each file if it exists
-                for file_path in file_paths:
-                    if file_path and default_storage.exists(file_path):
-                        default_storage.delete(file_path)
-
-                # If the folder is empty, delete the folder
-                if folder_path and not os.listdir(folder_path):
-                    os.rmdir(folder_path)
-
-                # Delete the instance
-                instance.delete()
-
-        except Exception as e:
-            pass  # Log the error or handle it as necessary
-
-    @action(detail=False, methods=['get'])
-    def year(self, request):
-        balance_reports = self.get_queryset()
-
-        year_month_data = {}
-
-        for entry in balance_reports.values('year', 'month').distinct():
-            year = entry['year']
-            month = entry['month']
-            if year not in year_month_data:
-                year_month_data[year] = []
-            if month not in year_month_data[year]:
-                year_month_data[year].append(month)
-
-        formatted_data = [{'year': year, 'months': sorted(
-            months)} for year, months in year_month_data.items()]
-
-        return Response(formatted_data, status=status.HTTP_200_OK)
-
-    @action(detail=False, methods=['put', 'patch'], url_path='send-experts')
-    def send(self, request):
-
-        ids = request.data.get('ids', [])
-
-        queryset = BalanceReport.objects.filter(
-            id__in=ids, company__user=self.request.user
-        )
-
-        if not queryset.exists():
-            return Response(
-                {"error": "No valid tax declarations found for the provided IDs."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-
-        # Perform the bulk update
-        updated_count = queryset.update(is_saved=True, is_sent=True)
-
-        for instance in queryset:
-            post_save.send(sender=BalanceReport,
-                           instance=instance, created=False)
-        return Response(
-            {"success": f"{updated_count} files marked as sent."},
-            status=status.HTTP_200_OK,
-        )
-
-
-class RequestViewSet(viewsets.ModelViewSet):
-    REQUEST_TYPES = {
-        'diagnostic': DiagnosticRequestSerializer,
-    }
-
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        company = self.request.user.company
-        return DiagnosticRequest.objects.filter(company=company).order_by('-updated_at')
-
-    def get_serializer_class(self):
-        request_type = self.request.query_params.get('type')
-
-        if request_type in self.REQUEST_TYPES:
-            return self.REQUEST_TYPES[request_type]
-        else:
-            raise NotFound("The requested type doesn't exist")
+            logger.error("Failed to fetch dashboard data", extra={
+                         "user_id": user_id, "error": str(e)}, exc_info=True)
+            return Response({"error": "An error occurred while fetching dashboard data"}, status=500)
