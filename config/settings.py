@@ -181,7 +181,15 @@ SIMPLE_JWT = {
     "BLACKLIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": True,
     "AUTH_HEADER_TYPES": ("Bearer",),
+}
 
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Farabin API',
+    'DESCRIPTION': 'API Documentation for Farabin Saramad',
+    'VERSION': '1.0.0',
+    'CONTACT': {"name": "Ahmad Asadi", "email": "madassandd@gmail.com"},
+    'SERVE_INCLUDE_SCHEMA': True,
 }
 
 
