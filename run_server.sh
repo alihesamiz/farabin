@@ -21,7 +21,7 @@ python manage.py load_cities
 python manage.py load_special_fields
 python manage.py load_tech_fields
 python manage.py load_services 
-python manage.py load_excel_files --noinput
+python manage.py load_excel_files 
 
 python manage.py collectstatic --noinput
 
