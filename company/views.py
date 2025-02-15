@@ -1,13 +1,10 @@
+import importlib
 import logging
-import os
 
-from django.views.decorators.clickjacking import xframe_options_exempt
-from django.core.files.storage import default_storage
-from django.db.models.signals import post_save
+
 from django.shortcuts import get_object_or_404
-from django.db.transaction import atomic
-from django.http import FileResponse
 from django.core.cache import cache
+from django.conf import settings
 
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import NotFound
@@ -17,12 +14,11 @@ from rest_framework import status, viewsets
 from rest_framework.views import APIView
 
 
+from company.serializers import CompanyProfileSerializer, CompanyProfileCreateSerializer
 from company.models import CompanyProfile
-from company.serializers import CompanyProfileSerializer,CompanyProfileCreateSerializer
 
+from finance.models import TaxDeclarationFile, BalanceReportFile
 from ticket.models import Ticket
-from finance.models import TaxDeclarationFile,BalanceReportFile
-from request.models import FinanceRequest
 
 logger = logging.getLogger("company")
 
@@ -102,28 +98,34 @@ class DashboardViewSet(APIView):
                                extra={"user_id": user_id})
                 return Response({"error": "Company profile not found"}, status=404)
 
-            tax_files = TaxDeclarationFile.objects.filter(company=company)
-            report_files = BalanceReportFile.objects.filter(
-                company=company)
-            tickets = Ticket.objects.filter(issuer=company).count()
-            tax_files_count = tax_files.count()
-            report_files_count = report_files.count()
-            diagnostic_requests_count = FinanceRequest.objects.filter(
+            tax_files_count = TaxDeclarationFile.objects.filter(
                 company=company).count()
-            total_uploaded_files = tax_files_count + report_files_count
-            tickets = Ticket.objects.filter(
+
+            report_files_count = BalanceReportFile.objects.filter(
+                company=company).count()
+
+            tickets_count = Ticket.objects.filter(issuer=company).count()
+
+            tax_files_count = tax_files_count
+
+            report_files_count = report_files_count
+
+            total_uploaded_files_count = tax_files_count + report_files_count
+
+            tickets_count = Ticket.objects.filter(
                 issuer__user=self.request.user).count()
+
+            requests_count = {
+                f"{app.lower()}_request_count": getattr(importlib.import_module("request.models"), f"{app.title()}Request").objects.filter(company=company).count()
+                for app in settings.APP_REQUEST_TYPES
+            }
+
             response_data = {
-                'tax_files_count': tax_files_count,
+                'all_uploaded_files_count': total_uploaded_files_count,
                 'report_files_count': report_files_count,
-                'all_uploaded_files': total_uploaded_files,
-                "tickets": tickets,
-                "diagnostic_requests": diagnostic_requests_count,
-                "management_requests": 0,
-                "marketing_requests": 0,
-                "mis_requests": 0,
-                "rad_requests": 0,
-                "production_requests": 0,
+                'tax_files_count': tax_files_count,
+                "requests_count": requests_count,
+                "tickets_count": tickets_count,
             }
 
             cache.set(cache_key, response_data)

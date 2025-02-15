@@ -1,12 +1,5 @@
-from typing import Any
-
-
 from django.utils.translation import gettext_lazy as _
-from django.db.models.query import QuerySet
-from django.db.transaction import atomic
-from django.http import HttpRequest
 from django.contrib import messages
-from django.db import transaction
 from django.contrib import admin
 
 
@@ -42,7 +35,7 @@ class CompanyAdmin(admin.ModelAdmin):
     national_code.short_description = _("National Code")
 
     def special_field_display(self, company_profile: CompanyProfile):
-        return company_profile.special_field  # Ensure this matches the field name
+        return company_profile.special_field 
     special_field_display.short_description = _("Special Field")
 
     @admin.display(description=_("Capital Providing Method"), ordering='capital_providing_method_display')
@@ -78,5 +71,4 @@ class CompanyServiceAdmin(admin.ModelAdmin):
             messages.SUCCESS
         )
 
-    # Add the action to the actions list
     actions = [activate_services, deactivate_services]
