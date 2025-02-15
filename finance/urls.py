@@ -2,12 +2,12 @@ from django.urls import path
 
 from rest_framework.routers import DefaultRouter
 
-from finance.views import FinanceAnalysisViewSet, CompanyFinancialDataView,TaxDeclarationViewSet,BalanceReportViewSet
+from finance.views import FinanceAnalysisViewSet, CompanyFinancialDataView, TaxDeclarationViewSet, BalanceReportViewSet
 
 
 router = DefaultRouter()
 
-router.register(r'', FinanceAnalysisViewSet,
+router.register(r'finance-analysis', FinanceAnalysisViewSet,
                 basename='finance-analysis')
 
 router.register(r'tax-declarations', TaxDeclarationViewSet,

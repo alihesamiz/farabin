@@ -49,6 +49,7 @@ class TaxDeclarationViewSet(viewsets.ModelViewSet):
         return queryset
 
     def get_serializer_class(self):
+        logger.info(f"Action: {self.action}")  # Debugging
         if self.action in ['create', 'update']:
             return TaxDeclarationCreateSerializer
         return TaxDeclarationSerializer

@@ -28,11 +28,11 @@ class FinanceRequestSerializer(BaseRequestSerializer):
             ['tax_record', 'balance_record']
 
 
-class ManagementRequestSerializer(BaseRequestSerializer):
-    tax_record = SimpleTaxDeclarationSerializer()
-    balance_record = SimpleBalanceReportSerializer()
+# class ManagementRequestSerializer(BaseRequestSerializer):
+#     tax_record = SimpleTaxDeclarationSerializer()
+#     balance_record = SimpleBalanceReportSerializer()
 
-    class Meta(BaseRequestSerializer.Meta):
-        model = FinanceRequest
-        fields = BaseRequestSerializer.Meta.fields + \
-            ['tax_record', 'balance_record']
+#     class Meta(BaseRequestSerializer.Meta):
+#         model = FinanceRequest
+#         fields = BaseRequestSerializer.Meta.fields + \
+#             ['tax_record', 'balance_record']

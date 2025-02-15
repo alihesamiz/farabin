@@ -12,6 +12,8 @@ from company.models import CompanyProfile
 from core.validators import pdf_file_validator
 from core.utils import GeneralUtils
 
+
+
 class CompanyFileAbstract(models.Model):
 
     company = models.ForeignKey(CompanyProfile, on_delete=models.SET_NULL, null=True, verbose_name=_(

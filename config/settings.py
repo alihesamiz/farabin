@@ -357,4 +357,4 @@ LOGGING["handlers"]["rotating_file"] = {
     "formatter": "verbose",
 }
 
-APP_REQUEST_TYPES = ['finance', 'management']
+APP_REQUEST_TYPES = ['finance']
