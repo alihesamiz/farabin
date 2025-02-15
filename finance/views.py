@@ -127,7 +127,7 @@ class TaxDeclarationViewSet(viewsets.ModelViewSet):
         """
         user_id = request.user.id
         ids = request.data.get('ids', [])
-        queryset = TaxDeclaration.objects.filter(
+        queryset = TaxDeclarationFile.objects.filter(
             id__in=ids, company__user=self.request.user
         )
 
@@ -142,7 +142,7 @@ class TaxDeclarationViewSet(viewsets.ModelViewSet):
         updated_count = queryset.update(is_sent=True)
 
         for instance in queryset:
-            post_save.send(sender=TaxDeclaration,
+            post_save.send(sender=TaxDeclarationFile,
                            instance=instance, created=False)
 
         logger.info("Marked tax declarations as sent", extra={

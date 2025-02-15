@@ -55,7 +55,7 @@ class TaxDeclarationFile(CompanyFileAbstract):
         # Check if the tax_file is being updated
         if self.pk:
             # Fetch the current instance
-            existing_instance = TaxDeclaration.objects.get(pk=self.pk)
+            existing_instance = TaxDeclarationFile.objects.get(pk=self.pk)
 
             # If the tax_file is being changed, delete the old file
             if existing_instance.tax_file != self.tax_file:
@@ -65,7 +65,7 @@ class TaxDeclarationFile(CompanyFileAbstract):
                     default_storage.delete(old_file_path)
 
         # Now save the new instance (either a new one or an update)
-        super(TaxDeclaration, self).save(*args, **kwargs)
+        super(TaxDeclarationFile, self).save(*args, **kwargs)
 
 
 def get_non_tax_file_upload_path(instance, filename):
@@ -100,13 +100,13 @@ class BalanceReportFile(CompanyFileAbstract):
         return f"{self.company.company_title} › {self.year}"
 
     class Meta:
-        verbose_name = _("Balance Report")
-        verbose_name_plural = _("Balance Reports")
+        verbose_name = _("Balance Report File")
+        verbose_name_plural = _("Balance Reports File")
         unique_together = [['company', 'month', 'year'],]
         
     def save(self, *args, **kwargs):
         if self.pk:  # Only check if updating an existing instance
-            existing_instance = BalanceReport.objects.get(pk=self.pk)
+            existing_instance = BalanceReportFile.objects.get(pk=self.pk)
 
             # Loop through each file field to check if it has been updated
             file_fields = [
@@ -128,7 +128,7 @@ class BalanceReportFile(CompanyFileAbstract):
                         default_storage.delete(old_file_path)
 
         # Save the new instance (either a new one or an update)
-        super(BalanceReport, self).save(*args, **kwargs)
+        super(BalanceReportFile, self).save(*args, **kwargs)
 
 
 class SoldProductFee(models.Model):
