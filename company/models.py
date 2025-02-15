@@ -1,17 +1,8 @@
 from uuid import uuid4
-import os
 
-
-from django.core.files.storage import default_storage
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.db import models
-
-
-from core.validators import pdf_file_validator
-from core.utils import GeneralUtils
-# Create your models here.
-
 
 User = get_user_model()
 

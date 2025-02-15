@@ -1,7 +1,11 @@
 import json
-from django.core.management.base import BaseCommand
-from company.models import TechField
 import os
+
+
+from django.core.management.base import BaseCommand
+
+
+from company.models import TechField
 
 
 class Command(BaseCommand):
