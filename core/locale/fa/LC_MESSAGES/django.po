@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-04 08:54+0330\n"
+"POT-Creation-Date: 2025-02-15 15:29+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,121 +18,133 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: core/admin.py:26
+#: core/admin.py:28
 msgid "Personal info"
 msgstr "اطلاعات شخصی"
 
-#: core/admin.py:27
+#: core/admin.py:29
 msgid "Permissions"
 msgstr "اجازه‌ها"
 
-#: core/admin.py:30
+#: core/admin.py:32
 msgid "Important dates"
 msgstr "تاریخ‌های مهم"
 
-#: core/admin.py:56 core/models.py:138
+#: core/admin.py:55 core/models.py:134
 msgid "Price"
 msgstr "قیمت"
 
-#: core/apps.py:9
+#: core/apps.py:8
 msgid "Core"
 msgstr "اصلی"
 
-#: core/models.py:16
+#: core/management/commands/createstaffuser.py:43
+msgid "Editor"
+msgstr "ویرایشگر"
+
+#: core/models.py:20
 msgid "Phone Number"
 msgstr "شماره تلفن"
 
-#: core/models.py:17
+#: core/models.py:21
 msgid "National Code"
 msgstr "شناسه ملی"
 
-#: core/models.py:25
+#: core/models.py:29
 msgid "groups"
 msgstr "گروه‌ها"
 
-#: core/models.py:28
+#: core/models.py:32
 msgid ""
 "The groups this user belongs to. A user will get all permissions granted to "
 "each of their groups."
 msgstr ""
 
-#: core/models.py:36
+#: core/models.py:40
 msgid "user permissions"
 msgstr "اجازه‌های کاربر"
 
-#: core/models.py:38
+#: core/models.py:42
 msgid "Specific permissions for this user."
 msgstr "اجازه‌های اختاصاصی برای این کاربر"
 
-#: core/models.py:70
+#: core/models.py:74
 msgid "User"
 msgstr "کاربر"
 
-#: core/models.py:71
+#: core/models.py:75
 msgid "Users"
 msgstr "کاربران"
 
-#: core/models.py:101 core/models.py:118
+#: core/models.py:95
+msgid "OTP"
+msgstr "کد"
+
+#: core/models.py:96
+msgid "OTPs"
+msgstr "کدها"
+
+#: core/models.py:100 core/models.py:117
 msgid "Name"
 msgstr "نام"
 
-#: core/models.py:104 core/models.py:124
+#: core/models.py:103 core/models.py:123
 msgid "Province"
 msgstr "استان"
 
-#: core/models.py:111
+#: core/models.py:110
 msgid "City"
 msgstr "شهر"
 
-#: core/models.py:112
+#: core/models.py:111
 msgid "Cities"
 msgstr "شهرها"
 
-#: core/models.py:125
+#: core/models.py:124
 msgid "Provinces"
 msgstr "استان‌ها"
 
-#: core/models.py:133
+#: core/models.py:129
 msgid "Service Name"
 msgstr "نام سرویس"
 
-#: core/models.py:135
+#: core/models.py:131
 msgid "Service Description"
 msgstr "شرح سرویس"
 
-#: core/models.py:141
+#: core/models.py:137
 msgid "Service Active"
 msgstr "فعالسازی"
 
-#: core/models.py:144
+#: core/models.py:140
 msgid "Service"
 msgstr "سرویس"
 
-#: core/models.py:145
+#: core/models.py:141
 msgid "Services"
 msgstr "سرویس‌ها"
 
-#: core/serializers.py:17 core/serializers.py:53
+#: core/serializers.py:21 core/serializers.py:57
 msgid "Phone number must contain only digits."
 msgstr "شماره تلفن تنها شامل اعداد است"
 
-#: core/serializers.py:23 core/serializers.py:59
+#: core/serializers.py:27 core/serializers.py:63
 msgid "Phone number must be 11 digits long."
 msgstr "شماره تلفن را به صورت صحیح وارد نمایید."
 
-#: core/serializers.py:32
+#: core/serializers.py:36
 msgid "National Code must contain only digits."
 msgstr "شناسه ملی تنها شامل اعداد است"
 
-#: core/serializers.py:38
+#: core/serializers.py:42
 msgid "National Code must be 11 digits long."
 msgstr "طول شناسه ملی ۱۱ رقم است"
 
-#: core/serializers.py:68
+#: core/serializers.py:72
 msgid "OTP code must contain only digits."
 msgstr "کد ورود تنها شامل اعداد است"
 
-#: core/serializers.py:74
+#: core/serializers.py:78
 msgid "OTP code must be 6 digits long."
 msgstr "طول کد ورود ۶ عدد است"
 
@@ -148,33 +160,3 @@ msgstr "شماره تلفن نامعتبر"
 #, python-brace-format
 msgid "File size should be less than {max_file_size}"
 msgstr "حجم فایل باید کمتر از {max_file_size} باشد."
-
-#~ msgid "Province Name"
-#~ msgstr "نام استان"
-
-#~ msgid "Defend"
-#~ msgstr "دفاع"
-
-#~ msgid "Organization Title"
-#~ msgstr "نام نهاد"
-
-#~ msgid "Enter a custom organization title if none of the choices apply."
-#~ msgstr "در صورتی که نام نهاد مورد نظر موجود نیست وارد نمایید."
-
-#~ msgid "Other Organization Title"
-#~ msgstr "سایر"
-
-#~ msgid "Organization"
-#~ msgstr "نهاد"
-
-#~ msgid "Organizations"
-#~ msgstr "نهاد‌ها"
-
-#~ msgid "Title"
-#~ msgstr "عنوان"
-
-#~ msgid "Institute"
-#~ msgstr "موسسه"
-
-#~ msgid "Institutes"
-#~ msgstr "موسسات"
