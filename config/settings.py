@@ -321,6 +321,8 @@ LOGGING = {
     },
 }
 
+
+# For creating the automatic logs based on the apps
 APPS_TO_LOG = PROJECT_APPS
 
 for app in APPS_TO_LOG:
@@ -357,4 +359,9 @@ LOGGING["handlers"]["rotating_file"] = {
     "formatter": "verbose",
 }
 
+# For automatically adding apps into the request type
 APP_REQUEST_TYPES = ['finance']
+
+
+# For the custom file path exceptions
+FILE_PATH_EXCEPTION_MODELS = ["OrganizationChartBase"]
