@@ -2,7 +2,7 @@ from django.contrib import admin
 
 
 from request.models import FinanceRequest
-# Register your models here.
+
 
 
 @admin.register(FinanceRequest)
