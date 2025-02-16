@@ -1,15 +1,23 @@
 from typing import List, Union
-
 from celery import shared_task
+import logging
 import cohere
+
+from django.core.exceptions import ObjectDoesNotExist
+from django.conf import settings
 
 from finance.models import AnalysisReport, FinancialData
 
 
-@shared_task(rate_limit='5/m') 
+logger = logging.getLogger("finance")
+
+
+@shared_task(rate_limit='5/m')
 def generate_analysis(company, chart_name, *args, **kwargs):
-    COHERE_KEY = "BMzAnLb3lWY2Pkj4UqIh3n3tUZt8fiTIw2v5AdVF"
-    generator = cohere.ClientV2(COHERE_KEY)  # Synchronous client for tasks
+    logger.info(
+        f"Starting analysis task for company {company}, chart {chart_name}")
+
+    generator = cohere.ClientV2(settings.FARABIN_COHERE_API_KEY)
 
     charts: dict[str, dict[Union[str, List[float]]]] = {
         "sale": {
@@ -117,41 +125,64 @@ def generate_analysis(company, chart_name, *args, **kwargs):
         },
     }
 
-    data = FinancialData.objects.prefetch_related("financial_asset").filter(
-        financial_asset__company__id=company).order_by("financial_asset__year", "financial_asset__month").all()
-    last_data = data.last()
-    for field in charts[chart_name]:
-        if field != "prompt":
-            for values in data:
-                charts[chart_name][field].append(float(getattr(values, field)))
-    formatted_prompt = "act as a professional financial management and analyst and" + \
-        charts[chart_name]["prompt"]
-    for field in charts[chart_name]:
-        if field != "prompt":
-            formatted_prompt += "\n\nData:\n" + (f"{field}: {charts[chart_name][field]}"
-                                                 )
+    try:
+        data = FinancialData.objects.prefetch_related("financial_asset").filter(
+            financial_asset__company__id=company).order_by("financial_asset__year", "financial_asset__month")
 
-    response = generator.chat(
-        model="command-r-plus",
-        messages=[
-            {
-                "role": "user",
-                "content": f"{formatted_prompt}"}],
-    ).message.content[0].text
-    
-    response = generator.chat(
-        model="command-r-plus",
-        messages=[
-            {
-                "role": "user",
-                "content": f"fix any issues in the following persian text. also check and fix if there are any grammaricall issues: {response}"}],
-    ).message.content[0].text
+        if not data.exists():
+            logger.warning(f"No financial data found for company {company}.")
+            return "No financial data available for analysis."
 
-    AnalysisReport.objects.update_or_create(
-        calculated_data=last_data,
-        chart_name=chart_name,
-        defaults={
-            "period": "y" if last_data.financial_asset.is_tax_record else "m",
-            "text": response,
-        }
-    )
+        last_data = data.last()
+        logger.info(f"Fetched {data.count()} records for company {company}.")
+
+
+        for field in charts[chart_name]:
+            if field != "prompt":
+                for values in data:
+                    charts[chart_name][field].append(float(getattr(values, field)))
+        formatted_prompt = "act as a professional financial management and analyst and" + \
+            charts[chart_name]["prompt"]
+        for field in charts[chart_name]:
+            if field != "prompt":
+                formatted_prompt += "\n\nData:\n" + (f"{field}: {charts[chart_name][field]}"
+                                                    )
+
+        logger.info(f"Sending request to Cohere API for company {company}, chart {chart_name}")
+
+        response = generator.chat(
+            model="command-r-plus",
+            messages=[
+                {
+                    "role": "user",
+                    "content": f"{formatted_prompt}"}],
+        ).message.content[0].text
+
+        response = generator.chat(
+            model="command-r-plus",
+            messages=[
+                {
+                    "role": "user",
+                    "content": f"fix any issues in the following persian text. also check and fix if there are any grammaricall issues: {response}"}],
+        ).message.content[0].text
+        
+        
+        logger.info(f"Received AI response for company {company}, chart {chart_name}")
+
+        AnalysisReport.objects.update_or_create(
+            calculated_data=last_data,
+            chart_name=chart_name,
+            defaults={
+                "period": "y" if last_data.financial_asset.is_tax_record else "m",
+                "text": response,
+            }
+        )
+        logger.info(f"Successfully saved analysis report for company {company}, chart {chart_name}")
+
+    except ObjectDoesNotExist as e:
+        logger.error(f"Error: Financial asset data not found for company {company}. Exception: {e}")
+        return "Error: Financial asset data not found."
+
+    except Exception as e:
+        logger.error(f"Unexpected error in analysis task for company {company}, chart {chart_name}: {e}")
+        return "Error: An unexpected issue occurred during analysis."
