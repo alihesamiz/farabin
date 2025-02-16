@@ -2,8 +2,6 @@ from django.contrib import admin
 
 from management.models import HumanResource, PersonelInformation, OrganizationChartBase
 
-# Register your models here.
-
 
 @admin.register(PersonelInformation)
 class PersonelInformationAdmin(admin.ModelAdmin):

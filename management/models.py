@@ -2,19 +2,19 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
-from core import (utils, validators)
-# Create your models here.
+from core.validators import excel_file_validator
+from core.utils import GeneralUtils
 
 
 def get_hr_file_upload_path(instance, filename):
-    path = utils.GeneralUtils(
+    path = GeneralUtils(
         path="hr_files", fields=['']).rename_folder(instance, filename)
     return path
 
 
 class HumanResource(models.Model):
     excel_file = models.FileField(verbose_name=_(
-        "Excel File"), blank=False, null=False, upload_to=get_hr_file_upload_path, validators=[validators.excel_file_validator])
+        "Excel File"), blank=False, null=False, upload_to=get_hr_file_upload_path, validators=[excel_file_validator])
 
     company = models.ForeignKey('company.CompanyProfile', verbose_name=_(
         "Company"), null=False, blank=False, on_delete=models.CASCADE, related_name="hrfiles")
@@ -59,7 +59,7 @@ class PersonelInformation(models.Model):
 
 
 def get_chart_excel_file_upload_path(instance, filename):
-    path = utils.GeneralUtils(
+    path = GeneralUtils(
         path="chart_excel_files", fields=['field']).rename_folder(instance, filename)
     return path
 
@@ -69,7 +69,7 @@ class OrganizationChartBase(models.Model):
     field = models.CharField(verbose_name=_("Field"), max_length=150, null=False, blank=False)
     
     position_excel = models.FileField(verbose_name=_("Position Excel"), max_length=150, null=False, blank=False,
-                                      upload_to=get_chart_excel_file_upload_path, validators=[validators.excel_file_validator])
+                                      upload_to=get_chart_excel_file_upload_path, validators=[excel_file_validator])
 
     def __str__(self):
         return f"{self.field.title()}"
