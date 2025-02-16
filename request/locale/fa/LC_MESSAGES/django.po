@@ -1,0 +1,86 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-02-16 12:29+0330\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+#: request/apps.py:7
+msgid "Request"
+msgstr "درخواست"
+
+#: request/models.py:14
+msgid "New"
+msgstr "جدید"
+
+#: request/models.py:15
+msgid "Pending"
+msgstr "در حال انتظار"
+
+#: request/models.py:16
+msgid "Accepted"
+msgstr "پذیرفته شده"
+
+#: request/models.py:17
+msgid "Rejected"
+msgstr "رد شده"
+
+#: request/models.py:21
+msgid "Company"
+msgstr "شرکت"
+
+#: request/models.py:24
+msgid "Subject"
+msgstr "عنوان"
+
+#: request/models.py:27
+msgid "Status"
+msgstr "وضعیت"
+
+#: request/models.py:30
+msgid "Created At"
+msgstr "ایجاد شده در"
+
+#: request/models.py:33
+msgid "Updated At"
+msgstr "بروزرسانی شده در"
+
+#: request/models.py:36
+msgid "Service"
+msgstr "سرویس"
+
+#: request/models.py:40
+msgid "BaseRequest"
+msgstr "درخواست پایه"
+
+#: request/models.py:41
+msgid "BaseRequests"
+msgstr "درخواست‌های پایه"
+
+#: request/models.py:47
+msgid "Tax Record"
+msgstr "رکورد اظهارنامه"
+
+#: request/models.py:50
+msgid "Balance Record"
+msgstr "رکورد ترازنامه"
+
+#: request/models.py:56
+msgid "Finance Request"
+msgstr "درخواست مالی"
+
+#: request/models.py:57
+msgid "Finance Requests"
+msgstr "درخواست‌های مالی"

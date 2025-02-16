@@ -2,7 +2,6 @@ import importlib
 import logging
 
 
-from django.shortcuts import render
 from django.conf import settings
 
 from rest_framework.permissions import IsAuthenticated
@@ -10,10 +9,8 @@ from rest_framework.exceptions import NotFound
 from rest_framework import viewsets
 
 
-from request.serializers import FinanceRequestSerializer
 from request.models import FinanceRequest
 
-# Create your views here.
 
 logger = logging.getLogger("request")
 
@@ -28,12 +25,15 @@ class RequestViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         company = self.request.user.company
-
+        logger.info(f"Fetching FinanceRequests for company: {company.id}, user: {self.request.user.id}")
         return FinanceRequest.objects.filter(company=company).order_by('-updated_at')
 
     def get_serializer_class(self):
         request_type = self.request.query_params.get('type')
+        logger.info(f"Received request for type: {request_type} by user: {self.request.user.id}")
+
         if request_type in self.REQUEST_TYPES:
+            logger.debug(f"Using serializer for request type: {request_type}")
             return self.REQUEST_TYPES[request_type]
         else:
             logger.warning(
