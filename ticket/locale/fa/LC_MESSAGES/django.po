@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-04 08:54+0330\n"
+"POT-Creation-Date: 2025-02-16 14:34+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,146 +18,140 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: ticket/admin.py:14 ticket/admin.py:18
+#: ticket/admin.py:19 ticket/admin.py:23
 msgid "Members count"
 msgstr "تعداد اعضا"
 
-#: ticket/admin.py:35 ticket/models.py:96 ticket/models.py:123
-#: ticket/models.py:141
+#: ticket/admin.py:40 ticket/models.py:88 ticket/models.py:115
+#: ticket/models.py:133
 msgid "Department"
 msgstr "دپارتمان"
 
-#: ticket/admin.py:36 ticket/models.py:124
+#: ticket/admin.py:41 ticket/models.py:116
 msgid "Departments"
 msgstr "دپارتمان‌ها"
 
-#: ticket/admin.py:57
+#: ticket/admin.py:62
 msgid "Phone Number"
 msgstr "شماره تلفن"
 
-#: ticket/admin.py:87
+#: ticket/admin.py:92
 msgid "Company Title"
 msgstr "نام شرکت"
 
-#: ticket/apps.py:7 ticket/models.py:18 ticket/models.py:38
-#: ticket/models.py:111
+#: ticket/apps.py:7 ticket/models.py:16 ticket/models.py:36
+#: ticket/models.py:103
 msgid "Ticket"
 msgstr "تیکت"
 
-#: ticket/models.py:20 ticket/models.py:147
+#: ticket/models.py:18 ticket/models.py:139
 msgid "Agent"
 msgstr "کارمند"
 
-#: ticket/models.py:22 ticket/models.py:43 ticket/models.py:88
+#: ticket/models.py:20 ticket/models.py:38 ticket/models.py:83
 msgid "Comment"
 msgstr "پیام"
 
-#: ticket/models.py:25 ticket/models.py:46 ticket/models.py:102
+#: ticket/models.py:23 ticket/models.py:41 ticket/models.py:94
 msgid "Created At"
 msgstr "ایجاد شده در"
 
-#: ticket/models.py:28 ticket/models.py:49 ticket/models.py:104
+#: ticket/models.py:26 ticket/models.py:44 ticket/models.py:96
 msgid "Updated At"
 msgstr "بروزرسانی شده در"
 
-#: ticket/models.py:31
+#: ticket/models.py:29
 msgid "Ticket Answer"
 msgstr "پاسخ تیکت"
 
-#: ticket/models.py:32
+#: ticket/models.py:30
 msgid "Ticket Answers"
 msgstr "پاسخ‌های تیکت"
 
-#: ticket/models.py:52
+#: ticket/models.py:47
 msgid "Ticket Comment"
 msgstr "پیام تیکت"
 
-#: ticket/models.py:53
+#: ticket/models.py:48
 msgid "Ticket Comments"
 msgstr "پیام تیکت"
 
-#: ticket/models.py:68
+#: ticket/models.py:63
 msgid "New"
 msgstr "جدید"
 
-#: ticket/models.py:69
+#: ticket/models.py:64
 msgid "In Progress"
 msgstr "در حال بررسی"
 
-#: ticket/models.py:70
+#: ticket/models.py:65
 msgid "Resolved"
 msgstr "پاسخ داده‌شده"
 
-#: ticket/models.py:71
+#: ticket/models.py:66
 msgid "Closed"
 msgstr "بسته شده"
 
-#: ticket/models.py:79
+#: ticket/models.py:74
 msgid "Low"
 msgstr "کم"
 
-#: ticket/models.py:80
+#: ticket/models.py:75
 msgid "Medium"
 msgstr "متوسط"
 
-#: ticket/models.py:81
+#: ticket/models.py:76
 msgid "High"
 msgstr "زیاد"
 
-#: ticket/models.py:84
+#: ticket/models.py:79
 msgid "Issuer"
 msgstr "سازنده"
 
-#: ticket/models.py:86
+#: ticket/models.py:81
 msgid "Subject"
 msgstr "عنوان"
 
-#: ticket/models.py:94
+#: ticket/models.py:86
 msgid "Service"
 msgstr "سرویس"
 
-#: ticket/models.py:98
+#: ticket/models.py:90
 msgid "Status"
 msgstr "وضعیت"
 
-#: ticket/models.py:100
+#: ticket/models.py:92
 msgid "Priority"
 msgstr "اولویت"
 
-#: ticket/models.py:112
+#: ticket/models.py:104
 msgid "Tickets"
 msgstr "تیکت‌ها"
 
-#: ticket/models.py:116
+#: ticket/models.py:108
 msgid "Name"
 msgstr "نام"
 
-#: ticket/models.py:117
+#: ticket/models.py:109
 msgid "Description"
 msgstr "توضیحات"
 
-#: ticket/models.py:130
+#: ticket/models.py:122
 msgid "First Name"
 msgstr "نام"
 
-#: ticket/models.py:133
+#: ticket/models.py:125
 msgid "Last Name"
 msgstr "نام خانوادگی"
 
-#: ticket/models.py:135
+#: ticket/models.py:127
 msgid "Email"
 msgstr "ایمیل"
 
-#: ticket/models.py:138
+#: ticket/models.py:130
 msgid "User"
 msgstr "کاربر"
 
-#: ticket/models.py:148
+#: ticket/models.py:140
 msgid "Agents"
 msgstr "کارمندان"
-
-#~ msgid "Answer"
-#~ msgstr "پاسخ"
-
-#~ msgid "Attached File"
-#~ msgstr "فایل ضمیمه"
