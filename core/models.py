@@ -1,14 +1,17 @@
-from django.contrib.auth.models import AbstractBaseUser as BaseUser, PermissionsMixin
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.auth.models import Group, Permission
+from datetime import timedelta
+import random
+
+
+from django.contrib.auth.models import AbstractBaseUser as BaseUser, PermissionsMixin,Group
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from django.db import models
-from datetime import timedelta
-import random
-from .validators import phone_number_validator
-from .managers import UserManager
-# Create your models here.
+
+
+from core.validators import phone_number_validator
+from core.managers import UserManager
+
+
 
 
 class User(BaseUser, PermissionsMixin):
@@ -19,7 +22,7 @@ class User(BaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
 
-    # Added fields for groups and permissions
+
     groups = models.ManyToManyField(
         Group,
         verbose_name=_('groups'),
@@ -49,17 +52,17 @@ class User(BaseUser, PermissionsMixin):
         return f"{self.phone_number}"
 
     def has_perm(self, perm, obj=None):
-        # Check if user is superuser
+
         if self.is_superuser:
             return True
-        # Check if user has specific permission
+
         return self.user_permissions.filter(codename=perm).exists() or super().has_perm(perm, obj)
 
     def has_module_perms(self, app_label):
-        # Check if user is superuser
+
         if self.is_superuser:
             return True
-        # Check if user has permissions in a specific app
+
         return self.user_permissions.filter(content_type__app_label=app_label).exists() or super().has_module_perms(app_label)
 
     @property
@@ -71,10 +74,6 @@ class User(BaseUser, PermissionsMixin):
         verbose_name_plural = _("Users")
 
 
-####################################
-"""OTP Model"""
-
-
 class OTP(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='otps')
@@ -82,7 +81,7 @@ class OTP(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def is_valid(self):
-        # OTP is valid for 10 minutes
+        
         return self.created_at >= timezone.now() - timedelta(minutes=3)
 
     def generate_otp(self):
@@ -91,10 +90,9 @@ class OTP(models.Model):
     def __str__(self):
         return f"OTP for {self.user.phone_number} - Code: {self.otp_code}"
 
-
-####################################
-"""City and province Models"""
-
+    class Meta:
+        verbose_name = _("OTP")
+        verbose_name_plural = _("OTPs")
 
 class City(models.Model):
 
@@ -124,9 +122,6 @@ class Province(models.Model):
         verbose_name = _("Province")
         verbose_name_plural = _("Provinces")
 
-
-####################################
-"""Services model"""
 
 class Service(models.Model):
 

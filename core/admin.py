@@ -1,26 +1,28 @@
-from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
-from .models import Service,OTP
+from django.contrib import admin
 
-# Register your models here.
+
+from core.models import Service, OTP
+
 
 User = get_user_model()
 
-admin.site.register(OTP)
+
+@admin.register(OTP)
+class OtpAdmin(admin.ModelAdmin):
+    list_display = ['user', 'otp_code', 'created_at']
+
+
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     list_display = ('phone_number', 'national_code',
                     'is_active', 'is_staff', 'is_superuser')
 
-    # Define the fields to search for in the search bar
     search_fields = ('phone_number', 'national_code')
 
-    # Define the ordering of the users
     ordering = ('phone_number',)
 
-    # Define which fields to show on the 'add' or 'change' pages
     fieldsets = (
         (None, {'fields': ('phone_number', 'password')}),
         (_('Personal info'), {'fields': ('national_code',)}),
@@ -30,7 +32,6 @@ class UserAdmin(admin.ModelAdmin):
         (_('Important dates'), {'fields': ('last_login',)}),
     )
 
-    # Define the fields to display when creating a new user
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
@@ -38,14 +39,12 @@ class UserAdmin(admin.ModelAdmin):
         }),
     )
 
-    # Fields that are read-only in the admin interface
     readonly_fields = ('last_login', 'password')
 
-    # Remove filter_horizontal since 'groups' and 'user_permissions' do not exist
     filter_horizontal = ('groups', 'user_permissions')
 
-    # Remove 'groups' from list_filter
     list_filter = ('is_active', 'is_staff', 'is_superuser')
+
 
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
