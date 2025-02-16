@@ -1,8 +1,9 @@
 from rest_framework import serializers
-from rest_framework import serializers
+
+from ticket.models import Ticket, Department, TicketAnswer, TicketComment
 
 from core.models import Service
-from .models import Ticket, Agent, Department, TicketAnswer, TicketComment
+
 
 
 class TicketCommentCreateSerializer(serializers.ModelSerializer):
@@ -11,9 +12,9 @@ class TicketCommentCreateSerializer(serializers.ModelSerializer):
         fields = ["comment"]
 
     def create(self, validated_data):
-        # 'ticket' and 'answer' are provided via the context
+
         ticket = self.context.get('ticket')
-        # Set ticket directly in validated_data
+
         validated_data['ticket'] = ticket
         return TicketComment.objects.create(**validated_data)
 
@@ -44,7 +45,7 @@ class TicketAnswerSerializer(serializers.ModelSerializer):
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
-        fields = ['name']  # Or any other relevant fields
+        fields = ['name']
 
 
 class DepartmentSerializer(serializers.ModelSerializer):
@@ -52,18 +53,6 @@ class DepartmentSerializer(serializers.ModelSerializer):
         model = Department
         fields = ['name']
 
-
-# class TicketDetailSerializer(serializers.ModelSerializer):
-#     service = ServiceSerializer()
-#     department = DepartmentSerializer()
-#     answers = TicketAnswerSerializer(many=True, read_only=True)
-#     comments = TicketCommentSerializer(many=True, read_only=True)
-
-#     class Meta:
-#         model = Ticket
-#         fields = ["id", "subject", "comment", "service",
-#                   "department", "status", "priority", "answers", "comments", "updated_at"]#, "attached_file"]
-#         read_only_fields = ["answers", "comments"]
 
 
 class TicketListSerializer(serializers.ModelSerializer):
@@ -83,31 +72,28 @@ class TicketCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
         fields = ["subject", "comment", "service",
-                  "department", "status", "priority"]#, "attached_file"]
-
+                  "department", "status", "priority"]
+        
     def create(self, validated_data):
         service_data = validated_data.pop('service')
         department_data = validated_data.pop('department')
 
-        # Get or create the related service and department
+        
         service = Service.objects.get_or_create(name=service_data["name"])[0]
         department = Department.objects.get_or_create(
             name=department_data["name"])[0]
 
-        # Create the ticket with related fields
+        
         ticket = Ticket.objects.create(
             service=service, department=department, **validated_data)
         return ticket
 
 
 
-
-
-
 class TicketChatSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     type = serializers.CharField(read_only=True)
-    agent = serializers.IntegerField(required=False)  # Only for answers
+    agent = serializers.IntegerField(required=False) 
     comment = serializers.CharField()
     created_at = serializers.DateTimeField()
     updated_at = serializers.DateTimeField()
@@ -136,20 +122,10 @@ class TicketChatSerializer(serializers.Serializer):
 class TicketDetailSerializer(serializers.ModelSerializer):
     service = ServiceSerializer()
     department = DepartmentSerializer()
-    # chats = serializers.SerializerMethodField()
+    
 
     class Meta:
         model = Ticket
         fields = [
             "id", "subject", "comment", "service", "department", "status",
-            "priority", "updated_at", "created_at"]#"chats",]
-
-    # def get_chats(self, obj):
-    #     # Combine answers and comments
-    #     answers = obj.answers.all()
-    #     comments = obj.comments.all()
-    #     combined = sorted(
-    #         list(answers) + list(comments), key=lambda x: x.created_at, reverse=False
-    #     )
-    #     serializer = TicketChatSerializer(combined, many=True)
-    #     return serializer.data
+            "priority", "updated_at", "created_at"]
