@@ -228,17 +228,16 @@ class BalanceReportViewSet(viewsets.ModelViewSet):
                 ]
 
                 folder_path = os.path.dirname(file_paths[0])
-                # Delete each file if it exists
+                
                 for file_path in file_paths:
 
                     if file_path and default_storage.exists(file_path):
 
                         default_storage.delete(file_path)
 
-                # If the folder is empty, delete the folder
                 if folder_path and not os.listdir(folder_path):
                     os.rmdir(folder_path)
-                # Delete the instance
+                
                 instance.delete()
                 logger.info(
                     f"Balance report {instance.id} and all associated files deleted by user {self.request.user.id}")
@@ -372,7 +371,6 @@ class FinanceAnalysisViewSet(viewsets.ModelViewSet):
                 .filter(
                 calculated_data__financial_asset__company=company,
                 calculated_data__is_published=True
-                # Order by date (latest first)
             ).order_by('calculated_data__financial_asset__year', 'calculated_data__financial_asset__month', '-created_at')
             cache.set(data_cache_key, analysis)
 
@@ -404,12 +402,12 @@ class FinanceAnalysisViewSet(viewsets.ModelViewSet):
         yearly_serializer_data = {}
 
         for topic, item in monthly_topic_data.items():
-            if topic in self.CHART_SERIALIZER_MAP:  # Ensure the chart is one of the valid topics
+            if topic in self.CHART_SERIALIZER_MAP:
                 monthly_serializer_data[topic] = AnalysisReportListSerializer(
                     item).data
 
         for topic, item in yearly_topic_data.items():
-            if topic in self.CHART_SERIALIZER_MAP:  # Ensure the chart is one of the valid topics
+            if topic in self.CHART_SERIALIZER_MAP:
                 yearly_serializer_data[topic] = AnalysisReportListSerializer(
                     item).data
 
@@ -522,8 +520,9 @@ class CompanyFinancialDataView(View):
         if cached_data:
             financial_data = cached_data
 
-        financial_data = FinancialData.objects.select_related("financial_asset").filter(
-            financial_asset__company=company).order_by('financial_asset__year', 'financial_asset__month')
+        else:
+            financial_data = FinancialData.objects.select_related("financial_asset").filter(
+                financial_asset__company=company).order_by('financial_asset__year', 'financial_asset__month')
 
         cache.set(cache_key, financial_data)
 
@@ -663,5 +662,5 @@ class CompanyFinancialDataView(View):
             'construction_overhead': construction_overhead,
             'consuming_material': consuming_material,
             'production_total_price': production_total_price,
-            **admin_context,  # Include admin context for breadcrumbs
+            **admin_context,
         })

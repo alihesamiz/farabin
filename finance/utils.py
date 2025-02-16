@@ -1,7 +1,68 @@
-import decimal
-import numpy as np
-from django.utils.translation import gettext_lazy as _
+from typing import List
 from math import log2
+import logging
+
+from django.utils.translation import gettext_lazy as _
+
+
+from finance.functions import (
+    current_asset_function,
+    non_current_asset_function,
+    total_asset_function,
+    current_debt_function,
+    non_current_debt_function,
+    total_debt_function,
+    ownership_right_total_function,
+    inventory_function,
+    net_sale_function,
+    net_profit_function,
+    accumulated_profit_function,
+    operational_profit_function,
+    gross_profit_function,
+    proceed_profit_function,
+    salary_fee_function,
+    operational_income_expense_function,
+    marketing_fee_function,
+    consuming_material_function,
+    construction_overhead_function,
+    production_total_price_function,
+    sold_product_total_fee_function,
+    direct_wage_function,
+    usability_function,
+    efficiency_function,
+    roa_function,
+    roab_function,
+    roe_function,
+    gross_profit_margin_ratio_function,
+    net_profit_margin_ratio_function,
+    debt_ratio_function,
+    capital_ratio_function,
+    total_debt_to_proceed_profit_ratio_function,
+    current_debt_to_proceed_profit_ratio_function,
+    properitary_ratio_function,
+    equity_per_total_debt_ratio_function,
+    current_ratio_function,
+    instant_ratio_function,
+    total_asset_turnover_ratio_function,
+    salary_production_fee_function,
+    capital_to_asset_ratio_function,
+    accumulated_profit_to_asset_ratio_function,
+    before_tax_profit_to_asset_ratio_function,
+    sale_to_asset_ratio_function,
+    equity_per_total_non_current_asset_ratio_function,
+    altman_bankruptcy_ratio_function,
+    equity_to_debt_ratio_function,
+    total_sum_equity_debt_function,
+    stock_turn_over_ratio_function,
+    trade_payable_function,
+    advance_function,
+    reserves_function,
+    long_term_payable_function,
+    employee_termination_benefit_reserve_function,
+)
+
+
+logger = logging.getLogger("finance")
 
 
 def get_life_cycle(company):
@@ -36,38 +97,55 @@ def get_life_cycle(company):
 
 class FinancialCalculations:
     def __init__(self, financial_assets):
+        logger.info("Initializing FinancialCalculations with %d financial assets", len(
+            financial_assets))
+
         self.financial_assets = financial_assets
         self.length = len(self.financial_assets)
-        # non-calculations
         self.year = []
         self.month = []
-        self.current_asset = []
-        self.non_current_asset = []
-        self.total_asset = []
-        self.total_debt = []
-        self.current_debt = []
-        self.non_current_debt = []
-        self.ownership_right_total = []
-        self.inventory_average = []
-        self.net_sale = []
-        self.operational_profit = []
-        self.net_profit = []
-        self.proceed_profit = []
-        self.salary_fee = []
-        self.gross_profit = []
-        self.construction_overhead = []
-        self.consuming_material = []
-        self.production_total_price = []
-        self.direct_wage = []
-        self.accumulated_profit = []
-        #saddfsf
-        self.operational_income_expense=[]
-        self.marketing_fee=[]
-#sdfsdf
+
+        self.balance_report_values: dict[str, List] = {
+            "current_asset": [],
+            "non_current_asset": [],
+            "total_asset": [],
+            "current_debt": [],
+            "non_current_debt": [],
+            "total_debt": [],
+            "inventory": [],
+            "net_sale": [],
+            "net_profit": [],
+            "accumulated_profit": [],
+            "ownership_right_total": [],
+
+
+            "trade_payable": [],
+            "advance": [],
+            "reserves": [],
+            "long_term_payable": [],
+            "employee_termination_benefit_reserve": []
+        }
+
+        self.profit_loss_statement_values: dict[str, List] = {
+            "operational_profit": [],
+            "gross_profit": [],
+            "proceed_profit": [],
+            "salary_fee": [],
+            "operational_income_expense": [],
+            "marketing_fee": [],
+        }
+
+        self.sold_product_values: dict[str, List] = {
+            "consuming_material": [],
+            "construction_overhead": [],
+            "production_total_price": [],
+            "direct_wage": [],
+            "sold_product_total_fee": [],
+        }
+
         self.gross_profit_margin_ratio = []
         self.net_profit_margin_ratio = []
         self.total_sum_equity_debt = []
-        self.sold_product_total_fee = []
         self.salary_production_fee = []
         self.equity_per_total_debt_ratio = []
         self.equity_per_total_non_current_asset_ratio = []
@@ -96,555 +174,155 @@ class FinancialCalculations:
 
     def process_assets(self):
         try:
+
+            logger.info("Starting to process %d financial assets", self.length)
+
             for i in range(self.length):
-                account_turnover = self.financial_assets[i].account_turnovers.first(
-                )
-                balance_report = self.financial_assets[i].balance_reports.first(
-                )
-                sold_product_fee = self.financial_assets[i].sold_product_fees.first(
-                )
-                profit_loss_statement = self.financial_assets[i].profit_loss_statements.first(
-                )
+                logger.debug("Processing financial asset %d/%d",
+                             i + 1, self.length)
+                asset = self.financial_assets[i]
 
-                self.current_asset_function(balance_report)
-                self.non_current_asset_function(balance_report)
-                self.total_asset_function(balance_report)
-                self.current_debt_function(balance_report)
-                self.non_current_debt_function(balance_report)
-                self.total_debt_function(balance_report)
-                self.ownership_right_total_function(balance_report)
-                self.inventory_average_function(balance_report)
-                self.net_sale_function(balance_report)
-                self.net_profit_function(balance_report)
-                self.accumulated_profit_function(balance_report)
+                account_turnover = asset.account_turnovers.first()
+                balance_report = asset.balance_reports.first()
+                sold_product_fee = asset.sold_product_fees.first()
+                profit_loss_statement = asset.profit_loss_statements.first()
 
-                self.operational_profit_function(profit_loss_statement)
-                self.gross_profit_function(profit_loss_statement)
-                self.proceed_profit_function(profit_loss_statement)
-                self.salary_fee_function(profit_loss_statement)
-                self.operational_income_expense_function(profit_loss_statement)
-                self.marketing_fee_function(profit_loss_statement)
+                if not balance_report or not profit_loss_statement or not sold_product_fee:
+                    logger.warning("Missing data for asset %d", i + 1)
 
-                self.consuming_material_function(sold_product_fee)
-                self.construction_overhead_function(sold_product_fee)
-                self.production_total_price_function(sold_product_fee)
-                self.sold_product_total_fee_function(sold_product_fee)
-                self.direct_wage_function(sold_product_fee)
+                self.process_balance_report(balance_report)
 
-            self.usability_function()
-            self.efficiency_function()
-            self.roa_function()
-            self.roab_function()
-            self.roe_function()
+                self.process_profit_loss_statement(profit_loss_statement)
 
-            self.gross_profit_margin_ratio_function()
-            self.net_profit_margin_ratio_function()
-            self.debt_ratio_function()
-            self.capital_ratio_function()
-            self.total_debt_to_proceed_profit_ratio_function()
-            self.current_debt_to_proceed_profit_ratio_function()
-            self.properitary_ratio_function()
-            self.equity_per_total_debt_ratio_function()
-            self.current_ratio_function()
-            self.instant_ratio_function()
-            self.total_asset_turnover_ratio_function()
-            self.salary_production_fee_function()
-            self.capital_to_asset_ratio_function()
-            self.accumulated_profit_to_asset_ratio_function()
-            self.before_tax_profit_to_asset_ratio_function()
-            self.sale_to_asset_ratio_function()
-            self.equity_per_total_non_current_asset_ratio_function()
-            self.altman_bankruptcy_ratio_function()
-            self.equity_to_debt_ratio_function()
-            self.total_sum_equity_debt_function()
-            self.stock_turn_over_ratio_function()
+                self.process_sold_product_fee(sold_product_fee)
+
+            self.process_ratios()
+            logger.info("Finished processing financial assets successfully")
 
         except Exception as e:
-            print(f"Error occurred while processing assets: {e}")
+            logger.error(
+                "Error occurred while processing assets: %s", e, exc_info=True)
             return {'status': 'failed',
                     'data': {}}
 
-    #########################
-    # Assets Functions      #
-    #########################
-    def current_asset_function(self, balance_report):
+    def process_balance_report(self, balance_report):
         """
-        Current Asset calculation
+        start balance report processing functions
         """
-        if balance_report:
+        logger.debug("Processing balance report data")
 
-            self.current_asset.append(balance_report.total_current_asset)
-        else:
-            self.current_asset.append(0)  # or some other default value
+        current_asset_function(self, balance_report)
+        non_current_asset_function(self, balance_report)
+        total_asset_function(self, balance_report)
+        current_debt_function(self, balance_report)
+        non_current_debt_function(self, balance_report)
+        total_debt_function(self, balance_report)
+        ownership_right_total_function(self, balance_report)
+        inventory_function(self, balance_report)
+        net_sale_function(self, balance_report)
+        net_profit_function(self, balance_report)
+        accumulated_profit_function(self, balance_report)
+        trade_payable_function(self, balance_report)
+        advance_function(self, balance_report)
+        reserves_function(self, balance_report)
+        long_term_payable_function(self, balance_report)
+        employee_termination_benefit_reserve_function(self, balance_report)
 
-    def non_current_asset_function(self, balance_report):
+    def process_profit_loss_statement(self, profit_loss_statement):
         """
-        Non-Current Asset Mean calculation
+        start profit loss statement processing functions
         """
-        if balance_report:
-            self.non_current_asset.append(
-                balance_report.total_non_current_asset)
-        else:
-            self.non_current_asset.append(0)
+        logger.debug("Processing profit and loss statement data")
 
-    def total_asset_function(self, balance_report):
-        """
-        Total Asset calculation
-        """
-        if balance_report:
-            self.total_asset.append(
-                balance_report.total_non_current_asset + balance_report.total_current_asset)
-        else:
-            self.total_asset.append(0)
+        operational_profit_function(self, profit_loss_statement)
+        gross_profit_function(self, profit_loss_statement)
+        proceed_profit_function(self, profit_loss_statement)
+        salary_fee_function(self, profit_loss_statement)
+        operational_income_expense_function(self, profit_loss_statement)
+        marketing_fee_function(self, profit_loss_statement)
 
-    #########################
-    # Debt Functions        #
-    #########################
-    def current_debt_function(self, balance_report):
+    def process_sold_product_fee(self, sold_product_fee):
         """
-        Current debt calculation
+        start sold product fee processing functions
         """
-        if balance_report:
-            self.current_debt.append(
-                balance_report.total_current_debt)
-        else:
-            self.current_debt.append(0)
+        logger.debug("Processing sold product fee data")
 
-    def non_current_debt_function(self, balance_report):
-        """
-        Non Current debt calculation
-        """
-        if balance_report:
-            self.non_current_debt.append(
-                balance_report.total_non_current_debt)
-        else:
-            self.non_current_debt.append(0)
+        consuming_material_function(self, sold_product_fee)
+        construction_overhead_function(self, sold_product_fee)
+        production_total_price_function(self, sold_product_fee)
+        sold_product_total_fee_function(self, sold_product_fee)
+        direct_wage_function(self, sold_product_fee)
 
-    def total_debt_function(self, balance_report):
-        """
-        Total debt calculation
-        """
-        if balance_report:
-            self.total_debt.append(
-                balance_report.total_non_current_debt + balance_report.total_current_debt)
-        else:
-            self.total_debt.append(0)
+    def process_ratios(self):
 
-    def inventory_average_function(self, balance_report):
-        """
-        Inventory calculation
-        """
-        if balance_report:
-            average = (balance_report.first_period_inventory+balance_report.end_period_inventory)/2
-            self.inventory_average.append(average)
-        else:
-            self.inventory_average.append(0)
+        logger.debug("Processing financial ratios")
 
-    def net_sale_function(self, balance_report):
-        """
-        Net Sale calculation
-        """
-        if balance_report:
-            self.net_sale.append(balance_report.net_sale)
-        else:
-            self.net_sale.append(0)
+        usability_function(self)
+        efficiency_function(self)
+        roa_function(self)
+        roab_function(self)
+        roe_function(self)
 
-    def net_profit_function(self, balance_report):
-        """
-        Net Profit calculation
-        """
-        if balance_report:
-            self.net_profit.append(balance_report.net_profit)
-        else:
-            self.net_profit.append(0)
+        gross_profit_margin_ratio_function(self)
+        net_profit_margin_ratio_function(self)
+        debt_ratio_function(self)
+        capital_ratio_function(self)
+        total_debt_to_proceed_profit_ratio_function(self)
+        current_debt_to_proceed_profit_ratio_function(self)
+        properitary_ratio_function(self)
+        equity_per_total_debt_ratio_function(self)
+        current_ratio_function(self)
+        instant_ratio_function(self)
+        total_asset_turnover_ratio_function(self)
+        salary_production_fee_function(self)
+        capital_to_asset_ratio_function(self)
+        accumulated_profit_to_asset_ratio_function(self)
+        before_tax_profit_to_asset_ratio_function(self)
+        sale_to_asset_ratio_function(self)
+        equity_per_total_non_current_asset_ratio_function(self)
+        altman_bankruptcy_ratio_function(self)
+        equity_to_debt_ratio_function(self)
+        total_sum_equity_debt_function(self)
+        stock_turn_over_ratio_function(self)
 
-    def consuming_material_function(self, sold_product_fee):
-        """
-        Consuming Material calculation
-        """
-        if sold_product_fee:
-            self.consuming_material.append(sold_product_fee.consuming_material)
-        else:
-            self.consuming_material.append(0)
-
-    def operational_profit_function(self, profit_loss_statement):
-        """
-        Operational Profit calculation
-        """
-        if profit_loss_statement:
-            self.operational_profit.append(
-                profit_loss_statement.operational_profit)
-        else:
-            self.operational_profit.append(0)
-
-    def gross_profit_function(self, profit_loss_statement):
-        """
-        Gross Profit Mean calculation
-        """
-        if profit_loss_statement:
-            self.gross_profit.append(profit_loss_statement.gross_profit)
-        else:
-            self.gross_profit.append(0)
-
-    def proceed_profit_function(self, profit_loss_statement):
-        """
-        Proceed Profit calculation
-        """
-        if profit_loss_statement:
-            self.proceed_profit.append(profit_loss_statement.proceed_profit)
-        else:
-            self.proceed_profit.append(0)
-
-    def salary_fee_function(self, profit_loss_statement):
-        """Salary Fee calculation
-        """
-        if profit_loss_statement:
-            self.salary_fee.append(profit_loss_statement.salary_fee)
-        else:
-            self.salary_fee.append(0)
-            
-    def operational_income_expense_function(self,profit_loss_statement):
-        """Operational Income Expense calculation"""
-        if profit_loss_statement:
-            self.operational_income_expense.append(
-                profit_loss_statement.operational_income_expense)
-        else:
-            self.operational_income_expense.append(0)
-            
-    def marketing_fee_function(self,profit_loss_statement):
-        """Marketing Fee calculation"""
-        if profit_loss_statement:
-            self.marketing_fee.append(
-                profit_loss_statement.marketing_fee)
-        else:
-            self.marketing_fee.append(0)
-
-    def construction_overhead_function(self, sold_product_fee):
-        """
-        Construction Overhead calculation
-        """
-        if sold_product_fee:
-            self.construction_overhead.append(
-                sold_product_fee.construction_overhead)
-        else:
-            self.construction_overhead.append(0)
-
-    def production_total_price_function(self, sold_product_fee):
-        """
-        Production Total Price calculation
-        """
-        if sold_product_fee:
-            self.production_total_price.append(
-                sold_product_fee.production_total_price)
-        else:
-            self.production_total_price.append(0)
-
-    def direct_wage_function(self, sold_product_fee):
-        """
-        Direct Wage calculation
-        """
-        if sold_product_fee:
-            self.direct_wage.append(sold_product_fee.direct_wage)
-        else:
-            self.direct_wage.append(0)
-
-    def sold_product_total_fee_function(self, sold_product_fee):
-        """Sold Product Total Fee calculation"""
-        if sold_product_fee:
-            self.sold_product_total_fee.append(
-                sold_product_fee.sold_product_total_price)
-        else:
-            self.sold_product_total_fee.append(0)
-
-    def accumulated_profit_function(self, balance_report):
-        """
-        Accumulated Profit/Loss calculation
-        """
-        if balance_report:
-            self.accumulated_profit.append(
-                balance_report.accumulated_profit_loss)
-        else:
-            self.accumulated_profit.append(0)
-
-    def ownership_right_total_function(self, balance_report):
-        """
-        Total ownership right calculation
-        """
-        if balance_report:
-            self.ownership_right_total.append(
-                balance_report.ownership_right_total)
-        else:
-            self.ownership_right_total.append(0)
-
-    def year_function(self):
-        """Year calculation"""
-        for i in range(self.length):
-            self.year.append(self.financial_assets[i].year)
-
-    def roi_function():
-        """Return of Investments (ROI) calculation
-        """
-        pass
-
-    def usability_function(self):
-        """
-        Usability calculation
-        """
-        for i in range(self.length):
-            self.usability.append(
-                self.net_profit[i]/self.net_sale[i] if self.net_sale[i] != 0 else 0)
-
-    def efficiency_function(self):
-        """
-        Efficiency calculation
-        """
-        for i in range(self.length):
-            self.efficiency.append(self.net_sale[i]/self.total_asset[i]
-                                   if self.total_asset[i] != 0 else 0)
-
-    def roa_function(self):
-        """
-        Return on Assets (ROA) calculation
-        """
-        for i in range(self.length):
-            self.roa.append(
-                self.net_profit[i]/self.total_asset[i] if self.total_asset[i] != 0 else 0)
-
-    def roab_function(self):
-        """
-        Return on Assets (ROA) secondary
-        """
-        for i in range(self.length):
-            self.roab.append(
-                self.usability[i]*self.efficiency[i])
-
-    def roe_function(self):
-        """Return on Equity (ROE) calculation"""
-        for i in range(self.length):
-            self.roe.append(
-                self.net_profit[i]/self.ownership_right_total[i] if self.ownership_right_total[i] != 0 else 0)
-
-    def equity_per_total_non_current_asset_ratio_function(self):
-        for i in range(self.length):
-            self.equity_per_total_non_current_asset_ratio.append(
-                self.ownership_right_total[i]/self.non_current_asset[i]
-                if self.non_current_asset[i] != 0 else 0)
-
-    def gross_profit_margin_ratio_function(self):
-        """
-        Gross Profit Margin Ratio calculation
-        """
-        for i in range(self.length):
-            self.gross_profit_margin_ratio.append(
-                self.gross_profit[i]/self.net_sale[i] if self.net_sale[i] != 0 else 0)
-
-    def net_profit_margin_ratio_function(self):
-        """
-        Net Profit Margin Ratio calculation
-        """
-        for i in range(self.length):
-            self.net_profit_margin_ratio.append(
-                self.net_profit[i]/self.net_sale[i] if self.net_sale[i] != 0 else 0)
-
-    def operational_profit_margin_function(self):
-        """Operational Profit Margin calculation
-        """
-        pass
-
-    def total_sum_equity_debt_function(self):
-        """Total Sum of Equity and Debt calculation
-        """
-        for i in range(self.length):
-            self.total_sum_equity_debt.append(
-                self.ownership_right_total[i] + self.total_debt[i])
-
-    def debt_ratio_function(self):
-        """
-        Debt Ratio calculation
-        """
-        for i in range(self.length):
-            self.debt_ratio.append(
-                self.total_debt[i]/self.total_asset[i] if self.total_asset[i] != 0 else 0)
-
-    def salary_production_fee_function(self):
-        for i in range(self.length):
-            self.salary_production_fee.append(
-                self.direct_wage[i] + self.salary_fee[i])
-
-    def profit_coverage_ratio_function(self):
-        """Profit Coverage Ratio calculation
-        """
-        pass
-
-    def capital_ratio_function(self):
-        """
-        Capital Ratio calculation
-        """
-        for i in range(self.length):
-            self.capital_ratio.append(
-                self.net_profit[i]/self.ownership_right_total[i] if self.ownership_right_total[i] != 0 else 0)
-
-    def fixed_asset_to_proceed_profit_ratio_function(self):
-        """Fixed Asset to Proceed Profit Ratio calculation"""
-        pass
-
-    def total_debt_to_proceed_profit_ratio_function(self):
-        """Total Debt to Proceed Profit Ratio calculation"""
-        for i in range(self.length):
-            self.total_debt_to_proceed_profit_ratio.append(
-                self.total_debt[i]/self.proceed_profit[i] if self.proceed_profit[i] != 0 else 0)
-
-    def current_debt_to_proceed_profit_ratio_function(self):
-        """Current Debt to Proceed Profit Ratio calculation"""
-        for i in range(self.length):
-            self.current_debt_to_proceed_profit_ratio.append(
-                self.current_debt[i]/self.proceed_profit[i] if self.proceed_profit[i] != 0 else 0)
-
-    def properitary_ratio_function(self):
-        """Proprietary Ratio calculation"""
-        for i in range(self.length):
-            self.proprietary_ratio.append(
-                self.proceed_profit[i]/self.total_asset[i] if self.total_asset[i] != 0 else 0)
-
-    def equity_per_total_debt_ratio_function(self):
-        """Equity Per Total Debt Ratio calculation"""
-        for i in range(self.length):
-            self.equity_per_total_debt_ratio.append(
-                self.total_debt[i]/self.ownership_right_total[i] if self.ownership_right_total[i] != 0 else 0)
-
-    def equity_per_total_fixed_asset_ratio_function(self):
-        """Equity Per Total Fixed Asset Ratio calculation"""
-        pass
-
-    def current_ratio_function(self):
-        """Current Ratio calculation"""
-        for i in range(self.length):
-            self.current_ratio.append(
-                self.current_asset[i]/self.current_debt[i] if self.current_debt[i] != 0 else 0)
-
-    def instant_ratio_function(self):
-        """Current Ratio calculation"""
-        for i in range(self.length):
-            self.instant_ratio.append(
-                (self.current_asset[i]-self.inventory_average[i])/self.current_debt[i] if self.current_debt[i] != 0 else 0)
-
-    def liquidity_ratio_function(self):
-        """Liquidity Ratio calculation"""
-        pass
-
-    def stock_turn_over_ratio_function(self):
-        """Stock Turnover Ratio calculation"""
-        inventory = np.mean(
-            self.inventory_average)
-        for i in range(self.length):
-            if inventory != 0:
-                self.stock_turnover.append(
-                    self.sold_product_total_fee[i] / inventory)
-            else:
-                self.stock_turnover.append(0)
-
-    def received_turn_over_ratio_function(self):
-        """Received Turnover Ratio calculation"""
-        pass
-
-    def average_collection_period_function(self):
-        """Average Collection Period calculation"""
-        pass
-
-    def total_asset_turnover_ratio_function(self):
-        """Total Asset Turnover Ratio calculation"""
-        total_asset_mean = np.mean(self.total_asset)
-        for i in range(self.length):
-            self.total_asset_turnover_ratio.append(
-                self.net_sale[i]/total_asset_mean if total_asset_mean != 0 else 0)
-
-    def potential_growth_ratio_function(self):
-        """Growth Potential Ratio calculation"""
-        pass
-
-    def sale_growth_ratio_function(self):
-        """Sale Growth Ratio calculation"""
-        pass
-
-    def net_profit_growth_ratio_function(self):
-        """Net Profit Growth Ratio calculation"""
-        pass
-
-    def capital_to_asset_ratio_function(self):
-        for i in range(self.length):
-            self.capital_to_asset_ratio.append(
-                (self.current_asset[i] - self.current_debt[i]) / self.total_asset[i] if self.total_asset[i] != 0 else 0)
-
-    def accumulated_profit_to_asset_ratio_function(self):
-        """
-        Accumulated Profit to Asset Ratio calculation
-        """
-
-        for i in range(self.length):
-            self.accumulated_profit_to_asset_ratio.append(
-                self.accumulated_profit[i] / self.total_asset[i] if self.total_asset[i] != 0 else 0)
-
-    def before_tax_profit_to_asset_ratio_function(self):
-        """
-        Before Tax Profit to Asset Ratio calculation
-        """
-        for i in range(self.length):
-            self.before_tax_profit_to_asset_ratio.append(
-                self.proceed_profit[i] / self.total_asset[i] if self.total_asset[i] != 0 else 0)
-
-    def sale_to_asset_ratio_function(self):
-        """
-        Sale to Asset Ratio calculation
-        """
-        for i in range(self.length):
-            self.sale_to_asset_ratio.append(
-                self.net_sale[i] / self.total_asset[i] if self.total_asset[i] != 0 else 0)
-
-    def equity_to_debt_ratio_function(self):
-        """
-        Equity to Debt Ratio calculation
-        """
-        for i in range(self.length):
-            self.equity_to_debt_ratio.append(
-                self.ownership_right_total[i] / self.total_debt[i] if self.total_debt[i] != 0 else 0)
-
-    def altman_bankruptcy_ratio_function(self):
-        """Altman Bankruptcy Ratio calculation"""
-        from decimal import Decimal
-        for i in range(self.length):
-            self.altman_bankrupsy_ratio.append(
-                (Decimal(1.2) * self.capital_to_asset_ratio[i]) +
-                (Decimal(1.4) * self.accumulated_profit_to_asset_ratio[i]) +
-                (Decimal(3.3) * self.before_tax_profit_to_asset_ratio[i]) +
-                (Decimal(0.6) * self.equity_per_total_debt_ratio[i]) +
-                (Decimal(.999)*self.sale_to_asset_ratio[i])
-            )
+        logger.info("Financial ratio calculations completed")
 
     def get_results(self):
+        """ Return the final processed financial data """
+        
+        logger.info("Generating results for financial calculations")
+        
         return {
+
             'status': 'success',
             'data': {
-                'current_asset': self.current_asset,
-                'non_current_asset': self.non_current_asset,
-                'total_asset': self.total_asset,
-                'current_debt': self.current_debt,
-                'non_current_debt': self.non_current_debt,
-                'total_debt': self.total_debt,
-                'total_equity': self.ownership_right_total,
+                'current_asset': self.balance_report_values["current_asset"],
+                'non_current_asset': self.balance_report_values["non_current_asset"],
+                'total_asset': self.balance_report_values["total_asset"],
+                'current_debt': self.balance_report_values["current_debt"],
+                'non_current_debt': self.balance_report_values["non_current_debt"],
+                'total_debt': self.balance_report_values["total_debt"],
+                'total_equity': self.balance_report_values["ownership_right_total"],
+                'net_sale': self.balance_report_values["net_sale"],
+                'inventory': self.balance_report_values["inventory"],
+                'net_profit': self.balance_report_values["net_profit"],
+                'trade_payable': self.balance_report_values["trade_payable"],
+                'advance': self.balance_report_values["advance"],
+                'reserves': self.balance_report_values["reserves"],
+                'long_term_payable': self.balance_report_values["long_term_payable"],
+                'employee_termination_benefit_reserve': self.balance_report_values["employee_termination_benefit_reserve"],
+
                 'total_sum_equity_debt': self.total_sum_equity_debt,
-                'gross_profit': self.gross_profit,
-                'net_sale': self.net_sale,
-                'operational_income_expense':self.operational_income_expense,
-                'marketing_fee':self.marketing_fee,                
-                'inventory': self.inventory_average,
-                'operational_profit': self.operational_profit,
-                'proceed_profit': self.proceed_profit,
-                'net_profit': self.net_profit,
-                'consuming_material': self.consuming_material,
-                'production_fee': self.direct_wage,
-                'construction_overhead': self.construction_overhead,
-                'production_total_price': self.production_total_price,
-                'salary_fee': self.salary_fee,
+                'gross_profit': self.profit_loss_statement_values["gross_profit"],
+                'operational_income_expense': self.profit_loss_statement_values["operational_income_expense"],
+                'marketing_fee': self.profit_loss_statement_values["marketing_fee"],
+                'operational_profit': self.profit_loss_statement_values["operational_profit"],
+                'proceed_profit': self.profit_loss_statement_values["proceed_profit"],
+                'consuming_material': self.sold_product_values["consuming_material"],
+                'production_fee': self.sold_product_values["direct_wage"],
+                'construction_overhead': self.sold_product_values["construction_overhead"],
+                'production_total_price': self.sold_product_values["production_total_price"],
+                'salary_fee': self.profit_loss_statement_values["salary_fee"],
                 'salary_production_fee': self.salary_production_fee,
                 'usability': self.usability,
                 'efficiency': self.efficiency,
