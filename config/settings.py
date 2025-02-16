@@ -365,3 +365,9 @@ APP_REQUEST_TYPES = ['finance']
 
 # For the custom file path exceptions
 FILE_PATH_EXCEPTION_MODELS = ["OrganizationChartBase"]
+
+
+# For retrievong of the files based on the company field
+HUMAN_RESOURCE_FILE_FIELDS ={
+    "general": ["__all__"],
+}
