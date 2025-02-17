@@ -1,3 +1,4 @@
+from django.conf import settings
 import logging
 import os
 
@@ -14,7 +15,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 
-from management.serializers import (HumanResourceSerializer, HumanResourceCreateSerializer, HumanResourceUpdateSerializer,
+from management.serializers import (ChartNodeSerializer, HumanResourceSerializer, HumanResourceCreateSerializer, HumanResourceUpdateSerializer,
                                     PersonelInformationSerializer, PersonelInformationUpdateSerializer, PersonelInformationCreateSerializer,
                                     OrganizationChartFileSerializer)
 from management.models import HumanResource, PersonelInformation, OrganizationChartBase
@@ -108,40 +109,90 @@ class OrganizationChartFileViewSet(viewsets.ReadOnlyModelViewSet):
         file_field = get_file_field(field)
         return OrganizationChartBase.objects.filter(field=file_field)
 
-    def list(self, request, *args, **kwargs):
+    @action(detail=False, methods=['GET'], url_name='download', url_path='download')
+    def download(self, request):
+
         queryset = self.get_queryset().first()
         if not queryset:
-            logger.warning("No associated OrganizationChart file found for the user's profile.")
+            logger.warning(
+                "No associated OrganizationChart file found for the user's profile.")
             return Response({"error": _("Not found an associated file with your profile")}, status=status.HTTP_404_NOT_FOUND)
 
         file_path = queryset.position_excel.path
+
         company_name = request.user.company.company_title
 
-        logger.info(f"Processing Excel file for company {company_name}. File path: {file_path}")
-        task = prepare_excel.delay(
-            company_name=company_name, file_path=file_path, action="rename-column")
+        logger.info(
+            f"Returning Excel file for company {company_name}. File path: {file_path}")
 
-        return Response(
-            {
-                "message": _("Processing started. Check back later for the file. Proceed to 'download' action for getting the file"),
-                "download_url": f"/download/?company_name={company_name}",
-                "task_id": task.id,
-            },
-            status=status.HTTP_202_ACCEPTED,
-        )
+        return FileResponse(open(file_path, "rb"), as_attachment=True, filename=os.path.basename(file_path))
 
-    @action(detail=False, methods=['GET'], url_name='download', url_path='download')
-    def download(self, request):
-        """Check if the updated file exists and return it."""
-        company_name = request.GET.get("company_name")
-        if not company_name:
-            logger.error("Company name is missing in the download request.")
-            return Response({"error": _("Company name is required")}, status=status.HTTP_400_BAD_REQUEST)
 
-        latest_file = check_file_ready(company_name)
-        if isinstance(latest_file, Response):
-            logger.error(f"Error checking file for company {company_name}: {latest_file.data}")
-            return latest_file
+class ChartNodeViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ChartNodeSerializer
 
-        logger.info(f"Returning updated file for company {company_name}.")
-        return FileResponse(open(latest_file, "rb"), as_attachment=True, filename=os.path.basename(latest_file))
+    def get_queryset(self):
+        company = self.request.user.company
+        return PersonelInformation.objects.filter(human_resource__company=company)
+
+    def list(self, request, *args, **kwargs):
+        """
+        Default list method that returns grouped data with aggregated reports-to positions.
+        """
+        queryset = self.get_queryset()
+        grouped_data = {}
+        for person in queryset:
+            pos = person.position
+            if pos not in grouped_data:
+                grouped_data[pos] = {
+                    'personnel': [],
+                    'aggregated_reports_to': set()
+                }
+            grouped_data[pos]['personnel'].append(person)
+            if person.reports_to:
+                grouped_data[pos]['aggregated_reports_to'].add(
+                    person.reports_to.position)
+
+        # Build the response data.
+        response_data = {}
+        for pos, data in grouped_data.items():
+            response_data[pos] = {
+                'aggregated_reports_to': list(data['aggregated_reports_to'])
+            }
+
+        return Response(response_data)
+
+    @action(detail=False, methods=['get'],url_name='positions',url_path='positions')
+    def by_positions(self, request, *args, **kwargs):
+        """
+        Custom action that expects a query parameter 'positions' (comma-separated values).
+        It returns a JSON response where each key is a position and the value is a list
+        of personnel (serialized) who hold that position.
+
+        Example request:
+            GET /chartnodes/positions/?pos=Manager,Developer
+        """
+        positions_param = request.query_params.get('pos')
+        if not positions_param:
+            return Response(
+                {"detail": "Query parameter 'positions' is required."},
+                status=400
+            )
+        # Split the comma-separated positions and trim whitespace
+        positions = [pos.strip() for pos in positions_param.split(',')]
+
+        # Filter the queryset for the specified positions
+        queryset = self.get_queryset().filter(position__in=positions)
+
+        # Group personnel by their position
+        grouped_personnel = {}
+        for person in queryset:
+            pos = person.position
+            if pos not in grouped_personnel:
+                grouped_personnel[pos] = []
+            # Serialize the personnel record
+            serialized_person = self.get_serializer(person).data
+            grouped_personnel[pos].append(serialized_person)
+
+        return Response(grouped_personnel)
