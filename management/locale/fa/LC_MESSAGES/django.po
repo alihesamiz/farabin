@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-16 12:06+0330\n"
+"POT-Creation-Date: 2025-02-17 10:19+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,7 +30,7 @@ msgstr "فایل اکسل"
 msgid "Company"
 msgstr "شرکت"
 
-#: management/models.py:29 management/models.py:40
+#: management/models.py:29 management/models.py:39
 msgid "Human Resource"
 msgstr "منبع انسانی"
 
@@ -38,43 +38,39 @@ msgstr "منبع انسانی"
 msgid "Human Resources"
 msgstr "منابع انسانی"
 
-#: management/models.py:42
+#: management/models.py:41
 msgid "Full Name"
 msgstr "نام کامل"
 
-#: management/models.py:46
+#: management/models.py:45
 msgid "Unit"
 msgstr "واحد"
 
-#: management/models.py:49
+#: management/models.py:48
 msgid "Position"
 msgstr "جایگاه"
 
-#: management/models.py:52
-msgid "Reports to(Position)"
+#: management/models.py:51
+msgid "Reports to (Personnel)"
 msgstr "گزارش میدهد به (جایگاه)"
 
-#: management/models.py:57
-msgid "Personel Information"
+#: management/models.py:57 management/models.py:58
+msgid "Personnel Information"
 msgstr "اطلاعات کارکنان"
 
-#: management/models.py:58
-msgid "Personels Information"
-msgstr "اطلاعات کارکنان"
-
-#: management/models.py:69
+#: management/models.py:70
 msgid "Field"
 msgstr "نام حوزه"
 
-#: management/models.py:71
+#: management/models.py:72
 msgid "Position Excel"
 msgstr "اکسل موقعیت‌ها"
 
-#: management/models.py:78
+#: management/models.py:79
 msgid "Organization Chart"
 msgstr "فایل چارت سازمانی"
 
-#: management/models.py:79
+#: management/models.py:80
 msgid "Organization Charts"
 msgstr "فایل‌های چارت سازمانی"
 
