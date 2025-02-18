@@ -101,4 +101,3 @@ msgstr "رکورد منابع انسانی مناسبی برای شرکت پید
 #: management/views.py:120
 msgid "Not found an associated file with your profile"
 msgstr "فایلی متناسب با پروفایل شرکت شما یافت نشد. باپشتیبانی تماس بگیرید."
-
