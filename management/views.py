@@ -1,4 +1,3 @@
-from django.conf import settings
 import logging
 import os
 
@@ -19,10 +18,8 @@ from management.serializers import (ChartNodeSerializer, HumanResourceSerializer
                                     PersonelInformationSerializer, PersonelInformationUpdateSerializer, PersonelInformationCreateSerializer,
                                     OrganizationChartFileSerializer)
 from management.models import HumanResource, PersonelInformation, OrganizationChartBase
-from management.utils import check_file_ready, get_file_field
 from management.paginations import PersonelPagination
-from management.tasks import prepare_excel
-
+from management.utils import get_file_field
 
 logger = logging.getLogger("management")
 
@@ -51,6 +48,11 @@ class HumanResourceViewSet(viewsets.ModelViewSet):
                 "IntegrityError: Trying to create a second Human Resource record for the company.")
             raise ValidationError(
                 {"error": _("Each company can only have one Human Resource record. To replace, you must first delete the previous record.")})
+        except Exception as e:
+            logger.error(
+                f"Error while saving new Human Resource record: {str(e)}")
+            raise ValidationError(
+                {"error": _("An error occurred while saving the Human Resource record.")})
 
 
 class PersonelInformationViewSet(viewsets.ModelViewSet):
@@ -104,8 +106,7 @@ class OrganizationChartFileViewSet(viewsets.ReadOnlyModelViewSet):
     http_method_names = ['get']
 
     def get_queryset(self):
-        company = self.request.user.company
-        field = company.tech_field
+        field = self.request.user.company.tech_field
         file_field = get_file_field(field)
         return OrganizationChartBase.objects.filter(field=file_field)
 
@@ -119,9 +120,7 @@ class OrganizationChartFileViewSet(viewsets.ReadOnlyModelViewSet):
             return Response({"error": _("Not found an associated file with your profile")}, status=status.HTTP_404_NOT_FOUND)
 
         file_path = queryset.position_excel.path
-
         company_name = request.user.company.company_title
-
         logger.info(
             f"Returning Excel file for company {company_name}. File path: {file_path}")
 
@@ -144,6 +143,7 @@ class ChartNodeViewSet(viewsets.ReadOnlyModelViewSet):
         grouped_data = {}
         for person in queryset:
             pos = person.position
+
             if pos not in grouped_data:
                 grouped_data[pos] = {
                     'personnel': [],
@@ -154,7 +154,6 @@ class ChartNodeViewSet(viewsets.ReadOnlyModelViewSet):
                 grouped_data[pos]['aggregated_reports_to'].add(
                     person.reports_to.position)
 
-        # Build the response data.
         response_data = {}
         for pos, data in grouped_data.items():
             response_data[pos] = {
@@ -163,7 +162,7 @@ class ChartNodeViewSet(viewsets.ReadOnlyModelViewSet):
 
         return Response(response_data)
 
-    @action(detail=False, methods=['get'],url_name='positions',url_path='positions')
+    @action(detail=False, methods=['get'], url_name='positions', url_path='positions')
     def by_positions(self, request, *args, **kwargs):
         """
         Custom action that expects a query parameter 'positions' (comma-separated values).
@@ -179,19 +178,18 @@ class ChartNodeViewSet(viewsets.ReadOnlyModelViewSet):
                 {"detail": "Query parameter 'positions' is required."},
                 status=400
             )
-        # Split the comma-separated positions and trim whitespace
+
         positions = [pos.strip() for pos in positions_param.split(',')]
 
-        # Filter the queryset for the specified positions
         queryset = self.get_queryset().filter(position__in=positions)
 
-        # Group personnel by their position
         grouped_personnel = {}
         for person in queryset:
             pos = person.position
+
             if pos not in grouped_personnel:
                 grouped_personnel[pos] = []
-            # Serialize the personnel record
+
             serialized_person = self.get_serializer(person).data
             grouped_personnel[pos].append(serialized_person)
 
