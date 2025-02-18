@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-16 12:06+0330\n"
+"POT-Creation-Date: 2025-02-18 11:12+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,55 +30,59 @@ msgstr "فایل اکسل"
 msgid "Company"
 msgstr "شرکت"
 
-#: management/models.py:29 management/models.py:40
+#: management/models.py:23
+msgid "Created At"
+msgstr "ایجاد شده در"
+
+#: management/models.py:25
+msgid "Updated At"
+msgstr "بروزرسانی شده در"
+
+#: management/models.py:31 management/models.py:41
 msgid "Human Resource"
 msgstr "منبع انسانی"
 
-#: management/models.py:30
+#: management/models.py:32
 msgid "Human Resources"
 msgstr "منابع انسانی"
 
-#: management/models.py:42
+#: management/models.py:43
 msgid "Full Name"
 msgstr "نام کامل"
 
-#: management/models.py:46
+#: management/models.py:47
 msgid "Unit"
 msgstr "واحد"
 
-#: management/models.py:49
+#: management/models.py:50
 msgid "Position"
 msgstr "جایگاه"
 
-#: management/models.py:52
-msgid "Reports to(Position)"
+#: management/models.py:53
+msgid "Reports to (Personnel)"
 msgstr "گزارش میدهد به (جایگاه)"
 
-#: management/models.py:57
-msgid "Personel Information"
+#: management/models.py:59 management/models.py:60
+msgid "Personnel Information"
 msgstr "اطلاعات کارکنان"
 
-#: management/models.py:58
-msgid "Personels Information"
-msgstr "اطلاعات کارکنان"
-
-#: management/models.py:69
+#: management/models.py:72
 msgid "Field"
 msgstr "نام حوزه"
 
-#: management/models.py:71
+#: management/models.py:74
 msgid "Position Excel"
 msgstr "اکسل موقعیت‌ها"
 
-#: management/models.py:78
+#: management/models.py:81
 msgid "Organization Chart"
 msgstr "فایل چارت سازمانی"
 
-#: management/models.py:79
+#: management/models.py:82
 msgid "Organization Charts"
 msgstr "فایل‌های چارت سازمانی"
 
-#: management/views.py:52
+#: management/views.py:50
 msgid ""
 "Each company can only have one Human Resource record. To replace, you must "
 "first delete the previous record."
@@ -86,20 +90,15 @@ msgstr ""
 "هر شرکت تنها میتواند یک فایل منابع انسانی را بارگذاری کند. برای جایگزینی "
 "ابتدا فایل قبلی را حذف کنید."
 
-#: management/views.py:92
+#: management/views.py:55
+msgid "An error occurred while saving the Human Resource record."
+msgstr "هنگام ذخیره فایل منابع انسانی خطایی رخ داد."
+
+#: management/views.py:95
 msgid "Invalid or missing HumanResource record for this company."
 msgstr "رکورد منابع انسانی مناسبی برای شرکت پیدا نشد."
 
-#: management/views.py:115
+#: management/views.py:120
 msgid "Not found an associated file with your profile"
 msgstr "فایلی متناسب با پروفایل شرکت شما یافت نشد. باپشتیبانی تماس بگیرید."
 
-#: management/views.py:126
-msgid ""
-"Processing started. Check back later for the file. Proceed to 'download' "
-"action for getting the file"
-msgstr "برای بارگیری به صفحه دانلود مراجعه کنید."
-
-#: management/views.py:139
-msgid "Company name is required"
-msgstr "نام شرکت لازم است."

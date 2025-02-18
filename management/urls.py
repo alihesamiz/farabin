@@ -1,6 +1,6 @@
 from rest_framework_nested.routers import DefaultRouter, NestedDefaultRouter
 
-from management.views import HumanResourceViewSet, OrganizationChartFileViewSet, PersonelInformationViewSet
+from management.views import ChartNodeViewSet, HumanResourceViewSet, OrganizationChartFileViewSet, PersonelInformationViewSet
 
 
 router = DefaultRouter()
@@ -12,6 +12,10 @@ personel_router = NestedDefaultRouter(
 
 personel_router.register(
     r'personel', PersonelInformationViewSet, basename='human-resource-personel')
+
+
+personel_router.register(
+    r'graph', ChartNodeViewSet, basename='human-resource-graph')
 
 chart_file_router = DefaultRouter()
 chart_file_router.register(r'organization-chart-files',

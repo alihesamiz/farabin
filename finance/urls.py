@@ -7,7 +7,7 @@ from finance.views import FinanceAnalysisViewSet, CompanyFinancialDataView, TaxD
 
 router = DefaultRouter()
 
-router.register(r'finance-analysis', FinanceAnalysisViewSet,
+router.register(r'analysis', FinanceAnalysisViewSet,
                 basename='finance-analysis')
 
 router.register(r'tax-declarations', TaxDeclarationViewSet,

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 
-from management.models import HumanResource,PersonelInformation,OrganizationChartBase
+from management.models import HumanResource, PersonelInformation, OrganizationChartBase
 from company.models import CompanyProfile
 
 
@@ -41,19 +41,23 @@ class HumanResourceSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'create_at', 'updated_at']
 
 
-
-
 class PersonelInformationSerializer(serializers.ModelSerializer):
 
     human_resource_id = serializers.PrimaryKeyRelatedField(
         source="human_resource", read_only=True
     )
 
+    node_relation = serializers.SerializerMethodField(
+        method_name="get_relation")
+
     class Meta:
         model = PersonelInformation
         fields = ["id", "human_resource_id", "name",
-                  "unit", "position", "reports_to"]
+                  "unit", "position", "reports_to", "node_relation"]
         read_only_fields = ["id", "human_resource_id"]
+
+    def get_relation(self, obj):
+        return f"{obj.id}-{obj.reports_to}"
 
 
 class PersonelInformationCreateSerializer(serializers.ModelSerializer):
@@ -82,3 +86,14 @@ class OrganizationChartFileSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrganizationChartBase
         fields = ["id", "position_excel_url"]
+
+
+class ChartNodeSerializer(serializers.ModelSerializer):
+    reports_to = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PersonelInformation
+        fields = ['id', 'name', 'unit', 'position', 'reports_to']
+
+    def get_reports_to(self, obj):
+        return obj.reports_to.id if obj.reports_to else None
