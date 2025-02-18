@@ -1,5 +1,5 @@
-from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.db import models
 
 
 from core.validators import excel_file_validator
@@ -19,12 +19,14 @@ class HumanResource(models.Model):
     company = models.ForeignKey('company.CompanyProfile', verbose_name=_(
         "Company"), null=False, blank=False, on_delete=models.CASCADE, related_name="hrfiles")
 
-    create_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    create_at = models.DateTimeField(
+        auto_now_add=True, verbose_name=_("Created At"))
+    updated_at = models.DateTimeField(
+        auto_now=True, verbose_name=_("Updated At"))
 
     def __str__(self):
-        return f"{self.company.company_title}"# › {self.excel_file}"
-    
+        return f"{self.company.company_title}"  # › {self.excel_file}"
+
     class Meta:
         verbose_name = _("Human Resource")
         verbose_name_plural = _("Human Resources")
@@ -35,7 +37,6 @@ class HumanResource(models.Model):
 
 
 class PersonelInformation(models.Model):
-
     human_resource = models.ForeignKey(HumanResource, verbose_name=_(
         "Human Resource"), null=False, blank=False, on_delete=models.CASCADE, related_name='personelinformation')
 
@@ -48,14 +49,15 @@ class PersonelInformation(models.Model):
     position = models.CharField(verbose_name=_(
         "Position"), max_length=150, null=False, blank=False)
 
-    reports_to = models.CharField(verbose_name=_(
-        "Reports to(Position)"), max_length=150, null=True, blank=True)
-    
+    reports_to = models.ForeignKey('self', verbose_name=_(
+        "Reports to (Personnel)"), null=True, blank=True, on_delete=models.SET_NULL, related_name='subordinates')
+
     def __str__(self):
-        return f"{self.human_resource.company.company_title} › {self.position}"
+        return f"{self.name}"
+
     class Meta:
-        verbose_name = _("Personel Information")
-        verbose_name_plural = _("Personels Information")
+        verbose_name = _("Personnel Information")
+        verbose_name_plural = _("Personnel Information")
 
 
 def get_chart_excel_file_upload_path(instance, filename):
@@ -65,15 +67,16 @@ def get_chart_excel_file_upload_path(instance, filename):
 
 
 class OrganizationChartBase(models.Model):
-    
-    field = models.CharField(verbose_name=_("Field"), max_length=150, null=False, blank=False)
-    
+
+    field = models.CharField(verbose_name=_(
+        "Field"), max_length=150, null=False, blank=False)
+
     position_excel = models.FileField(verbose_name=_("Position Excel"), max_length=150, null=False, blank=False,
                                       upload_to=get_chart_excel_file_upload_path, validators=[excel_file_validator])
 
     def __str__(self):
         return f"{self.field.title()}"
-    
+
     class Meta:
         verbose_name = _("Organization Chart")
         verbose_name_plural = _("Organization Charts")
