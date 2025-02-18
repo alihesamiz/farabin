@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-15 15:29+0330\n"
+"POT-Creation-Date: 2025-02-16 14:34+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,7 +30,7 @@ msgstr "اجازه‌ها"
 msgid "Important dates"
 msgstr "تاریخ‌های مهم"
 
-#: core/admin.py:55 core/models.py:134
+#: core/admin.py:55 core/models.py:133
 msgid "Price"
 msgstr "قیمت"
 
@@ -42,85 +42,85 @@ msgstr "اصلی"
 msgid "Editor"
 msgstr "ویرایشگر"
 
-#: core/models.py:20
+#: core/models.py:19
 msgid "Phone Number"
 msgstr "شماره تلفن"
 
-#: core/models.py:21
+#: core/models.py:20
 msgid "National Code"
 msgstr "شناسه ملی"
 
-#: core/models.py:29
+#: core/models.py:28
 msgid "groups"
 msgstr "گروه‌ها"
 
-#: core/models.py:32
+#: core/models.py:31
 msgid ""
 "The groups this user belongs to. A user will get all permissions granted to "
 "each of their groups."
 msgstr ""
 
-#: core/models.py:40
+#: core/models.py:39
 msgid "user permissions"
 msgstr "اجازه‌های کاربر"
 
-#: core/models.py:42
+#: core/models.py:41
 msgid "Specific permissions for this user."
 msgstr "اجازه‌های اختاصاصی برای این کاربر"
 
-#: core/models.py:74
+#: core/models.py:73
 msgid "User"
 msgstr "کاربر"
 
-#: core/models.py:75
+#: core/models.py:74
 msgid "Users"
 msgstr "کاربران"
 
-#: core/models.py:95
+#: core/models.py:94
 msgid "OTP"
 msgstr "کد"
 
-#: core/models.py:96
+#: core/models.py:95
 msgid "OTPs"
 msgstr "کدها"
 
-#: core/models.py:100 core/models.py:117
+#: core/models.py:99 core/models.py:116
 msgid "Name"
 msgstr "نام"
 
-#: core/models.py:103 core/models.py:123
+#: core/models.py:102 core/models.py:122
 msgid "Province"
 msgstr "استان"
 
-#: core/models.py:110
+#: core/models.py:109
 msgid "City"
 msgstr "شهر"
 
-#: core/models.py:111
+#: core/models.py:110
 msgid "Cities"
 msgstr "شهرها"
 
-#: core/models.py:124
+#: core/models.py:123
 msgid "Provinces"
 msgstr "استان‌ها"
 
-#: core/models.py:129
+#: core/models.py:128
 msgid "Service Name"
 msgstr "نام سرویس"
 
-#: core/models.py:131
+#: core/models.py:130
 msgid "Service Description"
 msgstr "شرح سرویس"
 
-#: core/models.py:137
+#: core/models.py:136
 msgid "Service Active"
 msgstr "فعالسازی"
 
-#: core/models.py:140
+#: core/models.py:139
 msgid "Service"
 msgstr "سرویس"
 
-#: core/models.py:141
+#: core/models.py:140
 msgid "Services"
 msgstr "سرویس‌ها"
 
@@ -148,15 +148,15 @@ msgstr "کد ورود تنها شامل اعداد است"
 msgid "OTP code must be 6 digits long."
 msgstr "طول کد ورود ۶ عدد است"
 
-#: core/validators.py:8
+#: core/validators.py:7
 msgid "Phone number must be in 09XXXXXXXXX format."
 msgstr "شماره تلفن را به صورت صحیح وارد نمایید."
 
-#: core/validators.py:9
+#: core/validators.py:8
 msgid "Invalid_phone_number"
 msgstr "شماره تلفن نامعتبر"
 
-#: core/validators.py:31 core/validators.py:39 core/validators.py:47
+#: core/validators.py:30 core/validators.py:38 core/validators.py:46
 #, python-brace-format
 msgid "File size should be less than {max_file_size}"
 msgstr "حجم فایل باید کمتر از {max_file_size} باشد."

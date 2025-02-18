@@ -89,11 +89,11 @@ msgstr "فایل"
 
 #: finance/models.py:52
 msgid "Tax Declaration"
-msgstr "اظهارنامه"
+msgstr "فایل اظهارنامه"
 
 #: finance/models.py:53
 msgid "Tax Declarations"
-msgstr "اظهارنامه‌ها"
+msgstr "فایل اظهارنامه‌ها"
 
 #: finance/models.py:90 finance/models.py:105
 msgid "Balance Report File"
