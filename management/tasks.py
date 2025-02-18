@@ -1,52 +1,84 @@
 from openpyxl import load_workbook
 from celery import shared_task
 import logging
-import os
+
+from django.db.transaction import atomic
 
 
-from django.conf import settings
+from management.models import HumanResource, PersonelInformation
 
 
 logger = logging.getLogger("management")
 
 
-@shared_task()
-def prepare_excel(company_name: str, file_path: str, action: str = "rename-column"):
+@shared_task(bind=True)
+def process_personnel_excel(self, id: int):
+    try:
+        hr_instance = HumanResource.objects.get(id=id)
+        file_path = hr_instance.excel_file.path
+        company_name = hr_instance.company.company_title
 
-    logger.info(
-        f"Preparing Excel file for company: {company_name} with action: {action}")
+        logger.info(
+            f"Processing Excel file for company: {company_name}")
+        logger.info(f"Loading workbook from {file_path}")
 
-    if action == "rename-column":
-        try:
-            logger.info(f"Loading workbook from {file_path}")
+        wb = load_workbook(file_path)
+        sheet = wb.active
 
-            wb = load_workbook(file_path)
-            ws = wb.active
+        logger.info(
+            f"loading rows of data from {company_name} excel")
 
-            logger.info(
-                f"Renaming columns in the file for company: {company_name}")
+        personnel_list = []
+        position_map = {}
 
-            for col in ws.iter_cols(min_col=3, max_col=3, max_row=1):
-                for cell in col:
-                    original_value = cell.value
-                    cell.value = cell.value.replace('x', company_name)
-                    logger.debug(
-                        f"Replaced '{original_value}' with '{cell.value}' in column {cell.column_letter}")
+        for row in sheet.iter_rows(min_row=4, values_only=True):
+            if not any(row):
+                continue
 
-            new_filename = f"updated_{company_name}.xlsx"
-            updated_file_path = os.path.join(
-                settings.MEDIA_ROOT, "organization_charts", new_filename)
+            name, unit, position, reports_to_position = row[:4]
 
-            os.makedirs(os.path.dirname(updated_file_path), exist_ok=True)
-            logger.info(f"Saving updated file to {updated_file_path}")
+            if not (name and unit and position):
+                logger.warning(
+                    f"Skipped invalid record: {name}, {unit}, {position}. Missing reports_to: {reports_to_position}"
+                )
+                continue
 
-            wb.save(updated_file_path)
-            logger.info(
-                f"File updated successfully for company: {company_name}")
+            person = PersonelInformation(
+                human_resource=hr_instance,
+                name=name.strip().title(),
+                unit=unit.strip(),
+                position=position.strip(),
+                reports_to=None
+            )
+            personnel_list.append(person)
+            position_map[position] = person
 
-            return updated_file_path
+        
+        with atomic():
+            created_personnel = PersonelInformation.objects.bulk_create(
+                personnel_list)
 
-        except Exception as e:
-            logger.error(
-                f"Error while processing the Excel file for company {company_name}: {str(e)}")
-            return str(e)
+        
+        updated_personnel = []
+        for person in created_personnel:
+            reports_to_position = next(
+                (row[3] for row in sheet.iter_rows(min_row=4, values_only=True)
+                 if row[2] == person.position), None
+            )
+            if reports_to_position and reports_to_position in position_map:
+                person.reports_to = position_map[reports_to_position]
+                updated_personnel.append(person)
+
+        
+        if updated_personnel:
+            with atomic():
+                PersonelInformation.objects.bulk_update(
+                    updated_personnel, ["reports_to"])
+
+        logger.info(
+            f"Successfully processed and saved {len(created_personnel)} personnel records.")
+
+    except Exception as e:
+        logger.error(
+            f"Error while processing the Excel file for company {company_name}: {str(e)}")
+        return str(e)
