@@ -67,16 +67,18 @@ def get_file_field(field):
     """
     logger.info(f"Fetching file field for tech field: {field}")
 
-    REVERSED_FILE_FIELDS = {
-        key: [
-            field if field != "__all__" else TechField.objects.values_list(
-                'name', flat=True)
-            for field in fields
-        ]
+    REVERSED_TECH_FIELDS = {
+        field: key
         for key, fields in settings.HUMAN_RESOURCE_FILE_FIELDS.items()
+        for field in [
+            sub_field if sub_field != "__all__" else list(
+                TechField.objects.values_list('name', flat=True))
+            for sub_field in fields
+        ][0]
     }
+    
+    file_field = REVERSED_TECH_FIELDS[str(field)]
 
-    file_field = REVERSED_FILE_FIELDS.get(field)
     if file_field:
         logger.info(f"File field found for field {field}.")
     else:
