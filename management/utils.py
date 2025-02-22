@@ -1,8 +1,10 @@
+from graphql_jwt.utils import jwt_payload
 from filelock import FileLock
 import logging
 import glob
 import time
 import os
+
 
 from django.conf import settings
 
@@ -76,7 +78,7 @@ def get_file_field(field):
             for sub_field in fields
         ][0]
     }
-    
+
     file_field = REVERSED_TECH_FIELDS[str(field)]
 
     if file_field:
@@ -84,3 +86,9 @@ def get_file_field(field):
     else:
         logger.warning(f"No file field found for {field}. Returning None.")
     return file_field
+
+
+def jwt_payload(user, context=None):
+    payload = jwt_payload(user, context)
+    payload['user_id'] = user.pk
+    return payload
