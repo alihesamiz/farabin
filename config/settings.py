@@ -16,7 +16,7 @@ environ.Env.read_env(BASE_DIR)
 
 SECRET_KEY = env.get_value("FARABIN_SECRET_KEY")
 
-DEBUG = True  # env.get_value("FARABIN_DEBUG")
+DEBUG = True 
 
 ALLOWED_HOSTS = ["*"]
 
@@ -49,6 +49,7 @@ THIRED_PARTY_APPS = [
     'rest_framework',
     'nested_admin',
     'corsheaders',
+    'graphene_django',
 ]
 
 
@@ -182,6 +183,22 @@ SIMPLE_JWT = {
     "UPDATE_LAST_LOGIN": True,
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
+
+GRAPHENE = {
+    "SCHEMA": "management.schema.schema",
+    "MIDDLEWARE": [
+        "graphql_jwt.middleware.JSONWebTokenMiddleware",
+    ],
+}
+GRAPHQL_JWT = {
+    # 'JWT_PAYLOAD_HANDLER': 'management.utils.jwt_payload',
+    'JWT_AUTH_HEADER_PREFIX': 'JWT',
+}
+
+AUTHENTICATION_BACKENDS = [
+    "graphql_jwt.backends.JSONWebTokenBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
 
 
 SPECTACULAR_SETTINGS = {
@@ -368,6 +385,6 @@ FILE_PATH_EXCEPTION_MODELS = ["OrganizationChartBase"]
 
 
 # For retrievong of the files based on the company field
-HUMAN_RESOURCE_FILE_FIELDS ={
+HUMAN_RESOURCE_FILE_FIELDS = {
     "general": ["__all__"],
 }

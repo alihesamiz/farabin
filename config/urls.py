@@ -3,10 +3,13 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
-
+from graphene_django.views import GraphQLView
+from django.views.decorators.csrf import csrf_exempt
 admin.site.site_header = "مدیریت وبسایت فرابین"
 
 urlpatterns = [
+    path("graphql/", csrf_exempt(GraphQLView.as_view(graphiql=True))),
+
     path('farabin-admin/', admin.site.urls),
 
     path('management/', include('management.urls')),
