@@ -8,16 +8,16 @@ from django.views.decorators.csrf import csrf_exempt
 admin.site.site_header = "مدیریت وبسایت فرابین"
 
 urlpatterns = [
-    path("graphql/", csrf_exempt(GraphQLView.as_view(graphiql=True))),
+    path("graphql/", csrf_exempt(GraphQLView.as_view(graphiql=(True if settings.DEBUG else False)))),
 
     path('farabin-admin/', admin.site.urls),
 
     path('management/', include('management.urls')),
 
     path('finance/', include('finance.urls')),
-    
+
     path('company/', include('company.urls')),
-    
+
     path('requests/', include('request.urls')),
 
     path('tickets/', include('ticket.urls')),
@@ -25,7 +25,6 @@ urlpatterns = [
     path('auth/', include('core.urls')),
 
 ]
-
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,

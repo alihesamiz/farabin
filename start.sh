@@ -1,14 +1,11 @@
 #!/bin/bash
 
-
-if ! command -v supervisord &> /dev/null; then
+if ! command -v supervisord &>/dev/null; then
     echo "Supervisor is not installed. Installing..."
     sudo apt install -y supervisor
 fi
 
-
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
 
 if [ -f "$SCRIPT_DIR/.env" ]; then
     echo "Loading environment variables from .env file..."
@@ -21,6 +18,10 @@ else
     exit 1
 fi
 
+if ! [ -f "$SCRIPT_DIR/logs" ]; then
+    mkdir "$SCRIPT_DIR/logs"
+    echo "Logs directory created."
+fi
 
 bash "$SCRIPT_DIR/stop.sh"
 
