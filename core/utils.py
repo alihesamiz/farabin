@@ -103,6 +103,7 @@ class GeneralUtils:
         if not base_filename:
             base_filename = 'file'
 
+        current_slug='file'
         if instance._meta.model.__name__ not in self.EXCEPTION_MODELS:
             try:
                 if hasattr(instance.company, 'id'):
