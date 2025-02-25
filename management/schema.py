@@ -35,8 +35,7 @@ class Query(ObjectType):
     human_resources = List(HumanResourceType)
 
     personel_informations = List(
-        PersonelInformationType,
-        human_resource_id=Int()
+        PersonelInformationType
     )
 
     organization_charts = List(OrganizationChartType)
@@ -50,15 +49,15 @@ class Query(ObjectType):
         return HumanResource.objects.filter(company=company)
 
     @login_required
-    def resolve_personel_informations(self, info, human_resource_id=None, **kwargs):
-        user = info.context.user
-        company = user.company
-        if human_resource_id:
+    def resolve_personel_informations(self, info, **kwargs):
+        try:
+            user = info.context.user
+            company = user.company
             return PersonelInformation.objects.filter(
-                human_resource__id=human_resource_id,
                 human_resource__company=company
             )
-        return PersonelInformation.objects.none()
+        except Exception as e:
+            return PersonelInformation.objects.none()
 
     @login_required
     def resolve_organization_charts(self, info, **kwargs):
