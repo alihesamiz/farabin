@@ -5,9 +5,9 @@ from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.core.cache import cache
 
-from finance.models import AnalysisReport, FinancialAsset, FinancialData
+from finance.models import AnalysisReport, FinancialAsset, FinancialData, FinanceExcelFile
 from finance.utils import FinancialCalculations
-from finance.tasks import generate_analysis
+from finance.tasks import generate_analysis, generate_financial_asset
 
 
 logger = logging.getLogger("finance")
@@ -138,6 +138,21 @@ def trigger_calculation_task(sender, instance, **kwargs):
                 logger.error(
                     "Error updating FinancialData for asset %d: %s", asset.id, e, exc_info=True)
     logger.info("FinancialData processing complete.")
+
+
+@receiver(post_save, sender=FinanceExcelFile)
+def generate_financial_data(sender, instance, **kwargs):
+    """
+    Generate financial data for each asset when a new finance excel file is uploaded.
+    """
+    company = instance.company
+    path = instance.finance_excel_file.path
+    logger.info(
+        f"Generating financial data for company {company.company_title}")
+    if instance.is_sent:
+        logger.info(
+            f"Finance excel file sent for company {company.company_title}, triggering financial data processing.")
+        generate_financial_asset.delay(company.id, path)
 
 
 @receiver(post_save, sender=FinancialData)

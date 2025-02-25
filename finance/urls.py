@@ -2,7 +2,7 @@ from django.urls import path
 
 from rest_framework.routers import DefaultRouter
 
-from finance.views import FinanceAnalysisViewSet, CompanyFinancialDataView, TaxDeclarationViewSet, BalanceReportViewSet
+from finance.views import FinanceAnalysisViewSet, CompanyFinancialDataView, FinanceExcelViewSet, TaxDeclarationViewSet, BalanceReportViewSet
 
 
 router = DefaultRouter()
@@ -15,6 +15,9 @@ router.register(r'tax-declarations', TaxDeclarationViewSet,
 
 router.register(r'balance-reports',
                 BalanceReportViewSet, basename='balance-report')
+
+router.register(r'finance_excel', FinanceExcelViewSet,
+                basename='finance-excel')
 
 
 urlpatterns = router.urls + [

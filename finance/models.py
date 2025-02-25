@@ -9,12 +9,11 @@ from django.db import models
 
 from company.models import CompanyProfile
 
-from core.validators import pdf_file_validator
+from core.validators import pdf_file_validator, excel_file_validator
 from core.utils import GeneralUtils
 
 
-
-class CompanyFileAbstract(models.Model):
+class FileAbstract(models.Model):
 
     company = models.ForeignKey(CompanyProfile, on_delete=models.SET_NULL, null=True, verbose_name=_(
         "Company"))
@@ -30,27 +29,26 @@ class CompanyFileAbstract(models.Model):
         abstract = True
 
 
-
 def get_tax_file_upload_path(instance, filename):
-    path = GeneralUtils(path="tax_files", fields=[
+    path = GeneralUtils(path="finance_tax_files", fields=[
                         'year']).rename_folder(instance, filename)
     return path
 
 
-class TaxDeclarationFile(CompanyFileAbstract):
+class TaxDeclarationFile(FileAbstract):
 
     company = models.ForeignKey(CompanyProfile, on_delete=models.CASCADE, null=True, verbose_name=_(
         "Company"), related_name="taxfiles")
 
     tax_file = models.FileField(verbose_name=_(
-        "File"), upload_to=get_tax_file_upload_path, blank=True, null=True)
+        "File"), upload_to=get_tax_file_upload_path, validators=[pdf_file_validator], blank=True, null=True)
 
     def __str__(self) -> str:
         return f"{self.company.company_title} › {self.year}"
 
     class Meta:
-        verbose_name = _("Tax Declaration")
-        verbose_name_plural = _("Tax Declarations")
+        verbose_name = _("Finance Tax Declaration")
+        verbose_name_plural = _("Finance Tax Declarations")
         unique_together = [['company', 'year']]
 
     def save(self, *args, **kwargs):
@@ -72,11 +70,11 @@ class TaxDeclarationFile(CompanyFileAbstract):
 
 def get_non_tax_file_upload_path(instance, filename):
     path = GeneralUtils(
-        path="non-tax_files", fields=['year', 'month']).rename_folder(instance, filename)
+        path="finance_non_tax_files", fields=['year', 'month']).rename_folder(instance, filename)
     return path
 
 
-class BalanceReportFile(CompanyFileAbstract):
+class BalanceReportFile(FileAbstract):
 
     MONTH_CHOICES = [(str(i), f"{i}") for i in range(1, 14)]
 
@@ -102,10 +100,10 @@ class BalanceReportFile(CompanyFileAbstract):
         return f"{self.company.company_title} › {self.year}"
 
     class Meta:
-        verbose_name = _("Balance Report File")
-        verbose_name_plural = _("Balance Reports File")
+        verbose_name = _("Finance Balance Report File")
+        verbose_name_plural = _("Finance Balance Reports File")
         unique_together = [['company', 'month', 'year'],]
-        
+
     def save(self, *args, **kwargs):
         if self.pk:  # Only check if updating an existing instance
             existing_instance = BalanceReportFile.objects.get(pk=self.pk)
@@ -121,7 +119,7 @@ class BalanceReportFile(CompanyFileAbstract):
             for field in file_fields:
                 old_file = getattr(existing_instance, field)
                 new_file = getattr(self, field)
-                
+
                 # If the file has changed (new file uploaded)
                 if old_file != new_file:
                     old_file_path = old_file.path if old_file else None
@@ -133,6 +131,46 @@ class BalanceReportFile(CompanyFileAbstract):
         super(BalanceReportFile, self).save(*args, **kwargs)
 
 
+def get_finance_excel_file_upload_path(instance, filename):
+    path = GeneralUtils(path="finance_excel_files", fields=[
+                        'year', 'month']).rename_folder(instance, filename)
+    return path
+
+
+class FinanceExcelFile(models.Model):
+    company = models.ForeignKey(CompanyProfile, on_delete=models.CASCADE, null=True, verbose_name=_(
+        "Company"), related_name="excelfiles")
+
+    finance_excel_file = models.FileField(verbose_name=_(
+        "Finance Excel File"), upload_to=get_finance_excel_file_upload_path, validators=[excel_file_validator], blank=False, null=False)
+
+    is_saved = models.BooleanField(default=True, verbose_name=_("Is Saved"))
+
+    is_sent = models.BooleanField(default=False, verbose_name=_("Is Sent"))
+
+    class Meta:
+        verbose_name = _("Finance Excel File")
+        verbose_name_plural = _("Finance Excel Files")
+        unique_together = [["company", "finance_excel_file"]]
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            # Fetch the current instance safely
+            existing_instance = FinanceExcelFile.objects.filter(
+                pk=self.pk).first()
+
+            if existing_instance and existing_instance.finance_excel_file and existing_instance.finance_excel_file != self.finance_excel_file:
+                old_file_path = existing_instance.finance_excel_file.path
+                if old_file_path and os.path.exists(old_file_path):
+                    default_storage.delete(old_file_path)
+        if FinanceExcelFile.objects.filter(company=self.company, finance_excel_file=self.finance_excel_file).exclude(pk=self.pk).exists():
+            raise ValueError(
+                "This company already has an uploaded file with the same name.")
+
+        super().save(*args, **kwargs)
+
+    def __str__(self) -> str:
+        return f"{self.company.company_title} › {self.finance_excel_file}"
 class SoldProductFee(models.Model):
     financial_asset = models.ForeignKey(
         'FinancialAsset', on_delete=models.CASCADE, related_name='sold_product_fees', verbose_name=_('Financial Asset'))

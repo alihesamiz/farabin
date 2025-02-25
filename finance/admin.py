@@ -13,11 +13,9 @@ from django.urls import reverse
 
 from finance.models import (
     AccountTurnOver, AnalysisReport, FinancialData, FinancialAsset,
-    ProfitLossStatement, SoldProductFee, BalanceReport,TaxDeclarationFile,BalanceReportFile
+    ProfitLossStatement, SoldProductFee, BalanceReport, TaxDeclarationFile, BalanceReportFile, FinanceExcelFile
 )
 from company.models import CompanyProfile
-
-
 
 
 class ProfitStatementInline(admin.StackedInline):
@@ -41,14 +39,51 @@ class AccountTurnOverInline(admin.StackedInline):
     max_num = 1
 
 
-class BalanceReportInline(admin.TabularInline):
+class BalanceReportInline(admin.StackedInline):
     model = BalanceReport
     extra = 0
     min_num = 1
     max_num = 1
 
 
-    
+@admin.register(FinanceExcelFile)
+class FinanceExcelFileAdmin(admin.ModelAdmin):
+    list_display = ['company_title', 'finance_excel_file',
+                    'is_saved',
+                    'is_sent',]
+
+    search_fields = ['company__company_title']
+
+    @admin.display(ordering='company__company_title')
+    def company_title(self, finance_excel: FinanceExcelFile):
+        return finance_excel.company.company_title if finance_excel.company.company_title else '-'
+    company_title.short_description = _("Company Title")
+
+    def delete_model(self, request: HttpRequest, obj: Any):
+        with atomic():
+            if obj.finance_excel_file:
+                obj.finance_excel_file.delete(save=False)
+            return super().delete_model(request, obj)
+
+    def delete_queryset(self, request: HttpRequest, queryset: QuerySet) -> None:
+        for obj in queryset:
+            with atomic():
+                if obj.finance_excel_file:
+                    obj.finance_excel_file.delete(save=False)
+        return super().delete_queryset(request, queryset)
+
+    def get_queryset(self, request):
+        # Get the original queryset
+        qs = super().get_queryset(request)
+
+        # Allow superuser to view all tickets
+        if request.user.is_superuser:
+            return qs
+
+        # Filter tickets based on the agent's department
+        return qs.filter(is_sent=True)
+
+
 @admin.register(TaxDeclarationFile)
 class TaxFileAdmin(admin.ModelAdmin):
     list_display = ['company_title', 'year', 'tax_file',

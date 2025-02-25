@@ -1,6 +1,9 @@
+from pathlib import Path
 from typing import List
 from math import log2
+import pandas as pd
 import logging
+
 
 from django.utils.translation import gettext_lazy as _
 
@@ -73,11 +76,9 @@ def get_life_cycle(company):
     x_vals_numerical = [1, 1.5, 2, 2.5, 4, 4.5, 4, 3, 2]
     y_vals = [log2(x) for x in x_vals_numerical]
 
-    # Get the life cycles associated with the company
     life_cycle = company.capital_providing_method.all()
     life_cycles_data = [str(lc) for lc in life_cycle]
 
-    # Define mappings for capital_providing combinations
     cycle_mappings = {
         ('Operational', 'Finance'): 7,
         ('Operational', 'Invest'): 6,
@@ -87,7 +88,6 @@ def get_life_cycle(company):
         ('Invest',): 3
     }
 
-    # Sort and tuple the life cycle values for lookup
     sorted_cycles = tuple(sorted(life_cycles_data))
     life_cycle_stage = cycle_mappings.get(
         sorted_cycles, 5) if len(sorted_cycles) <= 2 else 5
@@ -289,9 +289,9 @@ class FinancialCalculations:
 
     def get_results(self):
         """ Return the final processed financial data """
-        
+
         logger.info("Generating results for financial calculations")
-        
+
         return {
 
             'status': 'success',
@@ -342,3 +342,67 @@ class FinancialCalculations:
                 'altman_bankrupsy_ratio': self.altman_bankrupsy_ratio,
             }
         }
+
+
+class ReadExcel:
+    def __init__(self, file_path):
+        self.file_path: Path = file_path
+        self.is_tax: bool = False
+        self.df: pd.DataFrame = None
+        self.years: List[int] = list()
+        self.months: List[int] = list()
+
+        self.records: dict = {
+            "balance": {"offset": 2, "length": 41},
+            "profit_loss": {"offset": None, "length": 32},
+            "sold_product": {"offset": None, "length": 13},
+            "account_turnover": {"offset": None, "length": 20}
+        }
+
+        prev_offset = self.records["balance"]["offset"]
+        for key in list(self.records.keys())[1:]:
+            self.records[key]["offset"] = prev_offset + \
+                self.records[key]["length"]
+            prev_offset = self.records[key]["offset"]
+
+        self.load_data()
+
+    def load_data(self):
+        """ Lazily loads the DataFrame when first accessed to improve efficiency. """
+        if self.df is None:
+            self.df = pd.read_excel(
+                self.file_path, sheet_name="Sheet1", engine="openpyxl", header=None)
+            self.df = self.df.iloc[1:, 1:].reset_index(drop=True)
+            self.get_dates()
+            if self.df.iloc[1].isnull().all():
+                self.is_tax = True
+                self.df.loc[1] = self.df.loc[1].fillna(-1)
+
+            self.df.dropna(how="all", inplace=True)
+            self.df.reset_index(drop=True, inplace=True)
+
+    def get_dates(self):
+        """ Retrieves the dates from the first row of the DataFrame. """
+        self.years.extend(self.df.iloc[0].tolist())
+        self.months.extend(self.df.iloc[1].tolist(
+        ) if self.df.iloc[1] is not None else [])
+
+    def get_record(self, record_name):
+        """ Retrieves a record dynamically by name. """
+        if record_name in self.records:
+            offset = self.records[record_name]["offset"]
+            length = self.records[record_name]["length"]
+            return self.df.iloc[offset: offset + length]
+        raise ValueError(f"Record '{record_name}' not found!")
+
+    def get_balance_record(self):
+        return self.get_record("balance")
+
+    def get_profit_loss_record(self):
+        return self.get_record("profit_loss")
+
+    def get_sold_product_record(self):
+        return self.get_record("sold_product")
+
+    def get_account_turnover_record(self):
+        return self.get_record("account_turnover")
