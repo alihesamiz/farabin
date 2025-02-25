@@ -25,10 +25,11 @@ from rest_framework.decorators import action
 from rest_framework import status, viewsets
 
 
-from finance.models import AnalysisReport, FinancialData, TaxDeclarationFile, BalanceReportFile
 from company.models import CompanyProfile
-from finance.serializers import (TaxDeclarationCreateSerializer, TaxDeclarationSerializer, BalanceReportCreateSerializer, BalanceReportSerializer,
-                                 AgilityChartSerializer, AnalysisReportListSerializer, AnalysisReportSerializer, AssetChartSerializer, BankrupsyChartSerializer, CostChartSerializer, DebtChartSerializer, EquityChartSerializer, FinancialDataSerializer,
+
+from finance.models import AnalysisReport, FinanceExcelFile, FinancialData, TaxDeclarationFile, BalanceReportFile
+from finance.serializers import (FinanceExcelFileSerializer, TaxDeclarationCreateSerializer, TaxDeclarationSerializer, BalanceReportCreateSerializer, BalanceReportSerializer,
+                                 AgilityChartSerializer, AnalysisReportListSerializer, AssetChartSerializer, BankrupsyChartSerializer, CostChartSerializer, DebtChartSerializer, EquityChartSerializer, FinancialDataSerializer,
                                  InventoryChartSerializer, LeverageChartSerializer, LiquidityChartSerializer, FinancialDataSerializer, MonthDataSerializer,  ProfitChartSerializer, ProfitibilityChartSerializer, SalaryChartSerializer, SaleChartSerializer, YearlyFinanceDataSerializer
                                  )
 
@@ -228,7 +229,7 @@ class BalanceReportViewSet(viewsets.ModelViewSet):
                 ]
 
                 folder_path = os.path.dirname(file_paths[0])
-                
+
                 for file_path in file_paths:
 
                     if file_path and default_storage.exists(file_path):
@@ -237,7 +238,7 @@ class BalanceReportViewSet(viewsets.ModelViewSet):
 
                 if folder_path and not os.listdir(folder_path):
                     os.rmdir(folder_path)
-                
+
                 instance.delete()
                 logger.info(
                     f"Balance report {instance.id} and all associated files deleted by user {self.request.user.id}")
@@ -285,6 +286,16 @@ class BalanceReportViewSet(viewsets.ModelViewSet):
             {"success": f"{updated_count} files marked as sent."},
             status=status.HTTP_200_OK,
         )
+
+
+class FinanceExcelViewSet(viewsets.ModelViewSet):
+
+    permission_classes = [IsAuthenticated]
+    serializer_class = FinanceExcelFileSerializer
+
+    def get_queryset(self):
+        company = self.request.user.company
+        return FinanceExcelFile.objects.filter(company=company)
 
 
 class FinanceAnalysisViewSet(viewsets.ModelViewSet):

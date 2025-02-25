@@ -2,8 +2,9 @@
 from rest_framework.exceptions import ValidationError
 from rest_framework import serializers
 
-from finance.models import AnalysisReport, FinancialAsset, FinancialData,BalanceReportFile,TaxDeclarationFile
+from finance.models import AnalysisReport, FinanceExcelFile, FinancialAsset, FinancialData, BalanceReportFile, TaxDeclarationFile
 from company.models import CompanyProfile
+
 
 class BalanceReportCreateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,11 +19,13 @@ class BalanceReportCreateSerializer(serializers.ModelSerializer):
 
         year = validated_data.get('year')
         month = validated_data.get('month')
-        existing_report = BalanceReportFile.objects.filter(company=company, year=year, month=month).first()
+        existing_report = BalanceReportFile.objects.filter(
+            company=company, year=year, month=month).first()
 
         if existing_report:
-            raise ValidationError({"error": "This months' file already exists"})
-        
+            raise ValidationError(
+                {"error": "This months' file already exists"})
+
         return super().create(validated_data)
 
     def update(self, instance, validated_data):
@@ -62,7 +65,8 @@ class TaxDeclarationCreateSerializer(serializers.ModelSerializer):
         validated_data['company'] = company
 
         year = validated_data.get('year')
-        existing_report = TaxDeclarationFile.objects.filter(company=company, year=year).first()
+        existing_report = TaxDeclarationFile.objects.filter(
+            company=company, year=year).first()
 
         if existing_report:
             raise ValidationError({"error": "This years' file already exists"})
@@ -90,6 +94,12 @@ class SimpleTaxDeclarationSerializer(serializers.ModelSerializer):
     class Meta:
         model = TaxDeclarationFile
         fields = ['id',  'year']
+
+
+class FinanceExcelFileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FinanceExcelFile
+        fields = ['id', 'company', 'finance_excel_file', 'is_saved', 'is_sent']
 
 
 class BaseChartSerializer(serializers.Serializer):
