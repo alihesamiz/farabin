@@ -1,25 +1,29 @@
 from datetime import timedelta
 from pathlib import Path
+import tempfile
 import environ
+import socket
 import os
 
 from kombu import Queue
 
 from django.utils.translation import gettext_lazy as _
 
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-env = environ.Env(FARABIN_DEBUG=(bool, True))
-environ.Env.read_env(BASE_DIR)
-
+env = environ.Env()
+environ.Env.read_env(BASE_DIR/".env")
 
 SECRET_KEY = env.get_value("FARABIN_SECRET_KEY")
 
-DEBUG = True 
+HOST_NAME = socket.gethostname()
 
-ALLOWED_HOSTS = ["*"]
+DEBUG = True if not HOST_NAME in [
+    "saramad.farabinbrand.com"] else env.bool("FARABIN_DEBUG", default=False)
 
+ALLOWED_HOSTS = ["localhost", "127.0.0.1"] if DEBUG else \
+    env.list("FARABIN_ALLOWED_HOSTS", default=[])
 
 INSTALLED_APPS = [
     "admin_interface",
@@ -92,28 +96,16 @@ WSGI_APPLICATION = 'config.wsgi.application'
 ASGI_APPLICATION = 'config.asgi.application'
 
 
-if DEBUG:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'PASSWORD': env.get_value("FARABIN_DB_PASSWORD"),
-            'NAME': env.get_value("FARABIN_DB_NAME"),
-            'USER': env.get_value("FARABIN_DB_USER"),
-            'HOST': env.get_value("FARABIN_DB_HOST"),
-            'PORT': env.get_value("FARABIN_DB_PORT")
-        }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'PASSWORD': env.get_value("FARABIN_DB_PASSWORD"),
+        'NAME': env.get_value("FARABIN_DB_NAME"),
+        'USER': env.get_value("FARABIN_DB_USER"),
+        'HOST': env.get_value("FARABIN_DB_HOST"),
+        'PORT': env.get_value("FARABIN_DB_PORT")
     }
-if not DEBUG:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'PASSWORD': env.get_value("FARABIN_DB_PASSWORD"),
-            'NAME': env.get_value("FARABIN_DB_NAME"),
-            'USER': env.get_value("FARABIN_DB_USER"),
-            'HOST': env.get_value("FARABIN_DB_HOST"),
-            'PORT': env.get_value("FARABIN_DB_PORT")
-        }
-    }
+}
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -265,7 +257,10 @@ if not DEBUG:
     CSRF_COOKIE_SECURE = True
 
 
-LOG_DIR = BASE_DIR / 'logs'
+LOG_DIR = Path(tempfile.gettempdir()) / "saramad_logs"
+
+os.makedirs(LOG_DIR, exist_ok=True) if not os.path.exists(LOG_DIR) else None
+
 
 LOGGING = {
     "version": 1,

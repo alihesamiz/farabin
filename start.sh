@@ -18,11 +18,6 @@ else
     exit 1
 fi
 
-if ! [ -f "$SCRIPT_DIR/logs" ]; then
-    mkdir "$SCRIPT_DIR/logs"
-    echo "Logs directory created."
-fi
-
 bash "$SCRIPT_DIR/stop.sh"
 
 supervisord -c supervisord.conf
