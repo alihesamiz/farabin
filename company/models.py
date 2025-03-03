@@ -72,16 +72,16 @@ class CompanyProfile(models.Model):
         max_length=255, verbose_name=_("Company Title"))
 
     email = models.EmailField(
-        max_length=255, unique=True, verbose_name=_("Email"),null=True,blank=True)
+        max_length=255, unique=True, verbose_name=_("Email"), null=True, blank=True)
 
     social_code = models.CharField(
-        max_length=10, unique=True, verbose_name=_("Social Code"),blank=True,null=True)
+        max_length=10, unique=True, verbose_name=_("Social Code"), blank=True, null=True)
 
     manager_name = models.CharField(
         max_length=255, verbose_name=_("Manager Full Name"))
 
-    license = models.CharField(
-        max_length=1, choices=LICENSE_CHOICES, verbose_name=_("License Type"))
+    license = models.ManyToManyField(
+        'License', verbose_name=_("License Types"))
 
     tech_field = models.ForeignKey('TechField', default=1,
                                    on_delete=models.CASCADE,
@@ -114,11 +114,36 @@ class CompanyProfile(models.Model):
         return f"{self.company_title} › {self.user.national_code}"
 
 
+class License(models.Model):
+    INDUSTRIAL_TOWN_LICENSE = 'itl'
+    INNOVATIVE_LICENSE = 'il'
+    KNOWLEDGE_BASE_LICENSE = 'kbl'
+    OTHER_LICENSE = 'ol'
+
+    LICENSE_CHOICES = [
+        (INDUSTRIAL_TOWN_LICENSE, _("Industrial town")),
+        (INNOVATIVE_LICENSE, _("Innovative")),
+        (KNOWLEDGE_BASE_LICENSE, _("Knowledge base")),
+        (OTHER_LICENSE, _("Others")),
+    ]
+
+    code = models.CharField(max_length=3, unique=True,
+                            choices=LICENSE_CHOICES, verbose_name=_("License Code"))
+    name = models.CharField(max_length=50, verbose_name=_("License Name"))
+
+    class Meta:
+        verbose_name = _("License")
+        verbose_name_plural = _("Licenses")
+
+    def __str__(self):
+        return self.name
+
+
 class CompanyService(models.Model):
     company = models.ForeignKey(CompanyProfile, on_delete=models.CASCADE,
                                 related_name='services', verbose_name=_("Company"))
     service = models.ForeignKey(
-        'core.Service', on_delete=models.CASCADE, verbose_name=_("Service"),related_name='services')
+        'core.Service', on_delete=models.CASCADE, verbose_name=_("Service"), related_name='services')
     is_active = models.BooleanField(default=False, verbose_name=_("Activate"))
 
     purchased_date = models.DateField(
@@ -131,5 +156,3 @@ class CompanyService(models.Model):
 
     def __str__(self) -> str:
         return f"{self.company.company_title} › {self.service.name} ({'Active' if self.is_active else 'Inactive'})"
-
-
