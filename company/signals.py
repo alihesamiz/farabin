@@ -5,77 +5,12 @@ from django.dispatch import receiver
 from django.core.cache import cache
 
 
-from company.models import  CompanyService, CompanyProfile
 from finance.models import TaxDeclarationFile, BalanceReportFile
+from company.models import CompanyProfile
 from ticket.models import Ticket
 
 
 logger = logging.getLogger("company")
-
-
-# # TODO: Update the folowing signal handler
-
-# @receiver(post_save, sender=TaxDeclarationFile)
-# @receiver(post_save, sender=BalanceReportFile)
-# def create_diagnostic_request(sender, instance, created, **kwargs):
-#     """
-#     Create a FinanceRequest if a TaxDeclarationFile or BalanceReportFile is sent.
-#     """
-
-#     if instance.is_sent:
-#         try:
-#             with transaction.atomic():
-#                 # Get the company and corresponding service
-#                 company = instance.company
-#                 service_instance = CompanyService.objects.select_related('service').filter(
-#                     company=company,
-#                     service__name="DIAGNOSTIC",  # Assuming "DIAGNOSTIC" is the service name
-#                     is_active=True  # Ensure the service is active
-#                 ).first()
-#                 if not service_instance:
-#                     logger.warning(
-#                         f"No active 'DIAGNOSTIC' service found for company: {company.id}")
-#                     return
-
-#                 # Create the FinanceRequest
-#                 FinanceRequest.objects.create(
-#                     company=company,
-#                     service=service_instance,
-#                     tax_record=instance if sender is TaxDeclarationFile else None,
-#                     balance_record=instance if sender is BalanceReportFile else None,
-#                 )
-#                 logger.info(
-#                     f"FinanceRequest created for company {company.id}, triggered by {sender.__name__} {instance.id}")
-
-#         except Exception as e:
-#             logger.error(
-#                 f"Error creating FinanceRequest for company {company.id}: {e}", exc_info=True)
-
-
-# @receiver(post_save, sender=FinanceRequest)
-# def set_the_file_available(sender, instance, created, **kwargs):
-#     """
-#     Signal to handle updates when a FinanceRequest's status is changed to 'rejected'.
-#     """
-
-#     if instance.status == FinanceRequest.REQUEST_STATUS_REJECTED:
-#         logger.info(f"FinanceRequest {instance.pk} is rejected.")
-
-#         # Handle tax record
-
-#         if instance.tax_record:
-#             instance.tax_record.is_sent = False
-#             instance.tax_record.save()  # Save the change to persist it in the database
-#             logger.info(
-#                 f"Updated tax_record {instance.tax_record.pk} is_sent to False.")
-
-#         # Handle balance record
-
-#         if instance.balance_record:
-#             instance.balance_record.is_sent = False
-#             instance.balance_record.save()  # Save the change to persist it in the database
-#             logger.info(
-#                 f"Updated balance_record {instance.balance_record.pk} is_sent to False.")
 
 
 @receiver(post_save, sender=TaxDeclarationFile)
