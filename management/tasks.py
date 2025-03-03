@@ -35,18 +35,18 @@ def process_personnel_excel(self, id: int):
             if not any(row):
                 continue
 
-            name, unit, position, reports_to_position = row[:4]
+            name, position, reports_to_position, obligations = row[:4]
 
-            if not (name and unit and position):
+            if not (name and obligations and position):
                 logger.warning(
-                    f"Skipped invalid record: {name}, {unit}, {position}. Missing reports_to: {reports_to_position}"
+                    f"Skipped invalid record: {name}, {obligations}, {position}. Missing reports_to: {reports_to_position}"
                 )
                 continue
 
             person = PersonelInformation(
                 human_resource=hr_instance,
                 name=name.strip().title(),
-                unit=unit.strip(),
+                obligations=obligations.strip(),
                 position=position.strip(),
                 reports_to=None
             )

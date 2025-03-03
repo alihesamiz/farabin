@@ -43,14 +43,14 @@ class PersonelInformation(models.Model):
     name = models.CharField(verbose_name=_("Full Name"),
                             max_length=250, null=False, blank=False)
 
-    unit = models.CharField(verbose_name=_(
-        "Unit"), max_length=150, null=False, blank=False)
-
     position = models.CharField(verbose_name=_(
         "Position"), max_length=150, null=False, blank=False)
 
     reports_to = models.ForeignKey('self', verbose_name=_(
         "Reports to (Personnel)"), null=True, blank=True, on_delete=models.SET_NULL, related_name='subordinates')
+
+    obligations = models.CharField(verbose_name=_(
+        "Obligation"), max_length=150, null=False, blank=False)
 
     def __str__(self):
         return f"{self.name}"
