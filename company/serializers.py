@@ -10,7 +10,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework import serializers
 
 
-from company.models import CompanyProfile, CompanyService
+from company.models import CompanyProfile, CompanyService, License
 
 from core.models import Service
 
@@ -30,6 +30,9 @@ class CompanyProfileSerializer(serializers.ModelSerializer):
         source='user.national_code', read_only=True
     )
     services = serializers.SerializerMethodField()
+    license = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=License.objects.all()
+    )
 
     class Meta:
         model = CompanyProfile
@@ -40,7 +43,7 @@ class CompanyProfileSerializer(serializers.ModelSerializer):
             'address', 'services',
         ]
 
-    def get_services(self, company)-> list[str]:
+    def get_services(self, company) -> list[str]:
         # Retrieve all services available
         all_services = Service.objects.filter(service_active=True)
 
@@ -71,6 +74,10 @@ class CompanyProfileSerializer(serializers.ModelSerializer):
 
 
 class CompanyProfileCreateSerializer(serializers.ModelSerializer):
+    license = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=License.objects.all()
+    )
+
     class Meta:
         model = CompanyProfile
         fields = [
@@ -82,7 +89,7 @@ class CompanyProfileCreateSerializer(serializers.ModelSerializer):
         ]
 
     def validate_email(self, value):
-        
+
         profile_id = self.instance.id if self.instance else None
 
         if CompanyProfile.objects.filter(email=value).exclude(id=profile_id).exists():
@@ -91,7 +98,7 @@ class CompanyProfileCreateSerializer(serializers.ModelSerializer):
         return value
 
     def validate_social_code(self, value):
-        
+
         profile_id = self.instance.id if self.instance else None
 
         if CompanyProfile.objects.filter(social_code=value).exclude(id=profile_id).exists():
@@ -102,20 +109,22 @@ class CompanyProfileCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         capital_providing_methods = validated_data.pop(
             'capital_providing_method', [])
+        license = validated_data.pop('license', [])
         user = self.context['request'].user
 
         try:
-            
+
             company_profile, created = CompanyProfile.objects.get_or_create(
                 user=user, defaults=validated_data)
-            
+
             if not created:
                 for attr, value in validated_data.items():
                     setattr(company_profile, attr, value)
                 company_profile.save()
-            
+
             company_profile.capital_providing_method.set(
                 capital_providing_methods)
+            company_profile.license.set(license)
             return company_profile
 
         except IntegrityError:
@@ -125,22 +134,21 @@ class CompanyProfileCreateSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         capital_providing_methods = validated_data.pop(
             'capital_providing_method', [])
-        
+        license = validated_data.pop('license', [])
+
         if 'email' in validated_data:
             self.validate_email(validated_data['email'])
-        
+
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
 
         try:
-            
+
             instance.save()
-            
+            instance.license.set(license)
             instance.capital_providing_method.set(capital_providing_methods)
             return instance
 
         except IntegrityError:
             raise ValidationError(
                 {"email": "A company profile with this email already exists."})
-
-
