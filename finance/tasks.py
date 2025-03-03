@@ -227,7 +227,6 @@ def generate_financial_asset(company_id, file_path):
             SoldProductFee, financial_asset, sold_product_df)
 
 
-@shared_task
 def populate_financial_model(model_class, financial_asset, df):
     """
     Dynamically populate financial models based on the DataFrame columns.
