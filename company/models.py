@@ -53,15 +53,6 @@ class TechField(models.Model):
 class CompanyProfile(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
 
-    NEWBIE_LICENSE = 'n'
-    INNOVATIVE_LICENSE = 'i'
-    TECHNOLOGICAL_LICENSE = 'l'
-    LICENSE_CHOICES = [
-        (NEWBIE_LICENSE, _("Newbie")),
-        (INNOVATIVE_LICENSE, _("Innovative")),
-        (TECHNOLOGICAL_LICENSE, _("Technological")),
-    ]
-
     user = models.OneToOneField(
         User, on_delete=models.CASCADE, related_name='company', verbose_name=_("User"))
 
@@ -116,13 +107,13 @@ class CompanyProfile(models.Model):
 
 class License(models.Model):
     INDUSTRIAL_TOWN_LICENSE = 'itl'
-    INNOVATIVE_LICENSE = 'il'
+    TECHNOLOGICAL_LICENSE = 'tl'
     KNOWLEDGE_BASE_LICENSE = 'kbl'
     OTHER_LICENSE = 'ol'
 
     LICENSE_CHOICES = [
         (INDUSTRIAL_TOWN_LICENSE, _("Industrial town")),
-        (INNOVATIVE_LICENSE, _("Innovative")),
+        (TECHNOLOGICAL_LICENSE, _("Technological")),
         (KNOWLEDGE_BASE_LICENSE, _("Knowledge base")),
         (OTHER_LICENSE, _("Others")),
     ]
