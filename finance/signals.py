@@ -159,14 +159,14 @@ def generate_financial_data(sender, instance, **kwargs):
 def populating_reports(sender, instance, **kwargs):
     company = instance.financial_asset.company.id
     logger.info(
-        "FinancialData published, generating analysis reports for company %d.", company)
+        f"FinancialData published, generating analysis reports for company {company}.")
 
     if instance.is_published:
         i = 0
         for chart_name, _ in AnalysisReport.CHART_CHOICES:
             if chart_name != "life_cycle":
                 logger.debug(
-                    "Triggering analysis generation for chart: %s", chart_name)
+                    f"Triggering analysis generation for chart: {chart_name}", )
                 generate_analysis.delay(company, chart_name)
 
 
@@ -190,5 +190,5 @@ def clear_chart_monthly_cache(sender, instance, **kwargs):
     for chart in chart_types:
         cache_key = f"finance_analysis_chart_monthly_{chart}_{company}"
         cache.delete(cache_key)
-        logger.debug("Cleared cache: %s", cache_key)
-    logger.info("Chart cache cleared for company %d.", company)
+        logger.debug(f"Cleared cache: {cache_key}")
+    logger.info(f"Chart cache cleared for company {company}.")
