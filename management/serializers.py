@@ -52,8 +52,8 @@ class PersonelInformationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PersonelInformation
-        fields = ["id", "human_resource_id", "name",
-                  "unit", "position", "reports_to", "node_relation"]
+        fields = ["id", "human_resource_id", "name", "position",
+                  "reports_to", "obligations", "node_relation"]
         read_only_fields = ["id", "human_resource_id"]
 
     def get_relation(self, obj):
@@ -64,18 +64,19 @@ class PersonelInformationCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PersonelInformation
-        fields = ["human_resource", "name", "unit", "position", "reports_to"]
+        fields = ["human_resource", "name",
+                  "position", "reports_to", "obligations"]
 
 
 class PersonelInformationUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = PersonelInformation
-        fields = ["name", "unit", "position", "reports_to"]
+        fields = ["name", "position", "reports_to", "obligations"]
         extra_kwargs = {
             "name": {"required": False},
-            "unit": {"required": False},
             "position": {"required": False},
             "reports_to": {"required": False},
+            "obligations": {"required": False},
         }
 
 
@@ -93,7 +94,7 @@ class ChartNodeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PersonelInformation
-        fields = ['id', 'name', 'unit', 'position', 'reports_to']
+        fields = ['id', 'name', 'position', 'reports_to', "obligations"]
 
     def get_reports_to(self, obj):
         return obj.reports_to.id if obj.reports_to else None

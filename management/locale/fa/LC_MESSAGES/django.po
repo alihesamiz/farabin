@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-18 11:12+0330\n"
+"POT-Creation-Date: 2025-03-03 09:40+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -51,16 +51,16 @@ msgid "Full Name"
 msgstr "نام کامل"
 
 #: management/models.py:47
-msgid "Unit"
-msgstr "واحد"
+msgid "Position"
+msgstr "موقعیت شغلی"
 
 #: management/models.py:50
-msgid "Position"
-msgstr "جایگاه"
+msgid "Reports to (Personnel)"
+msgstr "گزارش میدهد به (موقعیت شغلی)"
 
 #: management/models.py:53
-msgid "Reports to (Personnel)"
-msgstr "گزارش میدهد به (جایگاه)"
+msgid "Obligation"
+msgstr "صلاحیت‌ها و مهارت‌ها"
 
 #: management/models.py:59 management/models.py:60
 msgid "Personnel Information"
@@ -101,3 +101,4 @@ msgstr "رکورد منابع انسانی مناسبی برای شرکت پید
 #: management/views.py:120
 msgid "Not found an associated file with your profile"
 msgstr "فایلی متناسب با پروفایل شرکت شما یافت نشد. باپشتیبانی تماس بگیرید."
+

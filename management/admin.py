@@ -5,10 +5,11 @@ from management.models import HumanResource, PersonelInformation, OrganizationCh
 
 @admin.register(PersonelInformation)
 class PersonelInformationAdmin(admin.ModelAdmin):
-    list_display = ['human_resource', 'name', 'unit', 'position', 'reports_to']
+    list_display = ['human_resource', 'name',
+                    'obligations', 'position', 'reports_to']
     autocomplete_fields = ['human_resource']
-    search_fields = ['name', 'unit', 'position', 'reports_to']
-    list_filter = ['human_resource', 'unit', 'position', 'reports_to']
+    search_fields = ['name', 'obligations', 'position', 'reports_to']
+    list_filter = ['human_resource', 'obligations', 'position', 'reports_to']
 
 
 @admin.register(HumanResource)
