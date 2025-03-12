@@ -22,7 +22,7 @@ HOST_NAME = socket.gethostname()
 DEBUG = True if not HOST_NAME in [
     "saramad.farabinbrand.com"] else env.bool("FARABIN_DEBUG", default=False)
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"] if DEBUG else \
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0"] if DEBUG else \
     env.list("FARABIN_ALLOWED_HOSTS", default=[])
 
 INSTALLED_APPS = [
@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
 ]
 
+INTERNAL_IPS = ["127.0.0.1"] if DEBUG else None
+
 PROJECT_APPS = [
     'management',
     'finance',
@@ -49,13 +51,14 @@ PROJECT_APPS = [
 THIRED_PARTY_APPS = [
     'rest_framework_simplejwt',
     'django_celery_beat',
+    'graphene_django',
     'drf_spectacular',
     'rest_framework',
     'nested_admin',
     'corsheaders',
-    'graphene_django',
 ]
 
+THIRED_PARTY_APPS.append('debug_toolbar',) if DEBUG else None
 
 INSTALLED_APPS += PROJECT_APPS + THIRED_PARTY_APPS
 
@@ -71,6 +74,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+MIDDLEWARE.append(
+    'debug_toolbar.middleware.DebugToolbarMiddleware',) if DEBUG else None
 
 ROOT_URLCONF = 'config.urls'
 
@@ -372,7 +377,7 @@ LOGGING["handlers"]["rotating_file"] = {
 }
 
 # For automatically adding apps into the request type
-APP_REQUEST_TYPES = ['finance']
+APP_REQUEST_TYPES = ['finance', 'management']
 
 
 # For the custom file path exceptions

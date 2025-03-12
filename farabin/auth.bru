@@ -5,7 +5,21 @@ meta {
 }
 
 get {
-  url: 127.0.0.1:8000/
-  body: none
-  auth: none
+  url: 127.0.0.1:8000/requests/requests/?type=management
+  body: multipartForm
+  auth: bearer
+}
+
+params:query {
+  type: management
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQxNzcwMTkwLCJpYXQiOjE3NDE2ODM3OTAsImp0aSI6ImFhYTJiZGU0NTlkNzQxOWJiOWQyNTkxNTQ3MmQ1NjE5IiwidXNlcl9pZCI6MX0.9lBHyKrP3YXPuMkGohYP_ef-1FddsNH6VHM3qNLplzE
+}
+
+body:multipart-form {
+  national_code: 12736700277
+  phone_number: 09138038121
+  otp_code: 734158
 }
