@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-16 12:29+0330\n"
+"POT-Creation-Date: 2025-03-12 13:28+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,70 +17,83 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
 #: request/apps.py:7
 msgid "Request"
 msgstr "درخواست"
 
-#: request/models.py:14
+#: request/models.py:12
 msgid "New"
 msgstr "جدید"
 
-#: request/models.py:15
+#: request/models.py:13
 msgid "Pending"
 msgstr "در حال انتظار"
 
-#: request/models.py:16
+#: request/models.py:14
 msgid "Accepted"
 msgstr "پذیرفته شده"
 
-#: request/models.py:17
+#: request/models.py:15
 msgid "Rejected"
 msgstr "رد شده"
 
-#: request/models.py:21
+#: request/models.py:19
 msgid "Company"
 msgstr "شرکت"
 
-#: request/models.py:24
+#: request/models.py:22
 msgid "Subject"
 msgstr "عنوان"
 
-#: request/models.py:27
+#: request/models.py:25
 msgid "Status"
 msgstr "وضعیت"
 
-#: request/models.py:30
+#: request/models.py:28
 msgid "Created At"
 msgstr "ایجاد شده در"
 
-#: request/models.py:33
+#: request/models.py:31
 msgid "Updated At"
 msgstr "بروزرسانی شده در"
 
-#: request/models.py:36
+#: request/models.py:37 request/models.py:53 request/models.py:89
 msgid "Service"
 msgstr "سرویس"
 
-#: request/models.py:40
+#: request/models.py:43
 msgid "BaseRequest"
 msgstr "درخواست پایه"
 
-#: request/models.py:41
+#: request/models.py:44
 msgid "BaseRequests"
 msgstr "درخواست‌های پایه"
 
-#: request/models.py:47
+#: request/models.py:60
 msgid "Tax Record"
 msgstr "رکورد اظهارنامه"
 
-#: request/models.py:50
+#: request/models.py:69
 msgid "Balance Record"
 msgstr "رکورد ترازنامه"
 
-#: request/models.py:56
+#: request/models.py:79
 msgid "Finance Request"
 msgstr "درخواست مالی"
 
-#: request/models.py:57
+#: request/models.py:80
 msgid "Finance Requests"
 msgstr "درخواست‌های مالی"
+
+#: request/models.py:95
+msgid "Human Resource Record"
+msgstr "رکورد منابع انسانی"
+
+#: request/models.py:106
+msgid "Management Request"
+msgstr "درخواست مدیریتی"
+
+#: request/models.py:107
+msgid "Management Requests"
+msgstr "درخواست‌های مدیریتی"

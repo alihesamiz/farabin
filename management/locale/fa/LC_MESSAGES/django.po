@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-03 09:40+0330\n"
+"POT-Creation-Date: 2025-03-12 13:28+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -31,54 +31,58 @@ msgid "Company"
 msgstr "شرکت"
 
 #: management/models.py:23
+msgid "Is Approved"
+msgstr "تایید"
+
+#: management/models.py:26
 msgid "Created At"
 msgstr "ایجاد شده در"
 
-#: management/models.py:25
+#: management/models.py:28
 msgid "Updated At"
 msgstr "بروزرسانی شده در"
 
-#: management/models.py:31 management/models.py:41
+#: management/models.py:34 management/models.py:44
 msgid "Human Resource"
 msgstr "منبع انسانی"
 
-#: management/models.py:32
+#: management/models.py:35
 msgid "Human Resources"
 msgstr "منابع انسانی"
 
-#: management/models.py:43
+#: management/models.py:46
 msgid "Full Name"
 msgstr "نام کامل"
 
-#: management/models.py:47
+#: management/models.py:50
 msgid "Position"
 msgstr "موقعیت شغلی"
 
-#: management/models.py:50
+#: management/models.py:53
 msgid "Reports to (Personnel)"
 msgstr "گزارش میدهد به (موقعیت شغلی)"
 
-#: management/models.py:53
+#: management/models.py:56
 msgid "Obligation"
 msgstr "صلاحیت‌ها و مهارت‌ها"
 
-#: management/models.py:59 management/models.py:60
+#: management/models.py:62 management/models.py:63
 msgid "Personnel Information"
 msgstr "اطلاعات کارکنان"
 
-#: management/models.py:72
+#: management/models.py:75
 msgid "Field"
 msgstr "نام حوزه"
 
-#: management/models.py:74
+#: management/models.py:77
 msgid "Position Excel"
 msgstr "اکسل موقعیت‌ها"
 
-#: management/models.py:81
+#: management/models.py:84
 msgid "Organization Chart"
 msgstr "فایل چارت سازمانی"
 
-#: management/models.py:82
+#: management/models.py:85
 msgid "Organization Charts"
 msgstr "فایل‌های چارت سازمانی"
 
@@ -101,4 +105,3 @@ msgstr "رکورد منابع انسانی مناسبی برای شرکت پید
 #: management/views.py:120
 msgid "Not found an associated file with your profile"
 msgstr "فایلی متناسب با پروفایل شرکت شما یافت نشد. باپشتیبانی تماس بگیرید."
-
