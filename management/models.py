@@ -19,6 +19,9 @@ class HumanResource(models.Model):
     company = models.ForeignKey('company.CompanyProfile', verbose_name=_(
         "Company"), null=False, blank=False, on_delete=models.CASCADE, related_name="hrfiles")
 
+    is_approved = models.BooleanField(
+        verbose_name=_("Is Approved"), default=False)
+
     create_at = models.DateTimeField(
         auto_now_add=True, verbose_name=_("Created At"))
     updated_at = models.DateTimeField(
