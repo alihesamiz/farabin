@@ -27,11 +27,11 @@ from rest_framework import status, viewsets
 
 from company.models import CompanyProfile
 
+
 from finance.models import AnalysisReport, FinanceExcelFile, FinancialData, TaxDeclarationFile, BalanceReportFile
 from finance.serializers import (FinanceExcelFileSerializer, TaxDeclarationCreateSerializer, TaxDeclarationSerializer, BalanceReportCreateSerializer, BalanceReportSerializer,
                                  AgilityChartSerializer, AnalysisReportListSerializer, AssetChartSerializer, BankrupsyChartSerializer, CostChartSerializer, DebtChartSerializer, EquityChartSerializer, FinancialDataSerializer,
-                                 InventoryChartSerializer, LeverageChartSerializer, LiquidityChartSerializer, FinancialDataSerializer, MonthDataSerializer,  ProfitChartSerializer, ProfitibilityChartSerializer, SalaryChartSerializer, SaleChartSerializer, YearlyFinanceDataSerializer
-                                 )
+                                 InventoryChartSerializer, LeverageChartSerializer, LiquidityChartSerializer, FinancialDataSerializer, MonthDataSerializer,  ProfitChartSerializer, ProfitibilityChartSerializer, SalaryChartSerializer, SaleChartSerializer, YearlyFinanceDataSerializer)
 
 
 logger = logging.getLogger("finance")
@@ -44,13 +44,16 @@ class TaxDeclarationViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user_id = self.request.user.id
         queryset = TaxDeclarationFile.objects.filter(
-            company__user=self.request.user).order_by('-year')
+            company__user=self.request.user).select_related("company").order_by('-year')
+
+        count = queryset.count()
+
         logger.info("Fetched tax declarations", extra={
-                    "user_id": user_id, "count": queryset.count()})
+                    "user_id": user_id, "count": count})
         return queryset
 
     def get_serializer_class(self):
-        logger.info(f"Action: {self.action}")  # Debugging
+        logger.info(f"Action: {self.action}")
         if self.action in ['create', 'update']:
             return TaxDeclarationCreateSerializer
         return TaxDeclarationSerializer
@@ -64,9 +67,11 @@ class TaxDeclarationViewSet(viewsets.ModelViewSet):
         user_id = request.user.id
         try:
             instance = self.get_object()
+            file_id = instance.id
+
             self.perform_destroy(instance)
             logger.info("File deleted successfully", extra={
-                        "user_id": user_id, "file_id": instance.id})
+                        "user_id": user_id, "file_id": file_id})
             return Response({"success": "file deleted"}, status=status.HTTP_204_NO_CONTENT)
 
         except Exception as e:
@@ -114,8 +119,9 @@ class TaxDeclarationViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'])
     def year(self, request):
 
-        tax_declarations = self.get_queryset()
-        years = tax_declarations.values('year').distinct()
+        # tax_declarations = self.get_queryset()
+        years = list(self.get_queryset().values_list(
+            'year', flat=True).distinct())
         logger.info("Fetched unique tax declaration years", extra={
                     "user_id": request.user.id, "years_count": len(years)})
 
@@ -133,22 +139,15 @@ class TaxDeclarationViewSet(viewsets.ModelViewSet):
             id__in=ids, company__user=self.request.user
         )
 
-        if not queryset.exists():
-            logger.warning("No valid tax declarations found for send-experts action",
-                           extra={"user_id": user_id, "ids": ids})
-            return Response(
-                {"error": "No valid tax declarations found for the provided IDs."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-
         updated_count = queryset.update(is_sent=True)
-
-        for instance in queryset:
+        instances = list(queryset)
+        for instance in instances:
             post_save.send(sender=TaxDeclarationFile,
                            instance=instance, created=False)
 
         logger.info("Marked tax declarations as sent", extra={
                     "user_id": user_id, "updated_count": updated_count})
+
         return Response(
             {"success": f"{updated_count} files marked as sent."},
             status=status.HTTP_200_OK,
@@ -295,7 +294,7 @@ class FinanceExcelViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         company = self.request.user.company
-        return FinanceExcelFile.objects.filter(company=company)
+        return FinanceExcelFile.objects.select_related("company").filter(company=company)
 
 
 class FinanceAnalysisViewSet(viewsets.ModelViewSet):
@@ -350,7 +349,7 @@ class FinanceAnalysisViewSet(viewsets.ModelViewSet):
         if cached_data:
             return cached_data
         try:
-            queryset = FinancialData.objects.select_related('financial_asset').filter(
+            queryset = FinancialData.objects.select_related('financial_asset').prefetch_related("financial_asset__company").filter(
                 financial_asset__company=company,
                 financial_asset__is_tax_record=True,
                 is_published=True
@@ -381,8 +380,10 @@ class FinanceAnalysisViewSet(viewsets.ModelViewSet):
                 .prefetch_related("calculated_data__financial_asset")\
                 .filter(
                 calculated_data__financial_asset__company=company,
-                calculated_data__is_published=True
-            ).order_by('calculated_data__financial_asset__year', 'calculated_data__financial_asset__month', '-created_at')
+                calculated_data__is_published=True)\
+                .order_by('chart_name', '-created_at', 'calculated_data__financial_asset__year', 'calculated_data__financial_asset__month')\
+                .distinct('chart_name')
+
             cache.set(data_cache_key, analysis)
 
         cache_key = f"finance_analysis_data_{company.id}"
@@ -532,8 +533,9 @@ class CompanyFinancialDataView(View):
             financial_data = cached_data
 
         else:
-            financial_data = FinancialData.objects.select_related("financial_asset").filter(
-                financial_asset__company=company).order_by('financial_asset__year', 'financial_asset__month')
+            financial_data = FinancialData.objects.select_related(
+                "financial_asset", "financial_asset__company"
+            ).filter(financial_asset__company=company).order_by('financial_asset__year', 'financial_asset__month')
 
         cache.set(cache_key, financial_data)
 
