@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from ticket.models import Ticket, Department, TicketAnswer, TicketComment
+from tickets.models import Ticket, Department, TicketAnswer, TicketComment
 
 from core.models import Service
 

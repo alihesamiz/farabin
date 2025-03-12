@@ -7,7 +7,7 @@ from django.core.cache import cache
 
 from finance.models import TaxDeclarationFile, BalanceReportFile
 from company.models import CompanyProfile
-from ticket.models import Ticket
+from tickets.models import Ticket
 
 
 logger = logging.getLogger("company")
