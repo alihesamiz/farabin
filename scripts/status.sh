@@ -1,4 +1,5 @@
 #!/bin/bash
+
 if pgrep -x "supervisord" > /dev/null; then
     supervisorctl -c supervisord.conf status
 else
