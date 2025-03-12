@@ -1,9 +1,10 @@
+from management.models import HumanResource
 import importlib
 import logging
 
-
 from django.shortcuts import get_object_or_404
 from django.core.cache import cache
+from django.db.models import Count
 from django.conf import settings
 
 from rest_framework.permissions import IsAuthenticated
@@ -27,20 +28,26 @@ class CompanyProfileViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+
         cache_key = f"company_profile_{self.request.user.id}"
         cached_data = cache.get(cache_key)
+
         if cached_data:
             logger.info("Cache hit for company profile", extra={
                         "user_id": self.request.user.id})
             return cached_data
 
         try:
-            profile = CompanyProfile.objects.filter(user=self.request.user)
-            cache.set(cache_key, profile)
+            queryset = CompanyProfile.objects.select_related(
+                "user").filter(user=self.request.user)
+
+            queryset_list = list(queryset)
+
+            cache.set(cache_key, queryset_list)
+
             logger.info("Profile fetched from DB and cached",
                         extra={"user_id": self.request.user.id})
-            return profile
-
+            return queryset_list
         except Exception as e:
             logger.error("Failed to fetch profile", extra={
                          "user_id": self.request.user.id, "error": str(e)}, exc_info=True)
@@ -55,7 +62,7 @@ class CompanyProfileViewSet(viewsets.ModelViewSet):
     def retrieve_profile(self, request, pk=None):
 
         try:
-            queryset = self.get_queryset()
+            queryset = self.queryset
             company_profile = get_object_or_404(queryset, pk=pk)
             serializer = CompanyProfileSerializer(company_profile)
             logger.info(
@@ -90,40 +97,39 @@ class DashboardViewSet(APIView):
             return Response(cached_data)
 
         try:
-            company = CompanyProfile.objects.filter(
-                user=self.request.user).first()
+            company = CompanyProfile.objects.select_related(
+                "user").filter(user=request.user).first()
 
             if not company:
                 logger.warning("Company profile not found",
                                extra={"user_id": user_id})
                 return Response({"error": "Company profile not found"}, status=404)
 
-            tax_files_count = TaxDeclarationFile.objects.filter(
-                company=company).count()
-
-            report_files_count = BalanceReportFile.objects.filter(
-                company=company).count()
+            tax_file_count = TaxDeclarationFile.objects.filter(company=company).aggregate(
+                tax_files_count=Count("id")
+            )
+            report_file_count = BalanceReportFile.objects.filter(company=company).aggregate(
+                report_files_count=Count("id")
+            )
+            human_resource_count = HumanResource.objects.filter(company=company).aggregate(
+                human_resource_files_count=Count("id")
+            )
 
             tickets_count = Ticket.objects.filter(issuer=company).count()
 
-            tax_files_count = tax_files_count
+            total_uploaded_files_count = tax_file_count["tax_files_count"] + report_file_count["report_files_count"] + human_resource_count["human_resource_files_count"]
 
-            report_files_count = report_files_count
-
-            total_uploaded_files_count = tax_files_count + report_files_count
-
-            tickets_count = Ticket.objects.filter(
-                issuer__user=self.request.user).count()
-
-            requests_count = {
-                f"{app.lower()}_request_count": getattr(importlib.import_module("request.models"), f"{app.title()}Request").objects.filter(company=company).count()
-                for app in settings.APP_REQUEST_TYPES
-            }
+            requests_count = {}
+            for app in settings.APP_REQUEST_TYPES:
+                model = getattr(importlib.import_module(
+                    "request.models"), f"{app.title()}Request")
+                requests_count[f"{app.lower()}_request_count"] = model.objects.filter(
+                    company=company).count()
 
             response_data = {
                 'all_uploaded_files_count': total_uploaded_files_count,
-                'report_files_count': report_files_count,
-                'tax_files_count': tax_files_count,
+                'report_files_count': report_file_count["report_files_count"],
+                'tax_files_count': tax_file_count["tax_files_count"],
                 "requests_count": requests_count,
                 "tickets_count": tickets_count,
             }
