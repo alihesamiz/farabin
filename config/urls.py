@@ -24,7 +24,7 @@ urlpatterns = [
 
     path('requests/', include('request.urls')),
 
-    path('tickets/', include('ticket.urls')),
+    path('tickets/', include('tickets.urls')),
 
     path('auth/', include('core.urls')),
 

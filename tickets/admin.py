@@ -9,7 +9,7 @@ from django.db.models import Count
 from django.contrib import admin
 
 
-from ticket.models import Ticket, Department, Agent, TicketAnswer, TicketComment
+from tickets.models import Ticket, Department, Agent, TicketAnswer, TicketComment
 
 
 @admin.register(Department)

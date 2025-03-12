@@ -19,7 +19,7 @@ from company.serializers import CompanyProfileSerializer, CompanyProfileCreateSe
 from company.models import CompanyProfile
 
 from finance.models import TaxDeclarationFile, BalanceReportFile
-from ticket.models import Ticket
+from tickets.models import Ticket
 
 logger = logging.getLogger("company")
 

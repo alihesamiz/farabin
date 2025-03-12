@@ -6,7 +6,7 @@ import os
 from django.core.management.base import BaseCommand
 
 
-from ticket.models import Department
+from tickets.models import Department
 
 
 logger = logging.getLogger("ticket")

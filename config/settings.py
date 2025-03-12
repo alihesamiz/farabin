@@ -44,7 +44,7 @@ PROJECT_APPS = [
     'finance',
     'company',
     'request',
-    'ticket',
+    'tickets',
     'core',
 ]
 

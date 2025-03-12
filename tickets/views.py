@@ -10,12 +10,12 @@ from rest_framework.response import Response
 from rest_framework import viewsets, status
 
 
-from ticket.serializers import TicketChatSerializer, TicketCommentCreateSerializer, TicketCreateSerializer, TicketListSerializer, TicketDetailSerializer
-from ticket.paginations import TicketPagination
-from ticket.models import Ticket
+from tickets.serializers import TicketChatSerializer, TicketCommentCreateSerializer, TicketCreateSerializer, TicketListSerializer, TicketDetailSerializer
+from tickets.paginations import TicketPagination
+from tickets.models import Ticket
 
 
-logger = logging.getLogger("ticket")
+logger = logging.getLogger("tickets")
 
 
 class TicketViewSet(viewsets.ModelViewSet):
