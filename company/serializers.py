@@ -145,8 +145,11 @@ class CompanyProfileCreateSerializer(serializers.ModelSerializer):
         try:
 
             instance.save()
-            instance.license.set(license)
-            instance.capital_providing_method.set(capital_providing_methods)
+            if license is not None:
+                instance.license.set(license)
+
+            if capital_providing_methods is not None:
+                instance.capital_providing_method.set(capital_providing_methods)
             return instance
 
         except IntegrityError:
