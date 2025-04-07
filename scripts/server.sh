@@ -19,5 +19,5 @@ python manage.py collectstatic --noinput
 python manage.py makemigrations
 python manage.py migrate
 
-gunicorn --bind 0.0.0.0:8000 --workers 3 config.wsgi:application --reload
+gunicorn --bind 0.0.0.0:8000 --workers 3 config.wsgi:application
 # gunicorn --bind 0.0.0.0:8000 --workers 3 config.wsgi:application

@@ -2,7 +2,6 @@ from datetime import timedelta
 from pathlib import Path
 import tempfile
 import environ
-import socket
 import os
 
 from kombu import Queue
@@ -17,13 +16,11 @@ environ.Env.read_env(BASE_DIR/".env")
 
 SECRET_KEY = env.get_value("FARABIN_SECRET_KEY")
 
-HOST_NAME = socket.gethostname()
-
-DEBUG = True if not HOST_NAME in [
-    "saramad.farabinbrand.com"] else env.bool("FARABIN_DEBUG", default=False)
+DEBUG = env.bool("FARABIN_DEBUG", default=False)
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0"] if DEBUG else \
-    env.list("FARABIN_ALLOWED_HOSTS", default=[])
+    env.list("FARABIN_ALLOWED_HOSTS", default=[
+             "saramad.farabinbrand.com", "farabinback.farbinbrand.com", "0.0.0.0"])
 
 INSTALLED_APPS = [
     "admin_interface",
