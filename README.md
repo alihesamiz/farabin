@@ -2,7 +2,8 @@
 
 ## To Run the Project, You Have the Following Choices
 
--> Please note that the Docker configurations arent updated and therefore are not usefull
+> [!WARNING]
+> **The Docker configurations aren't updated and therefore are not useful.**
 
 ### 1. Run the Project with Docker
 
@@ -25,7 +26,7 @@
 
 ### 2. Run the Project with Django Itself
 
-You can either use `pipenv`, `poetry` or Python's `venv`. Follow the steps for your chosen method:
+You can use `pipenv`, `poetry`, or Python's `venv`. Follow the steps for your chosen method:
 
 #### - **To Use `pipenv`:**
 
@@ -53,7 +54,7 @@ You can either use `pipenv`, `poetry` or Python's `venv`. Follow the steps for y
    sudo apt install python3-poetry
    ```
 
-2. Install the dependencies and activate shell:
+2. Install the dependencies and activate the shell:
 
    ```bash
    poetry install --no-root
@@ -85,46 +86,52 @@ You can either use `pipenv`, `poetry` or Python's `venv`. Follow the steps for y
     pip install -r requirements.txt   
     ```
 
-**After the installation and activating the environments, you either can run the project manually ot just use the scripts that are prepared like following:**
+**After the installation and activating the environments, you can either run the project manually ot use the scripts that are prepared as follows:**
 
 #### - **To use `supervisor`:**
 
-##### - **To source the `command scripts`:**
+> [!TIP]
+> With `source load.sh`, the scripts directory temporarily gets added to the `PATH` of your terminal, and you'll be able to use the provided commands:
 
-- **Linux/Mac**:
-   With `source load.sh`, the scripts directory temporarily gets added to the `PATH` of your terminal and you'll be able to use the provided commands:
-
-Below command will run the supervisor:
+The below command will run the supervisor:
 
 ```bash
 start.sh
 ```
 
-Below command will show the status of the supervisor:
+The below command will show the status of the supervisor:
 
 ```bash
 status.sh
 ```
 
-And finally, command below will stop the supervisor service:
+And finally, the command below will stop the supervisor service:
 
 ```bash
 stop.sh
 ```
+> [!NOTE]
+> There are other scripts as well, which are either for loading the tools or environment variables, but can be used separately and independently
 
-(P.S.: there are other scripts as well which are either for loading the tools or enviroment variables but can be used seperatley and independentaley)
+After the `supervisor` starts the services, you can access the predefined URLs. The supervisor will automatically start `Gunicorn web server`, `Celery Worker`, `Celery Beat`, and `Flower`. The default ports are listed below:
 
-After the `supervisor` started the services you'll be able to access the predefined URLs. the supervisor will automatically starts `Gunicorn web server`, `Celery Worker`, `Celery Beat` and `Flower`. Default ports are lister below:
 
-```bash
 - **Gunicorn**: 8000  
 - **Flower**: 5555
-```
+
+---
 
 ### 3. Accessing the Project  
 
-Projets default web service is set to `8000` port, but you can modify it in the `supervisor.conf` or the scripts that are responsible for serving the project.
+Project's default web service is set to `8000` port, but you can modify it in the `supervisor.conf` or the scripts which responsible for serving the project.
 
 Also, to see the asynchronous processes using the `flower`, you only need to navigate to the `5555` port.
 
-And That's it! You'r all set🙂.
+And that's it! You're all set🙂.
+
+> [!CAUTION]
+> The default settings are set to `development`; for deployment, you need to set it to `production` in the following scripts:
+> - manage.py
+> - asgi.py
+> - wsgi.py
+> - celery.py
