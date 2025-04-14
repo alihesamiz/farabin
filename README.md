@@ -110,11 +110,11 @@ And finally, the command below will stop the supervisor service:
 ```bash
 stop.sh
 ```
+
 > [!NOTE]
 > There are other scripts as well, which are either for loading the tools or environment variables, but can be used separately and independently
 
 After the `supervisor` starts the services, you can access the predefined URLs. The supervisor will automatically start `Gunicorn web server`, `Celery Worker`, `Celery Beat`, and `Flower`. The default ports are listed below:
-
 
 - **Gunicorn**: 8000  
 - **Flower**: 5555
@@ -131,6 +131,7 @@ And that's it! You're all set🙂.
 
 > [!CAUTION]
 > The default settings are set to `development`; for deployment, you need to set it to `production` in the following scripts:
+>  
 > - manage.py
 > - asgi.py
 > - wsgi.py
