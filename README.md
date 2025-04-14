@@ -1,5 +1,24 @@
 # Farabin-API
 
+> [!NOTE]
+>
+> Project is optimized for `Linux` therefore you may need to adjust the code for `Windows` or `MacOS` if you are using them.
+
+## Requirements
+
+**First you need to have the listed requirements setup on your system in order to run the project.**
+>[!IMPORTANT]
+>
+> - Redis
+> - Supervisor
+> - Ubuntu(or any other linux)
+> - PostgreSQL
+> - Python3.12
+> - gettext
+> - poetry, pipenv, pip or anyother packaging tools for python (poetry is recommended)
+
+***
+
 ## To Run the Project, You Have the Following Choices
 
 > [!WARNING]
@@ -22,7 +41,7 @@
     docker-compose up --build
     ```
 
----
+***
 
 ### 2. Run the Project with Django Itself
 
@@ -48,9 +67,11 @@ You can use `pipenv`, `poetry`, or Python's `venv`. Follow the steps for your ch
 
    ```bash
    pip install poetry
-   
-   or
+   ```
 
+   **or**
+
+   ```bash
    sudo apt install python3-poetry
    ```
 
@@ -58,33 +79,35 @@ You can use `pipenv`, `poetry`, or Python's `venv`. Follow the steps for your ch
 
    ```bash
    poetry install --no-root
-   
    poetry shell
    ```
+
+> [!NOTE]
+> In case the `poetry shell` command is not working(version updates), you can use `poetry plugin` to install the `shell` plugin to use.
 
 #### - **To Use `venv`:**
 
 1. Create a new virtual environment in your project folder:
 
    ```bash
-    python -m venv yourvenvname
+   python -m venv yourvenvname
    ```
 
 2. Activate the virtual environment and install dependencies:
 
 - **Linux/Mac**:
 
-  ```bash
-  source yourvenvname/bin/activate
-  pip install -r requirements.txt
-  ```
+   ```bash
+   source yourvenvname/bin/activate
+   pip install -r requirements.txt
+   ```
 
 - **Windows**:
 
    ```bash
-    yourvenvname\Scripts\activate
-    pip install -r requirements.txt   
-    ```
+   yourvenvname\Scripts\activate
+   pip install -r requirements.txt   
+   ```
 
 **After the installation and activating the environments, you can either run the project manually ot use the scripts that are prepared as follows:**
 
@@ -119,7 +142,7 @@ After the `supervisor` starts the services, you can access the predefined URLs. 
 - **Gunicorn**: 8000  
 - **Flower**: 5555
 
----
+***
 
 ### 3. Accessing the Project  
 
@@ -131,7 +154,7 @@ And that's it! You're all set🙂.
 
 > [!CAUTION]
 > The default settings are set to `development`; for deployment, you need to set it to `production` in the following scripts:
->  
+>
 > - manage.py
 > - asgi.py
 > - wsgi.py
