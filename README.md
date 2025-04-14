@@ -2,6 +2,8 @@
 
 ## To Run the Project, You Have the Following Choices
 
+-> Please note that the Docker configurations arent updated and therefore are not usefull
+
 ### 1. Run the Project with Docker
 
 - First, make sure Docker is installed on your system.
@@ -45,6 +47,10 @@ You can either use `pipenv`, `poetry` or Python's `venv`. Follow the steps for y
 
    ```bash
    pip install poetry
+   
+   or
+
+   sudo apt install python3-poetry
    ```
 
 2. Install the dependencies and activate shell:
@@ -83,22 +89,36 @@ You can either use `pipenv`, `poetry` or Python's `venv`. Follow the steps for y
 
 #### - **To use `supervisor`:**
 
+##### - **To source the `command scripts`:**
+
+- **Linux/Mac**:
+   With `source load.sh`, the scripts directory temporarily gets added to the `PATH` of your terminal and you'll be able to use the provided commands:
+
 Below command will run the supervisor:
 
 ```bash
-bash start.sh
+start.sh
 ```
 
 Below command will show the status of the supervisor:
 
 ```bash
-bash status.sh
+status.sh
 ```
 
 And finally, command below will stop the supervisor service:
 
 ```bash
-bash stop.sh
+stop.sh
+```
+
+(P.S.: there are other scripts as well which are either for loading the tools or enviroment variables but can be used seperatley and independentaley)
+
+After the `supervisor` started the services you'll be able to access the predefined URLs. the supervisor will automatically starts `Gunicorn web server`, `Celery Worker`, `Celery Beat` and `Flower`. Default ports are lister below:
+
+```bash
+- **Gunicorn**: 8000  
+- **Flower**: 5555
 ```
 
 ### 3. Accessing the Project  
