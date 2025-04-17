@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 
 
+from core.management.commands.database import Command
 from core.utils import GeneralUtils
 from core.models import OTP
 
@@ -46,4 +47,16 @@ def delete_expiered_otp(self):
 
     except Exception as e:
         logger.exception(f"Error occurred in delete_expired_otp: {e}")
+        self.retry(exc=e, countdown=60, max_retries=3)
+
+
+@shared_task(bind=True)
+def backup_database(self, action='backup'):
+    try:
+        logger.info("Start Backup Database...")
+        cmd = Command()
+        cmd.handle(action=action)
+        logger.info("Backup finished")
+    except Exception as e:
+        logger.exception(f"Error occurred in backup_database: {e}")
         self.retry(exc=e, countdown=60, max_retries=3)

@@ -20,8 +20,16 @@ app.conf.beat_schedule = {
     'delete_expiered_otp': {
         'task': 'core.tasks.delete_expiered_otp',
         'schedule': crontab(minute='*/60'),
-        'options': {'queue': 'default'},  
+        'options': {'queue': 'default'},
     }
+}
+
+app.conf.beat_schedule = {
+    'backup-database-every-24-hours': {
+        'task': 'core.tasks.database',
+        'schedule': crontab(hour='0'),
+        'options': {'queue': 'high_priority'},
+    },
 }
 
 
