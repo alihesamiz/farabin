@@ -96,6 +96,10 @@ django-graphql-jwt = "^0.4.0"
 pandas = "^2.2.3"
 django-debug-toolbar = "^5.0.1"
 locust = "^2.33.1"
+google-auth = "^2.39.0"
+google-auth-oauthlib = "^1.2.1"
+google-auth-httplib2 = "^0.2.0"
+google-api-python-client = "^2.167.0"
 
 [build-system]
 requires = ["poetry-core"]
