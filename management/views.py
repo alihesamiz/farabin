@@ -1,3 +1,10 @@
+from management.serializers import (
+    SWOTStrengthOptionSerializer,
+    SWOTWeaknessOptionSerializer,
+    SWOTOpportunityOptionSerializer,
+    SWOTThreatOptionSerializer,
+    SWOTMatrixSerializer,
+)
 import logging
 import os
 
@@ -17,7 +24,7 @@ from rest_framework.response import Response
 from management.serializers import (ChartNodeSerializer, HumanResourceSerializer, HumanResourceCreateSerializer, HumanResourceUpdateSerializer,
                                     PersonelInformationSerializer, PersonelInformationUpdateSerializer, PersonelInformationCreateSerializer,
                                     OrganizationChartFileSerializer)
-from management.models import HumanResource, PersonelInformation, OrganizationChartBase
+from management.models import HumanResource, PersonelInformation, OrganizationChartBase, SWOTMatrix, SWOTOpportunityOption, SWOTStrengthOption, SWOTThreatOption, SWOTWeaknessOption
 from management.paginations import PersonelPagination
 from management.utils import get_file_field
 
@@ -147,17 +154,29 @@ class ChartNodeViewSet(viewsets.ReadOnlyModelViewSet):
             if pos not in grouped_data:
                 grouped_data[pos] = {
                     'personnel': [],
-                    'aggregated_reports_to': set()
+                    'aggregated_reports_to': set(),
+                    'aggregated_cooperates_with': set()
                 }
-            grouped_data[pos]['personnel'].append(person)
-            if person.reports_to:
-                grouped_data[pos]['aggregated_reports_to'].add(
-                    person.reports_to.position)
+            grouped_data[pos]['personnel'].append(person.position)
+
+            if person.reports_to.exists():
+                [
+                    grouped_data[pos]['aggregated_reports_to'].add(
+                        report.position) for report in person.reports_to.all(
+                    )
+                ]
+
+            if person.cooperates_with.exists():
+                [
+                    grouped_data[pos]['aggregated_cooperates_with'].add(
+                        cooperate.position) for cooperate in person.cooperates_with.all()
+                ]
 
         response_data = {}
         for pos, data in grouped_data.items():
             response_data[pos] = {
-                'aggregated_reports_to': list(data['aggregated_reports_to'])
+                'aggregated_reports_to': list(data['aggregated_reports_to']),
+                'aggregated_cooperates_with': list(data['aggregated_cooperates_with'])
             }
 
         return Response(response_data)
@@ -194,3 +213,89 @@ class ChartNodeViewSet(viewsets.ReadOnlyModelViewSet):
             grouped_personnel[pos].append(serialized_person)
 
         return Response(grouped_personnel)
+
+
+class SWOTStrengthOptionViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = SWOTStrengthOptionSerializer
+    http_method_names = ['get', 'post', 'put', 'patch', 'delete']
+
+    def get_queryset(self):
+        company = self.request.user.company
+        return SWOTStrengthOption.objects.filter(
+            swot_matrices_strengths__company=company
+        ).distinct()
+
+
+class SWOTWeaknessOptionViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = SWOTWeaknessOptionSerializer
+    http_method_names = ['get', 'post', 'put', 'patch', 'delete']
+
+    def get_queryset(self):
+        company = self.request.user.company
+        return SWOTWeaknessOption.objects.filter(
+            swot_matrices_weaknesses__company=company
+        ).distinct()
+
+
+class SWOTOppotunityOptionViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = SWOTOpportunityOptionSerializer
+    http_method_names = ['get', 'post', 'put', 'patch', 'delete']
+
+    def get_queryset(self):
+        company = self.request.user.company
+        return SWOTOpportunityOption.objects.filter(
+            swot_matrices_opportunities__company=company
+        ).distinct()
+
+
+class SWOTThreatOptionViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = SWOTThreatOptionSerializer
+    http_method_names = ['get', 'post', 'put', 'patch', 'delete']
+
+    def get_queryset(self):
+        company = self.request.user.company
+        return SWOTThreatOption.objects.filter(
+            swot_matrices_threats__company=company
+        ).distinct()
+
+
+class SWOTMatrixViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = SWOTMatrixSerializer
+    http_method_names = ['get', 'post', 'put', 'patch', 'delete']
+
+    def get_queryset(self):
+        company = self.request.user.company
+        return SWOTMatrix.objects.prefetch_related("company").filter(company=company)
+
+    @action(detail=True, methods=['get'])
+    def strength(self, request, **kwargs):
+        company = self.request.user.company
+        strengths = SWOTStrengthOption.objects.filter(company=company)
+        data = SWOTStrengthOptionSerializer(strengths, many=True).data
+        return Response(data)
+
+    @action(detail=True, methods=['get'])
+    def weakness(self, request, **kwargs):
+        company = self.request.user.company
+        weaknesses = SWOTWeaknessOption.objects.filter(company=company)
+        data = SWOTWeaknessOptionSerializer(weaknesses, many=True).data
+        return Response(data)
+
+    @action(detail=True, methods=['get'])
+    def opportunity(self, request, **kwargs):
+        company = self.request.user.company
+        opportunities = SWOTOpportunityOption.objects.filter(company=company)
+        data = SWOTOpportunityOptionSerializer(opportunities, many=True).data
+        return Response(data)
+
+    @action(detail=True, methods=['get'])
+    def threat(self, request, **kwargs):
+        company = self.request.user.company
+        threats = SWOTThreatOption.objects.filter(company=company)
+        data = SWOTThreatOptionSerializer(threats, many=True).data
+        return Response(data)

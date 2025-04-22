@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 
-from management.models import HumanResource, PersonelInformation, OrganizationChartBase
+from management.models import HumanResource, PersonelInformation, OrganizationChartBase, SWOTMatrix, SWOTOpportunityOption, SWOTStrengthOption, SWOTThreatOption, SWOTWeaknessOption
 from company.models import CompanyProfile
 
 
@@ -47,17 +47,25 @@ class PersonelInformationSerializer(serializers.ModelSerializer):
         source="human_resource", read_only=True
     )
 
-    node_relation = serializers.SerializerMethodField(
-        method_name="get_relation")
+    reports_relation = serializers.SerializerMethodField()
+
+    coops_relation = serializers.SerializerMethodField()
 
     class Meta:
         model = PersonelInformation
         fields = ["id", "human_resource_id", "name", "position",
-                  "reports_to", "obligations", "node_relation"]
+                  "reports_to", "cooperates_with", "obligations", "reports_relation", "coops_relation"]
         read_only_fields = ["id", "human_resource_id"]
 
-    def get_relation(self, obj):
-        return f"{obj.id}-{obj.reports_to}"
+    def get_reports_relation(self, obj):
+        if not obj.reports_to.exists():
+            return []
+        return [f"{obj.position}-{person.position}" for person in obj.reports_to.all()]
+
+    def get_coops_relation(self, obj):
+        if not obj.cooperates_with.exists():
+            return []
+        return [f"{obj.position}-{person.position}" for person in obj.cooperates_with.all()]
 
 
 class PersonelInformationCreateSerializer(serializers.ModelSerializer):
@@ -98,3 +106,53 @@ class ChartNodeSerializer(serializers.ModelSerializer):
 
     def get_reports_to(self, obj):
         return obj.reports_to.id if obj.reports_to else None
+
+
+class SWOTOptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = None
+        fields = ['id', 'name', 'custom_name']
+        read_only_fields = ['id', 'custom_name']
+
+    def to_representation(self, instance):
+        return {'id': instance.id, 'name': instance.name} if instance.name else {'id': instance.id, 'name': instance.custom_name}
+
+    def __init__(self, *args, **kwargs):
+        model = kwargs.pop('model', None)
+        super().__init__(*args, **kwargs)
+        if model:
+            self.Meta.model = model
+
+
+class SWOTStrengthOptionSerializer(SWOTOptionSerializer):
+    class Meta(SWOTOptionSerializer.Meta):
+        model = SWOTStrengthOption
+
+
+class SWOTWeaknessOptionSerializer(SWOTOptionSerializer):
+    class Meta(SWOTOptionSerializer.Meta):
+        model = SWOTWeaknessOption
+
+
+class SWOTOpportunityOptionSerializer(SWOTOptionSerializer):
+    class Meta(SWOTOptionSerializer.Meta):
+        model = SWOTOpportunityOption
+
+
+class SWOTThreatOptionSerializer(SWOTOptionSerializer):
+    class Meta(SWOTOptionSerializer.Meta):
+        model = SWOTThreatOption
+
+
+class SWOTMatrixSerializer(serializers.ModelSerializer):
+    strengths = SWOTStrengthOptionSerializer(many=True)
+    weaknesses = SWOTWeaknessOptionSerializer(many=True)
+    opportunities = SWOTOpportunityOptionSerializer(many=True)
+    threats = SWOTThreatOptionSerializer(many=True)
+
+    class Meta:
+        model = SWOTMatrix
+        fields = ['id', 'strengths', 'weaknesses', 'opportunities',
+                  'threats', 'create_at', 'updated_at']
+        read_only_fields = ['id', 'create_at', 'updated_at']
+
