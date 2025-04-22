@@ -1,10 +1,3 @@
-from management.serializers import (
-    SWOTStrengthOptionSerializer,
-    SWOTWeaknessOptionSerializer,
-    SWOTOpportunityOptionSerializer,
-    SWOTThreatOptionSerializer,
-    SWOTMatrixSerializer,
-)
 import logging
 import os
 
@@ -23,7 +16,8 @@ from rest_framework.response import Response
 
 from management.serializers import (ChartNodeSerializer, HumanResourceSerializer, HumanResourceCreateSerializer, HumanResourceUpdateSerializer,
                                     PersonelInformationSerializer, PersonelInformationUpdateSerializer, PersonelInformationCreateSerializer,
-                                    OrganizationChartFileSerializer)
+                                    OrganizationChartFileSerializer, SWOTStrengthOptionSerializer, SWOTWeaknessOptionSerializer, SWOTOpportunityOptionSerializer, SWOTThreatOptionSerializer, SWOTMatrixSerializer)
+
 from management.models import HumanResource, PersonelInformation, OrganizationChartBase, SWOTMatrix, SWOTOpportunityOption, SWOTStrengthOption, SWOTThreatOption, SWOTWeaknessOption
 from management.paginations import PersonelPagination
 from management.utils import get_file_field
