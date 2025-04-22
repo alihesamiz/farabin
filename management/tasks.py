@@ -1,14 +1,13 @@
-from management.models import SWOTAnalysis
 from openpyxl import load_workbook
 from celery import shared_task
 import logging
+import cohere
 
 from django.db.transaction import atomic
 from django.conf import settings
 
-from management.models import HumanResource, PersonelInformation, SWOTMatrix
+from management.models import HumanResource, PersonelInformation, SWOTMatrix, SWOTAnalysis
 
-import cohere
 
 logger = logging.getLogger("management")
 
@@ -20,18 +19,18 @@ def process_personnel_excel(self, id: int):
         file_path = hr_instance.excel_file.path
         company_name = hr_instance.company.company_title
 
-        logger.info(
-            f"Processing Excel file for company: {company_name}")
+        logger.info(f"Processing Excel file for company: {company_name}")
         logger.info(f"Loading workbook from {file_path}")
 
         wb = load_workbook(file_path)
         sheet = wb.active
 
-        logger.info(
-            f"loading rows of data from {company_name} excel")
+        logger.info(f"Loading rows of data from {company_name} excel")
 
         personnel_list = []
-        position_map = {}
+        position_map = {}  # Maps position to list of PersonelInformation
+        # Stores (person, reports_to_positions, cooperates_with_positions)
+        person_relations = []
 
         for row in sheet.iter_rows(min_row=4, values_only=True):
             if not any(row):
@@ -42,53 +41,71 @@ def process_personnel_excel(self, id: int):
 
             if not (name and obligations and position):
                 logger.warning(
-                    f"Skipped invalid record: {name}, {obligations}, {position}. Missing reports_to {reports_to_position} or cooperates_with {cooperates_with_position}")
+                    f"Skipped invalid record: {name}, {obligations}, {position}. "
+                    f"Missing reports_to {reports_to_position} or cooperates_with {cooperates_with_position}"
+                )
                 continue
+
+            # Normalize data
+            name = name.strip().title()
+            position = position.strip().upper()
+            obligations = obligations.strip()
+            reports_to_positions = (
+                [p.strip().upper()
+                 for p in reports_to_position.strip().split(",")]
+                if reports_to_position
+                else []
+            )
+            cooperates_with_positions = (
+                [p.strip().upper()
+                 for p in cooperates_with_position.strip().split(",")]
+                if cooperates_with_position
+                else []
+            )
 
             person = PersonelInformation(
                 human_resource=hr_instance,
-                name=name.strip().title(),
-                obligations=obligations.strip(),
-                position=position.strip(),
-                reports_to=None,
-                cooperates_with=None
+                name=name,
+                obligations=obligations,
+                position=position,
             )
             personnel_list.append(person)
-            position_map[position] = person
+
+            # Store person in position_map (as a list)
+            if position not in position_map:
+                position_map[position] = []
+            position_map[position].append(person)
+
+            # Store relationships for later processing
+            person_relations.append(
+                (person, reports_to_positions, cooperates_with_positions))
 
         with atomic():
+            # Bulk create personnel
             created_personnel = PersonelInformation.objects.bulk_create(
                 personnel_list)
 
-        updated_personnel = []
-        for person in created_personnel:
-            reports_to_position = next(
-                (row[3] for row in sheet.iter_rows(min_row=4, values_only=True)
-                 if row[2] == person.position), None
-            )
-            if reports_to_position and reports_to_position in position_map:
-                person.reports_to = position_map[reports_to_position]
-                updated_personnel.append(person)
-            cooperates_with_position = next(
-                (row[4] for row in sheet.iter_rows(min_row=5, values_only=True)
-                 if row[2] == person.position), None
-            )
-            if cooperates_with_position and cooperates_with_position in position_map:
-                person.cooperates_with = position_map[cooperates_with_position]
-                updated_personnel.append(person)
+            # Set many-to-many relationships
+            for person, reports_to_positions, cooperates_with_positions in person_relations:
+                # Set reports_to relationships
+                for pos in reports_to_positions:
+                    if pos in position_map:
+                        person.reports_to.add(*position_map[pos])
 
-        if updated_personnel:
-            with atomic():
-                PersonelInformation.objects.bulk_update(
-                    updated_personnel, ["reports_to", "cooperates_with"])
+                # Set cooperates_with relationships
+                for pos in cooperates_with_positions:
+                    if pos in position_map:
+                        person.cooperates_with.add(*position_map[pos])
 
         logger.info(
-            f"Successfully processed and saved {len(created_personnel)} personnel records.")
+            f"Successfully processed {len(created_personnel)} personnel records")
 
+    except HumanResource.DoesNotExist:
+        logger.error(f"HumanResource with id {id} not found")
+        raise
     except Exception as e:
-        logger.error(
-            f"Error while processing the Excel file for company {company_name}: {str(e)}")
-        return str(e)
+        logger.error(f"Error processing Excel file: {str(e)}")
+        raise
 
 
 @shared_task(bind=True, rate_limit='5/m')
