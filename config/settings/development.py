@@ -58,12 +58,8 @@ MIDDLEWARE = [
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'PASSWORD': env.get_value("FARABIN_DB_PASSWORD"),
-        'NAME': env.get_value("FARABIN_DB_NAME"),
-        'USER': env.get_value("FARABIN_DB_USER"),
-        'HOST': env.get_value("FARABIN_DB_HOST"),
-        'PORT': env.get_value("FARABIN_DB_PORT")
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / "db.sqlite3",
     }
 }
 

@@ -1,6 +1,6 @@
 from rest_framework_nested.routers import DefaultRouter, NestedDefaultRouter
 
-from management.views import ChartNodeViewSet, HumanResourceViewSet, OrganizationChartFileViewSet, PersonelInformationViewSet
+from management.views import ChartNodeViewSet, HumanResourceViewSet, OrganizationChartFileViewSet, PersonelInformationViewSet, SWOTStrengthOptionViewSet, SWOTWeaknessOptionViewSet, SWOTOppotunityOptionViewSet, SWOTThreatOptionViewSet, SWOTMatrixViewSet
 
 
 router = DefaultRouter()
@@ -21,4 +21,11 @@ chart_file_router = DefaultRouter()
 chart_file_router.register(r'organization-chart-files',
                            OrganizationChartFileViewSet, basename='organization-chart-files')
 
-urlpatterns = router.urls + personel_router.urls + chart_file_router.urls
+swot_router = NestedDefaultRouter(
+    router, r'human-resources', lookup='human_resource')
+
+swot_router.register(r'swot', SWOTMatrixViewSet,
+                     basename='swot')
+
+urlpatterns = router.urls + personel_router.urls + \
+    chart_file_router.urls + swot_router.urls
