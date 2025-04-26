@@ -16,7 +16,7 @@ from rest_framework.response import Response
 
 from management.serializers import (ChartNodeSerializer, HumanResourceSerializer, HumanResourceCreateSerializer, HumanResourceUpdateSerializer,
                                     PersonelInformationSerializer, PersonelInformationUpdateSerializer, PersonelInformationCreateSerializer,
-                                    OrganizationChartFileSerializer, SWOTStrengthOptionSerializer, SWOTWeaknessOptionSerializer, SWOTOpportunityOptionSerializer, SWOTThreatOptionSerializer, SWOTMatrixSerializer)
+                                    OrganizationChartFileSerializer, SWOTMatrixCreateSerializer, SWOTStrengthOptionSerializer, SWOTWeaknessOptionSerializer, SWOTOpportunityOptionSerializer, SWOTThreatOptionSerializer, SWOTMatrixSerializer)
 
 from management.models import HumanResource, PersonelInformation, OrganizationChartBase, SWOTMatrix, SWOTOpportunityOption, SWOTStrengthOption, SWOTThreatOption, SWOTWeaknessOption
 from management.paginations import PersonelPagination
@@ -216,7 +216,7 @@ class SWOTStrengthOptionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         company = self.request.user.company
-        return SWOTStrengthOption.objects.filter(
+        return SWOTStrengthOption.objects.prefetch_related("swot_matrices_strengths").filter(
             swot_matrices_strengths__company=company
         ).distinct()
 
@@ -262,34 +262,39 @@ class SWOTMatrixViewSet(viewsets.ModelViewSet):
     serializer_class = SWOTMatrixSerializer
     http_method_names = ['get', 'post', 'put', 'patch', 'delete']
 
+    def get_serializer_class(self):
+        if self.action == "create":
+            return SWOTMatrixCreateSerializer
+        return SWOTMatrixSerializer
+
     def get_queryset(self):
         company = self.request.user.company
         return SWOTMatrix.objects.prefetch_related("company").filter(company=company)
 
-    @action(detail=True, methods=['get'])
-    def strength(self, request, **kwargs):
-        company = self.request.user.company
-        strengths = SWOTStrengthOption.objects.filter(company=company)
-        data = SWOTStrengthOptionSerializer(strengths, many=True).data
-        return Response(data)
+    # @action(detail=True, methods=['get'])
+    # def strength(self, request, **kwargs):
+    #     company = self.request.user.company
+    #     strengths = SWOTMatrix.objects.get(company=company).strengths.all()
+    #     data = SWOTStrengthOptionSerializer(strengths, many=True).data
+    #     return Response(data)
 
-    @action(detail=True, methods=['get'])
-    def weakness(self, request, **kwargs):
-        company = self.request.user.company
-        weaknesses = SWOTWeaknessOption.objects.filter(company=company)
-        data = SWOTWeaknessOptionSerializer(weaknesses, many=True).data
-        return Response(data)
+    # @action(detail=True, methods=['get'])
+    # def weakness(self, request, **kwargs):
+    #     company = self.request.user.company
+    #     weaknesses = SWOTWeaknessOption.objects.filter(company=company)
+    #     data = SWOTWeaknessOptionSerializer(weaknesses, many=True).data
+    #     return Response(data)
 
-    @action(detail=True, methods=['get'])
-    def opportunity(self, request, **kwargs):
-        company = self.request.user.company
-        opportunities = SWOTOpportunityOption.objects.filter(company=company)
-        data = SWOTOpportunityOptionSerializer(opportunities, many=True).data
-        return Response(data)
+    # @action(detail=True, methods=['get'])
+    # def opportunity(self, request, **kwargs):
+    #     company = self.request.user.company
+    #     opportunities = SWOTOpportunityOption.objects.filter(company=company)
+    #     data = SWOTOpportunityOptionSerializer(opportunities, many=True).data
+    #     return Response(data)
 
-    @action(detail=True, methods=['get'])
-    def threat(self, request, **kwargs):
-        company = self.request.user.company
-        threats = SWOTThreatOption.objects.filter(company=company)
-        data = SWOTThreatOptionSerializer(threats, many=True).data
-        return Response(data)
+    # @action(detail=True, methods=['get'])
+    # def threat(self, request, **kwargs):
+    #     company = self.request.user.company
+    #     threats = SWOTThreatOption.objects.filter(company=company)
+    #     data = SWOTThreatOptionSerializer(threats, many=True).data
+    #     return Response(data)

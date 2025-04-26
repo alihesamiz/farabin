@@ -19,10 +19,10 @@ class PersonelInformationAdmin(admin.ModelAdmin):
 
 @admin.register(HumanResource)
 class HumanResourceAdmin(admin.ModelAdmin):
-    list_display = ['company', 'excel_file', 'create_at', 'updated_at']
+    list_display = ['company', 'excel_file', 'created_at', 'updated_at']
     autocomplete_fields = ['company']
     search_fields = ['company', 'excel_file']
-    list_filter = ['company', 'create_at', 'updated_at']
+    list_filter = ['company', 'created_at', 'updated_at']
 
 
 @admin.register(OrganizationChartBase)
@@ -32,58 +32,41 @@ class OrganizationChartAdmin(admin.ModelAdmin):
     list_filter = ['field', 'position_excel']
 
 
-@admin.register(SWOTStrengthOption)
-class StrengthAdmin(admin.ModelAdmin):
-    list_display = ['__str__', 'name', 'custom_name']
-    list_filter = ['name',]
+class OptionsAdmin(admin.ModelAdmin):
+    list_display = ['name', 'custom_name']
     search_fields = ['name', 'custom_name']
+    list_filter = ['name',]
 
     def formfield_for_dbfield(self, db_field, request, **kwargs):
         if db_field.name == 'name':
             kwargs['required'] = False
         return super().formfield_for_dbfield(db_field, request, **kwargs)
+
+
+@admin.register(SWOTStrengthOption)
+class StrengthAdmin(OptionsAdmin):
+    ...
 
 
 @admin.register(SWOTWeaknessOption)
-class WeaknessAdmin(admin.ModelAdmin):
-    list_display = ['__str__', 'name', 'custom_name']
-    list_filter = ['name',]
-    search_fields = ['name', 'custom_name']
-
-    def formfield_for_dbfield(self, db_field, request, **kwargs):
-        if db_field.name == 'name':
-            kwargs['required'] = False
-        return super().formfield_for_dbfield(db_field, request, **kwargs)
+class WeaknessAdmin(OptionsAdmin):
+    ...
 
 
 @admin.register(SWOTOpportunityOption)
-class OpportunityAdmin(admin.ModelAdmin):
-    list_display = ['__str__', 'name', 'custom_name']
-    list_filter = ['name',]
-    search_fields = ['name', 'custom_name']
-
-    def formfield_for_dbfield(self, db_field, request, **kwargs):
-        if db_field.name == 'name':
-            kwargs['required'] = False
-        return super().formfield_for_dbfield(db_field, request, **kwargs)
+class OpportunityAdmin(OptionsAdmin):
+    ...
 
 
 @admin.register(SWOTThreatOption)
-class ThreatAdmin(admin.ModelAdmin):
-    list_display = ['__str__', 'name', 'custom_name']
-    list_filter = ['name',]
-    search_fields = ['name', 'custom_name']
-
-    def formfield_for_dbfield(self, db_field, request, **kwargs):
-        if db_field.name == 'name':
-            kwargs['required'] = False
-        return super().formfield_for_dbfield(db_field, request, **kwargs)
+class ThreatAdmin(OptionsAdmin):
+    ...
 
 
 @admin.register(SWOTMatrix)
 class SWOTMatrixAdmin(admin.ModelAdmin):
-    list_display = ['company',  'create_at']
-    list_filter = ['create_at',]
+    list_display = ['company',  'created_at']
+    list_filter = ['created_at',]
     search_fields = ['company__company_title',]
     filter_horizontal = ['strengths', 'weaknesses', 'opportunities', 'threats']
 

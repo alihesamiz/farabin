@@ -23,7 +23,7 @@ class HumanResource(models.Model):
     is_approved = models.BooleanField(
         verbose_name=_("Is Approved"), default=False)
 
-    create_at = models.DateTimeField(
+    created_at = models.DateTimeField(
         auto_now_add=True, verbose_name=_("Created At"))
     updated_at = models.DateTimeField(
         auto_now=True, verbose_name=_("Updated At"))
@@ -106,15 +106,7 @@ COMMON_SWOT_CHOICES = [
 ]
 
 
-class SWOTStrengthOption(models.Model):
-    company = models.ForeignKey(
-        'company.CompanyProfile',
-        verbose_name=_("Company"),
-        null=False,
-        blank=False,
-        on_delete=models.CASCADE,
-        related_name="swot_strengths"
-    )
+class SWOTOption(models.Model):
     name = models.CharField(
         verbose_name=_("Name"),
         max_length=100,
@@ -128,198 +120,85 @@ class SWOTStrengthOption(models.Model):
         blank=True,
         null=True,
     )
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        if self.custom_name:
+            return self.custom_name
+        if self.name:
+            return self.get_name_display()
+        return "Unnamed"
+
+    def clean(self):
+        errors = {}
+        if not self.name and not self.custom_name:
+            errors['name'] = _(
+                "Either a predefined name or a custom name must be provided.")
+            errors['custom_name'] = _(
+                "Either a predefined name or a custom name must be provided.")
+        if self.name and self.custom_name:
+            errors['name'] = _(
+                "Cannot provide both a predefined name and a custom name.")
+            errors['custom_name'] = _(
+                "Cannot provide both a predefined name and a custom name.")
+        if self.custom_name and not self.custom_name.strip():
+            errors['custom_name'] = _("Custom name cannot be empty.")
+
+        if errors:
+            raise ValidationError(errors)
+
+    @classmethod
+    def generate_constraints(cls, prefix: str):
+        return [
+            models.UniqueConstraint(
+                fields=['name'],
+                condition=models.Q(name__isnull=False),
+                name=f'unique_{prefix}_name'
+            ),
+            models.UniqueConstraint(
+                fields=['custom_name'],
+                condition=models.Q(custom_name__isnull=False),
+                name=f'unique_{prefix}_custom_name'
+            ),
+        ]
+
+
+class SWOTStrengthOption(SWOTOption):
 
     class Meta:
         verbose_name = _("SWOT Strength Option")
         verbose_name_plural = _("SWOT Strengths Option")
         # Adding unique constraints to ensure that either name or custom_name is unique
-        constraints = [
-            models.UniqueConstraint(
-                fields=['name'],
-                condition=models.Q(name__isnull=False),
-                name='unique_strength_name'
-            ),
-            models.UniqueConstraint(
-                fields=['custom_name'],
-                condition=models.Q(custom_name__isnull=False),
-                name='unique_strength_custom_name'
-            ),
-        ]
-
-    def __str__(self):
-        return self.custom_name or self.get_name_display() or "Unnamed Strength"
-
-    def clean(self):
-        if not self.name and not self.custom_name:
-            raise ValidationError(
-                _("Either a predefined name or a custom name must be provided."))
-        if self.name and self.custom_name:
-            raise ValidationError(
-                _("Cannot provide both a predefined name and a custom name."))
-        if self.custom_name and not self.custom_name.strip():
-            raise ValidationError(_("Custom name cannot be empty."))
+        constraints = SWOTOption.generate_constraints('strength')
 
 
-class SWOTWeaknessOption(models.Model):
-    company = models.ForeignKey(
-        'company.CompanyProfile',
-        verbose_name=_("Company"),
-        null=False,
-        blank=False,
-        on_delete=models.CASCADE,
-        related_name="swot_weakness"
-    )
-    name = models.CharField(
-        verbose_name=_("Name"),
-        max_length=100,
-        choices=COMMON_SWOT_CHOICES,
-        blank=True,
-        null=True,
-    )
-    custom_name = models.CharField(
-        verbose_name=_("Custom Name"),
-        max_length=100,
-        blank=True,
-        null=True,
-    )
+class SWOTWeaknessOption(SWOTOption):
 
     class Meta:
         verbose_name = _("SWOT Weakness Option")
         verbose_name_plural = _("SWOT Weaknesses Option")
         # Adding unique constraints to ensure that either name or custom_name is unique
-        constraints = [
-            models.UniqueConstraint(
-                fields=['name'],
-                condition=models.Q(name__isnull=False),
-                name='unique_weakness_name'
-            ),
-            models.UniqueConstraint(
-                fields=['custom_name'],
-                condition=models.Q(custom_name__isnull=False),
-                name='unique_weakness_custom_name'
-            ),
-        ]
-
-    def __str__(self):
-        return self.custom_name or self.get_name_display() or "Unnamed Weakness"
-
-    def clean(self):
-        if not self.name and not self.custom_name:
-            raise ValidationError(
-                _("Either a predefined name or a custom name must be provided."))
-        if self.name and self.custom_name:
-            raise ValidationError(
-                _("Cannot provide both a predefined name and a custom name."))
-        if self.custom_name and not self.custom_name.strip():
-            raise ValidationError(_("Custom name cannot be empty."))
+        constraints = SWOTOption.generate_constraints('weakness')
 
 
-class SWOTOpportunityOption(models.Model):
-    company = models.ForeignKey(
-        'company.CompanyProfile',
-        verbose_name=_("Company"),
-        null=False,
-        blank=False,
-        on_delete=models.CASCADE,
-        related_name="swot_opportunity"
-    )
-    name = models.CharField(
-        verbose_name=_("Name"),
-        max_length=100,
-        choices=COMMON_SWOT_CHOICES,
-        blank=True,
-        null=True,
-    )
-    custom_name = models.CharField(
-        verbose_name=_("Custom Name"),
-        max_length=100,
-        blank=True,
-        null=True,
-    )
+class SWOTOpportunityOption(SWOTOption):
 
     class Meta:
         verbose_name = _("SWOT Opportunity Option")
         verbose_name_plural = _("SWOT Opportunities Option")
         # Adding unique constraints to ensure that either name or custom_name is unique
-        constraints = [
-            models.UniqueConstraint(
-                fields=['name'],
-                condition=models.Q(name__isnull=False),
-                name='unique_opportunity_name'
-            ),
-            models.UniqueConstraint(
-                fields=['custom_name'],
-                condition=models.Q(custom_name__isnull=False),
-                name='unique_opportunity_custom_name'
-            ),
-        ]
-
-    def __str__(self):
-        return self.custom_name or self.get_name_display() or "Unnamed Opportunity"
-
-    def clean(self):
-        if not self.name and not self.custom_name:
-            raise ValidationError(
-                _("Either a predefined name or a custom name must be provided."))
-        if self.name and self.custom_name:
-            raise ValidationError(
-                _("Cannot provide both a predefined name and a custom name."))
-        if self.custom_name and not self.custom_name.strip():
-            raise ValidationError(_("Custom name cannot be empty."))
+        constraints = SWOTOption.generate_constraints('opportunity')
 
 
-class SWOTThreatOption(models.Model):
-    company = models.ForeignKey(
-        'company.CompanyProfile',
-        verbose_name=_("Company"),
-        null=False,
-        blank=False,
-        on_delete=models.CASCADE,
-        related_name="swot_threat"
-    )
-    name = models.CharField(
-        verbose_name=_("Name"),
-        max_length=100,
-        choices=COMMON_SWOT_CHOICES,
-        blank=True,
-        null=True,
-    )
-    custom_name = models.CharField(
-        verbose_name=_("Custom Name"),
-        max_length=100,
-        blank=True,
-        null=True,
-    )
+class SWOTThreatOption(SWOTOption):
 
     class Meta:
         verbose_name = _("SWOT Threat Option")
         verbose_name_plural = _("SWOT Threats Option")
         # Adding unique constraints to ensure that either name or custom_name is unique
-        constraints = [
-            models.UniqueConstraint(
-                fields=['name'],
-                condition=models.Q(name__isnull=False),
-                name='unique_threat_name'
-            ),
-            models.UniqueConstraint(
-                fields=['custom_name'],
-                condition=models.Q(custom_name__isnull=False),
-                name='unique_threat_custom_name'
-            ),
-        ]
-
-    def __str__(self):
-        return self.get_name_display() or self.custom_name or "Unnamed Threat"
-
-    def clean(self):
-        if not self.name and not self.custom_name:
-            raise ValidationError(
-                _("Either a predefined name or a custom name must be provided."))
-        if self.name and self.custom_name:
-            raise ValidationError(
-                _("Cannot provide both a predefined name and a custom name."))
-        if self.custom_name and not self.custom_name.strip():
-            raise ValidationError(_("Custom name cannot be empty."))
+        constraints = SWOTOption.generate_constraints('threat')
 
 
 class SWOTMatrix(models.Model):
@@ -329,7 +208,7 @@ class SWOTMatrix(models.Model):
         null=False,
         blank=False,
         on_delete=models.CASCADE,
-        related_name="swot_matrix_value"
+        related_name="swot_matrices"
     )
 
     strengths = models.ManyToManyField(
@@ -353,7 +232,7 @@ class SWOTMatrix(models.Model):
         related_name="swot_matrices_threats"
     )
 
-    create_at = models.DateTimeField(
+    created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name=_("Created At")
     )
@@ -364,7 +243,7 @@ class SWOTMatrix(models.Model):
 
     class Meta:
         verbose_name = _("SWOT Matrix")
-        verbose_name_plural = _("SWOT Matrix")
+        verbose_name_plural = _("SWOT Matrices")
         constraints = [
             models.UniqueConstraint(
                 fields=['company'],
@@ -397,7 +276,7 @@ class SWOTAnalysis(models.Model):
         default=False
     )
 
-    create_at = models.DateTimeField(
+    created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name=_("Created At")
     )
