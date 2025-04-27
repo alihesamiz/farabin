@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-12 13:28+0330\n"
+"POT-Creation-Date: 2025-04-27 09:50+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,71 +22,195 @@ msgstr ""
 msgid "Management"
 msgstr "بخش مدیریت"
 
-#: management/models.py:17
-msgid "Excel File"
-msgstr "فایل اکسل"
-
-#: management/models.py:20
+#: management/models.py:18 management/models.py:207
 msgid "Company"
 msgstr "شرکت"
 
-#: management/models.py:23
+#: management/models.py:21
+msgid "Excel File"
+msgstr "فایل اکسل"
+
+#: management/models.py:24 management/models.py:275
 msgid "Is Approved"
 msgstr "تایید"
 
-#: management/models.py:26
+#: management/models.py:27 management/models.py:237 management/models.py:281
 msgid "Created At"
 msgstr "ایجاد شده در"
 
-#: management/models.py:28
+#: management/models.py:29 management/models.py:241 management/models.py:285
 msgid "Updated At"
 msgstr "بروزرسانی شده در"
 
-#: management/models.py:34 management/models.py:44
+#: management/models.py:35 management/models.py:45
 msgid "Human Resource"
 msgstr "منبع انسانی"
 
-#: management/models.py:35
+#: management/models.py:36
 msgid "Human Resources"
 msgstr "منابع انسانی"
 
-#: management/models.py:46
+#: management/models.py:47
 msgid "Full Name"
 msgstr "نام کامل"
 
-#: management/models.py:50
+#: management/models.py:51
 msgid "Position"
 msgstr "موقعیت شغلی"
 
-#: management/models.py:53
+#: management/models.py:54
 msgid "Reports to (Personnel)"
-msgstr "گزارش میدهد به (موقعیت شغلی)"
+msgstr "گزارش میدهد به (شخص)"
 
-#: management/models.py:56
+#: management/models.py:57
+msgid "Cooperates with (Personnel)"
+msgstr "همکاری میکند با (شخص)"
+
+#: management/models.py:60
 msgid "Obligation"
 msgstr "صلاحیت‌ها و مهارت‌ها"
 
-#: management/models.py:62 management/models.py:63
+#: management/models.py:63
+msgid "Is Exist"
+msgstr "وجود دارد"
+
+#: management/models.py:71 management/models.py:72
 msgid "Personnel Information"
 msgstr "اطلاعات کارکنان"
 
-#: management/models.py:75
+#: management/models.py:84
 msgid "Field"
 msgstr "نام حوزه"
 
-#: management/models.py:77
+#: management/models.py:86
 msgid "Position Excel"
 msgstr "اکسل موقعیت‌ها"
 
-#: management/models.py:84
+#: management/models.py:93
 msgid "Organization Chart"
 msgstr "فایل چارت سازمانی"
 
-#: management/models.py:85
+#: management/models.py:94
 msgid "Organization Charts"
 msgstr "فایل‌های چارت سازمانی"
 
-#: management/views.py:50
+#: management/models.py:98
+msgid "Strong"
+msgstr ""
+
+#: management/models.py:99
+msgid "Weak"
+msgstr ""
+
+#: management/models.py:100
+msgid "Average"
+msgstr ""
+
+#: management/models.py:101
+msgid "Excellent"
+msgstr ""
+
+#: management/models.py:102
+msgid "Good"
+msgstr ""
+
+#: management/models.py:103
+msgid "Poor"
+msgstr ""
+
+#: management/models.py:104
+msgid "Satisfactory"
+msgstr ""
+
+#: management/models.py:105
+msgid "Unsatisfactory"
+msgstr ""
+
+#: management/models.py:111
+msgid "Name"
+msgstr "نام"
+
+#: management/models.py:118
+msgid "Custom Name"
+msgstr "دلخواه"
+
+#: management/models.py:138 management/models.py:140
+msgid "Either a predefined name or a custom name must be provided."
+msgstr "یا از نام‌های از پیش تعریف شده استفاده کنید یا نام دلخواه وارد کنید."
+
+#: management/models.py:143 management/models.py:145
+msgid "Cannot provide both a predefined name and a custom name."
+msgstr "نمیتوانید هم از نام‌های از پیش تعریف شده استفاده کنید و هم نام دلخواه وارد کنید."
+
+#: management/models.py:147
+msgid "Custom name cannot be empty."
+msgstr "نام دلخواه نمیتواند خالی باشد."
+
+#: management/models.py:171
+msgid "SWOT Strength Option"
+msgstr "نقطه قوت SWOT"
+
+#: management/models.py:172
+msgid "SWOT Strengths Option"
+msgstr "نقاط قوت SWOT"
+
+#: management/models.py:180
+msgid "SWOT Weakness Option"
+msgstr "نقطه قوت SWOT"
+
+#: management/models.py:181
+msgid "SWOT Weaknesses Option"
+msgstr "نقاط ضعف SWOT"
+
+#: management/models.py:189
+msgid "SWOT Opportunity Option"
+msgstr "فرصت‌ SWOT"
+
+#: management/models.py:190
+msgid "SWOT Opportunities Option"
+msgstr "فرصت‌های SWOT"
+
+#: management/models.py:198
+msgid "SWOT Threat Option"
+msgstr "تهدید SWOT"
+
+#: management/models.py:199
+msgid "SWOT Threats Option"
+msgstr "تهدیدهای SWOT"
+
+#: management/models.py:216
+msgid "Strengths Options"
+msgstr "نقاط قوت"
+
+#: management/models.py:221
+msgid "Weaknesses Options"
+msgstr "نقاط ضعف"
+
+#: management/models.py:226
+msgid "Opportunities Options"
+msgstr "فرصت‌ها"
+
+#: management/models.py:231
+msgid "Threats Options"
+msgstr "تهدیدها"
+
+#: management/models.py:245 management/models.py:261
+msgid "SWOT Matrix"
+msgstr "ماتریس SWOT"
+
+#: management/models.py:246
+msgid "SWOT Matrices"
+msgstr "ماتریس‌های SWOT"
+
+#: management/models.py:269
+msgid "Analysis"
+msgstr "تحلیل"
+
+#: management/models.py:289 management/models.py:290
+msgid "SWOT Analysis"
+msgstr "تحلیل SWOT"
+
+#: management/views.py:51
 msgid ""
 "Each company can only have one Human Resource record. To replace, you must "
 "first delete the previous record."
@@ -94,14 +218,14 @@ msgstr ""
 "هر شرکت تنها میتواند یک فایل منابع انسانی را بارگذاری کند. برای جایگزینی "
 "ابتدا فایل قبلی را حذف کنید."
 
-#: management/views.py:55
+#: management/views.py:56
 msgid "An error occurred while saving the Human Resource record."
 msgstr "هنگام ذخیره فایل منابع انسانی خطایی رخ داد."
 
-#: management/views.py:95
+#: management/views.py:96
 msgid "Invalid or missing HumanResource record for this company."
 msgstr "رکورد منابع انسانی مناسبی برای شرکت پیدا نشد."
 
-#: management/views.py:120
+#: management/views.py:121
 msgid "Not found an associated file with your profile"
 msgstr "فایلی متناسب با پروفایل شرکت شما یافت نشد. باپشتیبانی تماس بگیرید."
