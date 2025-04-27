@@ -11,9 +11,7 @@ __pycache__/
 __pycache__/
 db.sqlite3
 db.sqlite3-journal
-*media/
-!media/admin-interface/
-
+/media/
 
 *static/
 !/static/finance/
@@ -22,7 +20,6 @@ staticfiles/
 # Environment variables
 # .env
 # *.env
-
 
 # IDEs and editors
 .idea/
