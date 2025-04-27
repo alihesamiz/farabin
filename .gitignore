@@ -23,9 +23,6 @@ staticfiles/
 # .env
 # *.env
 
-# Django migrations
-*/migrations/*
-!*/migrations/__init__.py
 
 # IDEs and editors
 .idea/
