@@ -37,7 +37,8 @@ class CompanyProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = CompanyProfile
         fields = [
-            'user_national_code', 'id', 'company_title', 'social_code', 'email',
+            'user_national_code', 'id', 'company_title', 'manager_social_code', 'manager_phone_number',
+            'office_phone_number', 'email',
             'manager_name', 'license', 'special_field', 'tech_field', 'province',
             'city', 'insurance_list', 'capital_providing_method', 'profile_active',
             'address', 'services',
@@ -82,7 +83,8 @@ class CompanyProfileCreateSerializer(serializers.ModelSerializer):
         model = CompanyProfile
         fields = [
             'id',
-            'company_title',  'social_code', 'email', 'manager_name',
+            'company_title', 'manager_social_code', 'manager_phone_number',
+            'office_phone_number', 'email', 'manager_name',
             'license', 'special_field', 'tech_field',  'province', 'city',
             'insurance_list', 'capital_providing_method',
             'profile_active', 'address'
@@ -149,7 +151,8 @@ class CompanyProfileCreateSerializer(serializers.ModelSerializer):
                 instance.license.set(license)
 
             if capital_providing_methods is not None:
-                instance.capital_providing_method.set(capital_providing_methods)
+                instance.capital_providing_method.set(
+                    capital_providing_methods)
             return instance
 
         except IntegrityError:
