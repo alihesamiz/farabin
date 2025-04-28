@@ -1,4 +1,5 @@
 from django.db import IntegrityError
+
 from rest_framework.exceptions import ValidationError
 from rest_framework import serializers
 
@@ -70,6 +71,27 @@ class PersonelInformationSerializer(serializers.ModelSerializer):
         return [f"{obj.position}-{person.position}" for person in obj.cooperates_with.all()]
 
 
+class ChartNodeSerializer(serializers.ModelSerializer):
+    reports_relation = serializers.SerializerMethodField()
+
+    coops_relation = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PersonelInformation
+        fields = ['id', 'name', 'position', 'reports_relation',
+                  "coops_relation", "obligations"]
+
+    def get_reports_relation(self, obj):
+        if not obj.reports_to.exists():
+            return []
+        return [f"{obj.position}-{person.position}" for person in obj.reports_to.all()]
+
+    def get_coops_relation(self, obj):
+        if not obj.cooperates_with.exists():
+            return []
+        return [f"{obj.position}-{person.position}" for person in obj.cooperates_with.all()]
+
+
 class PersonelInformationCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -97,17 +119,6 @@ class OrganizationChartFileSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrganizationChartBase
         fields = ["id", "position_excel_url"]
-
-
-class ChartNodeSerializer(serializers.ModelSerializer):
-    reports_to = serializers.SerializerMethodField()
-
-    class Meta:
-        model = PersonelInformation
-        fields = ['id', 'name', 'position', 'reports_to', "obligations"]
-
-    def get_reports_to(self, obj):
-        return obj.reports_to.id if obj.reports_to else None
 
 
 class SWOTOptionSerializer(serializers.ModelSerializer):
@@ -183,7 +194,6 @@ class SWOTMatrixCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = SWOTMatrix
         fields = ['strengths', 'weaknesses', 'opportunities', 'threats']
-
 
     def create(self, validated_data):
         user = self.context['request'].user

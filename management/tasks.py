@@ -115,35 +115,56 @@ def generate_swot_analysis(self, id: int):
         logger.info(f"Creating SWOT analysis for {swot_instance}")
 
         results = {}
+        values = {}
+
+        analysis_groups = {
+            "so":("strengths", "opportunities"),
+            "st":("strengths", "threats"),
+            "wo":("weaknesses", "opportunities"),
+            "wt":("weaknesses", "threats"),
+        }
 
         for field in ["strengths", "weaknesses", "opportunities", "threats"]:
             related_qs = getattr(swot_instance, field).values(
                 "name", "custom_name")
-            results[field] = [item["custom_name"] or item["name"]
-                              for item in related_qs if item["custom_name"] or item["name"]]
+            values[field] = [
+                item["custom_name"] or item["name"]
+                for item in related_qs
+                if item["custom_name"] or item["name"]
+            ]
 
-        generator = cohere.ClientV2(settings.FARABIN_COHERE_API_KEY)
-        prompt = f"""
-        Provide the strategic and collision points for the SWOT matrix given the strengths, threats, opportunities, and weaknesses presented as below:
-            Strengths: {results['strengths']}
-            Weaknesses: {results['weaknesses']}
-            Opportunities: {results['opportunities']}
-            Threats: {results['threats']}
-        this report and analysis should be in Persian language and a professional format and should be suitable for a business report.
-        """
-        response = generator.chat(
-            model="command-r-plus",
-            messages=[
-                {
-                    "role": "user",
-                    "content": f"{prompt}"}],
-        ).message.content[0].text
+        grouped_results = {}
 
-        SWOTAnalysis.objects.create(
-            swot_matrix=swot_instance,
-            analysis=response,
-            is_approved=False
-        )
+        for group1, group2 in analysis_groups:
+            key = f"{group1}_{group2}"
+            grouped_results[key] = {
+                group1: values.get(group1, []),
+                group2: values.get(group2, [])
+            }
+        print(values)
+        print(grouped_results)
+        # generator = cohere.ClientV2(settings.FARABIN_COHERE_API_KEY)
+        # prompt = f"""
+        # Provide the strategic and collision points for the SWOT matrix given the strengths, threats, opportunities, and weaknesses presented as below:
+        #     Strengths: {results['strengths']}
+        #     Weaknesses: {results['weaknesses']}
+        #     Opportunities: {results['opportunities']}
+        #     Threats: {results['threats']}
+        # this report and analysis should be in Persian language and a professional format and should be suitable for a business report.
+        # """
+        # response = generator.chat(
+        #     model="command-r-plus",
+        #     messages=[
+        #         {
+        #             "role": "user",
+        #             "content": f"{prompt}"}],
+        # ).message.content[0].text
+
+        # SWOTAnalysis.objects.create(
+        #     swot_matrix=swot_instance,
+        #     analysis=response,
+        #     is_approved=False
+        # )
 
         logger.info(f"SWOT analysis created for {swot_instance}")
 

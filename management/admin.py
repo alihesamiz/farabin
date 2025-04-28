@@ -73,6 +73,6 @@ class SWOTMatrixAdmin(admin.ModelAdmin):
 
 @admin.register(SWOTAnalysis)
 class SWOTAnalysisAdmin(admin.ModelAdmin):
-    list_display = ['swot_matrix', 'analysis', 'is_approved']
+    list_display = ['swot_matrix', 'is_approved']
     autocomplete_fields = ['swot_matrix']
-    search_fields = ['swot_matrix', 'analysis']
+    search_fields = ['swot_matrix', "company__company_title", "is_approved"]
