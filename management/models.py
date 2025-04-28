@@ -64,12 +64,56 @@ class PersonelInformation(models.Model):
         default=False
     )
 
-    def __str__(self):
-        return f"{self.name}"
-
     class Meta:
         verbose_name = _("Personnel Information")
         verbose_name_plural = _("Personnel Information")
+
+    def __str__(self):
+        return f"{self.name}"
+
+    @classmethod
+    def grouped_chart_data(cls, company):
+        queryset = cls.objects.prefetch_related(
+            "human_resource__company").filter(human_resource__company=company)
+        grouped_data = {}
+
+        for person in queryset:
+            pos = person.position
+            name = person.name
+            key = (pos, name)
+
+            if key not in grouped_data:
+                grouped_data[key] = {
+                    'personnel': [],
+                    'aggregated_reports_to': set(),
+                    'aggregated_cooperates_with': set()
+                }
+            grouped_data[key]['personnel'].append(person.position)
+
+            if person.reports_to.exists():
+                for report in person.reports_to.all():
+                    grouped_data[key]['aggregated_reports_to'].add(
+                        (report.position, report.name)
+                    )
+
+            if person.cooperates_with.exists():
+                for cooperate in person.cooperates_with.all():
+                    grouped_data[key]['aggregated_cooperates_with'].add(
+                        (cooperate.position, cooperate.name)
+                    )
+
+        response_data = {}
+        for (pos, name), data in grouped_data.items():
+            response_data[f"{pos} | {name}"] = {
+                'aggregated_reports_to': [
+                    {'position': position, 'name': report_name} for position, report_name in data['aggregated_reports_to']
+                ],
+                'aggregated_cooperates_with': [
+                    {'position': position, 'name': cooperate_name} for position, cooperate_name in data['aggregated_cooperates_with']
+                ]
+            }
+
+        return response_data
 
 
 def get_chart_excel_file_upload_path(instance, filename):
@@ -265,10 +309,25 @@ class SWOTAnalysis(models.Model):
         related_name="swot_analysis"
     )
 
-    analysis = models.TextField(
-        verbose_name=_("Analysis"),
-        null=False,
-        blank=False
+    so_analysis = models.TextField(
+        verbose_name=_("SO Analysis"),
+        null=True,
+        blank=True
+    )
+    st_analysis = models.TextField(
+        verbose_name=_("ST Analysis"),
+        null=True,
+        blank=True
+    )
+    wo_analysis = models.TextField(
+        verbose_name=_("WO Analysis"),
+        null=True,
+        blank=True
+    )
+    wt_analysis = models.TextField(
+        verbose_name=_("WT Analysis"),
+        null=True,
+        blank=True
     )
 
     is_approved = models.BooleanField(

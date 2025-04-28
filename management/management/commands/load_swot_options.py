@@ -51,7 +51,7 @@ class Command(BaseCommand):
                 model.objects.bulk_create([
                     model(name=value)
                     for value, _ in COMMON_SWOT_CHOICES
-                ])
+                ],ignore_conflicts=True)
             self.stdout.write(self.style.SUCCESS(
                 "SWOT options loaded successfully."))
 
