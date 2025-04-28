@@ -134,46 +134,12 @@ class ChartNodeViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         company = self.request.user.company
-        return PersonelInformation.objects.filter(human_resource__company=company)
+        return PersonelInformation.objects.prefetch_related("human_resource__company").filter(human_resource__company=company)
 
     def list(self, request, *args, **kwargs):
-        """
-        Default list method that returns grouped data with aggregated reports-to positions.
-        """
-        queryset = self.get_queryset()
-        grouped_data = {}
-        for person in queryset:
-            pos = person.position
-
-            if pos not in grouped_data:
-                grouped_data[pos] = {
-                    'personnel': [],
-                    'aggregated_reports_to': set(),
-                    'aggregated_cooperates_with': set()
-                }
-            grouped_data[pos]['personnel'].append(person.position)
-
-            if person.reports_to.exists():
-                [
-                    grouped_data[pos]['aggregated_reports_to'].add(
-                        report.position) for report in person.reports_to.all(
-                    )
-                ]
-
-            if person.cooperates_with.exists():
-                [
-                    grouped_data[pos]['aggregated_cooperates_with'].add(
-                        cooperate.position) for cooperate in person.cooperates_with.all()
-                ]
-
-        response_data = {}
-        for pos, data in grouped_data.items():
-            response_data[pos] = {
-                'aggregated_reports_to': list(data['aggregated_reports_to']),
-                'aggregated_cooperates_with': list(data['aggregated_cooperates_with'])
-            }
-
-        return Response(response_data)
+        company = self.request.user.company
+        data = PersonelInformation.grouped_chart_data(company)
+        return Response(data)
 
     @action(detail=False, methods=['get'], url_name='positions', url_path='positions')
     def by_positions(self, request, *args, **kwargs):
