@@ -4,6 +4,8 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.db import models
 
+from core.validators import phone_number_validator
+
 User = get_user_model()
 
 
@@ -56,8 +58,6 @@ class CompanyProfile(models.Model):
     user = models.OneToOneField(
         User, on_delete=models.CASCADE, related_name='company', verbose_name=_("User"))
 
-    profile_active = models.BooleanField(
-        default=False, verbose_name=_("Profile Active"))
 
     company_title = models.CharField(
         max_length=255, verbose_name=_("Company Title"))
@@ -65,11 +65,17 @@ class CompanyProfile(models.Model):
     email = models.EmailField(
         max_length=255, unique=True, verbose_name=_("Email"), null=True, blank=True)
 
-    social_code = models.CharField(
-        max_length=10, unique=True, verbose_name=_("Social Code"), blank=True, null=True)
+    manager_social_code = models.CharField(
+        max_length=10, unique=True, verbose_name=_("Manager Social Code"), blank=True, null=True)
 
     manager_name = models.CharField(
         max_length=255, verbose_name=_("Manager Full Name"))
+
+    manager_phone_number = models.CharField(
+        max_length=11, unique=True, validators=[phone_number_validator], verbose_name=_("Manager Phone Number"), null=True, blank=True)
+
+    office_phone_number = models.CharField(
+        max_length=11, unique=True, validators=[phone_number_validator], verbose_name=_("Office Phone Number"), null=True, blank=True)
 
     license = models.ManyToManyField(
         'License', verbose_name=_("License Types"))
@@ -97,12 +103,15 @@ class CompanyProfile(models.Model):
 
     address = models.CharField(max_length=255, verbose_name=_("Address"))
 
+    is_active = models.BooleanField(
+        default=False, verbose_name=_("Is Active?"))
+    
     class Meta:
         verbose_name = _("Company Profile")
         verbose_name_plural = _("Company Profiles")
 
     def __str__(self) -> str:
-        return f"{self.company_title} › {self.user.national_code}"
+        return f"{self.company_title!r} › {self.user.national_code}"
 
 
 class License(models.Model):

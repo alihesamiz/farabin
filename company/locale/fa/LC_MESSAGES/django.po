@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-12 13:28+0330\n"
+"POT-Creation-Date: 2025-04-28 13:49+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,11 +22,11 @@ msgstr ""
 msgid "National Code"
 msgstr "کد ثبت ملی شرکت"
 
-#: company/admin.py:44 company/models.py:83
+#: company/admin.py:44 company/models.py:89
 msgid "Special Field"
 msgstr "حوزه تخصصی"
 
-#: company/admin.py:46 company/models.py:90
+#: company/admin.py:46 company/models.py:96
 msgid "Capital Providing Method"
 msgstr "راه‌های تامین سرمایه"
 
@@ -46,61 +46,57 @@ msgstr "غیرفعالسازی سرویس‌های انتخابی"
 msgid "{} service(s) were successfully marked as deactive."
 msgstr "{} سرویس با موفقیت غیرفعال شدند"
 
-#: company/apps.py:8 company/models.py:135
+#: company/apps.py:8 company/models.py:144
 msgid "Company"
 msgstr "شرکت"
 
-#: company/models.py:16
+#: company/models.py:18
 msgid "Operational"
 msgstr "عملیاتی"
 
-#: company/models.py:17
+#: company/models.py:19
 msgid "Finance"
 msgstr "تسهیلات مالی"
 
-#: company/models.py:18
+#: company/models.py:20
 msgid "Invest"
 msgstr "سرمایه‌گذاری"
 
-#: company/models.py:21
+#: company/models.py:23
 msgid "Capital Providing"
 msgstr "تامین سرمایه"
 
-#: company/models.py:24
+#: company/models.py:26
 msgid "Life Cycle"
 msgstr "چرخه عمر"
 
-#: company/models.py:25
+#: company/models.py:27
 msgid "Life Cycles"
 msgstr "چرخه‌های عمر"
 
-#: company/models.py:32 company/models.py:43
+#: company/models.py:34 company/models.py:45
 msgid "Name"
 msgstr "نام"
 
-#: company/models.py:38
+#: company/models.py:40
 msgid "Special Tech"
 msgstr "حوزه تخصصی"
 
-#: company/models.py:39
+#: company/models.py:41
 msgid "Special Techs"
 msgstr "حوزه‌های تخصصی"
 
-#: company/models.py:49
+#: company/models.py:51
 msgid "Tech Field"
 msgstr "حوزه فناوری"
 
-#: company/models.py:50
+#: company/models.py:52
 msgid "Tech Fields"
 msgstr "حوزه‌های فناوری"
 
-#: company/models.py:57
+#: company/models.py:59
 msgid "User"
 msgstr "کاربر"
-
-#: company/models.py:60
-msgid "Profile Active"
-msgstr "فعالسازی"
 
 #: company/models.py:63
 msgid "Company Title"
@@ -111,96 +107,111 @@ msgid "Email"
 msgstr "ایمیل"
 
 #: company/models.py:69
-msgid "Social Code"
-msgstr "کد ملی"
+msgid "Manager Social Code"
+msgstr "کد ملی مدیرعامل"
 
 #: company/models.py:72
 msgid "Manager Full Name"
 msgstr "نام کامل مدیرعامل"
 
 #: company/models.py:75
+msgid "Manager Phone Number"
+msgstr "شماره تماس مدیرعامل"
+
+#: company/models.py:78
+msgid "Office Phone Number"
+msgstr "شماره تماس دفتر"
+
+#: company/models.py:81
 msgid "License Types"
 msgstr "نوع گواهی"
 
-#: company/models.py:79
+#: company/models.py:85
 msgid "Technical Field"
 msgstr "حوزه فناوری"
 
-#: company/models.py:87
+#: company/models.py:93
 msgid "Insurance List"
 msgstr "تعداد لیست بیمه‌شدگان"
 
-#: company/models.py:93
+#: company/models.py:99
 msgid "Province"
 msgstr "استان"
 
-#: company/models.py:96
+#: company/models.py:102
 msgid "City"
 msgstr "شهر"
 
-#: company/models.py:98
+#: company/models.py:104
 msgid "Address"
 msgstr "آدرس"
 
-#: company/models.py:101
+#: company/models.py:107
+msgid "Is Active?"
+msgstr "فعال است؟"
+
+#: company/models.py:110
 msgid "Company Profile"
 msgstr "پروفایل شرکت"
 
-#: company/models.py:102
+#: company/models.py:111
 msgid "Company Profiles"
 msgstr "پروفایل شرکت‌ها"
 
-#: company/models.py:115
+#: company/models.py:124
 msgid "Industrial town"
 msgstr "عضو شهرک صنعتی"
 
-#: company/models.py:116
+#: company/models.py:125
 msgid "Technological"
 msgstr "فناور"
 
-#: company/models.py:117
+#: company/models.py:126
 msgid "Knowledge base"
 msgstr "دانش بنیان"
 
-#: company/models.py:118
+#: company/models.py:127
 msgid "Others"
 msgstr "سایر"
 
-#: company/models.py:122
+#: company/models.py:131
 msgid "License Code"
 msgstr "کد گواهی"
 
-#: company/models.py:123
+#: company/models.py:132
 msgid "License Name"
 msgstr "نام گواهی"
 
-#: company/models.py:126
+#: company/models.py:135
 msgid "License"
 msgstr "گواهی"
 
-#: company/models.py:127
+#: company/models.py:136
 msgid "Licenses"
 msgstr "گواهی‌ها"
 
-#: company/models.py:137
+#: company/models.py:146
 msgid "Service"
 msgstr "خدمت"
 
-#: company/models.py:138
+#: company/models.py:147
 msgid "Activate"
 msgstr "فعالسازی"
 
-#: company/models.py:141
+#: company/models.py:150
 msgid "Purchased Date"
 msgstr "تاریخ خرید"
 
-#: company/models.py:145
+#: company/models.py:154
 msgid "Company Service"
 msgstr "خدمت شرکت"
 
-#: company/models.py:146
+#: company/models.py:155
 msgid "Company Services"
 msgstr "خدمت‌های شرکت‌ها"
+
+#~ msgid "Profile Active"
+#~ msgstr "فعالسازی"
 
 #~ msgid "Newbie"
 #~ msgstr "نوپا"
