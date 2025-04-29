@@ -1,0 +1,45 @@
+name: Switch to Production
+
+on:
+  push:
+    branches:
+      - release
+
+
+jobs:
+  switch-env:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Replace `.development` with `.production`
+        run: |
+          files=(
+            supervisord.conf
+            manage.py
+            config/wsgi.py
+            config/asgi.py
+            config/views.py
+            config/celery.py
+          )
+
+          for file in "${files[@]}"; do
+            if [[ -f "$file" ]]; then
+              sed -i 's/\.development/\.production/g' "$file"
+            fi
+          done
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "ahMADASSadi"
+          git config user.email "s1380ahmad@gmail.com"
+
+          if ! git diff --quiet; then
+            git add supervisord.conf manage.py config/*.py
+            git commit -m "CI: Switch .development to .production"
+            git push
+          else
+            echo "No changes to commit"
+          fi
