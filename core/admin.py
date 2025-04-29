@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib import admin
 
 
-from core.models import Service, OTP
+from core.models import PackagePermission, Service, OTP, UserPermission
 
 
 User = get_user_model()
@@ -53,3 +53,16 @@ class ServiceAdmin(admin.ModelAdmin):
     def get_price(self, service: Service):
         return f"{service.price:,.2f}"
     get_price.short_description = _("Price")
+
+
+@admin.register(PackagePermission)
+class PackagePermissionAdmin(admin.ModelAdmin):
+    list_display = ('name', 'codename', 'description')
+    search_fields = ('name', 'codename')
+
+
+@admin.register(UserPermission)
+class UserPermissionAdmin(admin.ModelAdmin):
+    list_display = ('user', 'permission')
+    list_filter = ('permission',)
+    search_fields = ('user__username', 'permission__name')
