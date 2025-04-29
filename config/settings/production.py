@@ -24,6 +24,7 @@ INTERNAL_IPS = None
 
 PROJECT_APPS = [
     'management',
+    'packages',
     'finance',
     'company',
     'request',
