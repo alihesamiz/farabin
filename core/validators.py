@@ -8,6 +8,12 @@ phone_number_validator = RegexValidator(
     code=_("Invalid_phone_number")
 )
 
+landline_number_validator = RegexValidator(
+    regex=r'^0\d{10}$',
+    message=_("Phone number must be in 09XXXXXXXXX format."),
+    code=_("Invalid_phone_number")
+)
+
 
 def pdf_file_validator(value):
     

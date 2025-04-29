@@ -21,6 +21,7 @@ INSTALLED_APPS = [
 
 PROJECT_APPS = [
     'management',
+    'packages',
     'finance',
     'company',
     'request',

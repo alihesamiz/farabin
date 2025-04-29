@@ -2,7 +2,7 @@ from datetime import timedelta
 import random
 
 
-from django.contrib.auth.models import AbstractBaseUser as BaseUser, PermissionsMixin,Group
+from django.contrib.auth.models import AbstractBaseUser as BaseUser, PermissionsMixin, Group
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from django.db import models
@@ -12,16 +12,14 @@ from core.validators import phone_number_validator
 from core.managers import UserManager
 
 
-
-
 class User(BaseUser, PermissionsMixin):
     phone_number = models.CharField(
-        max_length=11, unique=True, validators=[phone_number_validator],verbose_name=_("Phone Number"))
-    national_code = models.CharField(max_length=11, unique=True,verbose_name=_("National Code"))
+        max_length=11, unique=True, validators=[phone_number_validator], verbose_name=_("Phone Number"))
+    national_code = models.CharField(
+        max_length=11, unique=True, verbose_name=_("National Code"))
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
-
 
     groups = models.ManyToManyField(
         Group,
@@ -81,7 +79,7 @@ class OTP(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def is_valid(self):
-        
+
         return self.created_at >= timezone.now() - timedelta(minutes=3)
 
     def generate_otp(self):
@@ -93,6 +91,7 @@ class OTP(models.Model):
     class Meta:
         verbose_name = _("OTP")
         verbose_name_plural = _("OTPs")
+
 
 class City(models.Model):
 
@@ -141,3 +140,26 @@ class Service(models.Model):
 
     def __str__(self) -> str:
         return f"{self.name} › {self.description[:10]}"
+
+
+class PackagePermission(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    codename = models.CharField(max_length=100, unique=True)
+    description = models.TextField(blank=True)
+    service = models.ManyToManyField(
+        'packages.Service', blank=True, related_name='permissions'
+    )
+    package = models.ForeignKey(
+        'packages.Package', on_delete=models.CASCADE, null=True, blank=True, related_name='permissions'
+    )
+
+    def __str__(self):
+        return self.name
+
+
+class UserPermission(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    permission = models.ForeignKey(PackagePermission, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('user', 'permission')

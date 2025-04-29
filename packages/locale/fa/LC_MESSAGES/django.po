@@ -1,0 +1,110 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-04-28 15:15+0330\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+#: packages/models.py:8
+msgid "Financial"
+msgstr "مالی"
+
+#: packages/models.py:9
+msgid "Marketing"
+msgstr "بازاریابی"
+
+#: packages/models.py:10
+msgid "Management"
+msgstr "مدیریا"
+
+#: packages/models.py:11
+msgid "Production"
+msgstr "تولید"
+
+#: packages/models.py:12
+msgid "Management Information System"
+msgstr "مدیریت اطلاعات سیستم"
+
+#: packages/models.py:14
+msgid "Research and Development"
+msgstr "تحقیقات و توسعه"
+
+#: packages/models.py:17
+msgid "Service Name"
+msgstr "نام سرویس"
+
+#: packages/models.py:19
+msgid "Service Description"
+msgstr "ویژگی سرویس"
+
+#: packages/models.py:22 packages/models.py:51
+msgid "Is Active?"
+msgstr "فعال است؟"
+
+#: packages/models.py:25
+msgid "Service"
+msgstr "سرویس"
+
+#: packages/models.py:26 packages/models.py:44
+msgid "Services"
+msgstr "سرویس‌ها"
+
+#: packages/models.py:34
+msgid "Monthly"
+msgstr "ماهانه"
+
+#: packages/models.py:35
+msgid "Quarterly"
+msgstr "فصلی"
+
+#: packages/models.py:36
+msgid "Semi-Annually"
+msgstr "۶ ماهه"
+
+#: packages/models.py:37
+msgid "Annually"
+msgstr "سالانه"
+
+#: packages/models.py:40
+msgid "Package Name"
+msgstr "نام بسته"
+
+#: packages/models.py:42
+msgid "Package Description"
+msgstr "ویژگی بسته"
+
+#: packages/models.py:46
+msgid "Price"
+msgstr "قیمت"
+
+#: packages/models.py:48
+msgid "Period"
+msgstr "بازه زمانی"
+
+#: packages/models.py:53
+msgid "Created At"
+msgstr "ایجاد شده در"
+
+#: packages/models.py:55
+msgid "Updated At"
+msgstr "بروزرسانی شده در"
+
+#: packages/models.py:58
+msgid "Package"
+msgstr "بسته"
+
+#: packages/models.py:59
+msgid "Packages"
+msgstr "بسته‌ها"
