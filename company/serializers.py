@@ -40,7 +40,7 @@ class CompanyProfileSerializer(serializers.ModelSerializer):
             'user_national_code', 'id', 'company_title', 'manager_social_code', 'manager_phone_number',
             'office_phone_number', 'email',
             'manager_name', 'license', 'special_field', 'tech_field', 'province',
-            'city', 'insurance_list', 'capital_providing_method', 'profile_active',
+            'city', 'insurance_list', 'capital_providing_method', 'is_active',
             'address', 'services',
         ]
 
@@ -87,7 +87,7 @@ class CompanyProfileCreateSerializer(serializers.ModelSerializer):
             'office_phone_number', 'email', 'manager_name',
             'license', 'special_field', 'tech_field',  'province', 'city',
             'insurance_list', 'capital_providing_method',
-            'profile_active', 'address'
+            'is_active', 'address'
         ]
 
     def validate_email(self, value):

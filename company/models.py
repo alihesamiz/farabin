@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.db import models
 
-from core.validators import phone_number_validator
+from core.validators import phone_number_validator, landline_number_validator
 
 User = get_user_model()
 
@@ -58,7 +58,6 @@ class CompanyProfile(models.Model):
     user = models.OneToOneField(
         User, on_delete=models.CASCADE, related_name='company', verbose_name=_("User"))
 
-
     company_title = models.CharField(
         max_length=255, verbose_name=_("Company Title"))
 
@@ -75,7 +74,7 @@ class CompanyProfile(models.Model):
         max_length=11, unique=True, validators=[phone_number_validator], verbose_name=_("Manager Phone Number"), null=True, blank=True)
 
     office_phone_number = models.CharField(
-        max_length=11, unique=True, validators=[phone_number_validator], verbose_name=_("Office Phone Number"), null=True, blank=True)
+        max_length=11, unique=True, validators=[landline_number_validator], verbose_name=_("Office Phone Number"), null=True, blank=True)
 
     license = models.ManyToManyField(
         'License', verbose_name=_("License Types"))
@@ -105,7 +104,7 @@ class CompanyProfile(models.Model):
 
     is_active = models.BooleanField(
         default=False, verbose_name=_("Is Active?"))
-    
+
     class Meta:
         verbose_name = _("Company Profile")
         verbose_name_plural = _("Company Profiles")
