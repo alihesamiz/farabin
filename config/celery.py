@@ -26,7 +26,7 @@ app.conf.beat_schedule = {
 
 app.conf.beat_schedule = {
     'backup-database-every-sunday-and-wednesday-at-8pm': {
-        'task': 'core.tasks.database',
+        'task': 'core.tasks.backup_database',
         'schedule': crontab(hour=20, minute=0, day_of_week='0,3'),
         'options': {'queue': 'high_priority'},
     },
