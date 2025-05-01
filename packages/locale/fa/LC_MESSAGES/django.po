@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-28 15:15+0330\n"
+"POT-Creation-Date: 2025-05-01 15:18+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,94 +17,175 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-#: packages/models.py:8
+
+#: packages/admin.py:42 packages/admin.py:60
+msgid "Company Title"
+msgstr "نام شرکت"
+
+#: packages/models.py:16
 msgid "Financial"
 msgstr "مالی"
 
-#: packages/models.py:9
+#: packages/models.py:17
 msgid "Marketing"
 msgstr "بازاریابی"
 
-#: packages/models.py:10
+#: packages/models.py:18
 msgid "Management"
 msgstr "مدیریا"
 
-#: packages/models.py:11
+#: packages/models.py:19
 msgid "Production"
 msgstr "تولید"
 
-#: packages/models.py:12
+#: packages/models.py:20
 msgid "Management Information System"
 msgstr "مدیریت اطلاعات سیستم"
 
-#: packages/models.py:14
+#: packages/models.py:22
 msgid "Research and Development"
 msgstr "تحقیقات و توسعه"
 
-#: packages/models.py:17
+#: packages/models.py:25
 msgid "Service Name"
 msgstr "نام سرویس"
 
-#: packages/models.py:19
+#: packages/models.py:27
 msgid "Service Description"
 msgstr "ویژگی سرویس"
 
-#: packages/models.py:22 packages/models.py:51
+#: packages/models.py:30 packages/models.py:67
 msgid "Is Active?"
 msgstr "فعال است؟"
 
-#: packages/models.py:25
+#: packages/models.py:33
 msgid "Service"
 msgstr "سرویس"
 
-#: packages/models.py:26 packages/models.py:44
+#: packages/models.py:34 packages/models.py:59
 msgid "Services"
 msgstr "سرویس‌ها"
 
-#: packages/models.py:34
+#: packages/models.py:42
+msgid "Demo"
+msgstr "آزمایشی"
+
+#: packages/models.py:43
+msgid "Bronze"
+msgstr "برنزی"
+
+#: packages/models.py:44
+msgid "Silver"
+msgstr "نقره‌ای"
+
+#: packages/models.py:45
+msgid "Gold"
+msgstr "طلایی"
+
+#: packages/models.py:46
+msgid "Platinum"
+msgstr "پلاتینیوم"
+
+#: packages/models.py:49
 msgid "Monthly"
 msgstr "ماهانه"
 
-#: packages/models.py:35
+#: packages/models.py:50
 msgid "Quarterly"
 msgstr "فصلی"
 
-#: packages/models.py:36
+#: packages/models.py:51
 msgid "Semi-Annually"
 msgstr "۶ ماهه"
 
-#: packages/models.py:37
+#: packages/models.py:52
 msgid "Annually"
 msgstr "سالانه"
 
-#: packages/models.py:40
+#: packages/models.py:55
 msgid "Package Name"
 msgstr "نام بسته"
 
-#: packages/models.py:42
+#: packages/models.py:57
 msgid "Package Description"
 msgstr "ویژگی بسته"
 
-#: packages/models.py:46
+#: packages/models.py:61
 msgid "Price"
 msgstr "قیمت"
 
-#: packages/models.py:48
+#: packages/models.py:64
 msgid "Period"
 msgstr "بازه زمانی"
 
-#: packages/models.py:53
+#: packages/models.py:69 packages/models.py:152
 msgid "Created At"
 msgstr "ایجاد شده در"
 
-#: packages/models.py:55
+#: packages/models.py:71
 msgid "Updated At"
 msgstr "بروزرسانی شده در"
 
-#: packages/models.py:58
+#: packages/models.py:74 packages/models.py:150
 msgid "Package"
 msgstr "بسته"
 
-#: packages/models.py:59
+#: packages/models.py:75
 msgid "Packages"
 msgstr "بسته‌ها"
+
+#: packages/models.py:96
+msgid "Purchase Date"
+msgstr "زمان خرید"
+
+#: packages/models.py:98
+msgid "Expiry Date"
+msgstr "تاریخ انقضا"
+
+#: packages/models.py:100
+msgid "Duration in days"
+msgstr "بازه زمانی به روز"
+
+#: packages/models.py:101
+msgid "Duration"
+msgstr "بازه زمانی"
+
+#: packages/models.py:102
+msgid "Is Active"
+msgstr "فعال است؟"
+
+#: packages/models.py:105
+msgid "Subscription"
+msgstr "اشتراک"
+
+#: packages/models.py:106
+msgid "Subscriptions"
+msgstr "اشتراک‌ها"
+
+#: packages/models.py:141
+msgid "Pending"
+msgstr "در انتظار"
+
+#: packages/models.py:142
+msgid "Confirmed"
+msgstr "تایید شده"
+
+#: packages/models.py:143
+msgid "Canceled"
+msgstr "لغو شده"
+
+#: packages/models.py:146
+msgid "Status"
+msgstr "وضعیت"
+
+#: packages/models.py:148
+msgid "User"
+msgstr "کاربر"
+
+#: packages/models.py:162
+msgid "Order"
+msgstr "سفارش"
+
+#: packages/models.py:163
+msgid "Orders"
+msgstr "سفارش‌ها"
