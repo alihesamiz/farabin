@@ -34,7 +34,7 @@ class OTPViewSet(viewsets.ViewSet):
     util = GeneralUtils()
     COOLDOWN_PERIOD = timedelta(minutes=3)
 
-    @action(detail=False, methods=['get', 'post'], url_path='send')
+    @action(detail=False, methods=['get', 'post'], url_path='send',url_name="otp-send")
     def send_otp(self, request):
 
         logger.info("Received OTP send request.", extra={
@@ -81,7 +81,7 @@ class OTPViewSet(viewsets.ViewSet):
                 f"Error sending OTP for user {phone_number}: {str(e)}", exc_info=True)
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    @action(detail=False, methods=['get', 'post'], url_path='verify')
+    @action(detail=False, methods=['get', 'post'], url_path='verify',url_name="otp-verify")
     def verify_otp(self, request):
 
         logger.info("Received OTP verification request.",
