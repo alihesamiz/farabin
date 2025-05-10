@@ -9,6 +9,9 @@ from packages.models import Order, Package, Service, Subscription
 
 
 class ServiceViewSet(ModelViewSet):
+    """
+    >>> List the services
+    """
     permission_classes = [IsAuthenticated]
     serializer_class = ServiceSerializer
     http_method_names = ["get"]
@@ -29,10 +32,9 @@ class SubscriptionsViewSet(ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        print(user)
         return Subscription.objects.select_related("package").filter(user=user, is_active=True).all()
 
-    @action(detail=False, methods=["get"], url_path="inactive-subs")
+    @action(detail=False, methods=["get"], url_path="inactive")
     def inactive_subs(self, request):
         user = request.user
         inactive_subs = Subscription.objects.select_related(
@@ -48,25 +50,39 @@ class OrderViewSet(ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return Order.objects.filter(user=user, status=Order.OrderStatus.PENDING_STATUS).all()
+        status = self.request.query_params.get('status')
+        if status not in dict(Order.OrderStatus.choices):
+            status = Order.OrderStatus.PENDING_STATUS
+        return Order.objects.filter(user=user, status=status).all()
 
     def get_serializer_class(self):
         if self.action == "create":
             return OrderCreateSerializer
         return OrderSerializer
 
-    @action(methods=["get"], detail=False, url_path="confirmed_orders")
-    def confirmed_orders(self, request):
-        user = request.user
-        confirmed_orders = Order.get_by_status(
-            Order.OrderStatus.CONFIRMED_STATUS, user)
-        serializer = self.get_serializer(confirmed_orders, many=True)
-        return Response(serializer.data)
+    #
+    #  Below is written with action which is not really aligned with RestFull APIs so the successive `query_params` are using.
+    #
+    # @action(methods=["get"], detail=False, url_path="confirmed")
+    # def confirmed_orders(self, request):
+    #     user = request.user
+    #     confirmed_orders = Order.get_by_status(
+    #         Order.OrderStatus.CONFIRMED_STATUS, user)
+    #     serializer = self.get_serializer(confirmed_orders, many=True)
+    #     return Response(serializer.data)
 
-    @action(methods=["get"], detail=False, url_path="canceled_orders")
-    def canceled_orders(self, request):
-        user = request.user
-        canceled_orders = Order.get_by_status(
-            Order.OrderStatus.CANCELED_STATUS, user)
-        serializer = self.get_serializer(canceled_orders, many=True)
-        return Response(serializer.data)
+    # @action(methods=["get"], detail=False, url_path="canceled")
+    # def canceled_orders(self, request):
+    #     user = request.user
+    #     canceled_orders = Order.get_by_status(
+    #         Order.OrderStatus.CANCELED_STATUS, user)
+    #     serializer = self.get_serializer(canceled_orders, many=True)
+    #     return Response(serializer.data)
+
+    # @action(methods=["get"], detail=False, url_path="paid")
+    # def confirmed_orders(self, request):
+    #     user = request.user
+    #     confirmed_orders = Order.get_by_status(
+    #         Order.OrderStatus.PAID_STATUS, user)
+    #     serializer = self.get_serializer(confirmed_orders, many=True)
+    #     return Response(serializer.data)

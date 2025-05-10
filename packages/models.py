@@ -2,14 +2,21 @@ from uuid import uuid4
 import decimal
 
 
+from django.core.exceptions import FieldError, ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.db.transaction import atomic
 from django.utils import timezone
 from django.db import models
 
-
 User = get_user_model()
+
+
+class PeriodChoices(models.TextChoices):
+    MONTHLY = "monthly", _("Monthly")
+    QUARTERLY = "quarterly", _("Quarterly")
+    SEMI_ANNUALLY = "semi_annually", _("Semi-Annually")
+    ANNUALLY = "annually", _("Annually")
 
 
 class Service(models.Model):
@@ -25,9 +32,15 @@ class Service(models.Model):
 
     name = models.CharField(verbose_name=_(
         "Service Name"), max_length=30, choices=ServiceType.choices, unique=True)
-
+    code_name = models.CharField(verbose_name=_(
+        "Code Name"), blank=True, max_length=2, unique=True)
     description = models.TextField(verbose_name=_("Service Description"))
-
+    price = models.DecimalField(
+        decimal_places=2, max_digits=20, verbose_name=_("Price"), blank=True, null=True)
+    period = models.CharField(
+        max_length=20, choices=PeriodChoices.choices,
+        verbose_name=_("Period"), blank=True, null=True
+    )
     is_active = models.BooleanField(
         default=False, verbose_name=_("Is Active?"))
 
@@ -38,6 +51,20 @@ class Service(models.Model):
     def __str__(self) -> str:
         return self.get_name_display()
 
+    def save(self, *args, **kwargs):
+        not_created = self.pk is None
+        with atomic():
+            if not_created:
+                self.period = PeriodChoices.MONTHLY
+                self.code_name = self._get_code_name(self.name)
+
+            super().save(*args, **kwargs)
+
+    def _get_code_name(self, service_name: str):
+        for index, choice in enumerate(Service.ServiceType.choices):
+            if service_name == choice[0]:
+                return index
+
 
 class Package(models.Model):
     class PackageName(models.TextChoices):
@@ -47,14 +74,10 @@ class Package(models.Model):
         GOLD = "gold", _("Gold")
         PLATINUM = "platinum", _("Platinum")
 
-    class PeriodChoices(models.TextChoices):
-        MONTHLY = "monthly", _("Monthly")
-        QUARTERLY = "quarterly", _("Quarterly")
-        SEMI_ANNUALLY = "semi_annually", _("Semi-Annually")
-        ANNUALLY = "annually", _("Annually")
-
     name = models.CharField(
         max_length=30, verbose_name=_("Package Name"), unique=True, choices=PackageName.choices)
+    code_name = models.CharField(verbose_name=_(
+        "Code Name"), blank=True, max_length=2, unique=True)
     description = models.TextField(
         verbose_name=_("Package Description"), blank=True, null=True)
     services = models.ManyToManyField(
@@ -83,17 +106,25 @@ class Package(models.Model):
         not_created = self.pk is None
         with atomic():
             if not_created and self.name == self.PackageName.DEMO:
-                self.period = self.PeriodChoices.MONTHLY
+                self.period = PeriodChoices.MONTHLY
                 self.price = decimal.Decimal(0.00)
+                self.code_name = self._get_code_name(self.name)
 
             super().save(*args, **kwargs)
+
+    def _get_code_name(self, package_name: str):
+        for index, choice in enumerate(self.PackageName.choices):
+            if package_name == choice[0]:
+                return index
 
 
 class Subscription(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="subscriptions")
+        User, on_delete=models.CASCADE, related_name="subscriptions", verbose_name=_("User"))
     package = models.ForeignKey(
-        Package, on_delete=models.CASCADE, related_name="subscriptions")
+        Package, on_delete=models.CASCADE, related_name="subscriptions", null=True, blank=True, verbose_name=_("Package"))
+    service = models.ManyToManyField(
+        Service, related_name="subscriptions", blank=True, verbose_name=_("Service"))
     purchase_date = models.DateTimeField(
         auto_now_add=True, verbose_name=_("Purchase Date"))
     expires_at = models.DateTimeField(
@@ -111,7 +142,8 @@ class Subscription(models.Model):
         )
 
     def __str__(self):
-        return f"{self.user.phone_number} - {self.package.name}({self.package.period})"
+
+        return f"{self.user.company.company_title} - روز{self.duration.days}"
 
     def save(self, *args, **kwargs):
         # On first save, set expires_at based on package.duration
@@ -119,20 +151,21 @@ class Subscription(models.Model):
             with atomic():
                 now = timezone.now()
                 self.purchase_date = now
-                self.duration = self._calculate_duration()
-                self.expires_at = now + self.duration
+                if self.package:
+                    self.duration = self._calculate_duration(
+                        self.package.period)
+                    self.expires_at = now + self.duration
             super().save(*args, **kwargs)
 
-    def _calculate_duration(self):
-
-        match self.package.period:
-            case Package.PeriodChoices.MONTHLY:
+    def _calculate_duration(self, period):
+        match period:
+            case PeriodChoices.MONTHLY:
                 return timezone.timedelta(days=30)
-            case Package.PeriodChoices.QUARTERLY:
+            case PeriodChoices.QUARTERLY:
                 return timezone.timedelta(days=90)
-            case Package.PeriodChoices.SEMI_ANNUALLY:
+            case PeriodChoices.SEMI_ANNUALLY:
                 return timezone.timedelta(days=180)
-            case Package.PeriodChoices.ANNUALLY:
+            case PeriodChoices.ANNUALLY:
                 return timezone.timedelta(days=365)
             case _:
                 raise ValueError("Invalid period")
@@ -141,6 +174,7 @@ class Subscription(models.Model):
 class Order(models.Model):
     class OrderStatus(models.TextChoices):
         PENDING_STATUS = 'pending', _('Pending')
+        PAID_STATUS = 'paid', _("Paid")
         CONFIRMED_STATUS = 'confirmed', _('Confirmed')
         CANCELED_STATUS = 'canceled', _('Canceled')
 
@@ -149,16 +183,11 @@ class Order(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, verbose_name=_("User"), related_name="order")
     package = models.ForeignKey(Package, on_delete=models.SET_NULL,
-                                null=True, verbose_name=_("Package"), related_name="order")
+                                null=True, blank=True, verbose_name=_("Package"), related_name="order")
+    service = models.ManyToManyField(
+        Service, related_name="orders", blank=True, verbose_name=_("Service"))
     created_at = models.DateTimeField(
         verbose_name=_("Created At"), auto_now_add=True)
-
-    def __str__(self):
-        user_info = (
-            getattr(self.user.company, "company_title", None)
-            if hasattr(self.user, "company") else self.user.phone_number
-        )
-        return f"{user_info} -> {self.created_at.date()} : {self.get_status_display()}"
 
     class Meta:
         verbose_name = _("Order")
@@ -169,9 +198,16 @@ class Order(models.Model):
                 name="user_unique_package_order")
         ]
 
-    def set_as_paied(self):
+    def __str__(self):
+        user_info = (
+            getattr(self.user.company, "company_title", None)
+            if hasattr(self.user, "company") else self.user.phone_number
+        )
+        return f"{user_info} -> {self.created_at} : {self.get_status_display()}"
+
+    def set_as_paid(self):
         with atomic():
-            self.status = self.OrderStatus.CONFIRMED_STATUS
+            self.status = self.OrderStatus.PAID_STATUS
             self.save()
 
     @classmethod
