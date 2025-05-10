@@ -100,6 +100,9 @@ google-auth = "^2.39.0"
 google-auth-oauthlib = "^1.2.1"
 google-auth-httplib2 = "^0.2.0"
 google-api-python-client = "^2.167.0"
+django-lifecycle = "^1.2.4"
+pytest = "^8.3.5"
+pytest-django = "^4.11.1"
 
 [build-system]
 requires = ["poetry-core"]
