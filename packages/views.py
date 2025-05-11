@@ -4,7 +4,13 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 
 
-from packages.serializers import OrderCreateSerializer, OrderSerializer, PackageSerializer, ServiceSerializer, SubscriptionSerializer
+from packages.serializers import (
+    OrderCreateSerializer,
+    OrderSerializer,
+    PackageSerializer,
+    ServiceSerializer,
+    SubscriptionSerializer,
+)
 from packages.models import Order, Package, Service, Subscription
 
 
@@ -12,6 +18,7 @@ class ServiceViewSet(ModelViewSet):
     """
     >>> List the services
     """
+
     permission_classes = [IsAuthenticated]
     serializer_class = ServiceSerializer
     http_method_names = ["get"]
@@ -32,13 +39,18 @@ class SubscriptionsViewSet(ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return Subscription.objects.select_related("package").filter(user=user, is_active=True).all()
+        return (
+            Subscription.objects.select_related("package")
+            .filter(user=user, is_active=True)
+            .all()
+        )
 
     @action(detail=False, methods=["get"], url_path="inactive")
     def inactive_subs(self, request):
         user = request.user
-        inactive_subs = Subscription.objects.select_related(
-            "package").filter(user=user, is_active=False)
+        inactive_subs = Subscription.objects.select_related("package").filter(
+            user=user, is_active=False
+        )
         serializer = self.get_serializer(inactive_subs, many=True)
         return Response(serializer.data)
 
@@ -50,7 +62,7 @@ class OrderViewSet(ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        status = self.request.query_params.get('status')
+        status = self.request.query_params.get("status")
         if status not in dict(Order.OrderStatus.choices):
             status = Order.OrderStatus.PENDING_STATUS
         return Order.objects.filter(user=user, status=status).all()

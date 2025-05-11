@@ -6,13 +6,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('packages', '0019_remove_subscription_service_subscription_service'),
+        ("packages", "0019_remove_subscription_service_subscription_service"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='service',
-            name='code_name',
-            field=models.CharField(blank=True, max_length=2, null=True, unique=True, verbose_name='Code Name'),
+            model_name="service",
+            name="code_name",
+            field=models.CharField(
+                blank=True,
+                max_length=2,
+                null=True,
+                unique=True,
+                verbose_name="Code Name",
+            ),
         ),
     ]

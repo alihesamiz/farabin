@@ -8,16 +8,23 @@ import cohere
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 
-from finance.models import AnalysisReport, FinancialData, BalanceReport, AccountTurnOver, SoldProductFee, FinancialAsset, ProfitLossStatement
+from finance.models import (
+    AnalysisReport,
+    FinancialData,
+    BalanceReport,
+    AccountTurnOver,
+    SoldProductFee,
+    FinancialAsset,
+    ProfitLossStatement,
+)
 from finance.utils import ReadExcel
 
 logger = logging.getLogger("finance")
 
 
-@shared_task(rate_limit='5/m')
+@shared_task(rate_limit="5/m")
 def generate_analysis(company, chart_name, *args, **kwargs):
-    logger.info(
-        f"Starting analysis task for company {company}, chart {chart_name}")
+    logger.info(f"Starting analysis task for company {company}, chart {chart_name}")
 
     generator = cohere.ClientV2(settings.FARABIN_COHERE_API_KEY)
 
@@ -47,7 +54,6 @@ def generate_analysis(company, chart_name, *args, **kwargs):
             # "intangible_asset": [],
             # "long_term_investment": [],
             "inventory_average": [],
-
             "current_asset": [],
             "non_current_asset": [],
             "total_asset": [],
@@ -57,7 +63,8 @@ def generate_analysis(company, chart_name, *args, **kwargs):
             "gross_profit": [],
             "operational_profit": [],
             "proceed_profit": [],
-            "net_profit": [], },
+            "net_profit": [],
+        },
         "cost": {
             "prompt": "Using the provided consuming_material ,production fee ,construction overhead ,production total price ,salary fee ,salary production fee values, provide a comprehensive analysis of the company's cost performance.Ensure the analysis is detailed, insightful, and highlights key trends and observations then translate the results to persian",
             "consuming_material": [],
@@ -69,30 +76,25 @@ def generate_analysis(company, chart_name, *args, **kwargs):
         },
         "equity": {
             "prompt": "Using the provided total debt ,total equity ,total sum equity debt values, provide a comprehensive analysis of the company's equity performance.Ensure the analysis is detailed, insightful, and highlights key trends and observations then translate the results to persian",
-
             "total_debt": [],
             "total_equity": [],
             "total_sum_equity_debt": [],
         },
         "bankrupsy": {
             "prompt": "Using the provided altman bankrupsy ratio values, provide a comprehensive analysis of the company's bankruptcy rate performance.Ensure the analysis is detailed, insightful, and highlights key trends and observations then translate the results to persian",
-
-            "altman_bankrupsy_ratio": []
+            "altman_bankrupsy_ratio": [],
         },
         "profitability": {
             "prompt": "Using the provided efficiency ,roa ,roab ,roe ,gross profit margin ,profit margin ratio values, provide a comprehensive analysis of the company's profitability performance.Ensure the analysis is detailed, insightful, and highlights key trends and observations then translate the results to persian",
-
             "efficiency": [],
             "roa": [],
             "roab": [],
             "roe": [],
             "gross_profit_margin": [],
             "profit_margin_ratio": [],
-
         },
         "salary": {
             "prompt": "Using the provided construction overhead ,production total price ,salary fee ,salary production fee values, provide a comprehensive analysis of the company's salary performance.Ensure the analysis is detailed, insightful, and highlights key trends and observations then translate the results to persian",
-
             "construction_overhead": [],
             "production_total_price": [],
             "salary_fee": [],
@@ -100,25 +102,20 @@ def generate_analysis(company, chart_name, *args, **kwargs):
         },
         "inventory": {
             "prompt": "Using the provided invenrotry average values, provide a comprehensive analysis of the company's inventory performance.Ensure the analysis is detailed, insightful, and highlights key trends and observations then translate the results to persian",
-
             "inventory_average": [],
         },
         "agility": {
             "prompt": "Using the provided instant ratio, stock turnover values, provide a comprehensive analysis of the company's agility rate performance.Ensure the analysis is detailed, insightful, and highlights key trends and observations then translate the results to persian",
-
             "instant_ratio": [],
             "stock_turnover": [],
         },
-
         "liquidity": {
             "prompt": "Using the provided instant ratio, current ratio values, provide a comprehensive analysis of the company's liquidity rate performance.Ensure the analysis is detailed, insightful, and highlights key trends and observations then translate the results to persian",
-
             "instant_ratio": [],
             "current_ratio": [],
         },
         "leverage": {
             "prompt": "Using the provided debt_ratio ,capital ratio ,proprietary ratio ,equity per total debt ratio ,equity per total non current asset ratio values, provide a comprehensive analysis of the company's leverage rate performance.Ensure the analysis is detailed, insightful, and highlights key trends and observations then translate the results to persian",
-
             "debt_ratio": [],
             "capital_ratio": [],
             "proprietary_ratio": [],
@@ -128,8 +125,11 @@ def generate_analysis(company, chart_name, *args, **kwargs):
     }
 
     try:
-        data = FinancialData.objects.prefetch_related("financial_asset").filter(
-            financial_asset__company__id=company).order_by("financial_asset__year", "financial_asset__month")
+        data = (
+            FinancialData.objects.prefetch_related("financial_asset")
+            .filter(financial_asset__company__id=company)
+            .order_by("financial_asset__year", "financial_asset__month")
+        )
 
         if not data.exists():
             logger.warning(f"No financial data found for company {company}.")
@@ -141,36 +141,45 @@ def generate_analysis(company, chart_name, *args, **kwargs):
         for field in charts[chart_name]:
             if field != "prompt":
                 for values in data:
-                    charts[chart_name][field].append(
-                        float(getattr(values, field)))
-        formatted_prompt = "act as a professional financial management and analyst and" + \
-            charts[chart_name]["prompt"]
+                    charts[chart_name][field].append(float(getattr(values, field)))
+        formatted_prompt = (
+            "act as a professional financial management and analyst and"
+            + charts[chart_name]["prompt"]
+        )
         for field in charts[chart_name]:
             if field != "prompt":
-                formatted_prompt += "\n\nData:\n" + (f"{field}: {charts[chart_name][field]}"
-                                                     )
+                formatted_prompt += "\n\nData:\n" + (
+                    f"{field}: {charts[chart_name][field]}"
+                )
 
         logger.info(
-            f"Sending request to Cohere API for company {company}, chart {chart_name}")
+            f"Sending request to Cohere API for company {company}, chart {chart_name}"
+        )
 
-        response = generator.chat(
-            model="command-r-plus",
-            messages=[
-                {
-                    "role": "user",
-                    "content": f"{formatted_prompt}"}],
-        ).message.content[0].text
+        response = (
+            generator.chat(
+                model="command-r-plus",
+                messages=[{"role": "user", "content": f"{formatted_prompt}"}],
+            )
+            .message.content[0]
+            .text
+        )
 
-        response = generator.chat(
-            model="command-r-plus",
-            messages=[
-                {
-                    "role": "user",
-                    "content": f"fix any issues in the following persian text. also check and fix if there are any grammaricall issues: {response}"}],
-        ).message.content[0].text
+        response = (
+            generator.chat(
+                model="command-r-plus",
+                messages=[
+                    {
+                        "role": "user",
+                        "content": f"fix any issues in the following persian text. also check and fix if there are any grammaricall issues: {response}",
+                    }
+                ],
+            )
+            .message.content[0]
+            .text
+        )
 
-        logger.info(
-            f"Received AI response for company {company}, chart {chart_name}")
+        logger.info(f"Received AI response for company {company}, chart {chart_name}")
 
         AnalysisReport.objects.update_or_create(
             calculated_data=last_data,
@@ -178,19 +187,22 @@ def generate_analysis(company, chart_name, *args, **kwargs):
             defaults={
                 "period": "y" if last_data.financial_asset.is_tax_record else "m",
                 "text": response,
-            }
+            },
         )
         logger.info(
-            f"Successfully saved analysis report for company {company}, chart {chart_name}")
+            f"Successfully saved analysis report for company {company}, chart {chart_name}"
+        )
 
     except ObjectDoesNotExist as e:
         logger.error(
-            f"Error: Financial asset data not found for company {company}. Exception: {e}")
+            f"Error: Financial asset data not found for company {company}. Exception: {e}"
+        )
         return "Error: Financial asset data not found."
 
     except Exception as e:
         logger.error(
-            f"Unexpected error in analysis task for company {company}, chart {chart_name}: {e}")
+            f"Unexpected error in analysis task for company {company}, chart {chart_name}: {e}"
+        )
         return "Error: An unexpected issue occurred during analysis."
 
 
@@ -203,14 +215,16 @@ def generate_financial_asset(company_id, file_path):
     months = reader.months
 
     for year in years:
-        if not all(isinstance(x, float) and x != x for x in months):  # NaN is never equal to itself
+        if not all(
+            isinstance(x, float) and x != x for x in months
+        ):  # NaN is never equal to itself
             print(months)
         financial_asset, created = FinancialAsset.objects.update_or_create(
-            company=company, year=year, is_tax_record=is_tax)
+            company=company, year=year, is_tax_record=is_tax
+        )
 
         profit_loss_df = reader.get_profit_loss_record().T
-        populate_financial_model(
-            ProfitLossStatement, financial_asset, profit_loss_df)
+        populate_financial_model(ProfitLossStatement, financial_asset, profit_loss_df)
 
         # Populate BalanceReport
         balance_df = reader.get_balance_record().T
@@ -218,13 +232,11 @@ def generate_financial_asset(company_id, file_path):
 
         # Populate AccountTurnOver
         account_turnover_df = reader.get_account_turnover_record().T
-        populate_financial_model(
-            AccountTurnOver, financial_asset, account_turnover_df)
+        populate_financial_model(AccountTurnOver, financial_asset, account_turnover_df)
 
         # Populate SoldProductFee
         sold_product_df = reader.get_sold_product_record().T
-        populate_financial_model(
-            SoldProductFee, financial_asset, sold_product_df)
+        populate_financial_model(SoldProductFee, financial_asset, sold_product_df)
 
 
 def populate_financial_model(model_class, financial_asset, df):
@@ -239,10 +251,14 @@ def populate_financial_model(model_class, financial_asset, df):
     Returns:
         None
     """
-    fields = [field.name for field in model_class._meta.fields if field.name !=
-              "id" and field.name != "financial_asset"]
+    fields = [
+        field.name
+        for field in model_class._meta.fields
+        if field.name != "id" and field.name != "financial_asset"
+    ]
 
     for index, row in df.iterrows():
         data = {field: value or 0 for field, value in zip(fields, row)}
         model_class.objects.update_or_create(
-            financial_asset=financial_asset, defaults=data)
+            financial_asset=financial_asset, defaults=data
+        )

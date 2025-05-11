@@ -7,49 +7,57 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('company', '0002_initial'),
-        ('management', '0002_personelinformation_cooperates_with_and_more'),
+        ("company", "0002_initial"),
+        ("management", "0002_personelinformation_cooperates_with_and_more"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='swotmatrix',
-            options={'verbose_name': 'SWOT Matrix', 'verbose_name_plural': 'SWOT Matrices'},
+            name="swotmatrix",
+            options={
+                "verbose_name": "SWOT Matrix",
+                "verbose_name_plural": "SWOT Matrices",
+            },
         ),
         migrations.RenameField(
-            model_name='humanresource',
-            old_name='create_at',
-            new_name='created_at',
+            model_name="humanresource",
+            old_name="create_at",
+            new_name="created_at",
         ),
         migrations.RenameField(
-            model_name='swotanalysis',
-            old_name='create_at',
-            new_name='created_at',
+            model_name="swotanalysis",
+            old_name="create_at",
+            new_name="created_at",
         ),
         migrations.RenameField(
-            model_name='swotmatrix',
-            old_name='create_at',
-            new_name='created_at',
+            model_name="swotmatrix",
+            old_name="create_at",
+            new_name="created_at",
         ),
         migrations.RemoveField(
-            model_name='swotopportunityoption',
-            name='company',
+            model_name="swotopportunityoption",
+            name="company",
         ),
         migrations.RemoveField(
-            model_name='swotstrengthoption',
-            name='company',
+            model_name="swotstrengthoption",
+            name="company",
         ),
         migrations.RemoveField(
-            model_name='swotthreatoption',
-            name='company',
+            model_name="swotthreatoption",
+            name="company",
         ),
         migrations.RemoveField(
-            model_name='swotweaknessoption',
-            name='company',
+            model_name="swotweaknessoption",
+            name="company",
         ),
         migrations.AlterField(
-            model_name='swotmatrix',
-            name='company',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='swot_matrices', to='company.companyprofile', verbose_name='Company'),
+            model_name="swotmatrix",
+            name="company",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="swot_matrices",
+                to="company.companyprofile",
+                verbose_name="Company",
+            ),
         ),
     ]

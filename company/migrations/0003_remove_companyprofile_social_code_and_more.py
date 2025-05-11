@@ -7,27 +7,59 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('company', '0002_initial'),
+        ("company", "0002_initial"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='companyprofile',
-            name='social_code',
+            model_name="companyprofile",
+            name="social_code",
         ),
         migrations.AddField(
-            model_name='companyprofile',
-            name='manager_phone_number',
-            field=models.CharField(blank=True, max_length=11, null=True, unique=True, validators=[django.core.validators.RegexValidator(code='Invalid_phone_number', message='Phone number must be in 09XXXXXXXXX format.', regex='^09\\d{9}$')], verbose_name='Manager Phone Number'),
+            model_name="companyprofile",
+            name="manager_phone_number",
+            field=models.CharField(
+                blank=True,
+                max_length=11,
+                null=True,
+                unique=True,
+                validators=[
+                    django.core.validators.RegexValidator(
+                        code="Invalid_phone_number",
+                        message="Phone number must be in 09XXXXXXXXX format.",
+                        regex="^09\\d{9}$",
+                    )
+                ],
+                verbose_name="Manager Phone Number",
+            ),
         ),
         migrations.AddField(
-            model_name='companyprofile',
-            name='manager_social_code',
-            field=models.CharField(blank=True, max_length=10, null=True, unique=True, verbose_name='Manager Social Code'),
+            model_name="companyprofile",
+            name="manager_social_code",
+            field=models.CharField(
+                blank=True,
+                max_length=10,
+                null=True,
+                unique=True,
+                verbose_name="Manager Social Code",
+            ),
         ),
         migrations.AddField(
-            model_name='companyprofile',
-            name='office_phone_number',
-            field=models.CharField(blank=True, max_length=11, null=True, unique=True, validators=[django.core.validators.RegexValidator(code='Invalid_phone_number', message='Phone number must be in 09XXXXXXXXX format.', regex='^09\\d{9}$')], verbose_name='Office Phone Number'),
+            model_name="companyprofile",
+            name="office_phone_number",
+            field=models.CharField(
+                blank=True,
+                max_length=11,
+                null=True,
+                unique=True,
+                validators=[
+                    django.core.validators.RegexValidator(
+                        code="Invalid_phone_number",
+                        message="Phone number must be in 09XXXXXXXXX format.",
+                        regex="^09\\d{9}$",
+                    )
+                ],
+                verbose_name="Office Phone Number",
+            ),
         ),
     ]

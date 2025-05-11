@@ -12,54 +12,54 @@ from django.utils.translation import gettext_lazy as _
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 env = environ.Env()
-environ.Env.read_env(BASE_DIR/".env")
+environ.Env.read_env(BASE_DIR / ".env")
 
 SECRET_KEY = env.get_value("FARABIN_SECRET_KEY")
 
 FARABIN_COHERE_API_KEY = env.get_value("FARABIN_COHERE_API_KEY")
 FARABIN_GEMINI_API_KEY = env.get_value("FARABIN_GEMINI_API_KEY")
 
-ROOT_URLCONF = 'config.urls'
+ROOT_URLCONF = "config.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'config.wsgi.application'
-ASGI_APPLICATION = 'config.asgi.application'
+WSGI_APPLICATION = "config.wsgi.application"
+ASGI_APPLICATION = "config.asgi.application"
 
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
 
-LANGUAGE_CODE = 'fa'
+LANGUAGE_CODE = "fa"
 
-TIME_ZONE = 'Asia/Tehran'
+TIME_ZONE = "Asia/Tehran"
 
 USE_I18N = True
 
@@ -69,34 +69,33 @@ USE_L10N = True
 
 
 LANGUAGES = [
-    ('en-us', _('English')),
-
-    ('fa', _('Persian')),
+    ("en-us", _("English")),
+    ("fa", _("Persian")),
 ]
 
 LOCALE_PATHS = [
-    BASE_DIR/'locale',
+    BASE_DIR / "locale",
 ]
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-STATIC_ROOT = BASE_DIR / 'static'
+STATIC_ROOT = BASE_DIR / "static"
 
-STATIC_URL = '/static/'
+STATIC_URL = "/static/"
 
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = BASE_DIR / "media"
 
-MEDIA_URL = '/media/'
+MEDIA_URL = "/media/"
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-AUTH_USER_MODEL = 'core.User'
+AUTH_USER_MODEL = "core.User"
 
 REST_FRAMEWORK = {
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
 }
 
@@ -117,7 +116,7 @@ GRAPHENE = {
 }
 GRAPHQL_JWT = {
     # 'JWT_PAYLOAD_HANDLER': 'management.utils.jwt_payload',
-    'JWT_AUTH_HEADER_PREFIX': 'JWT',
+    "JWT_AUTH_HEADER_PREFIX": "JWT",
 }
 
 AUTHENTICATION_BACKENDS = [
@@ -127,15 +126,15 @@ AUTHENTICATION_BACKENDS = [
 
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Farabin API',
-    'DESCRIPTION': 'API Documentation for Farabin Saramad',
-    'VERSION': '1.0.0',
-    'CONTACT': {"name": "Ahmad Asadi", "email": "madassandd@gmail.com"},
-    'SERVE_INCLUDE_SCHEMA': True,
+    "TITLE": "Farabin API",
+    "DESCRIPTION": "API Documentation for Farabin Saramad",
+    "VERSION": "1.0.0",
+    "CONTACT": {"name": "Ahmad Asadi", "email": "madassandd@gmail.com"},
+    "SERVE_INCLUDE_SCHEMA": True,
 }
 
 
-X_FRAME_OPTIONS = 'ALLOWANY'
+X_FRAME_OPTIONS = "ALLOWANY"
 
 CORS_ALLOWED_ORIGINS = [
     "https://saramad.farabinbrand.com",
@@ -151,10 +150,10 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CELERY_QUEUES = (
-    Queue('default', routing_key='task.default'),
-    Queue('high_priority', routing_key='task.high_priority'),
+    Queue("default", routing_key="task.default"),
+    Queue("high_priority", routing_key="task.high_priority"),
 )
-CELERY_DEFAULT_QUEUE = 'default'
+CELERY_DEFAULT_QUEUE = "default"
 CELERY_RESULT_BACKEND = f'redis://{env.get_value("FARABIN_REDIS_HOST")}:{env.get_value(
     "FARABIN_REDIS_PORT")}/{env.get_value("FARABIN_REDIS_ASYNC_DATABASE")}'
 CELERY_BROKER_URL = f'redis://{env.get_value("FARABIN_REDIS_HOST")}:{env.get_value(
@@ -165,14 +164,14 @@ CELERY_TASK_RESULT_EXPIRES = 3600
 CELERY_TASK_ACKS_LATE = True
 
 CACHES = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': f'redis://{env.get_value("FARABIN_REDIS_HOST")}:{env.get_value("FARABIN_REDIS_PORT")}/{env.get_value("FARABIN_REDIS_CACHE_DATABASE")}',
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-            'KEY_PREFIX': 'farabin_cache',
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": f'redis://{env.get_value("FARABIN_REDIS_HOST")}:{env.get_value("FARABIN_REDIS_PORT")}/{env.get_value("FARABIN_REDIS_CACHE_DATABASE")}',
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "KEY_PREFIX": "farabin_cache",
         },
-        'TIMEOUT': 3*60,
+        "TIMEOUT": 3 * 60,
     }
 }
 
@@ -195,7 +194,7 @@ LOGGING = {
             "style": "{",
         },
         "json": {  # Structured JSON logging (useful for external logging systems)
-            "format": "{{\"timestamp\": \"{asctime}\", \"level\": \"{levelname}\", \"message\": \"{message}\"}}",
+            "format": '{{"timestamp": "{asctime}", "level": "{levelname}", "message": "{message}"}}',
             "style": "{",
         },
     },
@@ -254,7 +253,7 @@ LOGGING = {
 }
 
 # For automatically adding apps into the request type
-APP_REQUEST_TYPES = ['finance', 'management']
+APP_REQUEST_TYPES = ["finance", "management"]
 
 
 # For the custom file path exceptions

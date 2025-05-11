@@ -28,10 +28,38 @@ from rest_framework import status, viewsets
 from company.models import CompanyProfile
 
 
-from finance.models import AnalysisReport, FinanceExcelFile, FinancialData, TaxDeclarationFile, BalanceReportFile
-from finance.serializers import (FinanceExcelFileSerializer, TaxDeclarationCreateSerializer, TaxDeclarationSerializer, BalanceReportCreateSerializer, BalanceReportSerializer,
-                                 AgilityChartSerializer, AnalysisReportListSerializer, AssetChartSerializer, BankrupsyChartSerializer, CostChartSerializer, DebtChartSerializer, EquityChartSerializer, FinancialDataSerializer,
-                                 InventoryChartSerializer, LeverageChartSerializer, LiquidityChartSerializer, FinancialDataSerializer, MonthDataSerializer,  ProfitChartSerializer, ProfitibilityChartSerializer, SalaryChartSerializer, SaleChartSerializer, YearlyFinanceDataSerializer)
+from finance.models import (
+    AnalysisReport,
+    FinanceExcelFile,
+    FinancialData,
+    TaxDeclarationFile,
+    BalanceReportFile,
+)
+from finance.serializers import (
+    FinanceExcelFileSerializer,
+    TaxDeclarationCreateSerializer,
+    TaxDeclarationSerializer,
+    BalanceReportCreateSerializer,
+    BalanceReportSerializer,
+    AgilityChartSerializer,
+    AnalysisReportListSerializer,
+    AssetChartSerializer,
+    BankrupsyChartSerializer,
+    CostChartSerializer,
+    DebtChartSerializer,
+    EquityChartSerializer,
+    FinancialDataSerializer,
+    InventoryChartSerializer,
+    LeverageChartSerializer,
+    LiquidityChartSerializer,
+    FinancialDataSerializer,
+    MonthDataSerializer,
+    ProfitChartSerializer,
+    ProfitibilityChartSerializer,
+    SalaryChartSerializer,
+    SaleChartSerializer,
+    YearlyFinanceDataSerializer,
+)
 
 
 logger = logging.getLogger("finance")
@@ -43,24 +71,28 @@ class TaxDeclarationViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user_id = self.request.user.id
-        queryset = TaxDeclarationFile.objects.filter(
-            company__user=self.request.user).select_related("company").order_by('-year')
+        queryset = (
+            TaxDeclarationFile.objects.filter(company__user=self.request.user)
+            .select_related("company")
+            .order_by("-year")
+        )
 
         count = queryset.count()
 
-        logger.info("Fetched tax declarations", extra={
-                    "user_id": user_id, "count": count})
+        logger.info(
+            "Fetched tax declarations", extra={"user_id": user_id, "count": count}
+        )
         return queryset
 
     def get_serializer_class(self):
         logger.info(f"Action: {self.action}")
-        if self.action in ['create', 'update']:
+        if self.action in ["create", "update"]:
             return TaxDeclarationCreateSerializer
         return TaxDeclarationSerializer
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
-        context['request'] = self.request
+        context["request"] = self.request
         return context
 
     def destroy(self, request, *args, **kwargs):
@@ -70,14 +102,23 @@ class TaxDeclarationViewSet(viewsets.ModelViewSet):
             file_id = instance.id
 
             self.perform_destroy(instance)
-            logger.info("File deleted successfully", extra={
-                        "user_id": user_id, "file_id": file_id})
-            return Response({"success": "file deleted"}, status=status.HTTP_204_NO_CONTENT)
+            logger.info(
+                "File deleted successfully",
+                extra={"user_id": user_id, "file_id": file_id},
+            )
+            return Response(
+                {"success": "file deleted"}, status=status.HTTP_204_NO_CONTENT
+            )
 
         except Exception as e:
-            logger.error("Failed to delete file", extra={
-                         "user_id": user_id, "error": str(e)}, exc_info=True)
-            return Response({"error": "Failed to delete file"}, status=status.HTTP_400_BAD_REQUEST)
+            logger.error(
+                "Failed to delete file",
+                extra={"user_id": user_id, "error": str(e)},
+                exc_info=True,
+            )
+            return Response(
+                {"error": "Failed to delete file"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
     def perform_destroy(self, instance):
 
@@ -89,52 +130,67 @@ class TaxDeclarationViewSet(viewsets.ModelViewSet):
             if folder_path and not os.listdir(folder_path):
                 os.rmdir(folder_path)
             instance.delete()
-            logger.info("File and file path deleted successfully",
-                        extra={"file_id": instance.id})
+            logger.info(
+                "File and file path deleted successfully",
+                extra={"file_id": instance.id},
+            )
 
         except Exception as e:
-            logger.error("Failed to delete file or file path", extra={
-                         "file_id": instance.id, "error": str(e)}, exc_info=True)
+            logger.error(
+                "Failed to delete file or file path",
+                extra={"file_id": instance.id, "error": str(e)},
+                exc_info=True,
+            )
 
     @xframe_options_exempt
-    @action(detail=True, methods=['get'], url_path='pdf')
-    def pdf(self, request, pk=None,):
+    @action(detail=True, methods=["get"], url_path="pdf")
+    def pdf(
+        self,
+        request,
+        pk=None,
+    ):
         tax_declaration = self.get_object()
         pdf_path = tax_declaration.tax_file.path
 
         if not os.path.exists(pdf_path):
-            logger.warning("Requested PDF file not found", extra={
-                           "user_id": request.user.id, "file_id": pk})
-            return Response({"error": "File not found"}, status=status.HTTP_404_NOT_FOUND)
+            logger.warning(
+                "Requested PDF file not found",
+                extra={"user_id": request.user.id, "file_id": pk},
+            )
+            return Response(
+                {"error": "File not found"}, status=status.HTTP_404_NOT_FOUND
+            )
 
-        logger.info("Serving PDF file", extra={
-                    "user_id": request.user.id, "file_id": pk})
-        response = FileResponse(open(pdf_path, 'rb'),
-
-                                content_type='application/pdf')
-        response['Content-Disposition'] = f'inline; filename="{tax_declaration.tax_file.name}"'
-        response['X-Frame-Options'] = 'ALLOWALL'
+        logger.info(
+            "Serving PDF file", extra={"user_id": request.user.id, "file_id": pk}
+        )
+        response = FileResponse(open(pdf_path, "rb"), content_type="application/pdf")
+        response["Content-Disposition"] = (
+            f'inline; filename="{tax_declaration.tax_file.name}"'
+        )
+        response["X-Frame-Options"] = "ALLOWALL"
         return response
 
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=["get"])
     def year(self, request):
 
         # tax_declarations = self.get_queryset()
-        years = list(self.get_queryset().values_list(
-            'year', flat=True).distinct())
-        logger.info("Fetched unique tax declaration years", extra={
-                    "user_id": request.user.id, "years_count": len(years)})
+        years = list(self.get_queryset().values_list("year", flat=True).distinct())
+        logger.info(
+            "Fetched unique tax declaration years",
+            extra={"user_id": request.user.id, "years_count": len(years)},
+        )
 
         return Response(years, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=['put', 'patch'], url_path='send-experts')
+    @action(detail=False, methods=["put", "patch"], url_path="send-experts")
     def send(self, request):
         """
         Update the 'is_sent' field to True for multiple TaxDeclaration instances.
         Expects a list of IDs in the request body.
         """
         user_id = request.user.id
-        ids = request.data.get('ids', [])
+        ids = request.data.get("ids", [])
         queryset = TaxDeclarationFile.objects.filter(
             id__in=ids, company__user=self.request.user
         )
@@ -142,11 +198,12 @@ class TaxDeclarationViewSet(viewsets.ModelViewSet):
         updated_count = queryset.update(is_sent=True)
         instances = list(queryset)
         for instance in instances:
-            post_save.send(sender=TaxDeclarationFile,
-                           instance=instance, created=False)
+            post_save.send(sender=TaxDeclarationFile, instance=instance, created=False)
 
-        logger.info("Marked tax declarations as sent", extra={
-                    "user_id": user_id, "updated_count": updated_count})
+        logger.info(
+            "Marked tax declarations as sent",
+            extra={"user_id": user_id, "updated_count": updated_count},
+        )
 
         return Response(
             {"success": f"{updated_count} files marked as sent."},
@@ -159,27 +216,34 @@ class BalanceReportViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return BalanceReportFile.objects.filter(company__user=self.request.user).order_by('-year', 'month').all()
+        return (
+            BalanceReportFile.objects.filter(company__user=self.request.user)
+            .order_by("-year", "month")
+            .all()
+        )
 
     def get_serializer_class(self):
-        if self.action in ['create', 'update']:
+        if self.action in ["create", "update"]:
             return BalanceReportCreateSerializer
 
         return BalanceReportSerializer
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
-        context['request'] = self.request
+        context["request"] = self.request
         return context
 
     @xframe_options_exempt
-    @action(detail=True, methods=['get'], url_path='pdf')
+    @action(detail=True, methods=["get"], url_path="pdf")
     def pdf(self, request, pk=None):
         balance_report = self.get_object()
-        file_name = request.query_params.get('file_name')
+        file_name = request.query_params.get("file_name")
 
         if not file_name:
-            return Response({"error": "file_name query parameter is required."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "file_name query parameter is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         file_paths = {
             "balance_report_file": balance_report.balance_report_file.path,
@@ -189,18 +253,25 @@ class BalanceReportViewSet(viewsets.ModelViewSet):
         }
 
         if file_name not in file_paths:
-            return Response({"error": f"File {file_name} is not valid."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": f"File {file_name} is not valid."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         file_path = file_paths[file_name]
         if not os.path.exists(file_path):
 
-            return Response({"error": f"File {file_name} not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": f"File {file_name} not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
-        response = FileResponse(open(file_path, 'rb'),
-                                content_type='application/pdf')
-        response['Content-Disposition'] = f'inline; filename="{
+        response = FileResponse(open(file_path, "rb"), content_type="application/pdf")
+        response["Content-Disposition"] = (
+            f'inline; filename="{
             file_name}.pdf"'
-        response['X-Frame-Options'] = 'ALLOWALL'
+        )
+        response["X-Frame-Options"] = "ALLOWALL"
         return response
 
     def destroy(self, request, *args, **kwargs):
@@ -209,13 +280,20 @@ class BalanceReportViewSet(viewsets.ModelViewSet):
                 instance = self.get_object()
                 self.perform_destroy(instance)
                 logger.info(
-                    f"Balance report {instance.id} deleted successfully by user {request.user.id}")
-                return Response({"success": "files deleted"}, status=status.HTTP_204_NO_CONTENT)
+                    f"Balance report {instance.id} deleted successfully by user {request.user.id}"
+                )
+                return Response(
+                    {"success": "files deleted"}, status=status.HTTP_204_NO_CONTENT
+                )
 
         except Exception as e:
             logger.error(
-                f"Failed to delete balance report {instance.id} - User: {request.user.id}, Error: {e}", exc_info=True)
-            return Response({"error": "Failed to delete files"}, status=status.HTTP_400_BAD_REQUEST)
+                f"Failed to delete balance report {instance.id} - User: {request.user.id}, Error: {e}",
+                exc_info=True,
+            )
+            return Response(
+                {"error": "Failed to delete files"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
     def perform_destroy(self, instance):
         try:
@@ -240,33 +318,38 @@ class BalanceReportViewSet(viewsets.ModelViewSet):
 
                 instance.delete()
                 logger.info(
-                    f"Balance report {instance.id} and all associated files deleted by user {self.request.user.id}")
+                    f"Balance report {instance.id} and all associated files deleted by user {self.request.user.id}"
+                )
 
         except Exception as e:
             logger.error(
-                f"Failed to delete balance report files {instance.id} - User: {self.request.user.id}, Error: {e}", exc_info=True)
+                f"Failed to delete balance report files {instance.id} - User: {self.request.user.id}, Error: {e}",
+                exc_info=True,
+            )
 
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=["get"])
     def year(self, request):
 
         balance_reports = self.get_queryset()
         year_month_data = {}
-        for entry in balance_reports.values('year', 'month').distinct():
-            year = entry['year']
-            month = entry['month']
+        for entry in balance_reports.values("year", "month").distinct():
+            year = entry["year"]
+            month = entry["month"]
             if year not in year_month_data:
                 year_month_data[year] = []
 
             if month not in year_month_data[year]:
                 year_month_data[year].append(month)
 
-        formatted_data = [{'year': year, 'months': sorted(
-            months)} for year, months in year_month_data.items()]
+        formatted_data = [
+            {"year": year, "months": sorted(months)}
+            for year, months in year_month_data.items()
+        ]
         return Response(formatted_data, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=['put', 'patch'], url_path='send-experts')
+    @action(detail=False, methods=["put", "patch"], url_path="send-experts")
     def send(self, request):
-        ids = request.data.get('ids', [])
+        ids = request.data.get("ids", [])
         queryset = BalanceReportFile.objects.filter(
             id__in=ids, company__user=self.request.user
         )
@@ -279,8 +362,7 @@ class BalanceReportViewSet(viewsets.ModelViewSet):
 
         updated_count = queryset.update(is_saved=True, is_sent=True)
         for instance in queryset:
-            post_save.send(sender=BalanceReportFile,
-                           instance=instance, created=False)
+            post_save.send(sender=BalanceReportFile, instance=instance, created=False)
         return Response(
             {"success": f"{updated_count} files marked as sent."},
             status=status.HTTP_200_OK,
@@ -294,7 +376,9 @@ class FinanceExcelViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         company = self.request.user.company
-        return FinanceExcelFile.objects.select_related("company").filter(company=company)
+        return FinanceExcelFile.objects.select_related("company").filter(
+            company=company
+        )
 
 
 class FinanceAnalysisViewSet(viewsets.ModelViewSet):
@@ -315,7 +399,7 @@ class FinanceAnalysisViewSet(viewsets.ModelViewSet):
         "salary": SalaryChartSerializer,
     }
 
-    http_method_names = ['get']
+    http_method_names = ["get"]
 
     permission_classes = [IsAuthenticated]
 
@@ -327,13 +411,12 @@ class FinanceAnalysisViewSet(viewsets.ModelViewSet):
             return YearlyFinanceDataSerializer
 
         elif self.action in ["chart", "chart_month"]:
-            chart = self.kwargs.get('slug')
+            chart = self.kwargs.get("slug")
 
             serializer_class = self.CHART_SERIALIZER_MAP.get(chart)
 
             if serializer_class is None:
-                raise NotFound(
-                    detail=f"No serializer found for slug '{chart}'.")
+                raise NotFound(detail=f"No serializer found for slug '{chart}'.")
 
             return serializer_class
 
@@ -349,11 +432,16 @@ class FinanceAnalysisViewSet(viewsets.ModelViewSet):
         if cached_data:
             return cached_data
         try:
-            queryset = FinancialData.objects.select_related('financial_asset').prefetch_related("financial_asset__company").filter(
-                financial_asset__company=company,
-                financial_asset__is_tax_record=True,
-                is_published=True
-            ).order_by('financial_asset__year', 'financial_asset__month')
+            queryset = (
+                FinancialData.objects.select_related("financial_asset")
+                .prefetch_related("financial_asset__company")
+                .filter(
+                    financial_asset__company=company,
+                    financial_asset__is_tax_record=True,
+                    is_published=True,
+                )
+                .order_by("financial_asset__year", "financial_asset__month")
+            )
 
             cache.set(cache_key, queryset)
 
@@ -363,10 +451,13 @@ class FinanceAnalysisViewSet(viewsets.ModelViewSet):
             return queryset
 
         except Exception as e:
-            raise NotFound(detail=f"Error retrieving financial data.{
-                           e}", code=status.HTTP_404_NOT_FOUND)
+            raise NotFound(
+                detail=f"Error retrieving financial data.{
+                           e}",
+                code=status.HTTP_404_NOT_FOUND,
+            )
 
-    @action(detail=False, methods=['get'], url_path='analysis', url_name='analysis')
+    @action(detail=False, methods=["get"], url_path="analysis", url_name="analysis")
     def analysis(self, request):
         company = self.request.user.company
         data_cache_key = f"finance_analysis_{company.id}"
@@ -376,13 +467,21 @@ class FinanceAnalysisViewSet(viewsets.ModelViewSet):
             analysis = cached_data
 
         else:
-            analysis = AnalysisReport.objects.select_related("calculated_data")\
-                .prefetch_related("calculated_data__financial_asset")\
+            analysis = (
+                AnalysisReport.objects.select_related("calculated_data")
+                .prefetch_related("calculated_data__financial_asset")
                 .filter(
-                calculated_data__financial_asset__company=company,
-                calculated_data__is_published=True)\
-                .order_by('chart_name', '-created_at', 'calculated_data__financial_asset__year', 'calculated_data__financial_asset__month')\
-                .distinct('chart_name')
+                    calculated_data__financial_asset__company=company,
+                    calculated_data__is_published=True,
+                )
+                .order_by(
+                    "chart_name",
+                    "-created_at",
+                    "calculated_data__financial_asset__year",
+                    "calculated_data__financial_asset__month",
+                )
+                .distinct("chart_name")
+            )
 
             cache.set(data_cache_key, analysis)
 
@@ -393,10 +492,16 @@ class FinanceAnalysisViewSet(viewsets.ModelViewSet):
             return Response(cached_data)
 
         monthly_analysis = [
-            item for item in analysis if item.calculated_data.financial_asset.is_tax_record is False]
+            item
+            for item in analysis
+            if item.calculated_data.financial_asset.is_tax_record is False
+        ]
 
         yearly_analysis = [
-            item for item in analysis if item.calculated_data.financial_asset.is_tax_record is True]
+            item
+            for item in analysis
+            if item.calculated_data.financial_asset.is_tax_record is True
+        ]
 
         monthly_topic_data = {}
 
@@ -415,23 +520,26 @@ class FinanceAnalysisViewSet(viewsets.ModelViewSet):
 
         for topic, item in monthly_topic_data.items():
             if topic in self.CHART_SERIALIZER_MAP:
-                monthly_serializer_data[topic] = AnalysisReportListSerializer(
-                    item).data
+                monthly_serializer_data[topic] = AnalysisReportListSerializer(item).data
 
         for topic, item in yearly_topic_data.items():
             if topic in self.CHART_SERIALIZER_MAP:
-                yearly_serializer_data[topic] = AnalysisReportListSerializer(
-                    item).data
+                yearly_serializer_data[topic] = AnalysisReportListSerializer(item).data
 
         result = {
             "monthly_analysis": monthly_serializer_data,
-            "yearly_analysis": yearly_serializer_data
+            "yearly_analysis": yearly_serializer_data,
         }
         cache.set(cache_key, result)
         # Combine the results into a single response
         return Response(result)
 
-    @action(detail=False, methods=['get'], url_path='chart/(?P<slug>[^/.]+)', url_name='chart')
+    @action(
+        detail=False,
+        methods=["get"],
+        url_path="chart/(?P<slug>[^/.]+)",
+        url_name="chart",
+    )
     def chart(self, request, slug=None):
         company = self.request.user.company
 
@@ -442,11 +550,15 @@ class FinanceAnalysisViewSet(viewsets.ModelViewSet):
         if cached_data:
             return Response(cached_data)
 
-        queryset = FinancialData.objects.select_related('financial_asset').filter(
-            financial_asset__company=company,
-            financial_asset__is_tax_record=True,
-            is_published=True
-        ).order_by('financial_asset__year', 'financial_asset__month')
+        queryset = (
+            FinancialData.objects.select_related("financial_asset")
+            .filter(
+                financial_asset__company=company,
+                financial_asset__is_tax_record=True,
+                is_published=True,
+            )
+            .order_by("financial_asset__year", "financial_asset__month")
+        )
 
         if not queryset.exists():
             raise NotFound(detail="No financial data found.")
@@ -461,7 +573,12 @@ class FinanceAnalysisViewSet(viewsets.ModelViewSet):
         except Exception as e:
             raise NotFound(detail="Error fetching data: {}".format(str(e)))
 
-    @action(detail=False, methods=['get'], url_path='chart/(?P<slug>[^/.]+)/month', url_name='chart-month')
+    @action(
+        detail=False,
+        methods=["get"],
+        url_path="chart/(?P<slug>[^/.]+)/month",
+        url_name="chart-month",
+    )
     def chart_month(self, request, slug=None):
         company = self.request.user.company
 
@@ -472,11 +589,15 @@ class FinanceAnalysisViewSet(viewsets.ModelViewSet):
         if cached_data:
             return Response(cached_data)
 
-        queryset = FinancialData.objects.select_related('financial_asset').filter(
-            financial_asset__company=company,
-            financial_asset__is_tax_record=False,
-            is_published=True
-        ).order_by('financial_asset__year', 'financial_asset__month')
+        queryset = (
+            FinancialData.objects.select_related("financial_asset")
+            .filter(
+                financial_asset__company=company,
+                financial_asset__is_tax_record=False,
+                is_published=True,
+            )
+            .order_by("financial_asset__year", "financial_asset__month")
+        )
 
         if not queryset.exists():
             raise NotFound(detail="No financial data found.")
@@ -491,36 +612,41 @@ class FinanceAnalysisViewSet(viewsets.ModelViewSet):
         except Exception as e:
             raise NotFound(detail="Error fetching data: {}".format(str(e)))
 
-    @action(detail=False, methods=['get'], url_path='month', url_name='month')
+    @action(detail=False, methods=["get"], url_path="month", url_name="month")
     def month(self, request):
         company = self.request.user.company
 
-        queryset = FinancialData.objects.select_related('financial_asset').filter(
-            financial_asset__company=company,
-            financial_asset__is_tax_record=False,
-            is_published=True
-        ).order_by('financial_asset__year', 'financial_asset__month')
+        queryset = (
+            FinancialData.objects.select_related("financial_asset")
+            .filter(
+                financial_asset__company=company,
+                financial_asset__is_tax_record=False,
+                is_published=True,
+            )
+            .order_by("financial_asset__year", "financial_asset__month")
+        )
 
         if not queryset.exists():
-            return Response({'detail': 'No monthly data found.'}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"detail": "No monthly data found."}, status=status.HTTP_404_NOT_FOUND
+            )
 
         data_by_year = {
             year: list(month_data)
-            for year, month_data in groupby(queryset, key=lambda x: x.financial_asset.year)
+            for year, month_data in groupby(
+                queryset, key=lambda x: x.financial_asset.year
+            )
         }
 
         result = [
-            {
-                'year': year,
-                'months': MonthDataSerializer(month_data, many=True).data
-            }
+            {"year": year, "months": MonthDataSerializer(month_data, many=True).data}
             for year, month_data in data_by_year.items()
         ]
 
         return Response(result)
 
 
-@method_decorator(staff_member_required, name='dispatch')
+@method_decorator(staff_member_required, name="dispatch")
 class CompanyFinancialDataView(View):
     def get(self, request, company_id):
 
@@ -533,23 +659,25 @@ class CompanyFinancialDataView(View):
             financial_data = cached_data
 
         else:
-            financial_data = FinancialData.objects.select_related(
-                "financial_asset", "financial_asset__company"
-            ).filter(financial_asset__company=company).order_by('financial_asset__year', 'financial_asset__month')
+            financial_data = (
+                FinancialData.objects.select_related(
+                    "financial_asset", "financial_asset__company"
+                )
+                .filter(financial_asset__company=company)
+                .order_by("financial_asset__year", "financial_asset__month")
+            )
 
         cache.set(cache_key, financial_data)
 
         admin_context = admin_site.each_context(request)
-        admin_context['breadcrumbs'] = [
-            {"name": _("Home"), "url": reverse('admin:index')},
-
-            {"name": _("finance"), "url": '/admin/finance/'},
-
-            {"name": _("Analysis Reports"), "url": reverse(
-                'admin:finance_analysisreport_changelist')},
-
+        admin_context["breadcrumbs"] = [
+            {"name": _("Home"), "url": reverse("admin:index")},
+            {"name": _("finance"), "url": "/admin/finance/"},
+            {
+                "name": _("Analysis Reports"),
+                "url": reverse("admin:finance_analysisreport_changelist"),
+            },
             {"name": company.company_title, "url": ""},
-
         ]
 
         year = []
@@ -594,8 +722,9 @@ class CompanyFinancialDataView(View):
 
         for data in financial_data:
             year.append(float(data.financial_asset.year))
-            month.append(float(data.financial_asset.month)
-                         if data.financial_asset.month else '')
+            month.append(
+                float(data.financial_asset.month) if data.financial_asset.month else ""
+            )
             net_sale.append(float(data.net_sale))
             non_current_asset.append(float(data.non_current_asset))
             current_asset.append(float(data.current_asset))
@@ -620,10 +749,10 @@ class CompanyFinancialDataView(View):
             debt_ratio.append(float(data.debt_ratio))
             capital_ratio.append(float(data.capital_ratio))
             proprietary_ratio.append(float(data.proprietary_ratio))
-            equity_per_total_debt_ratio.append(float(
-                data.equity_per_total_debt_ratio))
-            equity_per_total_non_current_asset_ratio.append(float(
-                data.equity_per_total_non_current_asset_ratio))
+            equity_per_total_debt_ratio.append(float(data.equity_per_total_debt_ratio))
+            equity_per_total_non_current_asset_ratio.append(
+                float(data.equity_per_total_non_current_asset_ratio)
+            )
             instant_ratio.append(float(data.instant_ratio))
             current_ratio.append(float(data.current_ratio))
             stock_turnover.append(float(data.stock_turnover))
@@ -635,45 +764,49 @@ class CompanyFinancialDataView(View):
             consuming_material.append(float(data.consuming_material))
             production_total_price.append(float(data.production_total_price))
 
-        return render(request, 'finance/company_financial_data.html', {
-            'company': company,
-            'financial_data': financial_data,
-            'year': year,
-            'month': month,
-            'net_sale': net_sale,
-            'non_current_asset': non_current_asset,
-            'current_asset': current_asset,
-            'total_asset': total_asset,
-            'non_current_debt': non_current_debt,
-            'current_debt': current_debt,
-            'total_debt': total_debt,
-            'altman_bankrupsy_ratio': altman_bankrupsy_ratio,
-            'total_equity': total_equity,
-            'total_sum_equity_debt': total_sum_equity_debt,
-            'inventory': inventory,
-            'salary_fee': salary_fee,
-            'production_fee': production_fee,
-            'salary_production_fee': salary_production_fee,
-            'roa': roa,
-            'roab': roab,
-            'roe': roe,
-            'efficiency': efficiency,
-            'gross_profit_margin': gross_profit_margin,
-            'profit_margin_ratio': profit_margin_ratio,
-            'debt_ratio': debt_ratio,
-            'capital_ratio': capital_ratio,
-            'proprietary_ratio': proprietary_ratio,
-            'equity_per_total_debt_ratio': equity_per_total_debt_ratio,
-            'equity_per_total_non_current_asset_ratio': equity_per_total_non_current_asset_ratio,
-            'instant_ratio': instant_ratio,
-            'current_ratio': current_ratio,
-            'stock_turnover': stock_turnover,
-            'gross_profit': gross_profit,
-            'operational_profit': operational_profit,
-            'proceed_profit': proceed_profit,
-            'net_profit': net_profit,
-            'construction_overhead': construction_overhead,
-            'consuming_material': consuming_material,
-            'production_total_price': production_total_price,
-            **admin_context,
-        })
+        return render(
+            request,
+            "finance/company_financial_data.html",
+            {
+                "company": company,
+                "financial_data": financial_data,
+                "year": year,
+                "month": month,
+                "net_sale": net_sale,
+                "non_current_asset": non_current_asset,
+                "current_asset": current_asset,
+                "total_asset": total_asset,
+                "non_current_debt": non_current_debt,
+                "current_debt": current_debt,
+                "total_debt": total_debt,
+                "altman_bankrupsy_ratio": altman_bankrupsy_ratio,
+                "total_equity": total_equity,
+                "total_sum_equity_debt": total_sum_equity_debt,
+                "inventory": inventory,
+                "salary_fee": salary_fee,
+                "production_fee": production_fee,
+                "salary_production_fee": salary_production_fee,
+                "roa": roa,
+                "roab": roab,
+                "roe": roe,
+                "efficiency": efficiency,
+                "gross_profit_margin": gross_profit_margin,
+                "profit_margin_ratio": profit_margin_ratio,
+                "debt_ratio": debt_ratio,
+                "capital_ratio": capital_ratio,
+                "proprietary_ratio": proprietary_ratio,
+                "equity_per_total_debt_ratio": equity_per_total_debt_ratio,
+                "equity_per_total_non_current_asset_ratio": equity_per_total_non_current_asset_ratio,
+                "instant_ratio": instant_ratio,
+                "current_ratio": current_ratio,
+                "stock_turnover": stock_turnover,
+                "gross_profit": gross_profit,
+                "operational_profit": operational_profit,
+                "proceed_profit": proceed_profit,
+                "net_profit": net_profit,
+                "construction_overhead": construction_overhead,
+                "consuming_material": consuming_material,
+                "production_total_price": production_total_price,
+                **admin_context,
+            },
+        )

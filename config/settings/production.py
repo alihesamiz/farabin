@@ -5,71 +5,73 @@ from config.settings.base import *
 
 DEBUG = env.bool("FARABIN_DEBUG", default=False)
 
-ALLOWED_HOSTS = env.list("FARABIN_ALLOWED_HOSTS", default=[
-    "saramad.farabinbrand.com", "farabinback.farbinbrand.com", "0.0.0.0"])
+ALLOWED_HOSTS = env.list(
+    "FARABIN_ALLOWED_HOSTS",
+    default=["saramad.farabinbrand.com", "farabinback.farbinbrand.com", "0.0.0.0"],
+)
 
 INSTALLED_APPS = [
     "admin_interface",
     "colorfield",
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.humanize',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "django.contrib.humanize",
 ]
 
 INTERNAL_IPS = None
 
 PROJECT_APPS = [
-    'management',
-    'packages',
-    'finance',
-    'company',
-    'request',
-    'tickets',
-    'core',
+    "management",
+    "packages",
+    "finance",
+    "company",
+    "request",
+    "tickets",
+    "core",
 ]
 
 THIRED_PARTY_APPS = [
-    'rest_framework_simplejwt',
-    'django_celery_beat',
-    'drf_spectacular',
-    'rest_framework',
-    'nested_admin',
+    "rest_framework_simplejwt",
+    "django_celery_beat",
+    "drf_spectacular",
+    "rest_framework",
+    "nested_admin",
     "django_lifecycle_checks",
-    'corsheaders',
+    "corsheaders",
 ]
 
 INSTALLED_APPS += PROJECT_APPS + THIRED_PARTY_APPS
 
 MIDDLEWARE = [
-    'django.middleware.locale.LocaleMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.locale.LocaleMiddleware",
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'PASSWORD': env.get_value("FARABIN_DB_PASSWORD"),
-        'NAME': env.get_value("FARABIN_DB_NAME"),
-        'USER': env.get_value("FARABIN_DB_USER"),
-        'HOST': env.get_value("FARABIN_DB_HOST"),
-        'PORT': env.get_value("FARABIN_DB_PORT")
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "PASSWORD": env.get_value("FARABIN_DB_PASSWORD"),
+        "NAME": env.get_value("FARABIN_DB_NAME"),
+        "USER": env.get_value("FARABIN_DB_USER"),
+        "HOST": env.get_value("FARABIN_DB_HOST"),
+        "PORT": env.get_value("FARABIN_DB_PORT"),
     }
 }
 
-X_FRAME_OPTIONS = 'ALLOWANY'
+X_FRAME_OPTIONS = "ALLOWANY"
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
@@ -129,7 +131,7 @@ for app in APPS_TO_LOG:
 LOGGING["handlers"]["rotating_file"] = {
     "level": "INFO",
     "class": "logging.handlers.RotatingFileHandler",
-    "filename":  LOG_DIR/"rotating.log",
+    "filename": LOG_DIR / "rotating.log",
     "maxBytes": 1024 * 1024 * 5,
     "backupCount": 5,
     "formatter": "verbose",

@@ -6,17 +6,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('company', '0003_remove_companyprofile_social_code_and_more'),
+        ("company", "0003_remove_companyprofile_social_code_and_more"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='companyprofile',
-            name='profile_active',
+            model_name="companyprofile",
+            name="profile_active",
         ),
         migrations.AddField(
-            model_name='companyprofile',
-            name='is_active',
-            field=models.BooleanField(default=False, verbose_name='Is Active?'),
+            model_name="companyprofile",
+            name="is_active",
+            field=models.BooleanField(default=False, verbose_name="Is Active?"),
         ),
     ]

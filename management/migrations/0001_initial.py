@@ -11,54 +11,133 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('company', '0001_initial'),
+        ("company", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='OrganizationChartBase',
+            name="OrganizationChartBase",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('field', models.CharField(max_length=150, verbose_name='Field')),
-                ('position_excel', models.FileField(max_length=150, upload_to=management.models.get_chart_excel_file_upload_path, validators=[core.validators.excel_file_validator], verbose_name='Position Excel')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("field", models.CharField(max_length=150, verbose_name="Field")),
+                (
+                    "position_excel",
+                    models.FileField(
+                        max_length=150,
+                        upload_to=management.models.get_chart_excel_file_upload_path,
+                        validators=[core.validators.excel_file_validator],
+                        verbose_name="Position Excel",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Organization Chart',
-                'verbose_name_plural': 'Organization Charts',
+                "verbose_name": "Organization Chart",
+                "verbose_name_plural": "Organization Charts",
             },
         ),
         migrations.CreateModel(
-            name='HumanResource',
+            name="HumanResource",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('excel_file', models.FileField(upload_to=management.models.get_hr_file_upload_path, validators=[core.validators.excel_file_validator], verbose_name='Excel File')),
-                ('is_approved', models.BooleanField(default=False, verbose_name='Is Approved')),
-                ('create_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Updated At')),
-                ('company', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='hrfiles', to='company.companyprofile', verbose_name='Company')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "excel_file",
+                    models.FileField(
+                        upload_to=management.models.get_hr_file_upload_path,
+                        validators=[core.validators.excel_file_validator],
+                        verbose_name="Excel File",
+                    ),
+                ),
+                (
+                    "is_approved",
+                    models.BooleanField(default=False, verbose_name="Is Approved"),
+                ),
+                (
+                    "create_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Created At"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Updated At"),
+                ),
+                (
+                    "company",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="hrfiles",
+                        to="company.companyprofile",
+                        verbose_name="Company",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Human Resource',
-                'verbose_name_plural': 'Human Resources',
+                "verbose_name": "Human Resource",
+                "verbose_name_plural": "Human Resources",
             },
         ),
         migrations.CreateModel(
-            name='PersonelInformation',
+            name="PersonelInformation",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=250, verbose_name='Full Name')),
-                ('position', models.CharField(max_length=150, verbose_name='Position')),
-                ('obligations', models.CharField(max_length=150, verbose_name='Obligation')),
-                ('human_resource', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='personelinformation', to='management.humanresource', verbose_name='Human Resource')),
-                ('reports_to', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='subordinates', to='management.personelinformation', verbose_name='Reports to (Personnel)')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=250, verbose_name="Full Name")),
+                ("position", models.CharField(max_length=150, verbose_name="Position")),
+                (
+                    "obligations",
+                    models.CharField(max_length=150, verbose_name="Obligation"),
+                ),
+                (
+                    "human_resource",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="personelinformation",
+                        to="management.humanresource",
+                        verbose_name="Human Resource",
+                    ),
+                ),
+                (
+                    "reports_to",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="subordinates",
+                        to="management.personelinformation",
+                        verbose_name="Reports to (Personnel)",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Personnel Information',
-                'verbose_name_plural': 'Personnel Information',
+                "verbose_name": "Personnel Information",
+                "verbose_name_plural": "Personnel Information",
             },
         ),
         migrations.AddConstraint(
-            model_name='humanresource',
-            constraint=models.UniqueConstraint(fields=('company',), name='unique_company_hr'),
+            model_name="humanresource",
+            constraint=models.UniqueConstraint(
+                fields=("company",), name="unique_company_hr"
+            ),
         ),
     ]

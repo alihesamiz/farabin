@@ -6,13 +6,24 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('packages', '0008_alter_subscription_user'),
+        ("packages", "0008_alter_subscription_user"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='package',
-            name='name',
-            field=models.CharField(choices=[('demo', 'Demo'), ('bronze', 'Bronze'), ('silver', 'Silver'), ('gold', 'Gold'), ('platinum', 'Platinum')], max_length=30, unique=True, verbose_name='Package Name'),
+            model_name="package",
+            name="name",
+            field=models.CharField(
+                choices=[
+                    ("demo", "Demo"),
+                    ("bronze", "Bronze"),
+                    ("silver", "Silver"),
+                    ("gold", "Gold"),
+                    ("platinum", "Platinum"),
+                ],
+                max_length=30,
+                unique=True,
+                verbose_name="Package Name",
+            ),
         ),
     ]

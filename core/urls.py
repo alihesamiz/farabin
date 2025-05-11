@@ -8,12 +8,12 @@ from rest_framework.routers import DefaultRouter
 from core.views import OTPViewSet
 
 router = DefaultRouter()
-router.register(r'', OTPViewSet, basename='otp')
+router.register(r"", OTPViewSet, basename="otp")
 
 
 urlpatterns = router.urls
 
 
 urlpatterns += [
-    path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path("refresh/", TokenRefreshView.as_view(), name="token_refresh"),
 ]

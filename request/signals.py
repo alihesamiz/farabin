@@ -20,13 +20,13 @@ def create_finance_request(sender, instance, created, **kwargs):
     if created:
         # Log the creation event
         logger.info(
-            f"New {sender.__name__} created for company: {instance.company.id}, year: {instance.year}")
+            f"New {sender.__name__} created for company: {instance.company.id}, year: {instance.year}"
+        )
 
         try:
             service = CompanyService.objects.get(service__name="DIAGNOSTIC")
         except CompanyService.DoesNotExist:
-            logger.error(
-                "Service 'DIAGNOSTIC' does not exist in CompanyService.")
+            logger.error("Service 'DIAGNOSTIC' does not exist in CompanyService.")
             return
 
         finance_request_data = {
@@ -42,26 +42,25 @@ def create_finance_request(sender, instance, created, **kwargs):
             finance_request_data["balance_record"] = instance
 
         try:
-            finance_request = FinanceRequest.objects.create(
-                **finance_request_data)
+            finance_request = FinanceRequest.objects.create(**finance_request_data)
             logger.info(
-                f"FinanceRequest created: {finance_request.id} for {sender.__name__}")
+                f"FinanceRequest created: {finance_request.id} for {sender.__name__}"
+            )
         except Exception as e:
             logger.error(
-                f"Failed to create FinanceRequest for {sender.__name__}: {str(e)}")
+                f"Failed to create FinanceRequest for {sender.__name__}: {str(e)}"
+            )
 
 
 @receiver(post_save, sender=HumanResource)
 def create_management_request(sender, instance, created, **kwargs):
     if created:
-        logger.info(
-            f"New {sender.__name__} created for company: {instance.company.id}")
+        logger.info(f"New {sender.__name__} created for company: {instance.company.id}")
 
         try:
             service = CompanyService.objects.get(service__name="MANAGEMENT")
         except CompanyService.DoesNotExist:
-            logger.error(
-                "Service 'MANAGEMENT' does not exist in CompanyService.")
+            logger.error("Service 'MANAGEMENT' does not exist in CompanyService.")
             return
 
         management_request_data = {
@@ -73,9 +72,12 @@ def create_management_request(sender, instance, created, **kwargs):
 
         try:
             management_request = ManagementRequest.objects.create(
-                **management_request_data)
+                **management_request_data
+            )
             logger.info(
-                f"ManagementRequest created: {management_request.id} for {sender.__name__}")
+                f"ManagementRequest created: {management_request.id} for {sender.__name__}"
+            )
         except Exception as e:
             logger.error(
-                f"Failed to create ManagementRequest for {sender.__name__}: {str(e)}")
+                f"Failed to create ManagementRequest for {sender.__name__}: {str(e)}"
+            )

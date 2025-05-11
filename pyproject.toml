@@ -102,6 +102,7 @@ pytest = "^8.3.5"
 pytest-django = "^4.11.1"
 django-lifecycle = "^1.2.4"
 google-genai = "^1.14.0"
+black = "^25.1.0"
 
 [build-system]
 requires = ["poetry-core"]

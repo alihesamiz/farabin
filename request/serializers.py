@@ -2,14 +2,17 @@ from rest_framework import serializers
 
 from request.models import BaseRequest, FinanceRequest, ManagementRequest
 
-from finance.serializers import SimpleTaxDeclarationSerializer, SimpleBalanceReportSerializer
+from finance.serializers import (
+    SimpleTaxDeclarationSerializer,
+    SimpleBalanceReportSerializer,
+)
 from management.serializers import HumanResourceSerializer
 
 
 class BaseRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = BaseRequest
-        fields = ['id', 'status', 'subject', 'created_at', 'updated_at']
+        fields = ["id", "status", "subject", "created_at", "updated_at"]
 
     def update(self, instance, validated_data):
         # Custom update logic if needed
@@ -25,8 +28,7 @@ class FinanceRequestSerializer(BaseRequestSerializer):
 
     class Meta(BaseRequestSerializer.Meta):
         model = FinanceRequest
-        fields = BaseRequestSerializer.Meta.fields + \
-            ['tax_record', 'balance_record']
+        fields = BaseRequestSerializer.Meta.fields + ["tax_record", "balance_record"]
 
 
 class ManagementRequestSerializer(BaseRequestSerializer):
@@ -34,5 +36,4 @@ class ManagementRequestSerializer(BaseRequestSerializer):
 
     class Meta(BaseRequestSerializer.Meta):
         model = ManagementRequest
-        fields = BaseRequestSerializer.Meta.fields + \
-            ['human_resource_record']
+        fields = BaseRequestSerializer.Meta.fields + ["human_resource_record"]

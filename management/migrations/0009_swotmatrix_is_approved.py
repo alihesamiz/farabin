@@ -6,13 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('management', '0008_alter_swotmatrix_options_alter_swotoption_options_and_more'),
+        (
+            "management",
+            "0008_alter_swotmatrix_options_alter_swotoption_options_and_more",
+        ),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='swotmatrix',
-            name='is_approved',
-            field=models.BooleanField(default=False, verbose_name='مورد تایید قرار گرفته است'),
+            model_name="swotmatrix",
+            name="is_approved",
+            field=models.BooleanField(
+                default=False, verbose_name="مورد تایید قرار گرفته است"
+            ),
         ),
     ]

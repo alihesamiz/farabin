@@ -6,13 +6,24 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('packages', '0004_remove_service_price'),
+        ("packages", "0004_remove_service_price"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='package',
-            name='period',
-            field=models.CharField(blank=True, choices=[('monthly', 'Monthly'), ('quarterly', 'Quarterly'), ('semi_annually', 'Semi-Annually'), ('annually', 'Annually')], max_length=20, null=True, verbose_name='Period'),
+            model_name="package",
+            name="period",
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ("monthly", "Monthly"),
+                    ("quarterly", "Quarterly"),
+                    ("semi_annually", "Semi-Annually"),
+                    ("annually", "Annually"),
+                ],
+                max_length=20,
+                null=True,
+                verbose_name="Period",
+            ),
         ),
     ]

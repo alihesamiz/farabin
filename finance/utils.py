@@ -70,9 +70,17 @@ logger = logging.getLogger("finance")
 
 def get_life_cycle(company):
     # Initialize x_vals and y_vals for graphical representation
-    x_vals = [_("Start"), _("Introduction"), _("Growth"), _("Maturity"),
-              _("Recession 1"), _("Recession 2"), _("Recession 3"),
-              _("Decline 1"), _("Decline 2")]
+    x_vals = [
+        _("Start"),
+        _("Introduction"),
+        _("Growth"),
+        _("Maturity"),
+        _("Recession 1"),
+        _("Recession 2"),
+        _("Recession 3"),
+        _("Decline 1"),
+        _("Decline 2"),
+    ]
     x_vals_numerical = [1, 1.5, 2, 2.5, 4, 4.5, 4, 3, 2]
     y_vals = [log2(x) for x in x_vals_numerical]
 
@@ -80,25 +88,28 @@ def get_life_cycle(company):
     life_cycles_data = [str(lc) for lc in life_cycle]
 
     cycle_mappings = {
-        ('Operational', 'Finance'): 7,
-        ('Operational', 'Invest'): 6,
-        ('Finance', 'Invest'): 2,
-        ('Operational',): 8,
-        ('Finance',): 1,
-        ('Invest',): 3
+        ("Operational", "Finance"): 7,
+        ("Operational", "Invest"): 6,
+        ("Finance", "Invest"): 2,
+        ("Operational",): 8,
+        ("Finance",): 1,
+        ("Invest",): 3,
     }
 
     sorted_cycles = tuple(sorted(life_cycles_data))
-    life_cycle_stage = cycle_mappings.get(
-        sorted_cycles, 5) if len(sorted_cycles) <= 2 else 5
+    life_cycle_stage = (
+        cycle_mappings.get(sorted_cycles, 5) if len(sorted_cycles) <= 2 else 5
+    )
 
     return life_cycle_stage, x_vals, y_vals
 
 
 class FinancialCalculations:
     def __init__(self, financial_assets):
-        logger.info("Initializing FinancialCalculations with %d financial assets", len(
-            financial_assets))
+        logger.info(
+            "Initializing FinancialCalculations with %d financial assets",
+            len(financial_assets),
+        )
 
         self.financial_assets = financial_assets
         self.length = len(self.financial_assets)
@@ -117,13 +128,11 @@ class FinancialCalculations:
             "net_profit": [],
             "accumulated_profit": [],
             "ownership_right_total": [],
-
-
             "trade_payable": [],
             "advance": [],
             "reserves": [],
             "long_term_payable": [],
-            "employee_termination_benefit_reserve": []
+            "employee_termination_benefit_reserve": [],
         }
 
         self.profit_loss_statement_values: dict[str, List] = {
@@ -178,8 +187,7 @@ class FinancialCalculations:
             logger.info("Starting to process %d financial assets", self.length)
 
             for i in range(self.length):
-                logger.debug("Processing financial asset %d/%d",
-                             i + 1, self.length)
+                logger.debug("Processing financial asset %d/%d", i + 1, self.length)
                 asset = self.financial_assets[i]
 
                 account_turnover = asset.account_turnovers.first()
@@ -187,7 +195,11 @@ class FinancialCalculations:
                 sold_product_fee = asset.sold_product_fees.first()
                 profit_loss_statement = asset.profit_loss_statements.first()
 
-                if not balance_report or not profit_loss_statement or not sold_product_fee:
+                if (
+                    not balance_report
+                    or not profit_loss_statement
+                    or not sold_product_fee
+                ):
                     logger.warning("Missing data for asset %d", i + 1)
 
                 self.process_balance_report(balance_report)
@@ -200,10 +212,8 @@ class FinancialCalculations:
             logger.info("Finished processing financial assets successfully")
 
         except Exception as e:
-            logger.error(
-                "Error occurred while processing assets: %s", e, exc_info=True)
-            return {'status': 'failed',
-                    'data': {}}
+            logger.error("Error occurred while processing assets: %s", e, exc_info=True)
+            return {"status": "failed", "data": {}}
 
     def process_balance_report(self, balance_report):
         """
@@ -288,59 +298,67 @@ class FinancialCalculations:
         logger.info("Financial ratio calculations completed")
 
     def get_results(self):
-        """ Return the final processed financial data """
+        """Return the final processed financial data"""
 
         logger.info("Generating results for financial calculations")
 
         return {
-
-            'status': 'success',
-            'data': {
-                'current_asset': self.balance_report_values["current_asset"],
-                'non_current_asset': self.balance_report_values["non_current_asset"],
-                'total_asset': self.balance_report_values["total_asset"],
-                'current_debt': self.balance_report_values["current_debt"],
-                'non_current_debt': self.balance_report_values["non_current_debt"],
-                'total_debt': self.balance_report_values["total_debt"],
-                'total_equity': self.balance_report_values["ownership_right_total"],
-                'net_sale': self.balance_report_values["net_sale"],
-                'inventory': self.balance_report_values["inventory"],
-                'net_profit': self.balance_report_values["net_profit"],
-                'trade_payable': self.balance_report_values["trade_payable"],
-                'advance': self.balance_report_values["advance"],
-                'reserves': self.balance_report_values["reserves"],
-                'long_term_payable': self.balance_report_values["long_term_payable"],
-                'employee_termination_benefit_reserve': self.balance_report_values["employee_termination_benefit_reserve"],
-
-                'total_sum_equity_debt': self.total_sum_equity_debt,
-                'gross_profit': self.profit_loss_statement_values["gross_profit"],
-                'operational_income_expense': self.profit_loss_statement_values["operational_income_expense"],
-                'marketing_fee': self.profit_loss_statement_values["marketing_fee"],
-                'operational_profit': self.profit_loss_statement_values["operational_profit"],
-                'proceed_profit': self.profit_loss_statement_values["proceed_profit"],
-                'consuming_material': self.sold_product_values["consuming_material"],
-                'production_fee': self.sold_product_values["direct_wage"],
-                'construction_overhead': self.sold_product_values["construction_overhead"],
-                'production_total_price': self.sold_product_values["production_total_price"],
-                'salary_fee': self.profit_loss_statement_values["salary_fee"],
-                'salary_production_fee': self.salary_production_fee,
-                'usability': self.usability,
-                'efficiency': self.efficiency,
-                'roa': self.roa,
-                'roab': self.roab,
-                'roe': self.roe,
-                'gross_profit_margin': self.gross_profit_margin_ratio,
-                'profit_margin_ratio': self.net_profit_margin_ratio,
-                'debt_ratio': self.debt_ratio,
-                'capital_ratio': self.capital_ratio,
-                'proprietary_ratio': self.proprietary_ratio,
-                'equity_per_total_debt_ratio': self.equity_per_total_debt_ratio,
-                'equity_per_total_non_current_asset_ratio': self.equity_per_total_non_current_asset_ratio,
-                'current_ratio': self.current_ratio,
-                'instant_ratio': self.instant_ratio,
-                'stock_turnover': self.stock_turnover,
-                'altman_bankrupsy_ratio': self.altman_bankrupsy_ratio,
-            }
+            "status": "success",
+            "data": {
+                "current_asset": self.balance_report_values["current_asset"],
+                "non_current_asset": self.balance_report_values["non_current_asset"],
+                "total_asset": self.balance_report_values["total_asset"],
+                "current_debt": self.balance_report_values["current_debt"],
+                "non_current_debt": self.balance_report_values["non_current_debt"],
+                "total_debt": self.balance_report_values["total_debt"],
+                "total_equity": self.balance_report_values["ownership_right_total"],
+                "net_sale": self.balance_report_values["net_sale"],
+                "inventory": self.balance_report_values["inventory"],
+                "net_profit": self.balance_report_values["net_profit"],
+                "trade_payable": self.balance_report_values["trade_payable"],
+                "advance": self.balance_report_values["advance"],
+                "reserves": self.balance_report_values["reserves"],
+                "long_term_payable": self.balance_report_values["long_term_payable"],
+                "employee_termination_benefit_reserve": self.balance_report_values[
+                    "employee_termination_benefit_reserve"
+                ],
+                "total_sum_equity_debt": self.total_sum_equity_debt,
+                "gross_profit": self.profit_loss_statement_values["gross_profit"],
+                "operational_income_expense": self.profit_loss_statement_values[
+                    "operational_income_expense"
+                ],
+                "marketing_fee": self.profit_loss_statement_values["marketing_fee"],
+                "operational_profit": self.profit_loss_statement_values[
+                    "operational_profit"
+                ],
+                "proceed_profit": self.profit_loss_statement_values["proceed_profit"],
+                "consuming_material": self.sold_product_values["consuming_material"],
+                "production_fee": self.sold_product_values["direct_wage"],
+                "construction_overhead": self.sold_product_values[
+                    "construction_overhead"
+                ],
+                "production_total_price": self.sold_product_values[
+                    "production_total_price"
+                ],
+                "salary_fee": self.profit_loss_statement_values["salary_fee"],
+                "salary_production_fee": self.salary_production_fee,
+                "usability": self.usability,
+                "efficiency": self.efficiency,
+                "roa": self.roa,
+                "roab": self.roab,
+                "roe": self.roe,
+                "gross_profit_margin": self.gross_profit_margin_ratio,
+                "profit_margin_ratio": self.net_profit_margin_ratio,
+                "debt_ratio": self.debt_ratio,
+                "capital_ratio": self.capital_ratio,
+                "proprietary_ratio": self.proprietary_ratio,
+                "equity_per_total_debt_ratio": self.equity_per_total_debt_ratio,
+                "equity_per_total_non_current_asset_ratio": self.equity_per_total_non_current_asset_ratio,
+                "current_ratio": self.current_ratio,
+                "instant_ratio": self.instant_ratio,
+                "stock_turnover": self.stock_turnover,
+                "altman_bankrupsy_ratio": self.altman_bankrupsy_ratio,
+            },
         }
 
 
@@ -356,22 +374,22 @@ class ReadExcel:
             "balance": {"offset": 2, "length": 41},
             "profit_loss": {"offset": None, "length": 32},
             "sold_product": {"offset": None, "length": 13},
-            "account_turnover": {"offset": None, "length": 20}
+            "account_turnover": {"offset": None, "length": 20},
         }
 
         prev_offset = self.records["balance"]["offset"]
         for key in list(self.records.keys())[1:]:
-            self.records[key]["offset"] = prev_offset + \
-                self.records[key]["length"]
+            self.records[key]["offset"] = prev_offset + self.records[key]["length"]
             prev_offset = self.records[key]["offset"]
 
         self.load_data()
 
     def load_data(self):
-        """ Lazily loads the DataFrame when first accessed to improve efficiency. """
+        """Lazily loads the DataFrame when first accessed to improve efficiency."""
         if self.df is None:
             self.df = pd.read_excel(
-                self.file_path, sheet_name="Sheet1", engine="openpyxl", header=None)
+                self.file_path, sheet_name="Sheet1", engine="openpyxl", header=None
+            )
             self.df = self.df.iloc[1:, 1:].reset_index(drop=True)
             self.get_dates()
             if self.df.iloc[1].isnull().all():
@@ -382,17 +400,18 @@ class ReadExcel:
             self.df.reset_index(drop=True, inplace=True)
 
     def get_dates(self):
-        """ Retrieves the dates from the first row of the DataFrame. """
+        """Retrieves the dates from the first row of the DataFrame."""
         self.years.extend(self.df.iloc[0].tolist())
-        self.months.extend(self.df.iloc[1].tolist(
-        ) if self.df.iloc[1] is not None else [])
+        self.months.extend(
+            self.df.iloc[1].tolist() if self.df.iloc[1] is not None else []
+        )
 
     def get_record(self, record_name):
-        """ Retrieves a record dynamically by name. """
+        """Retrieves a record dynamically by name."""
         if record_name in self.records:
             offset = self.records[record_name]["offset"]
             length = self.records[record_name]["length"]
-            return self.df.iloc[offset: offset + length]
+            return self.df.iloc[offset : offset + length]
         raise ValueError(f"Record '{record_name}' not found!")
 
     def get_balance_record(self):

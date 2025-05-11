@@ -6,14 +6,16 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0003_packagepermission_package_packagepermission_service'),
-        ('packages', '0008_alter_subscription_user'),
+        ("core", "0003_packagepermission_package_packagepermission_service"),
+        ("packages", "0008_alter_subscription_user"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='packagepermission',
-            name='service',
-            field=models.ManyToManyField(blank=True, related_name='permissions', to='packages.service'),
+            model_name="packagepermission",
+            name="service",
+            field=models.ManyToManyField(
+                blank=True, related_name="permissions", to="packages.service"
+            ),
         ),
     ]

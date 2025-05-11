@@ -6,18 +6,25 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('packages', '0009_alter_package_name'),
+        ("packages", "0009_alter_package_name"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='package',
-            name='price',
-            field=models.DecimalField(blank=True, decimal_places=2, max_digits=20, verbose_name='Price'),
+            model_name="package",
+            name="price",
+            field=models.DecimalField(
+                blank=True, decimal_places=2, max_digits=20, verbose_name="Price"
+            ),
         ),
         migrations.AlterField(
-            model_name='package',
-            name='services',
-            field=models.ManyToManyField(blank=True, related_name='packages', to='packages.service', verbose_name='Services'),
+            model_name="package",
+            name="services",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="packages",
+                to="packages.service",
+                verbose_name="Services",
+            ),
         ),
     ]

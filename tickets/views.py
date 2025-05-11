@@ -10,7 +10,13 @@ from rest_framework.response import Response
 from rest_framework import viewsets, status
 
 
-from tickets.serializers import TicketChatSerializer, TicketCommentCreateSerializer, TicketCreateSerializer, TicketListSerializer, TicketDetailSerializer
+from tickets.serializers import (
+    TicketChatSerializer,
+    TicketCommentCreateSerializer,
+    TicketCreateSerializer,
+    TicketListSerializer,
+    TicketDetailSerializer,
+)
 from tickets.paginations import TicketPagination
 from tickets.models import Ticket
 
@@ -25,13 +31,12 @@ class TicketViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         company = self.request.user.company
         logger.info(
-            f"Fetching tickets for company: {company.id}, user: {self.request.user.id}")
+            f"Fetching tickets for company: {company.id}, user: {self.request.user.id}"
+        )
 
-        queryset = Ticket.objects.select_related(
-            'issuer'
-        ).filter(issuer=company)
+        queryset = Ticket.objects.select_related("issuer").filter(issuer=company)
 
-        service = self.request.query_params.get('service')
+        service = self.request.query_params.get("service")
         if service:
             queryset = queryset.filter(service__name=service)
             logger.debug(f"Filtered tickets by service: {service}")
@@ -41,29 +46,32 @@ class TicketViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         company = self.request.user.company
         logger.info(
-            f"Creating a new ticket for company: {company.id}, user: {self.request.user.id}")
+            f"Creating a new ticket for company: {company.id}, user: {self.request.user.id}"
+        )
         serializer.save(issuer=company)
 
     def get_serializer_class(self):
-        if self.action == 'list':
+        if self.action == "list":
             return TicketListSerializer
-        elif self.action == 'retrieve':
+        elif self.action == "retrieve":
             return TicketDetailSerializer
-        elif self.action == 'create':
+        elif self.action == "create":
             return TicketCreateSerializer
         return TicketListSerializer
 
-    @action(detail=True, methods=['get', 'post'], url_path='comments', url_name='comments')
+    @action(
+        detail=True, methods=["get", "post"], url_path="comments", url_name="comments"
+    )
     def comments(self, request, pk=None):
         logger.info(
-            f"Handling comments for ticket ID: {pk}, user: {self.request.user.id}")
+            f"Handling comments for ticket ID: {pk}, user: {self.request.user.id}"
+        )
 
         ticket = get_object_or_404(Ticket, pk=pk)
 
-        if request.method == 'GET':
-            comments = ticket.comments.all().order_by('-created_at')
-            logger.debug(
-                f"Retrieved {comments.count()} comments for ticket ID: {pk}")
+        if request.method == "GET":
+            comments = ticket.comments.all().order_by("-created_at")
+            logger.debug(f"Retrieved {comments.count()} comments for ticket ID: {pk}")
 
             page = self.paginate_queryset(comments)
             if page is not None:
@@ -73,26 +81,28 @@ class TicketViewSet(viewsets.ModelViewSet):
             serializer = TicketChatSerializer(comments, many=True)
             return Response(serializer.data)
 
-        elif request.method == 'POST':
+        elif request.method == "POST":
             serializer = TicketCommentCreateSerializer(
-                data=request.data,
-                context={'ticket': ticket}
+                data=request.data, context={"ticket": ticket}
             )
             if serializer.is_valid():
                 serializer.save()
                 logger.info(
-                    f"Comment added successfully for ticket ID: {pk}, user: {self.request.user.id}")
+                    f"Comment added successfully for ticket ID: {pk}, user: {self.request.user.id}"
+                )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
 
             logger.warning(
-                f"Failed to create comment for ticket ID: {pk}, user: {self.request.user.id}. Errors: {serializer.errors}")
+                f"Failed to create comment for ticket ID: {pk}, user: {self.request.user.id}. Errors: {serializer.errors}"
+            )
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=True, methods=['get'], url_path='chats', url_name='chats')
+    @action(detail=True, methods=["get"], url_path="chats", url_name="chats")
     def chats(self, request, pk=None):
 
         logger.info(
-            f"Fetching chat history for ticket ID: {pk}, user: {self.request.user.id}")
+            f"Fetching chat history for ticket ID: {pk}, user: {self.request.user.id}"
+        )
 
         ticket = get_object_or_404(Ticket, pk=pk)
 
@@ -102,8 +112,7 @@ class TicketViewSet(viewsets.ModelViewSet):
             list(answers) + list(comments), key=lambda x: x.created_at, reverse=True
         )
 
-        logger.debug(
-            f"Fetched {len(combined)} chat messages for ticket ID: {pk}")
+        logger.debug(f"Fetched {len(combined)} chat messages for ticket ID: {pk}")
 
         page = self.paginate_queryset(combined)
         if page is not None:
@@ -136,7 +145,8 @@ class TicketViewSet(viewsets.ModelViewSet):
         """
         instance = self.get_object()
         logger.info(
-            f"Retrieving ticket ID: {instance.id}, user: {self.request.user.id}")
+            f"Retrieving ticket ID: {instance.id}, user: {self.request.user.id}"
+        )
 
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
