@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-01 15:18+0330\n"
+"POT-Creation-Date: 2025-05-11 11:51+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,211 +18,171 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
+#: management/admin.py:60 management/admin.py:74
+#, fuzzy
+#| msgid "Company"
+msgid "Company Title"
+msgstr "شرکت"
+
 #: management/apps.py:7
 msgid "Management"
 msgstr "بخش مدیریت"
 
-#: management/models.py:18 management/models.py:251
-msgid "Company"
-msgstr "شرکت"
+#: management/models.py:22 management/models.py:182 management/models.py:253
+msgid "شرکت"
+msgstr ""
 
-#: management/models.py:21
-msgid "Excel File"
-msgstr "فایل اکسل"
+#: management/models.py:25
+msgid "فایل اکسل"
+msgstr ""
 
-#: management/models.py:24 management/models.py:334
-msgid "Is Approved"
-msgstr "تایید"
+#: management/models.py:28
+msgid "تأیید شده"
+msgstr ""
 
-#: management/models.py:27 management/models.py:281 management/models.py:340
-msgid "Created At"
-msgstr "ایجاد شده در"
+#: management/models.py:31 management/models.py:197 management/models.py:265
+msgid "تاریخ ایجاد"
+msgstr ""
 
-#: management/models.py:29 management/models.py:285 management/models.py:344
-msgid "Updated At"
-msgstr "بروزرسانی شده در"
+#: management/models.py:33 management/models.py:199 management/models.py:267
+msgid "تاریخ بروزرسانی"
+msgstr ""
 
-#: management/models.py:35 management/models.py:45
-msgid "Human Resource"
-msgstr "منبع انسانی"
-
-#: management/models.py:36
-msgid "Human Resources"
-msgstr "منابع انسانی"
-
-#: management/models.py:47
-msgid "Full Name"
-msgstr "نام کامل"
+#: management/models.py:39 management/models.py:40 management/models.py:49
+msgid "منابع انسانی"
+msgstr ""
 
 #: management/models.py:51
-msgid "Position"
-msgstr "موقعیت شغلی"
+msgid "نام کامل"
+msgstr ""
 
-#: management/models.py:54
-msgid "Reports to (Personnel)"
-msgstr "گزارش میدهد به (شخص)"
+#: management/models.py:55
+msgid "موقعیت شغلی"
+msgstr ""
 
-#: management/models.py:57
-msgid "Cooperates with (Personnel)"
-msgstr "همکاری میکند با (شخص)"
+#: management/models.py:58
+msgid "گزارش به (پرسنل)"
+msgstr ""
 
-#: management/models.py:60
-msgid "Obligation"
-msgstr "صلاحیت‌ها و مهارت‌ها"
+#: management/models.py:61
+msgid "همکاری با (پرسنل)"
+msgstr ""
 
-#: management/models.py:63
-msgid "Is Exist"
-msgstr "وجود دارد"
+#: management/models.py:64
+msgid "وظایف"
+msgstr ""
 
-#: management/models.py:68 management/models.py:69
-msgid "Personnel Information"
-msgstr "اطلاعات کارکنان"
+#: management/models.py:67
+msgid "موجود است"
+msgstr ""
 
-#: management/models.py:128
-msgid "Field"
-msgstr "نام حوزه"
+#: management/models.py:72 management/models.py:73
+msgid "اطلاعات پرسنل"
+msgstr ""
 
-#: management/models.py:130
-msgid "Position Excel"
-msgstr "اکسل موقعیت‌ها"
+#: management/models.py:132
+msgid "زمینه"
+msgstr ""
 
-#: management/models.py:137
-msgid "Organization Chart"
-msgstr "فایل چارت سازمانی"
+#: management/models.py:134
+msgid "فایل اکسل موقعیت"
+msgstr ""
 
-#: management/models.py:138
-msgid "Organization Charts"
-msgstr "فایل‌های چارت سازمانی"
+#: management/models.py:141
+msgid "نمودار سازمانی"
+msgstr ""
 
 #: management/models.py:142
-msgid "Strong"
-msgstr ""
-
-#: management/models.py:143
-msgid "Weak"
-msgstr ""
-
-#: management/models.py:144
-msgid "Average"
-msgstr ""
-
-#: management/models.py:145
-msgid "Excellent"
-msgstr ""
-
-#: management/models.py:146
-msgid "Good"
+msgid "نمودارهای سازمانی"
 msgstr ""
 
 #: management/models.py:147
-msgid "Poor"
+msgid "سیاسی (مانند مقررات، سیاست‌های دولتی)"
 msgstr ""
 
 #: management/models.py:148
-msgid "Satisfactory"
+msgid "اقتصادی (مانند روندهای بازار، تورم)"
 msgstr ""
 
 #: management/models.py:149
-msgid "Unsatisfactory"
+msgid "اجتماعی (مانند تغییرات فرهنگی، جمعیت‌شناسی)"
 msgstr ""
 
-#: management/models.py:155
-msgid "Name"
-msgstr "نام"
-
-#: management/models.py:162
-msgid "Custom Name"
-msgstr "دلخواه"
-
-#: management/models.py:182 management/models.py:184
-msgid "Either a predefined name or a custom name must be provided."
-msgstr "یا از نام‌های از پیش تعریف شده استفاده کنید یا نام دلخواه وارد کنید."
-
-#: management/models.py:187 management/models.py:189
-msgid "Cannot provide both a predefined name and a custom name."
+#: management/models.py:150
+msgid "فناوری (مانند نوآوری، اتوماسیون)"
 msgstr ""
-"نمیتوانید هم از نام‌های از پیش تعریف شده استفاده کنید و هم نام دلخواه وارد "
-"کنید."
 
-#: management/models.py:191
-msgid "Custom name cannot be empty."
-msgstr "نام دلخواه نمیتواند خالی باشد."
+#: management/models.py:152
+msgid "محیطی (مانند پایداری، تغییرات آب و هوایی)"
+msgstr ""
 
-#: management/models.py:215
-msgid "SWOT Strength Option"
-msgstr "نقطه قوت SWOT"
+#: management/models.py:153
+msgid "قانونی (مانند انطباق، قوانین)"
+msgstr ""
 
-#: management/models.py:216
-msgid "SWOT Strengths Option"
-msgstr "نقاط قوت SWOT"
+#: management/models.py:154
+msgid "هیچ‌کدام"
+msgstr ""
 
-#: management/models.py:224
-msgid "SWOT Weakness Option"
-msgstr "نقطه قوت SWOT"
+#: management/models.py:158
+msgid "نقطه قوت"
+msgstr ""
 
-#: management/models.py:225
-msgid "SWOT Weaknesses Option"
-msgstr "نقاط ضعف SWOT"
+#: management/models.py:159
+msgid "نقطه ضعف"
+msgstr ""
 
-#: management/models.py:233
-msgid "SWOT Opportunity Option"
-msgstr "فرصت‌ SWOT"
+#: management/models.py:160
+msgid "فرصت"
+msgstr ""
 
-#: management/models.py:234
-msgid "SWOT Opportunities Option"
-msgstr "فرصت‌های SWOT"
+#: management/models.py:161
+msgid "تهدید"
+msgstr ""
 
-#: management/models.py:242
-msgid "SWOT Threat Option"
-msgstr "تهدید SWOT"
+#: management/models.py:165 management/models.py:185
+msgid "سوال"
+msgstr ""
 
-#: management/models.py:243
-msgid "SWOT Threats Option"
-msgstr "تهدیدهای SWOT"
+#: management/models.py:169 management/models.py:189
+msgid "دسته‌بندی"
+msgstr ""
 
-#: management/models.py:260
-msgid "Strengths Options"
-msgstr "نقاط قوت"
+#: management/models.py:173
+msgid "سوال SWOT"
+msgstr ""
 
-#: management/models.py:265
-msgid "Weaknesses Options"
-msgstr "نقاط ضعف"
+#: management/models.py:174
+msgid "سوالات SWOT"
+msgstr ""
+
+#: management/models.py:187
+msgid "پاسخ"
+msgstr ""
+
+#: management/models.py:193
+msgid "عامل خارجی"
+msgstr ""
+
+#: management/models.py:202
+msgid "گزینه SWOT"
+msgstr ""
+
+#: management/models.py:203 management/models.py:261
+msgid "گزینه‌های SWOT"
+msgstr ""
+
+#: management/models.py:231
+msgid "External factor must be specified for Opportunities and Threats."
+msgstr "عامل خارجی باید برای فرصت‌ها و تهدیدها مشخص شود."
 
 #: management/models.py:270
-msgid "Opportunities Options"
-msgstr "فرصت‌ها"
+msgid "ماتریس SWOT"
+msgstr ""
 
-#: management/models.py:275
-msgid "Threats Options"
-msgstr "تهدیدها"
-
-#: management/models.py:289 management/models.py:305
-msgid "SWOT Matrix"
-msgstr "ماتریس SWOT"
-
-#: management/models.py:290
-msgid "SWOT Matrices"
-msgstr "ماتریس‌های SWOT"
-
-#: management/models.py:313
-msgid "SO Analysis"
-msgstr "تحلیل SO"
-
-#: management/models.py:318
-msgid "ST Analysis"
-msgstr "تحلیل ST"
-
-#: management/models.py:323
-msgid "WO Analysis"
-msgstr "تحلیل WO"
-
-#: management/models.py:328
-msgid "WT Analysis"
-msgstr "تحلیل WT"
-
-#: management/models.py:348 management/models.py:349
-msgid "SWOT Analysis"
-msgstr "تحلیل SWOT"
+#: management/models.py:271
+msgid "ماتریس‌های SWOT"
+msgstr ""
 
 #: management/views.py:51
 msgid ""
@@ -244,5 +204,113 @@ msgstr "رکورد منابع انسانی مناسبی برای شرکت پید
 msgid "Not found an associated file with your profile"
 msgstr "فایلی متناسب با پروفایل شرکت شما یافت نشد. باپشتیبانی تماس بگیرید."
 
-#~ msgid "Analysis"
-#~ msgstr "تحلیل"
+#~ msgid "Excel File"
+#~ msgstr "فایل اکسل"
+
+#~ msgid "Is Approved"
+#~ msgstr "تایید"
+
+#~ msgid "Created At"
+#~ msgstr "ایجاد شده در"
+
+#~ msgid "Updated At"
+#~ msgstr "بروزرسانی شده در"
+
+#~ msgid "Human Resource"
+#~ msgstr "منبع انسانی"
+
+#~ msgid "Human Resources"
+#~ msgstr "منابع انسانی"
+
+#~ msgid "Full Name"
+#~ msgstr "نام کامل"
+
+#~ msgid "Position"
+#~ msgstr "موقعیت شغلی"
+
+#~ msgid "Reports to (Personnel)"
+#~ msgstr "گزارش میدهد به (شخص)"
+
+#~ msgid "Cooperates with (Personnel)"
+#~ msgstr "همکاری میکند با (شخص)"
+
+#~ msgid "Obligation"
+#~ msgstr "صلاحیت‌ها و مهارت‌ها"
+
+#~ msgid "Is Exist"
+#~ msgstr "وجود دارد"
+
+#~ msgid "Personnel Information"
+#~ msgstr "اطلاعات کارکنان"
+
+#~ msgid "Field"
+#~ msgstr "نام حوزه"
+
+#~ msgid "Position Excel"
+#~ msgstr "اکسل موقعیت‌ها"
+
+#~ msgid "Organization Chart"
+#~ msgstr "فایل چارت سازمانی"
+
+#~ msgid "Organization Charts"
+#~ msgstr "فایل‌های چارت سازمانی"
+
+#~ msgid "Political (e.g., regulations, government policies)"
+#~ msgstr "سیاسی(برای مثال قوانین و سیاست‌های دولت)"
+
+#~ msgid "Economic (e.g., market trends, inflation)"
+#~ msgstr "اقتصادی (برای مثال روند بازار و تورم)"
+
+#~ msgid "Social (e.g., cultural shifts, demographics)"
+#~ msgstr "اجتماعی (برای مثال تغییرات فرهنگی و جمعیت‌شناسی)"
+
+#~ msgid "Technological (e.g., innovation, automation)"
+#~ msgstr "فناوری (برای مثال نوآوری و خودکارسازی)"
+
+#~ msgid "Environmental (e.g., sustainability, climate)"
+#~ msgstr "محیط‌زیست (برای مثال پایداری و تغییرات اقلیمی)"
+
+#~ msgid "Legal (e.g., compliance, laws)"
+#~ msgstr "قانونی (برای مثال رعایت قوانین و مقررات)"
+
+#~ msgid "Strength"
+#~ msgstr "نقاط قوت"
+
+#~ msgid "Weakness"
+#~ msgstr "نقاط ضعف"
+
+#~ msgid "Opportunity"
+#~ msgstr "فرصت"
+
+#~ msgid "Threat"
+#~ msgstr "تهدید"
+
+#~ msgid "Question"
+#~ msgstr "سوال"
+
+#~ msgid "Category"
+#~ msgstr "دسته‌بندی"
+
+#~ msgid "SWOT Question"
+#~ msgstr "SWOT سوال"
+
+#~ msgid "SWOT Questions"
+#~ msgstr "SWOT سوالات"
+
+#~ msgid "Answer"
+#~ msgstr "پاسخ"
+
+#~ msgid "External Factor"
+#~ msgstr "عامل خارجی"
+
+#~ msgid "SWOT Option"
+#~ msgstr "SWOT گزینه"
+
+#~ msgid "SWOT Options"
+#~ msgstr "SWOT گزینه‌ها"
+
+#~ msgid "SWOT Matrix"
+#~ msgstr "SWOT ماتریس"
+
+#~ msgid "SWOT Matrices"
+#~ msgstr "SWOT ماتریس‌ها"
