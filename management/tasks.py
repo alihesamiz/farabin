@@ -1,3 +1,8 @@
+from openai import OpenAIError
+from pydantic import BaseModel, ValidationError
+from google import genai
+
+from collections import defaultdict
 from openpyxl import load_workbook
 from celery import shared_task
 import logging
@@ -6,7 +11,7 @@ import cohere
 from django.db.transaction import atomic
 from django.conf import settings
 
-from management.models import HumanResource, PersonelInformation, SWOTMatrix, SWOTAnalysis
+from management.models import HumanResource, PersonelInformation, SWOTMatrix, SWOTAnalysis, SWOTCategory
 
 
 logger = logging.getLogger("management")
@@ -111,64 +116,89 @@ def process_personnel_excel(self, id: int):
 @shared_task(bind=True, rate_limit='5/m')
 def generate_swot_analysis(self, id: int):
     try:
-        swot_instance = SWOTMatrix.objects.get(id=id)
-        logger.info(f"Creating SWOT analysis for {swot_instance}")
+        class SWOTResponse(BaseModel):
+            so: str
+            st: str
+            wo: str
+            wt: str
 
-        results = {}
-        values = {}
+        matrix_instance = SWOTMatrix.objects.get(id=id)
 
-        analysis_groups = {
-            "so":("strengths", "opportunities"),
-            "st":("strengths", "threats"),
-            "wo":("weaknesses", "opportunities"),
-            "wt":("weaknesses", "threats"),
+        logger.info(f"Creating SWOT analysis for {matrix_instance}")
+
+        analysis_instance, created = SWOTAnalysis.objects.get_or_create(
+            matrix=matrix_instance)
+        analysis_groups = defaultdict(list)
+
+        for option in matrix_instance.options.all():
+            category = option.category[0].lower()
+            index = len(analysis_groups[category])
+            analysis_groups[category].append(
+                f"{category.upper()}{index}: {option.answer}")
+
+        combinations_dict = {
+            "so": analysis_groups["s"] + analysis_groups["o"],
+            "st": analysis_groups["s"] + analysis_groups["t"],
+            "wo": analysis_groups["w"] + analysis_groups["o"],
+            "wt": analysis_groups["w"] + analysis_groups["t"]
         }
 
-        for field in ["strengths", "weaknesses", "opportunities", "threats"]:
-            related_qs = getattr(swot_instance, field).values(
-                "name", "custom_name")
-            values[field] = [
-                item["custom_name"] or item["name"]
-                for item in related_qs
-                if item["custom_name"] or item["name"]
-            ]
+        prompt = f"""
+    Create a detailed SWOT analysis in Persian language based on the following parameters provided. Present the output in a well-organized format with headings for each section.
+        SWOT Parameters:
+        Strengths,Opportunities: {combinations_dict['so']}
+        Strengths,Threats: {combinations_dict['st']}
+        Weaknesses,Opportunities: {combinations_dict['wo']}
+        Weaknesses,Threats: {combinations_dict['wt']}
 
-        grouped_results = {}
+        Output Requirements:
 
-        for group1, group2 in analysis_groups:
-            key = f"{group1}_{group2}"
-            grouped_results[key] = {
-                group1: values.get(group1, []),
-                group2: values.get(group2, [])
-            }
-        print(values)
-        print(grouped_results)
-        # generator = cohere.ClientV2(settings.FARABIN_COHERE_API_KEY)
-        # prompt = f"""
-        # Provide the strategic and collision points for the SWOT matrix given the strengths, threats, opportunities, and weaknesses presented as below:
-        #     Strengths: {results['strengths']}
-        #     Weaknesses: {results['weaknesses']}
-        #     Opportunities: {results['opportunities']}
-        #     Threats: {results['threats']}
-        # this report and analysis should be in Persian language and a professional format and should be suitable for a business report.
-        # """
-        # response = generator.chat(
-        #     model="command-r-plus",
-        #     messages=[
-        #         {
-        #             "role": "user",
-        #             "content": f"{prompt}"}],
-        # ).message.content[0].text
+        SWOT Matrix: Summarize the provided Strengths, Weaknesses, Opportunities, and Threats in a concise analysis.
 
-        # SWOTAnalysis.objects.create(
-        #     swot_matrix=swot_instance,
-        #     analysis=response,
-        #     is_approved=False
-        # )
+        SO Strategies: Develop strategies that leverage Strengths to capitalize on Opportunities.
+        ST Strategies: Develop strategies that use Strengths to mitigate Threats.
+        WO Strategies: Develop strategies that address Weaknesses by taking advantage of Opportunities.
+        WT Strategies: Develop strategies that minimize Weaknesses and avoid Threats.
+        Ensure each strategy is specific, realistic, and tailored to the provided context.
 
-        logger.info(f"SWOT analysis created for {swot_instance}")
+        Use bullet points for clarity and include a brief explanation for each strategy.
+    """
 
+        try:
+            client = genai.Client(api_key=settings.FARABIN_GEMINI_API_KEY)
+            response = client.models.generate_content(
+                model="gemini-2.0-flash",
+                contents=prompt,
+                config={
+                    "response_mime_type": "application/json",
+                    "response_schema": SWOTResponse,
+                },
+            )
+        except OpenAIError as genai_error:
+            logger.error(
+                f"LLM Error during content generation: {str(genai_error)}")
+            raise genai_error
+
+        try:
+            analysis: SWOTResponse = response.parsed
+        except ValidationError as val_err:
+            logger.error(f"Response schema validation error: {val_err}")
+            raise val_err
+
+        # Populate the analysis instance safely
+        analysis_instance.so = analysis.so or "N/A"
+        analysis_instance.st = analysis.st or "N/A"
+        analysis_instance.wo = analysis.wo or "N/A"
+        analysis_instance.wt = analysis.wt or "N/A"
+        analysis_instance.save()
+
+        logger.info(f"SWOT analysis created for {matrix_instance}")
+
+    except SWOTMatrix.DoesNotExist:
+        error_msg = f"SWOTMatrix with id {id} does not exist."
+        logger.error(error_msg)
+        return error_msg
     except Exception as e:
         logger.error(
-            f"Error while creating SWOT analysis for {id}: {str(e)}")
+            f"Unexpected error while creating SWOT analysis for {id}: {str(e)}")
         return str(e)
