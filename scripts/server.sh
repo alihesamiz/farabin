@@ -13,6 +13,7 @@ python manage.py load_services
 python manage.py load_excel_files
 python manage.py load_licenses
 python manage.py load_life_cycles
+python manage.py load_swot_questions
 
 python manage.py collectstatic --noinput
 
