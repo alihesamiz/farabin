@@ -1,10 +1,18 @@
 from uuid import uuid4
+import logging
 
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.db import models
 
+
+from django_lifecycle.mixins import LifecycleModelMixin
+from django_lifecycle.hooks import AFTER_CREATE
+from django_lifecycle.decorators import hook
+
 from core.validators import phone_number_validator, landline_number_validator
+
+logger = logging.getLogger("company")
 
 User = get_user_model()
 
@@ -52,7 +60,7 @@ class TechField(models.Model):
         verbose_name_plural = _("Tech Fields")
 
 
-class CompanyProfile(models.Model):
+class CompanyProfile(LifecycleModelMixin, models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
 
     user = models.OneToOneField(
@@ -111,6 +119,18 @@ class CompanyProfile(models.Model):
 
     def __str__(self) -> str:
         return f"{self.company_title!r} › {self.user.national_code}"
+
+    @hook(AFTER_CREATE)
+    def clear_profile_cache(self):
+        from django.core.cache import cache
+
+        """
+        Hook to clear the cache when a CompanyProfile instance is updated.
+        """
+        cache_key = f"company_profile_{self.user.id}"
+        cache.delete(cache_key)
+        logger.info(
+            f"Cleared company profile cache for user {self.user.id}.")
 
 
 class License(models.Model):
