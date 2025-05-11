@@ -6,18 +6,35 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('packages', '0016_order_user_unique_package_order'),
+        ("packages", "0016_order_user_unique_package_order"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='service',
-            name='period',
-            field=models.CharField(blank=True, choices=[('monthly', 'Monthly'), ('quarterly', 'Quarterly'), ('semi_annually', 'Semi-Annually'), ('annually', 'Annually')], max_length=20, null=True, verbose_name='Period'),
+            model_name="service",
+            name="period",
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ("monthly", "Monthly"),
+                    ("quarterly", "Quarterly"),
+                    ("semi_annually", "Semi-Annually"),
+                    ("annually", "Annually"),
+                ],
+                max_length=20,
+                null=True,
+                verbose_name="Period",
+            ),
         ),
         migrations.AddField(
-            model_name='service',
-            name='price',
-            field=models.DecimalField(blank=True, decimal_places=2, max_digits=20, null=True, verbose_name='Price'),
+            model_name="service",
+            name="price",
+            field=models.DecimalField(
+                blank=True,
+                decimal_places=2,
+                max_digits=20,
+                null=True,
+                verbose_name="Price",
+            ),
         ),
     ]

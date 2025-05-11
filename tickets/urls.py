@@ -5,5 +5,5 @@ from tickets.views import TicketViewSet
 
 router = DefaultRouter()
 
-router.register(r'', TicketViewSet, basename='tickets')
+router.register(r"", TicketViewSet, basename="tickets")
 urlpatterns = router.urls

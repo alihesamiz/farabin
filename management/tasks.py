@@ -11,13 +11,21 @@ import cohere
 from django.db.transaction import atomic
 from django.conf import settings
 
-from management.models import HumanResource, PersonelInformation, SWOTMatrix, SWOTAnalysis, SWOTCategory
+from management.models import (
+    HumanResource,
+    PersonelInformation,
+    SWOTMatrix,
+    SWOTAnalysis,
+    SWOTCategory,
+)
 
 
 logger = logging.getLogger("management")
 
 
-@shared_task(bind=True,)
+@shared_task(
+    bind=True,
+)
 def process_personnel_excel(self, id: int):
     try:
         hr_instance = HumanResource.objects.get(id=id)
@@ -41,8 +49,13 @@ def process_personnel_excel(self, id: int):
             if not any(row):
                 continue
 
-            name, position, reports_to_position, cooperates_with_position, obligations = row[
-                :5]
+            (
+                name,
+                position,
+                reports_to_position,
+                cooperates_with_position,
+                obligations,
+            ) = row[:5]
 
             if not (name and obligations and position):
                 logger.warning(
@@ -56,14 +69,12 @@ def process_personnel_excel(self, id: int):
             position = position.strip().upper()
             obligations = obligations.strip()
             reports_to_positions = (
-                [p.strip().upper()
-                 for p in reports_to_position.strip().split(",")]
+                [p.strip().upper() for p in reports_to_position.strip().split(",")]
                 if reports_to_position
                 else []
             )
             cooperates_with_positions = (
-                [p.strip().upper()
-                 for p in cooperates_with_position.strip().split(",")]
+                [p.strip().upper() for p in cooperates_with_position.strip().split(",")]
                 if cooperates_with_position
                 else []
             )
@@ -83,15 +94,19 @@ def process_personnel_excel(self, id: int):
 
             # Store relationships for later processing
             person_relations.append(
-                (person, reports_to_positions, cooperates_with_positions))
+                (person, reports_to_positions, cooperates_with_positions)
+            )
 
         with atomic():
             # Bulk create personnel
-            created_personnel = PersonelInformation.objects.bulk_create(
-                personnel_list)
+            created_personnel = PersonelInformation.objects.bulk_create(personnel_list)
 
             # Set many-to-many relationships
-            for person, reports_to_positions, cooperates_with_positions in person_relations:
+            for (
+                person,
+                reports_to_positions,
+                cooperates_with_positions,
+            ) in person_relations:
                 # Set reports_to relationships
                 for pos in reports_to_positions:
                     if pos in position_map:
@@ -103,7 +118,8 @@ def process_personnel_excel(self, id: int):
                         person.cooperates_with.add(*position_map[pos])
 
         logger.info(
-            f"Successfully processed {len(created_personnel)} personnel records")
+            f"Successfully processed {len(created_personnel)} personnel records"
+        )
 
     except HumanResource.DoesNotExist:
         logger.error(f"HumanResource with id {id} not found")
@@ -113,9 +129,10 @@ def process_personnel_excel(self, id: int):
         raise
 
 
-@shared_task(bind=True, rate_limit='5/m')
+@shared_task(bind=True, rate_limit="5/m")
 def generate_swot_analysis(self, id: int):
     try:
+
         class SWOTResponse(BaseModel):
             so: str
             st: str
@@ -127,20 +144,22 @@ def generate_swot_analysis(self, id: int):
         logger.info(f"Creating SWOT analysis for {matrix_instance}")
 
         analysis_instance, created = SWOTAnalysis.objects.get_or_create(
-            matrix=matrix_instance)
+            matrix=matrix_instance
+        )
         analysis_groups = defaultdict(list)
 
         for option in matrix_instance.options.all():
             category = option.category[0].lower()
             index = len(analysis_groups[category])
             analysis_groups[category].append(
-                f"{category.upper()}{index}: {option.answer}")
+                f"{category.upper()}{index}: {option.answer}"
+            )
 
         combinations_dict = {
             "so": analysis_groups["s"] + analysis_groups["o"],
             "st": analysis_groups["s"] + analysis_groups["t"],
             "wo": analysis_groups["w"] + analysis_groups["o"],
-            "wt": analysis_groups["w"] + analysis_groups["t"]
+            "wt": analysis_groups["w"] + analysis_groups["t"],
         }
 
         prompt = f"""
@@ -175,8 +194,7 @@ def generate_swot_analysis(self, id: int):
                 },
             )
         except OpenAIError as genai_error:
-            logger.error(
-                f"LLM Error during content generation: {str(genai_error)}")
+            logger.error(f"LLM Error during content generation: {str(genai_error)}")
             raise genai_error
 
         try:
@@ -200,5 +218,6 @@ def generate_swot_analysis(self, id: int):
         return error_msg
     except Exception as e:
         logger.error(
-            f"Unexpected error while creating SWOT analysis for {id}: {str(e)}")
+            f"Unexpected error while creating SWOT analysis for {id}: {str(e)}"
+        )
         return str(e)

@@ -10,14 +10,25 @@ class ServiceAdmin(admin.ModelAdmin):
     list_filter = ["is_active", "period"]
     search_fields = ["name", "description"]
     ordering = ["-is_active", "-name"]
-    list_editable = ["is_active",]
+    list_editable = [
+        "is_active",
+    ]
 
 
 @admin.register(Package)
 class PackageAdmin(admin.ModelAdmin):
-    list_display = ["name", "description",
-                    "services_name", "price", "period", "is_active"]
-    search_fields = ["name", "description",]
+    list_display = [
+        "name",
+        "description",
+        "services_name",
+        "price",
+        "period",
+        "is_active",
+    ]
+    search_fields = [
+        "name",
+        "description",
+    ]
     ordering = ["-is_active", "-price"]
     filter_horizontal = ["services"]
     list_filter = ["is_active", "period"]
@@ -29,13 +40,27 @@ class PackageAdmin(admin.ModelAdmin):
 
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
-    list_display = ["company_title", "package",
-                    "services", "purchase_date", "expires_at",]
-    search_fields = ["user__phone_number",
-                     "user__company__company_title", "package__name"]
-    ordering = ["-purchase_date",]
-    readonly_fields = ["duration",]
-    filter_horizontal = ["service",]
+    list_display = [
+        "company_title",
+        "package",
+        "services",
+        "purchase_date",
+        "expires_at",
+    ]
+    search_fields = [
+        "user__phone_number",
+        "user__company__company_title",
+        "package__name",
+    ]
+    ordering = [
+        "-purchase_date",
+    ]
+    readonly_fields = [
+        "duration",
+    ]
+    filter_horizontal = [
+        "service",
+    ]
     list_filter = ["package", "service__name"]
 
     @admin.display(description=_("Services"))
@@ -55,13 +80,23 @@ class OrderAdmin(admin.ModelAdmin):
         "services",
         "status",
         "created_at",
-        "price"
+        "price",
     ]
-    search_fields = ("user__phone_number",
-                     "user__company__company_title", "package__name", "status")
+    search_fields = (
+        "user__phone_number",
+        "user__company__company_title",
+        "package__name",
+        "status",
+    )
     ordering = ("-created_at",)
-    list_filter = ("status", "package__name", "status",)
-    list_editable = ["status",]
+    list_filter = (
+        "status",
+        "package__name",
+        "status",
+    )
+    list_editable = [
+        "status",
+    ]
     filter_horizontal = ["service"]
 
     @admin.display(description=_("Company Title"))

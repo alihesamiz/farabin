@@ -6,13 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('packages', '0021_package_code_name'),
+        ("packages", "0021_package_code_name"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='order',
-            name='service',
-            field=models.ManyToManyField(blank=True, related_name='orders', to='packages.service', verbose_name='Service'),
+            model_name="order",
+            name="service",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="orders",
+                to="packages.service",
+                verbose_name="Service",
+            ),
         ),
     ]

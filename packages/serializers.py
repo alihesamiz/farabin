@@ -1,21 +1,36 @@
 from django.db.models import Sum
-from rest_framework.serializers import ModelSerializer, HyperlinkedIdentityField, PrimaryKeyRelatedField, SerializerMethodField
+from rest_framework.serializers import (
+    ModelSerializer,
+    HyperlinkedIdentityField,
+    PrimaryKeyRelatedField,
+    SerializerMethodField,
+)
 
 from packages.models import Order, Package, Service, Subscription
 
 
 class ServiceSerializer(ModelSerializer):
-    url = HyperlinkedIdentityField(view_name='services-detail', read_only=True)
+    url = HyperlinkedIdentityField(view_name="services-detail", read_only=True)
 
     class Meta:
         model = Service
-        fields = ("id", "url", "name",
-                  "code_name",
-                  "description",
-                  "price",
-                  "period",
-                  "is_active")
-        read_only_fields = ("id", "price", "period", "code_name", "is_active",)
+        fields = (
+            "id",
+            "url",
+            "name",
+            "code_name",
+            "description",
+            "price",
+            "period",
+            "is_active",
+        )
+        read_only_fields = (
+            "id",
+            "price",
+            "period",
+            "code_name",
+            "is_active",
+        )
 
 
 class PackageSerializer(ModelSerializer):
@@ -23,16 +38,22 @@ class PackageSerializer(ModelSerializer):
 
     class Meta:
         model = Package
-        fields = ("id", "name",
-                  "description",
-                  "price",
-                  "code_name",
-                  "created_at",
-                  "updated_at",
-                  "period",
-                  "services",
-                  "is_active")
-        read_only_fields = ("id", "is_active",)
+        fields = (
+            "id",
+            "name",
+            "description",
+            "price",
+            "code_name",
+            "created_at",
+            "updated_at",
+            "period",
+            "services",
+            "is_active",
+        )
+        read_only_fields = (
+            "id",
+            "is_active",
+        )
 
 
 class SubscriptionSerializer(ModelSerializer):
@@ -65,10 +86,9 @@ class OrderSerializer(ModelSerializer):
             "package",
             "services",
             "total_price",
-            "created_at"
+            "created_at",
         ]
-        read_only_fields = ["status", "created_at",
-                            "package", "services", "user"]
+        read_only_fields = ["status", "created_at", "package", "services", "user"]
 
     def get_total_price(self, obj: Order):
         if obj.package:

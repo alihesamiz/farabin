@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('packages', '0014_alter_order_status'),
+        ("packages", "0014_alter_order_status"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='subscription',
-            name='is_active',
-            field=models.BooleanField(default=True, verbose_name='Is Active'),
+            model_name="subscription",
+            name="is_active",
+            field=models.BooleanField(default=True, verbose_name="Is Active"),
         ),
     ]

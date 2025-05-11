@@ -32,21 +32,30 @@ class Service(LifecycleModelMixin, models.Model):
         PRODUCTION = "production", _("Production")
         MIS = "mis", _("Management Information System")
         REASEARCH_AND_DEVELOPMENT = "research_and_development", _(
-            "Research and Development")
+            "Research and Development"
+        )
 
-    name = models.CharField(verbose_name=_(
-        "Service Name"), max_length=30, choices=ServiceType.choices, unique=True)
-    code_name = models.CharField(verbose_name=_(
-        "Code Name"), blank=True, max_length=2, unique=True)
+    name = models.CharField(
+        verbose_name=_("Service Name"),
+        max_length=30,
+        choices=ServiceType.choices,
+        unique=True,
+    )
+    code_name = models.CharField(
+        verbose_name=_("Code Name"), blank=True, max_length=2, unique=True
+    )
     description = models.TextField(verbose_name=_("Service Description"))
     price = models.DecimalField(
-        decimal_places=2, max_digits=20, verbose_name=_("Price"), blank=True, null=True)
-    period = models.CharField(
-        max_length=20, choices=PeriodChoices.choices,
-        verbose_name=_("Period"), blank=True, null=True
+        decimal_places=2, max_digits=20, verbose_name=_("Price"), blank=True, null=True
     )
-    is_active = models.BooleanField(
-        default=False, verbose_name=_("Is Active?"))
+    period = models.CharField(
+        max_length=20,
+        choices=PeriodChoices.choices,
+        verbose_name=_("Period"),
+        blank=True,
+        null=True,
+    )
+    is_active = models.BooleanField(default=False, verbose_name=_("Is Active?"))
 
     class Meta:
         verbose_name = _("Service")
@@ -79,25 +88,33 @@ class Package(LifecycleModelMixin, models.Model):
         PLATINUM = "platinum", _("Platinum")
 
     name = models.CharField(
-        max_length=30, verbose_name=_("Package Name"), unique=True, choices=PackageName.choices)
-    code_name = models.CharField(verbose_name=_(
-        "Code Name"), blank=True, max_length=2, unique=True)
-    description = models.TextField(
-        verbose_name=_("Package Description"), blank=True, null=True)
-    services = models.ManyToManyField(
-        Service, verbose_name=_("Services"), related_name="packages", blank=True)
-    price = models.DecimalField(
-        decimal_places=2, max_digits=20, verbose_name=_("Price"), blank=True)
-    period = models.CharField(
-        max_length=20, choices=PeriodChoices.choices,
-        verbose_name=_("Period"), blank=True, null=True
+        max_length=30,
+        verbose_name=_("Package Name"),
+        unique=True,
+        choices=PackageName.choices,
     )
-    is_active = models.BooleanField(
-        default=False, verbose_name=_("Is Active?"))
-    created_at = models.DateTimeField(
-        auto_now_add=True, verbose_name=_("Created At"))
-    updated_at = models.DateTimeField(
-        auto_now=True, verbose_name=_("Updated At"))
+    code_name = models.CharField(
+        verbose_name=_("Code Name"), blank=True, max_length=2, unique=True
+    )
+    description = models.TextField(
+        verbose_name=_("Package Description"), blank=True, null=True
+    )
+    services = models.ManyToManyField(
+        Service, verbose_name=_("Services"), related_name="packages", blank=True
+    )
+    price = models.DecimalField(
+        decimal_places=2, max_digits=20, verbose_name=_("Price"), blank=True
+    )
+    period = models.CharField(
+        max_length=20,
+        choices=PeriodChoices.choices,
+        verbose_name=_("Period"),
+        blank=True,
+        null=True,
+    )
+    is_active = models.BooleanField(default=False, verbose_name=_("Is Active?"))
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created At"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
 
     class Meta:
         verbose_name = _("Package")
@@ -124,26 +141,40 @@ class Package(LifecycleModelMixin, models.Model):
 
 class Subscription(LifecycleModelMixin, models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="subscriptions", verbose_name=_("User"))
+        User,
+        on_delete=models.CASCADE,
+        related_name="subscriptions",
+        verbose_name=_("User"),
+    )
     package = models.ForeignKey(
-        Package, on_delete=models.CASCADE, related_name="subscriptions", null=True, blank=True, verbose_name=_("Package"))
+        Package,
+        on_delete=models.CASCADE,
+        related_name="subscriptions",
+        null=True,
+        blank=True,
+        verbose_name=_("Package"),
+    )
     service = models.ManyToManyField(
-        Service, related_name="subscriptions", blank=True, verbose_name=_("Service"))
+        Service, related_name="subscriptions", blank=True, verbose_name=_("Service")
+    )
     purchase_date = models.DateTimeField(
-        auto_now_add=True, verbose_name=_("Purchase Date"))
+        auto_now_add=True, verbose_name=_("Purchase Date")
+    )
     expires_at = models.DateTimeField(
-        verbose_name=_("Expiry Date"), blank=True, null=True)
+        verbose_name=_("Expiry Date"), blank=True, null=True
+    )
     duration = models.DurationField(
         help_text=_("Duration in days"),
-        verbose_name=_("Duration"), blank=True, null=True)
+        verbose_name=_("Duration"),
+        blank=True,
+        null=True,
+    )
     is_active = models.BooleanField(default=True, verbose_name=_("Is Active"))
 
     class Meta:
         verbose_name = _("Subscription")
         verbose_name_plural = _("Subscriptions")
-        unique_together = (
-            "user", "package", "purchase_date"
-        )
+        unique_together = ("user", "package", "purchase_date")
 
     def __str__(self):
         return f"{self.user.company.company_title} - روز{self.duration.days}"
@@ -154,8 +185,7 @@ class Subscription(LifecycleModelMixin, models.Model):
             now = timezone.now()
             self.purchase_date = now
             if self.package:
-                self.duration = self._calculate_duration(
-                    self.package.period)
+                self.duration = self._calculate_duration(self.package.period)
                 self.expires_at = now + self.duration
 
     def _calculate_duration(self, period):
@@ -174,35 +204,47 @@ class Subscription(LifecycleModelMixin, models.Model):
 
 class Order(LifecycleModelMixin, models.Model):
     class OrderStatus(models.TextChoices):
-        PENDING_STATUS = 'pending', _('Pending')
-        PAID_STATUS = 'paid', _("Paid")
-        CONFIRMED_STATUS = 'confirmed', _('Confirmed')
-        CANCELED_STATUS = 'canceled', _('Canceled')
+        PENDING_STATUS = "pending", _("Pending")
+        PAID_STATUS = "paid", _("Paid")
+        CONFIRMED_STATUS = "confirmed", _("Confirmed")
+        CANCELED_STATUS = "canceled", _("Canceled")
 
-    status = models.CharField(verbose_name=_(
-        "Status"), choices=OrderStatus.choices, max_length=10, default=OrderStatus.PENDING_STATUS)
+    status = models.CharField(
+        verbose_name=_("Status"),
+        choices=OrderStatus.choices,
+        max_length=10,
+        default=OrderStatus.PENDING_STATUS,
+    )
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, verbose_name=_("User"), related_name="order")
-    package = models.ForeignKey(Package, on_delete=models.SET_NULL,
-                                null=True, blank=True, verbose_name=_("Package"), related_name="order")
+        User, on_delete=models.CASCADE, verbose_name=_("User"), related_name="order"
+    )
+    package = models.ForeignKey(
+        Package,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_("Package"),
+        related_name="order",
+    )
     service = models.ManyToManyField(
-        Service, related_name="orders", blank=True, verbose_name=_("Service"))
-    created_at = models.DateTimeField(
-        verbose_name=_("Created At"), auto_now_add=True)
+        Service, related_name="orders", blank=True, verbose_name=_("Service")
+    )
+    created_at = models.DateTimeField(verbose_name=_("Created At"), auto_now_add=True)
 
     class Meta:
         verbose_name = _("Order")
         verbose_name_plural = _("Orders")
         constraints = [
             models.UniqueConstraint(
-                fields=["user", "package"],
-                name="user_unique_package_order")
+                fields=["user", "package"], name="user_unique_package_order"
+            )
         ]
 
     def __str__(self):
         user_info = (
             getattr(self.user.company, "company_title", None)
-            if hasattr(self.user, "company") else self.user.phone_number
+            if hasattr(self.user, "company")
+            else self.user.phone_number
         )
         return f"{user_info} -> {self.created_at} : {self.get_status_display()}"
 
@@ -214,25 +256,27 @@ class Order(LifecycleModelMixin, models.Model):
         with atomic():
 
             subscription, created = Subscription.objects.get_or_create(
-                user=self.user,
-                package=self.package
+                user=self.user, package=self.package
             )
 
             if not subscription.purchase_date:
                 subscription.purchase_date = timezone.now()
 
             if self.service.exists():
-                subscription.service.set(
-                    self.service.all())
+                subscription.service.set(self.service.all())
 
-                [duration := subscription._calculate_duration(
-                    ser.period) for ser in subscription.service.all()]
+                [
+                    duration := subscription._calculate_duration(ser.period)
+                    for ser in subscription.service.all()
+                ]
                 expires_at = subscription.purchase_date + duration
                 Subscription.objects.filter(pk=subscription.pk).update(
-                    duration=duration, expires_at=expires_at)
+                    duration=duration, expires_at=expires_at
+                )
 
             Order.objects.filter(pk=self.pk).update(
-                status=Order.OrderStatus.CONFIRMED_STATUS)
+                status=Order.OrderStatus.CONFIRMED_STATUS
+            )
 
     def set_as_paid(self):
         with atomic():

@@ -9,35 +9,35 @@ ALLOWED_HOSTS = ["*"]
 INSTALLED_APPS = [
     "admin_interface",
     "colorfield",
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.humanize',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "django.contrib.humanize",
 ]
 
 
 PROJECT_APPS = [
-    'management',
-    'packages',
-    'finance',
-    'company',
-    'request',
-    'tickets',
-    'core',
+    "management",
+    "packages",
+    "finance",
+    "company",
+    "request",
+    "tickets",
+    "core",
 ]
 
 THIRED_PARTY_APPS = [
-    'rest_framework_simplejwt',
-    'django_lifecycle_checks',
-    'django_celery_beat',
-    'drf_spectacular',
-    'rest_framework',
-    'debug_toolbar',
-    'nested_admin',
-    'corsheaders',
+    "rest_framework_simplejwt",
+    "django_lifecycle_checks",
+    "django_celery_beat",
+    "drf_spectacular",
+    "rest_framework",
+    "debug_toolbar",
+    "nested_admin",
+    "corsheaders",
 ]
 
 INSTALLED_APPS += PROJECT_APPS + THIRED_PARTY_APPS
@@ -45,23 +45,24 @@ INSTALLED_APPS += PROJECT_APPS + THIRED_PARTY_APPS
 INTERNAL_IPS = ["127.0.0.1"]
 
 MIDDLEWARE = [
-    'django.middleware.locale.LocaleMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',]
+    "django.middleware.locale.LocaleMiddleware",
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
+]
 
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / "db.sqlite3",
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
@@ -97,7 +98,7 @@ for app in APPS_TO_LOG:
 LOGGING["handlers"]["rotating_file"] = {
     "level": "INFO",
     "class": "logging.handlers.RotatingFileHandler",
-    "filename":  LOG_DIR/"rotating.log",
+    "filename": LOG_DIR / "rotating.log",
     "maxBytes": 1024 * 1024 * 5,
     "backupCount": 5,
     "formatter": "verbose",

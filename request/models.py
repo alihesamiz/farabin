@@ -3,10 +3,10 @@ from django.db import models
 
 
 class BaseRequest(models.Model):
-    REQUEST_STATUS_NEW = 'new'
-    REQUEST_STATUS_PENDING = 'pending'
-    REQUEST_STATUS_ACCEPTED = 'accepted'
-    REQUEST_STATUS_REJECTED = 'rejected'
+    REQUEST_STATUS_NEW = "new"
+    REQUEST_STATUS_PENDING = "pending"
+    REQUEST_STATUS_ACCEPTED = "accepted"
+    REQUEST_STATUS_REJECTED = "rejected"
 
     REQUEST_STATUS_CHOICES = [
         (REQUEST_STATUS_NEW, _("New")),
@@ -16,26 +16,31 @@ class BaseRequest(models.Model):
     ]
 
     company = models.ForeignKey(
-        "company.CompanyProfile", on_delete=models.CASCADE, verbose_name=_("Company"), null=True)
+        "company.CompanyProfile",
+        on_delete=models.CASCADE,
+        verbose_name=_("Company"),
+        null=True,
+    )
 
-    subject = models.TextField(
-        blank=True, null=True, verbose_name=_("Subject"))
+    subject = models.TextField(blank=True, null=True, verbose_name=_("Subject"))
 
     status = models.CharField(
-        verbose_name=_("Status"), max_length=10, choices=REQUEST_STATUS_CHOICES, default=REQUEST_STATUS_NEW)
+        verbose_name=_("Status"),
+        max_length=10,
+        choices=REQUEST_STATUS_CHOICES,
+        default=REQUEST_STATUS_NEW,
+    )
 
-    created_at = models.DateTimeField(
-        auto_now_add=True, verbose_name=_("Created At"))
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created At"))
 
-    updated_at = models.DateTimeField(
-        auto_now=True, verbose_name=_("Updated At"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
 
     # Define the service field without a related_name here since it's abstract
     service = models.ForeignKey(
-        "company.CompanyService", 
-        on_delete=models.SET_NULL, 
-        verbose_name=_("Service"), 
-        null=True
+        "company.CompanyService",
+        on_delete=models.SET_NULL,
+        verbose_name=_("Service"),
+        null=True,
     )
 
     class Meta:
@@ -47,29 +52,29 @@ class BaseRequest(models.Model):
 class FinanceRequest(BaseRequest):
     # Override the service field with a unique related_name
     service = models.ForeignKey(
-        "company.CompanyService", 
+        "company.CompanyService",
         related_name="finance_requests",  # Unique related_name
-        on_delete=models.SET_NULL, 
-        verbose_name=_("Service"), 
-        null=True
+        on_delete=models.SET_NULL,
+        verbose_name=_("Service"),
+        null=True,
     )
 
     tax_record = models.ForeignKey(
-        "finance.TaxDeclarationFile", 
-        on_delete=models.CASCADE, 
-        verbose_name=_("Tax Record"), 
-        null=True, 
-        blank=True, 
-        related_name="finance_request_tax_record"
+        "finance.TaxDeclarationFile",
+        on_delete=models.CASCADE,
+        verbose_name=_("Tax Record"),
+        null=True,
+        blank=True,
+        related_name="finance_request_tax_record",
     )
 
     balance_record = models.ForeignKey(
-        "finance.BalanceReportFile", 
-        on_delete=models.CASCADE, 
-        verbose_name=_("Balance Record"), 
-        null=True, 
-        blank=True, 
-        related_name="finance_request_balance_record"
+        "finance.BalanceReportFile",
+        on_delete=models.CASCADE,
+        verbose_name=_("Balance Record"),
+        null=True,
+        blank=True,
+        related_name="finance_request_balance_record",
     )
 
     def __str__(self) -> str:
@@ -83,20 +88,20 @@ class FinanceRequest(BaseRequest):
 class ManagementRequest(BaseRequest):
     # Override the service field with a unique related_name
     service = models.ForeignKey(
-        "company.CompanyService", 
+        "company.CompanyService",
         related_name="management_requests",  # Unique related_name
-        on_delete=models.SET_NULL, 
-        verbose_name=_("Service"), 
-        null=True
+        on_delete=models.SET_NULL,
+        verbose_name=_("Service"),
+        null=True,
     )
 
     human_resource_record = models.ForeignKey(
-        "management.HumanResource", 
-        verbose_name=_("Human Resource Record"), 
-        on_delete=models.CASCADE, 
-        null=True, 
-        blank=True, 
-        related_name="management_request_human_resource_record"
+        "management.HumanResource",
+        verbose_name=_("Human Resource Record"),
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="management_request_human_resource_record",
     )
 
     def __str__(self):

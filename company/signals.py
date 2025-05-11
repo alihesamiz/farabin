@@ -25,4 +25,5 @@ def clear_dashboard_cache(sender, instance, **kwargs):
     cache_key = f"dashboard_data_{instance.company.user.id}"
     cache.delete(cache_key)
     logger.info(
-        f"Cleared dashboard cache for user {instance.company.user.id} due to {sender.__name__} {instance.id} update.")
+        f"Cleared dashboard cache for user {instance.company.user.id} due to {sender.__name__} {instance.id} update."
+    )

@@ -7,13 +7,26 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('company', '0004_remove_companyprofile_profile_active_and_more'),
+        ("company", "0004_remove_companyprofile_profile_active_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='companyprofile',
-            name='office_phone_number',
-            field=models.CharField(blank=True, max_length=11, null=True, unique=True, validators=[django.core.validators.RegexValidator(code='Invalid_phone_number', message='Phone number must be in 09XXXXXXXXX format.', regex='^0\\d{10}$')], verbose_name='Office Phone Number'),
+            model_name="companyprofile",
+            name="office_phone_number",
+            field=models.CharField(
+                blank=True,
+                max_length=11,
+                null=True,
+                unique=True,
+                validators=[
+                    django.core.validators.RegexValidator(
+                        code="Invalid_phone_number",
+                        message="Phone number must be in 09XXXXXXXXX format.",
+                        regex="^0\\d{10}$",
+                    )
+                ],
+                verbose_name="Office Phone Number",
+            ),
         ),
     ]

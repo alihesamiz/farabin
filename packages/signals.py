@@ -11,7 +11,7 @@ from django.utils.timezone import timedelta, now
 # def create_subscription_of_confirmed_order(sender: Order, instance: Order, *args, **kwargs):
 #     if instance.status == Order.OrderStatus.PAID_STATUS:
 #         with atomic():
-            
+
 #             subscription, created = Subscription.objects.get_or_create(
 #                 user=instance.user,
 #             )

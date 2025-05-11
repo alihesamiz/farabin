@@ -30,25 +30,31 @@ class CompanyProfileViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
 
         try:
-            queryset = CompanyProfile.objects.select_related(
-                "user").filter(user=self.request.user)
+            queryset = CompanyProfile.objects.select_related("user").filter(
+                user=self.request.user
+            )
 
             if not queryset.exists():
                 raise NotFound("Company profile not found.")
 
-            logger.info("Profile fetched from DB and cached",
-                        extra={"user_id": self.request.user.id})
+            logger.info(
+                "Profile fetched from DB and cached",
+                extra={"user_id": self.request.user.id},
+            )
             return queryset
 
         except Exception as e:
-            logger.error("Failed to fetch profile", extra={
-                         "user_id": self.request.user.id, "error": str(e)}, exc_info=True)
+            logger.error(
+                "Failed to fetch profile",
+                extra={"user_id": self.request.user.id, "error": str(e)},
+                exc_info=True,
+            )
             raise NotFound(detail="Company profile not found.")
 
     def get_serializer_class(self):
-        if self.action in ['create', 'update', 'partial_update']:
+        if self.action in ["create", "update", "partial_update"]:
             return CompanyProfileCreateSerializer
-        
+
         return CompanyProfileSerializer
 
     # @action(detail=False, methods=['get'])
@@ -86,56 +92,69 @@ class DashboardViewSet(APIView):
         cached_data = cache.get(cache_key)
 
         if cached_data:
-            logger.info("Dashboard data retrieved from cache",
-                        extra={"user_id": user_id})
+            logger.info(
+                "Dashboard data retrieved from cache", extra={"user_id": user_id}
+            )
             return Response(cached_data)
 
         try:
-            company = CompanyProfile.objects.select_related(
-                "user").filter(user=request.user).first()
+            company = (
+                CompanyProfile.objects.select_related("user")
+                .filter(user=request.user)
+                .first()
+            )
 
             if not company:
-                logger.warning("Company profile not found",
-                               extra={"user_id": user_id})
+                logger.warning("Company profile not found", extra={"user_id": user_id})
                 return Response({"error": "Company profile not found"}, status=404)
 
-            tax_file_count = TaxDeclarationFile.objects.filter(company=company).aggregate(
-                tax_files_count=Count("id")
-            )
-            report_file_count = BalanceReportFile.objects.filter(company=company).aggregate(
-                report_files_count=Count("id")
-            )
-            human_resource_count = HumanResource.objects.filter(company=company).aggregate(
-                human_resource_files_count=Count("id")
-            )
+            tax_file_count = TaxDeclarationFile.objects.filter(
+                company=company
+            ).aggregate(tax_files_count=Count("id"))
+            report_file_count = BalanceReportFile.objects.filter(
+                company=company
+            ).aggregate(report_files_count=Count("id"))
+            human_resource_count = HumanResource.objects.filter(
+                company=company
+            ).aggregate(human_resource_files_count=Count("id"))
 
             tickets_count = Ticket.objects.filter(issuer=company).count()
 
-            total_uploaded_files_count = tax_file_count["tax_files_count"] + \
-                report_file_count["report_files_count"] + \
-                human_resource_count["human_resource_files_count"]
+            total_uploaded_files_count = (
+                tax_file_count["tax_files_count"]
+                + report_file_count["report_files_count"]
+                + human_resource_count["human_resource_files_count"]
+            )
 
             requests_count = {}
             for app in settings.APP_REQUEST_TYPES:
-                model = getattr(importlib.import_module(
-                    "request.models"), f"{app.title()}Request")
+                model = getattr(
+                    importlib.import_module("request.models"), f"{app.title()}Request"
+                )
                 requests_count[f"{app.lower()}_request_count"] = model.objects.filter(
-                    company=company).count()
+                    company=company
+                ).count()
 
             response_data = {
-                'all_uploaded_files_count': total_uploaded_files_count,
-                'report_files_count': report_file_count["report_files_count"],
-                'tax_files_count': tax_file_count["tax_files_count"],
+                "all_uploaded_files_count": total_uploaded_files_count,
+                "report_files_count": report_file_count["report_files_count"],
+                "tax_files_count": tax_file_count["tax_files_count"],
                 "requests_count": requests_count,
                 "tickets_count": tickets_count,
             }
 
             cache.set(cache_key, response_data)
-            logger.info("Dashboard data fetched from DB and cached",
-                        extra={"user_id": user_id})
+            logger.info(
+                "Dashboard data fetched from DB and cached", extra={"user_id": user_id}
+            )
             return Response(response_data)
 
         except Exception as e:
-            logger.error("Failed to fetch dashboard data", extra={
-                         "user_id": user_id, "error": str(e)}, exc_info=True)
-            return Response({"error": "An error occurred while fetching dashboard data"}, status=500)
+            logger.error(
+                "Failed to fetch dashboard data",
+                extra={"user_id": user_id, "error": str(e)},
+                exc_info=True,
+            )
+            return Response(
+                {"error": "An error occurred while fetching dashboard data"}, status=500
+            )

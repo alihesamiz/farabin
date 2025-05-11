@@ -7,13 +7,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('packages', '0015_subscription_is_active'),
+        ("packages", "0015_subscription_is_active"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AddConstraint(
-            model_name='order',
-            constraint=models.UniqueConstraint(fields=('user', 'package'), name='user_unique_package_order'),
+            model_name="order",
+            constraint=models.UniqueConstraint(
+                fields=("user", "package"), name="user_unique_package_order"
+            ),
         ),
     ]

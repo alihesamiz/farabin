@@ -6,32 +6,32 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('management', '0003_alter_swotmatrix_options_and_more'),
+        ("management", "0003_alter_swotmatrix_options_and_more"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='swotanalysis',
-            name='analysis',
+            model_name="swotanalysis",
+            name="analysis",
         ),
         migrations.AddField(
-            model_name='swotanalysis',
-            name='so_analysis',
-            field=models.TextField(blank=True, null=True, verbose_name='SO Analysis'),
+            model_name="swotanalysis",
+            name="so_analysis",
+            field=models.TextField(blank=True, null=True, verbose_name="SO Analysis"),
         ),
         migrations.AddField(
-            model_name='swotanalysis',
-            name='st_analysis',
-            field=models.TextField(blank=True, null=True, verbose_name='ST Analysis'),
+            model_name="swotanalysis",
+            name="st_analysis",
+            field=models.TextField(blank=True, null=True, verbose_name="ST Analysis"),
         ),
         migrations.AddField(
-            model_name='swotanalysis',
-            name='wo_analysis',
-            field=models.TextField(blank=True, null=True, verbose_name='WO Analysis'),
+            model_name="swotanalysis",
+            name="wo_analysis",
+            field=models.TextField(blank=True, null=True, verbose_name="WO Analysis"),
         ),
         migrations.AddField(
-            model_name='swotanalysis',
-            name='wt_analysis',
-            field=models.TextField(blank=True, null=True, verbose_name='WT Analysis'),
+            model_name="swotanalysis",
+            name="wt_analysis",
+            field=models.TextField(blank=True, null=True, verbose_name="WT Analysis"),
         ),
     ]

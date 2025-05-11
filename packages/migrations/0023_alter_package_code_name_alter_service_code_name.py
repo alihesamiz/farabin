@@ -6,20 +6,32 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('packages', '0022_order_service'),
+        ("packages", "0022_order_service"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='package',
-            name='code_name',
-            field=models.CharField(blank=True, default=1, max_length=2, unique=True, verbose_name='Code Name'),
+            model_name="package",
+            name="code_name",
+            field=models.CharField(
+                blank=True,
+                default=1,
+                max_length=2,
+                unique=True,
+                verbose_name="Code Name",
+            ),
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name='service',
-            name='code_name',
-            field=models.CharField(blank=True, default=1, max_length=2, unique=True, verbose_name='Code Name'),
+            model_name="service",
+            name="code_name",
+            field=models.CharField(
+                blank=True,
+                default=1,
+                max_length=2,
+                unique=True,
+                verbose_name="Code Name",
+            ),
             preserve_default=False,
         ),
     ]

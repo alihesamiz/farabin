@@ -8,38 +8,70 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('management', '0007_alter_humanresource_options_and_more'),
+        ("management", "0007_alter_humanresource_options_and_more"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='swotmatrix',
-            options={'verbose_name': 'SWOT ماتریس', 'verbose_name_plural': 'SWOT ماتریس\u200cها'},
+            name="swotmatrix",
+            options={
+                "verbose_name": "SWOT ماتریس",
+                "verbose_name_plural": "SWOT ماتریس\u200cها",
+            },
         ),
         migrations.AlterModelOptions(
-            name='swotoption',
-            options={'verbose_name': 'SWOT گزینه', 'verbose_name_plural': 'SWOT گزینه\u200cها'},
+            name="swotoption",
+            options={
+                "verbose_name": "SWOT گزینه",
+                "verbose_name_plural": "SWOT گزینه\u200cها",
+            },
         ),
         migrations.AlterModelOptions(
-            name='swotquestion',
-            options={'verbose_name': 'SWOT سوال', 'verbose_name_plural': 'SWOT سوالات'},
+            name="swotquestion",
+            options={"verbose_name": "SWOT سوال", "verbose_name_plural": "SWOT سوالات"},
         ),
         migrations.CreateModel(
-            name='SWOTAnalysis',
+            name="SWOTAnalysis",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('so', models.TextField(verbose_name='تحلیل نقاط قوت و فرصت\u200cها')),
-                ('st', models.TextField(verbose_name='تحلیل نقاط قوت و تهدیدات')),
-                ('wo', models.TextField(verbose_name='تحلیل نقاط ضعف و فرصت\u200cها')),
-                ('wt', models.TextField(verbose_name='تحلیل نقاط قوت و تهدیدات')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='تاریخ بروزرسانی')),
-                ('matrix', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='analysis', to='management.swotmatrix', verbose_name='ماتریس')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("so", models.TextField(verbose_name="تحلیل نقاط قوت و فرصت\u200cها")),
+                ("st", models.TextField(verbose_name="تحلیل نقاط قوت و تهدیدات")),
+                ("wo", models.TextField(verbose_name="تحلیل نقاط ضعف و فرصت\u200cها")),
+                ("wt", models.TextField(verbose_name="تحلیل نقاط قوت و تهدیدات")),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="تاریخ ایجاد"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="تاریخ بروزرسانی"),
+                ),
+                (
+                    "matrix",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="analysis",
+                        to="management.swotmatrix",
+                        verbose_name="ماتریس",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'SWOT تحلیل',
-                'verbose_name_plural': 'SWOT تحلیل\u200cها',
-                'constraints': [models.UniqueConstraint(fields=('matrix',), name='unique_matrix_analysis_swot')],
+                "verbose_name": "SWOT تحلیل",
+                "verbose_name_plural": "SWOT تحلیل\u200cها",
+                "constraints": [
+                    models.UniqueConstraint(
+                        fields=("matrix",), name="unique_matrix_analysis_swot"
+                    )
+                ],
             },
             bases=(django_lifecycle.mixins.LifecycleModelMixin, models.Model),
         ),

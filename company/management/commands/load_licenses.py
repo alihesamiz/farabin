@@ -23,7 +23,8 @@ class Command(BaseCommand):
         try:
             for code, name in TYPES.items():
                 license, created = License.objects.update_or_create(
-                    code=code, defaults={"name": name})
+                    code=code, defaults={"name": name}
+                )
             logger.info("Licenses types loaded successfully")
         except Exception as e:
             logger.error(f"Error while Loading licenses types:{e}")

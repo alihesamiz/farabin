@@ -7,19 +7,27 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0002_packagepermission_userpermission'),
-        ('packages', '0008_alter_subscription_user'),
+        ("core", "0002_packagepermission_userpermission"),
+        ("packages", "0008_alter_subscription_user"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='packagepermission',
-            name='package',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='permissions', to='packages.package'),
+            model_name="packagepermission",
+            name="package",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="permissions",
+                to="packages.package",
+            ),
         ),
         migrations.AddField(
-            model_name='packagepermission',
-            name='service',
-            field=models.ManyToManyField(blank=True, null=True, related_name='permissions', to='packages.service'),
+            model_name="packagepermission",
+            name="service",
+            field=models.ManyToManyField(
+                blank=True, null=True, related_name="permissions", to="packages.service"
+            ),
         ),
     ]

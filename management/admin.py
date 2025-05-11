@@ -1,34 +1,45 @@
 from django.utils.translation import gettext_lazy as _
 from django.contrib import admin
 
-from management.models import HumanResource, PersonelInformation, OrganizationChartBase, SWOTAnalysis, SWOTQuestion, SWOTOption, SWOTMatrix
+from management.models import (
+    HumanResource,
+    PersonelInformation,
+    OrganizationChartBase,
+    SWOTAnalysis,
+    SWOTQuestion,
+    SWOTOption,
+    SWOTMatrix,
+)
 
 
 @admin.register(PersonelInformation)
 class PersonelInformationAdmin(admin.ModelAdmin):
-    list_display = ['human_resource', 'name',
-                    'obligations', 'position']
-    autocomplete_fields = ['human_resource']
-    filter_horizontal = ['reports_to', 'cooperates_with']
-    search_fields = ['name', 'obligations',
-                     'position', 'reports_to', 'cooperates_with']
-    list_filter = ['human_resource', 'obligations',
-                   'position', 'reports_to', 'cooperates_with']
+    list_display = ["human_resource", "name", "obligations", "position"]
+    autocomplete_fields = ["human_resource"]
+    filter_horizontal = ["reports_to", "cooperates_with"]
+    search_fields = ["name", "obligations", "position", "reports_to", "cooperates_with"]
+    list_filter = [
+        "human_resource",
+        "obligations",
+        "position",
+        "reports_to",
+        "cooperates_with",
+    ]
 
 
 @admin.register(HumanResource)
 class HumanResourceAdmin(admin.ModelAdmin):
-    list_display = ['company', 'excel_file', 'created_at', 'updated_at']
-    autocomplete_fields = ['company']
-    search_fields = ['company', 'excel_file']
-    list_filter = ['company', 'created_at', 'updated_at']
+    list_display = ["company", "excel_file", "created_at", "updated_at"]
+    autocomplete_fields = ["company"]
+    search_fields = ["company", "excel_file"]
+    list_filter = ["company", "created_at", "updated_at"]
 
 
 @admin.register(OrganizationChartBase)
 class OrganizationChartAdmin(admin.ModelAdmin):
-    list_display = ['field', 'position_excel']
-    search_fields = ['field', 'position_excel']
-    list_filter = ['field', 'position_excel']
+    list_display = ["field", "position_excel"]
+    search_fields = ["field", "position_excel"]
+    list_filter = ["field", "position_excel"]
 
 
 @admin.register(SWOTQuestion)
@@ -54,21 +65,22 @@ class SWOTOptionAdmin(admin.ModelAdmin):
     search_fields = ["company__company_title", "answer"]
     list_per_page = 20
 
-    @admin.display(description=_("Company Title"),)
+    @admin.display(
+        description=_("Company Title"),
+    )
     def company_name(self, obj):
         return obj.company.company_title
 
 
 @admin.register(SWOTMatrix)
 class SWOTMatrixAdmin(admin.ModelAdmin):
-    list_display = [
-        "company_name",
-        "created_at",
-        "updated_at"]
+    list_display = ["company_name", "created_at", "updated_at"]
     filter_horizontal = ["options"]
     list_per_page = 20
 
-    @admin.display(description=_("Company Title"),)
+    @admin.display(
+        description=_("Company Title"),
+    )
     def company_name(self, obj):
         return obj.company.company_title
 
@@ -78,7 +90,8 @@ class SWOTMatrixAdmin(admin.ModelAdmin):
                 kwargs["queryset"] = SWOTOption.objects.all()
             else:
                 kwargs["queryset"] = SWOTOption.objects.filter(
-                    company__user=request.user)
+                    company__user=request.user
+                )
         return super().formfield_for_manytomany(db_field, request, **kwargs)
 
 

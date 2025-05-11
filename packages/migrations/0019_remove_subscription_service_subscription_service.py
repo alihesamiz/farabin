@@ -6,17 +6,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('packages', '0018_subscription_service_alter_subscription_package_and_more'),
+        ("packages", "0018_subscription_service_alter_subscription_package_and_more"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='subscription',
-            name='service',
+            model_name="subscription",
+            name="service",
         ),
         migrations.AddField(
-            model_name='subscription',
-            name='service',
-            field=models.ManyToManyField(blank=True, related_name='subscriptions', to='packages.service', verbose_name='Service'),
+            model_name="subscription",
+            name="service",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="subscriptions",
+                to="packages.service",
+                verbose_name="Service",
+            ),
         ),
     ]

@@ -7,22 +7,51 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Service',
+            name="Service",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(choices=[('financial', 'Financial'), ('marketing', 'Marketing'), ('management', 'Management'), ('production', 'Production'), ('mis', 'Management Information System'), ('research_and_development', 'Research and Development')], max_length=30, verbose_name='Service Name')),
-                ('description', models.TextField(verbose_name='Service Description')),
-                ('price', models.DecimalField(decimal_places=2, max_digits=20, verbose_name='Price')),
-                ('is_active', models.BooleanField(default=False, verbose_name='Is Active?')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        choices=[
+                            ("financial", "Financial"),
+                            ("marketing", "Marketing"),
+                            ("management", "Management"),
+                            ("production", "Production"),
+                            ("mis", "Management Information System"),
+                            ("research_and_development", "Research and Development"),
+                        ],
+                        max_length=30,
+                        verbose_name="Service Name",
+                    ),
+                ),
+                ("description", models.TextField(verbose_name="Service Description")),
+                (
+                    "price",
+                    models.DecimalField(
+                        decimal_places=2, max_digits=20, verbose_name="Price"
+                    ),
+                ),
+                (
+                    "is_active",
+                    models.BooleanField(default=False, verbose_name="Is Active?"),
+                ),
             ],
             options={
-                'verbose_name': 'Service',
-                'verbose_name_plural': 'Services',
+                "verbose_name": "Service",
+                "verbose_name_plural": "Services",
             },
         ),
     ]

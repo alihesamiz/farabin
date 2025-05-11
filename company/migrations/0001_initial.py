@@ -8,82 +8,192 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='CompanyProfile',
+            name="CompanyProfile",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('profile_active', models.BooleanField(default=False, verbose_name='Profile Active')),
-                ('company_title', models.CharField(max_length=255, verbose_name='Company Title')),
-                ('email', models.EmailField(blank=True, max_length=255, null=True, unique=True, verbose_name='Email')),
-                ('social_code', models.CharField(blank=True, max_length=10, null=True, unique=True, verbose_name='Social Code')),
-                ('manager_name', models.CharField(max_length=255, verbose_name='Manager Full Name')),
-                ('insurance_list', models.PositiveSmallIntegerField(default=1, verbose_name='Insurance List')),
-                ('address', models.CharField(max_length=255, verbose_name='Address')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "profile_active",
+                    models.BooleanField(default=False, verbose_name="Profile Active"),
+                ),
+                (
+                    "company_title",
+                    models.CharField(max_length=255, verbose_name="Company Title"),
+                ),
+                (
+                    "email",
+                    models.EmailField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        unique=True,
+                        verbose_name="Email",
+                    ),
+                ),
+                (
+                    "social_code",
+                    models.CharField(
+                        blank=True,
+                        max_length=10,
+                        null=True,
+                        unique=True,
+                        verbose_name="Social Code",
+                    ),
+                ),
+                (
+                    "manager_name",
+                    models.CharField(max_length=255, verbose_name="Manager Full Name"),
+                ),
+                (
+                    "insurance_list",
+                    models.PositiveSmallIntegerField(
+                        default=1, verbose_name="Insurance List"
+                    ),
+                ),
+                ("address", models.CharField(max_length=255, verbose_name="Address")),
             ],
             options={
-                'verbose_name': 'Company Profile',
-                'verbose_name_plural': 'Company Profiles',
+                "verbose_name": "Company Profile",
+                "verbose_name_plural": "Company Profiles",
             },
         ),
         migrations.CreateModel(
-            name='CompanyService',
+            name="CompanyService",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('is_active', models.BooleanField(default=False, verbose_name='Activate')),
-                ('purchased_date', models.DateField(auto_now_add=True, verbose_name='Purchased Date')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "is_active",
+                    models.BooleanField(default=False, verbose_name="Activate"),
+                ),
+                (
+                    "purchased_date",
+                    models.DateField(auto_now_add=True, verbose_name="Purchased Date"),
+                ),
             ],
             options={
-                'verbose_name': 'Company Service',
-                'verbose_name_plural': 'Company Services',
+                "verbose_name": "Company Service",
+                "verbose_name_plural": "Company Services",
             },
         ),
         migrations.CreateModel(
-            name='License',
+            name="License",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('code', models.CharField(choices=[('itl', 'Industrial town'), ('tl', 'Technological'), ('kbl', 'Knowledge base'), ('ol', 'Others')], max_length=3, unique=True, verbose_name='License Code')),
-                ('name', models.CharField(max_length=50, verbose_name='License Name')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "code",
+                    models.CharField(
+                        choices=[
+                            ("itl", "Industrial town"),
+                            ("tl", "Technological"),
+                            ("kbl", "Knowledge base"),
+                            ("ol", "Others"),
+                        ],
+                        max_length=3,
+                        unique=True,
+                        verbose_name="License Code",
+                    ),
+                ),
+                ("name", models.CharField(max_length=50, verbose_name="License Name")),
             ],
             options={
-                'verbose_name': 'License',
-                'verbose_name_plural': 'Licenses',
+                "verbose_name": "License",
+                "verbose_name_plural": "Licenses",
             },
         ),
         migrations.CreateModel(
-            name='LifeCycle',
+            name="LifeCycle",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('capital_providing', models.CharField(choices=[('operational', 'Operational'), ('finance', 'Finance'), ('invest', 'Invest')], default='operational', max_length=11, verbose_name='Capital Providing')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "capital_providing",
+                    models.CharField(
+                        choices=[
+                            ("operational", "Operational"),
+                            ("finance", "Finance"),
+                            ("invest", "Invest"),
+                        ],
+                        default="operational",
+                        max_length=11,
+                        verbose_name="Capital Providing",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Life Cycle',
-                'verbose_name_plural': 'Life Cycles',
+                "verbose_name": "Life Cycle",
+                "verbose_name_plural": "Life Cycles",
             },
         ),
         migrations.CreateModel(
-            name='SpecialTech',
+            name="SpecialTech",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
             ],
             options={
-                'verbose_name': 'Special Tech',
-                'verbose_name_plural': 'Special Techs',
+                "verbose_name": "Special Tech",
+                "verbose_name_plural": "Special Techs",
             },
         ),
         migrations.CreateModel(
-            name='TechField',
+            name="TechField",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
             ],
             options={
-                'verbose_name': 'Tech Field',
-                'verbose_name_plural': 'Tech Fields',
+                "verbose_name": "Tech Field",
+                "verbose_name_plural": "Tech Fields",
             },
         ),
     ]

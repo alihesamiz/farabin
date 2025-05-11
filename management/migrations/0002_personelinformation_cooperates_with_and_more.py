@@ -7,154 +7,443 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('company', '0002_initial'),
-        ('management', '0001_initial'),
+        ("company", "0002_initial"),
+        ("management", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='personelinformation',
-            name='cooperates_with',
-            field=models.ManyToManyField(blank=True, to='management.personelinformation', verbose_name='Cooperates with (Personnel)'),
+            model_name="personelinformation",
+            name="cooperates_with",
+            field=models.ManyToManyField(
+                blank=True,
+                to="management.personelinformation",
+                verbose_name="Cooperates with (Personnel)",
+            ),
         ),
         migrations.AddField(
-            model_name='personelinformation',
-            name='is_exist',
-            field=models.BooleanField(default=False, verbose_name='Is Exist'),
+            model_name="personelinformation",
+            name="is_exist",
+            field=models.BooleanField(default=False, verbose_name="Is Exist"),
         ),
         migrations.AlterField(
-            model_name='personelinformation',
-            name='obligations',
-            field=models.TextField(verbose_name='Obligation'),
+            model_name="personelinformation",
+            name="obligations",
+            field=models.TextField(verbose_name="Obligation"),
         ),
         migrations.RemoveField(
-            model_name='personelinformation',
-            name='reports_to',
+            model_name="personelinformation",
+            name="reports_to",
         ),
         migrations.CreateModel(
-            name='SWOTOpportunityOption',
+            name="SWOTOpportunityOption",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(blank=True, choices=[('strong', 'Strong'), ('weak', 'Weak'), ('average', 'Average'), ('excellent', 'Excellent'), ('good', 'Good'), ('poor', 'Poor'), ('satisfactory', 'Satisfactory'), ('unsatisfactory', 'Unsatisfactory')], max_length=100, null=True, verbose_name='Name')),
-                ('custom_name', models.CharField(blank=True, max_length=100, null=True, verbose_name='Custom Name')),
-                ('company', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='swot_opportunity', to='company.companyprofile', verbose_name='Company')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("strong", "Strong"),
+                            ("weak", "Weak"),
+                            ("average", "Average"),
+                            ("excellent", "Excellent"),
+                            ("good", "Good"),
+                            ("poor", "Poor"),
+                            ("satisfactory", "Satisfactory"),
+                            ("unsatisfactory", "Unsatisfactory"),
+                        ],
+                        max_length=100,
+                        null=True,
+                        verbose_name="Name",
+                    ),
+                ),
+                (
+                    "custom_name",
+                    models.CharField(
+                        blank=True,
+                        max_length=100,
+                        null=True,
+                        verbose_name="Custom Name",
+                    ),
+                ),
+                (
+                    "company",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="swot_opportunity",
+                        to="company.companyprofile",
+                        verbose_name="Company",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'SWOT Opportunity Option',
-                'verbose_name_plural': 'SWOT Opportunities Option',
+                "verbose_name": "SWOT Opportunity Option",
+                "verbose_name_plural": "SWOT Opportunities Option",
             },
         ),
         migrations.CreateModel(
-            name='SWOTStrengthOption',
+            name="SWOTStrengthOption",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(blank=True, choices=[('strong', 'Strong'), ('weak', 'Weak'), ('average', 'Average'), ('excellent', 'Excellent'), ('good', 'Good'), ('poor', 'Poor'), ('satisfactory', 'Satisfactory'), ('unsatisfactory', 'Unsatisfactory')], max_length=100, null=True, verbose_name='Name')),
-                ('custom_name', models.CharField(blank=True, max_length=100, null=True, verbose_name='Custom Name')),
-                ('company', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='swot_strengths', to='company.companyprofile', verbose_name='Company')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("strong", "Strong"),
+                            ("weak", "Weak"),
+                            ("average", "Average"),
+                            ("excellent", "Excellent"),
+                            ("good", "Good"),
+                            ("poor", "Poor"),
+                            ("satisfactory", "Satisfactory"),
+                            ("unsatisfactory", "Unsatisfactory"),
+                        ],
+                        max_length=100,
+                        null=True,
+                        verbose_name="Name",
+                    ),
+                ),
+                (
+                    "custom_name",
+                    models.CharField(
+                        blank=True,
+                        max_length=100,
+                        null=True,
+                        verbose_name="Custom Name",
+                    ),
+                ),
+                (
+                    "company",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="swot_strengths",
+                        to="company.companyprofile",
+                        verbose_name="Company",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'SWOT Strength Option',
-                'verbose_name_plural': 'SWOT Strengths Option',
+                "verbose_name": "SWOT Strength Option",
+                "verbose_name_plural": "SWOT Strengths Option",
             },
         ),
         migrations.CreateModel(
-            name='SWOTThreatOption',
+            name="SWOTThreatOption",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(blank=True, choices=[('strong', 'Strong'), ('weak', 'Weak'), ('average', 'Average'), ('excellent', 'Excellent'), ('good', 'Good'), ('poor', 'Poor'), ('satisfactory', 'Satisfactory'), ('unsatisfactory', 'Unsatisfactory')], max_length=100, null=True, verbose_name='Name')),
-                ('custom_name', models.CharField(blank=True, max_length=100, null=True, verbose_name='Custom Name')),
-                ('company', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='swot_threat', to='company.companyprofile', verbose_name='Company')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("strong", "Strong"),
+                            ("weak", "Weak"),
+                            ("average", "Average"),
+                            ("excellent", "Excellent"),
+                            ("good", "Good"),
+                            ("poor", "Poor"),
+                            ("satisfactory", "Satisfactory"),
+                            ("unsatisfactory", "Unsatisfactory"),
+                        ],
+                        max_length=100,
+                        null=True,
+                        verbose_name="Name",
+                    ),
+                ),
+                (
+                    "custom_name",
+                    models.CharField(
+                        blank=True,
+                        max_length=100,
+                        null=True,
+                        verbose_name="Custom Name",
+                    ),
+                ),
+                (
+                    "company",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="swot_threat",
+                        to="company.companyprofile",
+                        verbose_name="Company",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'SWOT Threat Option',
-                'verbose_name_plural': 'SWOT Threats Option',
+                "verbose_name": "SWOT Threat Option",
+                "verbose_name_plural": "SWOT Threats Option",
             },
         ),
         migrations.CreateModel(
-            name='SWOTWeaknessOption',
+            name="SWOTWeaknessOption",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(blank=True, choices=[('strong', 'Strong'), ('weak', 'Weak'), ('average', 'Average'), ('excellent', 'Excellent'), ('good', 'Good'), ('poor', 'Poor'), ('satisfactory', 'Satisfactory'), ('unsatisfactory', 'Unsatisfactory')], max_length=100, null=True, verbose_name='Name')),
-                ('custom_name', models.CharField(blank=True, max_length=100, null=True, verbose_name='Custom Name')),
-                ('company', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='swot_weakness', to='company.companyprofile', verbose_name='Company')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("strong", "Strong"),
+                            ("weak", "Weak"),
+                            ("average", "Average"),
+                            ("excellent", "Excellent"),
+                            ("good", "Good"),
+                            ("poor", "Poor"),
+                            ("satisfactory", "Satisfactory"),
+                            ("unsatisfactory", "Unsatisfactory"),
+                        ],
+                        max_length=100,
+                        null=True,
+                        verbose_name="Name",
+                    ),
+                ),
+                (
+                    "custom_name",
+                    models.CharField(
+                        blank=True,
+                        max_length=100,
+                        null=True,
+                        verbose_name="Custom Name",
+                    ),
+                ),
+                (
+                    "company",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="swot_weakness",
+                        to="company.companyprofile",
+                        verbose_name="Company",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'SWOT Weakness Option',
-                'verbose_name_plural': 'SWOT Weaknesses Option',
+                "verbose_name": "SWOT Weakness Option",
+                "verbose_name_plural": "SWOT Weaknesses Option",
             },
         ),
         migrations.CreateModel(
-            name='SWOTMatrix',
+            name="SWOTMatrix",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('create_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Updated At')),
-                ('company', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='swot_matrix_value', to='company.companyprofile', verbose_name='Company')),
-                ('opportunities', models.ManyToManyField(related_name='swot_matrices_opportunities', to='management.swotopportunityoption', verbose_name='Opportunities Options')),
-                ('strengths', models.ManyToManyField(related_name='swot_matrices_strengths', to='management.swotstrengthoption', verbose_name='Strengths Options')),
-                ('threats', models.ManyToManyField(related_name='swot_matrices_threats', to='management.swotthreatoption', verbose_name='Threats Options')),
-                ('weaknesses', models.ManyToManyField(related_name='swot_matrices_weaknesses', to='management.swotweaknessoption', verbose_name='Weaknesses Options')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "create_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Created At"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Updated At"),
+                ),
+                (
+                    "company",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="swot_matrix_value",
+                        to="company.companyprofile",
+                        verbose_name="Company",
+                    ),
+                ),
+                (
+                    "opportunities",
+                    models.ManyToManyField(
+                        related_name="swot_matrices_opportunities",
+                        to="management.swotopportunityoption",
+                        verbose_name="Opportunities Options",
+                    ),
+                ),
+                (
+                    "strengths",
+                    models.ManyToManyField(
+                        related_name="swot_matrices_strengths",
+                        to="management.swotstrengthoption",
+                        verbose_name="Strengths Options",
+                    ),
+                ),
+                (
+                    "threats",
+                    models.ManyToManyField(
+                        related_name="swot_matrices_threats",
+                        to="management.swotthreatoption",
+                        verbose_name="Threats Options",
+                    ),
+                ),
+                (
+                    "weaknesses",
+                    models.ManyToManyField(
+                        related_name="swot_matrices_weaknesses",
+                        to="management.swotweaknessoption",
+                        verbose_name="Weaknesses Options",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'SWOT Matrix',
-                'verbose_name_plural': 'SWOT Matrix',
+                "verbose_name": "SWOT Matrix",
+                "verbose_name_plural": "SWOT Matrix",
             },
         ),
         migrations.AddField(
-            model_name='personelinformation',
-            name='reports_to',
-            field=models.ManyToManyField(blank=True, to='management.personelinformation', verbose_name='Reports to (Personnel)'),
+            model_name="personelinformation",
+            name="reports_to",
+            field=models.ManyToManyField(
+                blank=True,
+                to="management.personelinformation",
+                verbose_name="Reports to (Personnel)",
+            ),
         ),
         migrations.CreateModel(
-            name='SWOTAnalysis',
+            name="SWOTAnalysis",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('analysis', models.TextField(verbose_name='Analysis')),
-                ('is_approved', models.BooleanField(default=False, verbose_name='Is Approved')),
-                ('create_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Updated At')),
-                ('swot_matrix', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='swot_analysis', to='management.swotmatrix', verbose_name='SWOT Matrix')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("analysis", models.TextField(verbose_name="Analysis")),
+                (
+                    "is_approved",
+                    models.BooleanField(default=False, verbose_name="Is Approved"),
+                ),
+                (
+                    "create_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Created At"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Updated At"),
+                ),
+                (
+                    "swot_matrix",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="swot_analysis",
+                        to="management.swotmatrix",
+                        verbose_name="SWOT Matrix",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'SWOT Analysis',
-                'verbose_name_plural': 'SWOT Analysis',
-                'constraints': [models.UniqueConstraint(fields=('swot_matrix',), name='unique_swot_analysis')],
+                "verbose_name": "SWOT Analysis",
+                "verbose_name_plural": "SWOT Analysis",
+                "constraints": [
+                    models.UniqueConstraint(
+                        fields=("swot_matrix",), name="unique_swot_analysis"
+                    )
+                ],
             },
         ),
         migrations.AddConstraint(
-            model_name='swotopportunityoption',
-            constraint=models.UniqueConstraint(condition=models.Q(('name__isnull', False)), fields=('name',), name='unique_opportunity_name'),
+            model_name="swotopportunityoption",
+            constraint=models.UniqueConstraint(
+                condition=models.Q(("name__isnull", False)),
+                fields=("name",),
+                name="unique_opportunity_name",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='swotopportunityoption',
-            constraint=models.UniqueConstraint(condition=models.Q(('custom_name__isnull', False)), fields=('custom_name',), name='unique_opportunity_custom_name'),
+            model_name="swotopportunityoption",
+            constraint=models.UniqueConstraint(
+                condition=models.Q(("custom_name__isnull", False)),
+                fields=("custom_name",),
+                name="unique_opportunity_custom_name",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='swotstrengthoption',
-            constraint=models.UniqueConstraint(condition=models.Q(('name__isnull', False)), fields=('name',), name='unique_strength_name'),
+            model_name="swotstrengthoption",
+            constraint=models.UniqueConstraint(
+                condition=models.Q(("name__isnull", False)),
+                fields=("name",),
+                name="unique_strength_name",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='swotstrengthoption',
-            constraint=models.UniqueConstraint(condition=models.Q(('custom_name__isnull', False)), fields=('custom_name',), name='unique_strength_custom_name'),
+            model_name="swotstrengthoption",
+            constraint=models.UniqueConstraint(
+                condition=models.Q(("custom_name__isnull", False)),
+                fields=("custom_name",),
+                name="unique_strength_custom_name",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='swotthreatoption',
-            constraint=models.UniqueConstraint(condition=models.Q(('name__isnull', False)), fields=('name',), name='unique_threat_name'),
+            model_name="swotthreatoption",
+            constraint=models.UniqueConstraint(
+                condition=models.Q(("name__isnull", False)),
+                fields=("name",),
+                name="unique_threat_name",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='swotthreatoption',
-            constraint=models.UniqueConstraint(condition=models.Q(('custom_name__isnull', False)), fields=('custom_name',), name='unique_threat_custom_name'),
+            model_name="swotthreatoption",
+            constraint=models.UniqueConstraint(
+                condition=models.Q(("custom_name__isnull", False)),
+                fields=("custom_name",),
+                name="unique_threat_custom_name",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='swotweaknessoption',
-            constraint=models.UniqueConstraint(condition=models.Q(('name__isnull', False)), fields=('name',), name='unique_weakness_name'),
+            model_name="swotweaknessoption",
+            constraint=models.UniqueConstraint(
+                condition=models.Q(("name__isnull", False)),
+                fields=("name",),
+                name="unique_weakness_name",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='swotweaknessoption',
-            constraint=models.UniqueConstraint(condition=models.Q(('custom_name__isnull', False)), fields=('custom_name',), name='unique_weakness_custom_name'),
+            model_name="swotweaknessoption",
+            constraint=models.UniqueConstraint(
+                condition=models.Q(("custom_name__isnull", False)),
+                fields=("custom_name",),
+                name="unique_weakness_custom_name",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='swotmatrix',
-            constraint=models.UniqueConstraint(fields=('company',), name='unique_company_swot'),
+            model_name="swotmatrix",
+            constraint=models.UniqueConstraint(
+                fields=("company",), name="unique_company_swot"
+            ),
         ),
     ]

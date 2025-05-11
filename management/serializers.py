@@ -2,7 +2,14 @@ import logging
 
 from rest_framework import serializers
 
-from management.models import HumanResource, PersonelInformation, OrganizationChartBase, SWOTMatrix, SWOTOption, SWOTQuestion
+from management.models import (
+    HumanResource,
+    PersonelInformation,
+    OrganizationChartBase,
+    SWOTMatrix,
+    SWOTOption,
+    SWOTQuestion,
+)
 from company.models import CompanyProfile
 
 
@@ -12,13 +19,12 @@ logger = logging.getLogger("management")
 class HumanResourceCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = HumanResource
-        fields = ['excel_file']  # , 'company']
+        fields = ["excel_file"]  # , 'company']
 
     def validate_company(self, value):
         logger.info(f"Validating company: {value}")
         if HumanResource.objects.filter(company=value).exists():
-            logger.warning(
-                f"Company {value} already has a Human Resource record.")
+            logger.warning(f"Company {value} already has a Human Resource record.")
             raise serializers.ValidationError(
                 "Each company can only have one Human Resource record."
             )
@@ -26,32 +32,36 @@ class HumanResourceCreateSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        user = self.context['request'].user
+        user = self.context["request"].user
         company = CompanyProfile.objects.get(user=user)
-        validated_data['company'] = company
-        logger.info(
-            f"Creating HumanResource for company: {company.company_title}")
+        validated_data["company"] = company
+        logger.info(f"Creating HumanResource for company: {company.company_title}")
         instance = super().create(validated_data)
-        logger.info(
-            f"HumanResource created successfully with ID: {instance.id}")
+        logger.info(f"HumanResource created successfully with ID: {instance.id}")
         return instance
 
 
 class HumanResourceUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = HumanResource
-        fields = ['excel_file']
-        extra_kwargs = {'excel_file': {'required': False}}
+        fields = ["excel_file"]
+        extra_kwargs = {"excel_file": {"required": False}}
 
 
 class HumanResourceSerializer(serializers.ModelSerializer):
-    company_name = serializers.CharField(source='company.name', read_only=True)
+    company_name = serializers.CharField(source="company.name", read_only=True)
 
     class Meta:
         model = HumanResource
-        fields = ['id', 'excel_file', 'company',
-                  'company_name', 'created_at', 'updated_at']
-        read_only_fields = ['id', 'created_at', 'updated_at']
+        fields = [
+            "id",
+            "excel_file",
+            "company",
+            "company_name",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = ["id", "created_at", "updated_at"]
 
 
 class PersonelInformationSerializer(serializers.ModelSerializer):
@@ -66,23 +76,32 @@ class PersonelInformationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PersonelInformation
-        fields = ["id", "human_resource_id", "name", "position",
-                  "reports_to", "cooperates_with", "obligations", "reports_relation", "coops_relation"]
+        fields = [
+            "id",
+            "human_resource_id",
+            "name",
+            "position",
+            "reports_to",
+            "cooperates_with",
+            "obligations",
+            "reports_relation",
+            "coops_relation",
+        ]
         read_only_fields = ["id", "human_resource_id"]
 
     def get_reports_relation(self, obj):
-        logger.info(
-            f"Fetching reports_relation for PersonelInformation ID: {obj.id}")
+        logger.info(f"Fetching reports_relation for PersonelInformation ID: {obj.id}")
         if not obj.reports_to.exists():
             return []
         return [f"{obj.position}-{person.position}" for person in obj.reports_to.all()]
 
     def get_coops_relation(self, obj):
-        logger.info(
-            f"Fetching coops_relation for PersonelInformation ID: {obj.id}")
+        logger.info(f"Fetching coops_relation for PersonelInformation ID: {obj.id}")
         if not obj.cooperates_with.exists():
             return []
-        return [f"{obj.position}-{person.position}" for person in obj.cooperates_with.all()]
+        return [
+            f"{obj.position}-{person.position}" for person in obj.cooperates_with.all()
+        ]
 
 
 class ChartNodeSerializer(serializers.ModelSerializer):
@@ -92,8 +111,14 @@ class ChartNodeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PersonelInformation
-        fields = ['id', 'name', 'position', 'reports_relation',
-                  "coops_relation", "obligations"]
+        fields = [
+            "id",
+            "name",
+            "position",
+            "reports_relation",
+            "coops_relation",
+            "obligations",
+        ]
 
     def get_reports_relation(self, obj):
         logger.info(f"Fetching reports_relation for ChartNode ID: {obj.id}")
@@ -105,15 +130,16 @@ class ChartNodeSerializer(serializers.ModelSerializer):
         logger.info(f"Fetching coops_relation for ChartNode ID: {obj.id}")
         if not obj.cooperates_with.exists():
             return []
-        return [f"{obj.position}-{person.position}" for person in obj.cooperates_with.all()]
+        return [
+            f"{obj.position}-{person.position}" for person in obj.cooperates_with.all()
+        ]
 
 
 class PersonelInformationCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PersonelInformation
-        fields = ["human_resource", "name",
-                  "position", "reports_to", "obligations"]
+        fields = ["human_resource", "name", "position", "reports_to", "obligations"]
 
 
 class PersonelInformationUpdateSerializer(serializers.ModelSerializer):
@@ -129,8 +155,7 @@ class PersonelInformationUpdateSerializer(serializers.ModelSerializer):
 
 
 class OrganizationChartFileSerializer(serializers.ModelSerializer):
-    position_excel_url = serializers.FileField(
-        source="position_excel", read_only=True)
+    position_excel_url = serializers.FileField(source="position_excel", read_only=True)
 
     class Meta:
         model = OrganizationChartBase
@@ -159,9 +184,8 @@ class SWOTOptionBaseSerializer(serializers.ModelSerializer):
 
 
 class SWOTOptionSerializer(SWOTOptionBaseSerializer):
-    question = serializers.PrimaryKeyRelatedField(
-        queryset=SWOTQuestion.objects.all())
-    question_detail = SWOTQuestionSerializer(source='question', read_only=True)
+    question = serializers.PrimaryKeyRelatedField(queryset=SWOTQuestion.objects.all())
+    question_detail = SWOTQuestionSerializer(source="question", read_only=True)
 
     class Meta(SWOTOptionBaseSerializer.Meta):
         fields = SWOTOptionBaseSerializer.Meta.fields + [
@@ -172,16 +196,11 @@ class SWOTOptionSerializer(SWOTOptionBaseSerializer):
 class SWOTOptionCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = SWOTOption
-        fields = [
-            "question",
-            "answer",
-            "category",
-            "external_factor"
-        ]
+        fields = ["question", "answer", "category", "external_factor"]
 
     def create(self, validated_data):
-        user = self.context['request'].user
-        company = getattr(user, 'company', None)
+        user = self.context["request"].user
+        company = getattr(user, "company", None)
 
         if not company:
             logger.error("User does not have an associated company.")
@@ -195,10 +214,10 @@ class SWOTOptionCreateSerializer(serializers.ModelSerializer):
         logger.info(f"SWOTOption created successfully with ID: {instance.id}")
         return instance
 
+
 class SWOTMatrixSerializer(serializers.ModelSerializer):
     options = SWOTOptionBaseSerializer(many=True, read_only=True)
-    company = serializers.PrimaryKeyRelatedField(
-        queryset=CompanyProfile.objects.all())
+    company = serializers.PrimaryKeyRelatedField(queryset=CompanyProfile.objects.all())
 
     strengths = SWOTOptionSerializer(many=True, read_only=True)
     weaknesses = SWOTOptionSerializer(many=True, read_only=True)

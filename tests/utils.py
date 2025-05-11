@@ -14,8 +14,10 @@ def api_client():
 def create_user():
     def _create_user(phone_number, national_code):
         user = User.objects.create(
-            phone_number=phone_number, national_code=national_code)
+            phone_number=phone_number, national_code=national_code
+        )
         return user
+
     return _create_user
 
 
@@ -27,4 +29,5 @@ def generate_otp():
         otp.otp_code = otp_code
         otp.save()
         return otp_code
+
     return _generate_otp

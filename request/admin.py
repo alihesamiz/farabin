@@ -13,7 +13,7 @@ class FinanceRequestAdmin(admin.ModelAdmin):
         "updated_at",
         "service",
         "tax_record",
-        "balance_record"
+        "balance_record",
     ]
 
 
@@ -25,5 +25,5 @@ class ManagementRequestAdmin(admin.ModelAdmin):
         "created_at",
         "updated_at",
         "service",
-        "human_resource_record"
+        "human_resource_record",
     ]

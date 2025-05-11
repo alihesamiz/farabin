@@ -7,13 +7,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('packages', '0023_alter_package_code_name_alter_service_code_name'),
+        ("packages", "0023_alter_package_code_name_alter_service_code_name"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='order',
-            name='package',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='order', to='packages.package', verbose_name='Package'),
+            model_name="order",
+            name="package",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="order",
+                to="packages.package",
+                verbose_name="Package",
+            ),
         ),
     ]

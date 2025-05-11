@@ -10,59 +10,100 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('company', '0001_initial'),
-        ('core', '0001_initial'),
+        ("company", "0001_initial"),
+        ("core", "0001_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='companyprofile',
-            name='city',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='core.city', verbose_name='City'),
+            model_name="companyprofile",
+            name="city",
+            field=models.ForeignKey(
+                default=1,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="core.city",
+                verbose_name="City",
+            ),
         ),
         migrations.AddField(
-            model_name='companyprofile',
-            name='province',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='core.province', verbose_name='Province'),
+            model_name="companyprofile",
+            name="province",
+            field=models.ForeignKey(
+                default=1,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="core.province",
+                verbose_name="Province",
+            ),
         ),
         migrations.AddField(
-            model_name='companyprofile',
-            name='user',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='company', to=settings.AUTH_USER_MODEL, verbose_name='User'),
+            model_name="companyprofile",
+            name="user",
+            field=models.OneToOneField(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="company",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="User",
+            ),
         ),
         migrations.AddField(
-            model_name='companyservice',
-            name='company',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='services', to='company.companyprofile', verbose_name='Company'),
+            model_name="companyservice",
+            name="company",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="services",
+                to="company.companyprofile",
+                verbose_name="Company",
+            ),
         ),
         migrations.AddField(
-            model_name='companyservice',
-            name='service',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='services', to='core.service', verbose_name='Service'),
+            model_name="companyservice",
+            name="service",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="services",
+                to="core.service",
+                verbose_name="Service",
+            ),
         ),
         migrations.AddField(
-            model_name='companyprofile',
-            name='license',
-            field=models.ManyToManyField(to='company.license', verbose_name='License Types'),
+            model_name="companyprofile",
+            name="license",
+            field=models.ManyToManyField(
+                to="company.license", verbose_name="License Types"
+            ),
         ),
         migrations.AddField(
-            model_name='companyprofile',
-            name='capital_providing_method',
-            field=models.ManyToManyField(related_name='company_profile', to='company.lifecycle', verbose_name='Capital Providing Method'),
+            model_name="companyprofile",
+            name="capital_providing_method",
+            field=models.ManyToManyField(
+                related_name="company_profile",
+                to="company.lifecycle",
+                verbose_name="Capital Providing Method",
+            ),
         ),
         migrations.AddField(
-            model_name='companyprofile',
-            name='special_field',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='company.specialtech', verbose_name='Special Field'),
+            model_name="companyprofile",
+            name="special_field",
+            field=models.ForeignKey(
+                default=1,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="company.specialtech",
+                verbose_name="Special Field",
+            ),
         ),
         migrations.AddField(
-            model_name='companyprofile',
-            name='tech_field',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='company.techfield', verbose_name='Technical Field'),
+            model_name="companyprofile",
+            name="tech_field",
+            field=models.ForeignKey(
+                default=1,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="company.techfield",
+                verbose_name="Technical Field",
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='companyservice',
-            unique_together={('company', 'service')},
+            name="companyservice",
+            unique_together={("company", "service")},
         ),
     ]
