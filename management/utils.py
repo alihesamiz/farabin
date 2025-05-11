@@ -1,4 +1,3 @@
-from graphql_jwt.utils import jwt_payload
 from filelock import FileLock
 import logging
 import glob
@@ -8,7 +7,7 @@ import os
 
 from django.conf import settings
 
-from rest_framework import (response, status)
+from rest_framework import response, status
 
 
 from company.models import TechField
@@ -86,9 +85,3 @@ def get_file_field(field):
     else:
         logger.warning(f"No file field found for {field}. Returning None.")
     return file_field
-
-
-def jwt_payload(user, context=None):
-    payload = jwt_payload(user, context)
-    payload['user_id'] = user.pk
-    return payload

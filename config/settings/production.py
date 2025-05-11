@@ -35,10 +35,10 @@ PROJECT_APPS = [
 THIRED_PARTY_APPS = [
     'rest_framework_simplejwt',
     'django_celery_beat',
-    'graphene_django',
     'drf_spectacular',
     'rest_framework',
     'nested_admin',
+    "django_lifecycle_checks",
     'corsheaders',
 ]
 

@@ -17,6 +17,7 @@ environ.Env.read_env(BASE_DIR/".env")
 SECRET_KEY = env.get_value("FARABIN_SECRET_KEY")
 
 FARABIN_COHERE_API_KEY = env.get_value("FARABIN_COHERE_API_KEY")
+FARABIN_GEMINI_API_KEY = env.get_value("FARABIN_GEMINI_API_KEY")
 
 ROOT_URLCONF = 'config.urls'
 

@@ -31,13 +31,14 @@ PROJECT_APPS = [
 
 THIRED_PARTY_APPS = [
     'rest_framework_simplejwt',
+    'django_lifecycle_checks',
     'django_celery_beat',
-    'graphene_django',
     'drf_spectacular',
     'rest_framework',
+    'debug_toolbar',
     'nested_admin',
     'corsheaders',
-    'debug_toolbar']
+]
 
 INSTALLED_APPS += PROJECT_APPS + THIRED_PARTY_APPS
 

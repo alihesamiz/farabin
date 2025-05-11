@@ -38,11 +38,11 @@ def delete_hr_file(sender, instance, **kwargs):
             os.remove(file_path)
 
 
-@receiver(post_save, sender=SWOTMatrix)
-def swot_analysis_signal(sender, instance, created, **kwargs):
-    # if created:
-    from management.tasks import generate_swot_analysis
-    logger.info("Creating SWOT analysis.")
-    print(instance.id)
-    generate_swot_analysis.delay(instance.id)
-    logger.info("SWOT analysis created successfully.")
+# @receiver(post_save, sender=SWOTMatrix)
+# def swot_analysis_signal(sender, instance, created, **kwargs):
+#     # if created:
+#     from management.tasks import generate_swot_analysis
+#     logger.info("Creating SWOT analysis.")
+#     print(instance.id)
+#     generate_swot_analysis.delay(instance.id)
+#     logger.info("SWOT analysis created successfully.")
