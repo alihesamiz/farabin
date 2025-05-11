@@ -91,8 +91,6 @@ sqlalchemy = "^2.0.37"
 openpyxl = "^3.1.5"
 drf-nested-routers = "^0.94.1"
 gunicorn = "^23.0.0"
-graphene-django = "^3.2.2"
-django-graphql-jwt = "^0.4.0"
 pandas = "^2.2.3"
 django-debug-toolbar = "^5.0.1"
 locust = "^2.33.1"
@@ -103,6 +101,7 @@ google-api-python-client = "^2.167.0"
 pytest = "^8.3.5"
 pytest-django = "^4.11.1"
 django-lifecycle = "^1.2.4"
+google-genai = "^1.14.0"
 
 [build-system]
 requires = ["poetry-core"]
