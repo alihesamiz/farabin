@@ -1,15 +1,21 @@
-from django_lifecycle.conditions import WhenFieldValueChangesTo
-from django.db.transaction import atomic
+import logging
+import os
+
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
+from django.db.transaction import atomic
 from django.db import models
 
-from django_lifecycle.hooks import BEFORE_CREATE, BEFORE_UPDATE, AFTER_CREATE, AFTER_UPDATE
+from django_lifecycle.hooks import BEFORE_CREATE, BEFORE_UPDATE, AFTER_CREATE, AFTER_UPDATE, AFTER_DELETE
+from django_lifecycle.conditions import WhenFieldValueChangesTo
 from django_lifecycle.mixins import LifecycleModelMixin
 from django_lifecycle.decorators import hook
 
 from core.validators import excel_file_validator
 from core.utils import GeneralUtils
+
+
+logger = logging.getLogger("management")
 
 
 def get_hr_file_upload_path(instance, filename):
@@ -18,7 +24,7 @@ def get_hr_file_upload_path(instance, filename):
     return path
 
 
-class HumanResource(models.Model):
+class HumanResource(LifecycleModelMixin, models.Model):
     company = models.ForeignKey('company.CompanyProfile', verbose_name=_(
         "شرکت"), null=False, blank=False, on_delete=models.CASCADE, related_name="hrfiles")
 
@@ -33,9 +39,6 @@ class HumanResource(models.Model):
     updated_at = models.DateTimeField(
         auto_now=True, verbose_name=_("تاریخ بروزرسانی"))
 
-    def __str__(self):
-        return f"{self.company.company_title}"  # › {self.excel_file}"
-
     class Meta:
         verbose_name = _("منابع انسانی")
         verbose_name_plural = _("منابع انسانی")
@@ -43,6 +46,32 @@ class HumanResource(models.Model):
             models.UniqueConstraint(
                 fields=['company'], name='unique_company_hr')
         ]
+
+    def __str__(self):
+        return f"{self.company.company_title}"  # › {self.excel_file}"
+
+    @hook(AFTER_CREATE, condition=WhenFieldValueChangesTo("is_approved", True))
+    def start_process_personnel_excel(self):
+        """
+        Hook to start the celery task of proccessing the human reources file
+        """
+        from management.tasks import process_personnel_excel
+        logger.info(
+            "Starting the process of creating personnel information.")
+        process_personnel_excel.delay(self.id)
+
+        logger.info(
+            "Process of creating personnel information started successfully.")
+        return
+
+    @hook(AFTER_DELETE)
+    def delete_hr_file(self):
+        """
+        Hook to delete the file after deleting the human resource
+        """
+        file_path = self.excel_file.path
+        if os.path.exists(file_path):
+            os.remove(file_path)
 
 
 class PersonelInformation(models.Model):
@@ -78,6 +107,10 @@ class PersonelInformation(models.Model):
 
     @classmethod
     def grouped_chart_data(cls, company):
+        """
+        This functions gather the data for each person with the aggregated
+        'reports-to' and 'cooperates-with' values
+        """
         queryset = cls.objects.prefetch_related(
             "human_resource__company").filter(human_resource__company=company)
         grouped_data = {}
@@ -127,7 +160,7 @@ def get_chart_excel_file_upload_path(instance, filename):
     return path
 
 
-class OrganizationChartBase(models.Model):
+class OrganizationChartBase(LifecycleModelMixin, models.Model):
 
     field = models.CharField(verbose_name=_(
         "زمینه"), max_length=150, null=False, blank=False)
@@ -135,12 +168,21 @@ class OrganizationChartBase(models.Model):
     position_excel = models.FileField(verbose_name=_("فایل اکسل موقعیت"), max_length=150, null=False, blank=False,
                                       upload_to=get_chart_excel_file_upload_path, validators=[excel_file_validator])
 
-    def __str__(self):
-        return f"{self.field.title()}"
-
     class Meta:
         verbose_name = _("نمودار سازمانی")
         verbose_name_plural = _("نمودارهای سازمانی")
+
+    def __str__(self):
+        return f"{self.field.title()}"
+
+    @hook(AFTER_DELETE)
+    def delete_hr_file(self):
+        """
+        Hook to delete the file after deleting the record
+        """
+        file_path = self.position_excel.path
+        if os.path.exists(file_path):
+            os.remove(file_path)
 
 
 class ExternalFactors(models.TextChoices):
@@ -221,15 +263,21 @@ class SWOTOption(LifecycleModelMixin, models.Model):
 
     @hook(BEFORE_CREATE)
     @hook(BEFORE_UPDATE)
-    def set_category_as_the_question_and_validate_external_factors(self):
+    def set_category_and_validate_external_factors(self):
         self.__set_category()
         self.__check_for_external_factors()
 
     def __set_category(self):
+        """
+        Set the category for each option as the questions category
+        """
         if self.question:
             self.category = self.question.category
 
     def __check_for_external_factors(self):
+        """
+        If the category is either opportunity or theat asks for the external factor if none is provided
+        """
         if self.category in ['Opportunity', 'Threat'] and not self.external_factor:
             self.external_factor = ExternalFactors.NONE
             return ValidationError(
@@ -289,6 +337,9 @@ class SWOTMatrix(LifecycleModelMixin, models.Model):
 
     @hook(AFTER_UPDATE, condition=WhenFieldValueChangesTo("is_approved", True))
     def start_analysing_task(self):
+        """
+        Hook to start the SWOT analyze process when the matrix 'is_approved'
+        """
         from management.tasks import generate_swot_analysis
         generate_swot_analysis.delay(self.id)
 
