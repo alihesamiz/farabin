@@ -1,7 +1,12 @@
+from django_lifecycle.conditions import WhenFieldValueChangesTo
+from django.db.transaction import atomic
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from django_lifecycle.hooks import BEFORE_CREATE, BEFORE_UPDATE, AFTER_CREATE, AFTER_UPDATE
+from django_lifecycle.mixins import LifecycleModelMixin
+from django_lifecycle.decorators import hook
 
 from core.validators import excel_file_validator
 from core.utils import GeneralUtils
@@ -15,25 +20,25 @@ def get_hr_file_upload_path(instance, filename):
 
 class HumanResource(models.Model):
     company = models.ForeignKey('company.CompanyProfile', verbose_name=_(
-        "Company"), null=False, blank=False, on_delete=models.CASCADE, related_name="hrfiles")
+        "شرکت"), null=False, blank=False, on_delete=models.CASCADE, related_name="hrfiles")
 
     excel_file = models.FileField(verbose_name=_(
-        "Excel File"), blank=False, null=False, upload_to=get_hr_file_upload_path, validators=[excel_file_validator])
+        "فایل اکسل"), blank=False, null=False, upload_to=get_hr_file_upload_path, validators=[excel_file_validator])
 
     is_approved = models.BooleanField(
-        verbose_name=_("Is Approved"), default=False)
+        verbose_name=_("تأیید شده"), default=False)
 
     created_at = models.DateTimeField(
-        auto_now_add=True, verbose_name=_("Created At"))
+        auto_now_add=True, verbose_name=_("تاریخ ایجاد"))
     updated_at = models.DateTimeField(
-        auto_now=True, verbose_name=_("Updated At"))
+        auto_now=True, verbose_name=_("تاریخ بروزرسانی"))
 
     def __str__(self):
         return f"{self.company.company_title}"  # › {self.excel_file}"
 
     class Meta:
-        verbose_name = _("Human Resource")
-        verbose_name_plural = _("Human Resources")
+        verbose_name = _("منابع انسانی")
+        verbose_name_plural = _("منابع انسانی")
         constraints = [
             models.UniqueConstraint(
                 fields=['company'], name='unique_company_hr')
@@ -42,31 +47,31 @@ class HumanResource(models.Model):
 
 class PersonelInformation(models.Model):
     human_resource = models.ForeignKey(HumanResource, verbose_name=_(
-        "Human Resource"), null=False, blank=False, on_delete=models.CASCADE, related_name='personelinformation')
+        "منابع انسانی"), null=False, blank=False, on_delete=models.CASCADE, related_name='personelinformation')
 
-    name = models.CharField(verbose_name=_("Full Name"),
+    name = models.CharField(verbose_name=_("نام کامل"),
                             max_length=250, null=False, blank=False)
 
     position = models.CharField(verbose_name=_(
-        "Position"), max_length=150, null=False, blank=False)
+        "موقعیت شغلی"), max_length=150, null=False, blank=False)
 
     reports_to = models.ManyToManyField('self', verbose_name=_(
-        "Reports to (Personnel)"), blank=True)
+        "گزارش به (پرسنل)"), blank=True)
 
     cooperates_with = models.ManyToManyField('self', verbose_name=_(
-        "Cooperates with (Personnel)"), blank=True)
+        "همکاری با (پرسنل)"), blank=True)
 
     obligations = models.TextField(verbose_name=_(
-        "Obligation"), null=False, blank=False)
+        "وظایف"), null=False, blank=False)
 
     is_exist = models.BooleanField(
-        verbose_name=_("Is Exist"),
+        verbose_name=_("موجود است"),
         default=False
     )
 
     class Meta:
-        verbose_name = _("Personnel Information")
-        verbose_name_plural = _("Personnel Information")
+        verbose_name = _("اطلاعات پرسنل")
+        verbose_name_plural = _("اطلاعات پرسنل")
 
     def __str__(self):
         return f"{self.name}"
@@ -125,169 +130,153 @@ def get_chart_excel_file_upload_path(instance, filename):
 class OrganizationChartBase(models.Model):
 
     field = models.CharField(verbose_name=_(
-        "Field"), max_length=150, null=False, blank=False)
+        "زمینه"), max_length=150, null=False, blank=False)
 
-    position_excel = models.FileField(verbose_name=_("Position Excel"), max_length=150, null=False, blank=False,
+    position_excel = models.FileField(verbose_name=_("فایل اکسل موقعیت"), max_length=150, null=False, blank=False,
                                       upload_to=get_chart_excel_file_upload_path, validators=[excel_file_validator])
 
     def __str__(self):
         return f"{self.field.title()}"
 
     class Meta:
-        verbose_name = _("Organization Chart")
-        verbose_name_plural = _("Organization Charts")
+        verbose_name = _("نمودار سازمانی")
+        verbose_name_plural = _("نمودارهای سازمانی")
 
 
-COMMON_SWOT_CHOICES = [
-    ('strong', _('Strong')),
-    ('weak', _('Weak')),
-    ('average', _('Average')),
-    ('excellent', _('Excellent')),
-    ('good', _('Good')),
-    ('poor', _('Poor')),
-    ('satisfactory', _('Satisfactory')),
-    ('unsatisfactory', _('Unsatisfactory')),
-]
+class ExternalFactors(models.TextChoices):
+    """External factors"""
+    POLITICAL = 'Political', _('سیاسی (مانند مقررات، سیاست‌های دولتی)')
+    ECONOMIC = 'Economic', _('اقتصادی (مانند روندهای بازار، تورم)')
+    SOCIAL = 'Social', _('اجتماعی (مانند تغییرات فرهنگی، جمعیت‌شناسی)')
+    TECHNOLOGICAL = 'Technological', _('فناوری (مانند نوآوری، اتوماسیون)')
+    ENVIRONMENTAL = 'Environmental', _(
+        'محیطی (مانند پایداری، تغییرات آب و هوایی)')
+    LEGAL = 'Legal', _('قانونی (مانند انطباق، قوانین)')
+    NONE = 'None', _('هیچ‌کدام')
 
 
-class SWOTOption(models.Model):
-    name = models.CharField(
-        verbose_name=_("Name"),
-        max_length=100,
-        choices=COMMON_SWOT_CHOICES,
-        blank=True,
-        null=True,
-    )
-    custom_name = models.CharField(
-        verbose_name=_("Custom Name"),
-        max_length=100,
-        blank=True,
-        null=True,
+class SWOTCategory(models.TextChoices):
+    STRENGTH = 'Strength', _('نقطه قوت')
+    WEAKNESS = 'Weakness', _('نقطه ضعف')
+    OPPORTUNITY = 'Opportunity', _('فرصت')
+    THREAT = 'Threat', _('تهدید')
+
+
+class SWOTQuestion(models.Model):
+    text = models.TextField(verbose_name=_("سوال"), unique=True)
+    category = models.CharField(
+        max_length=50,
+        choices=SWOTCategory.choices,
+        verbose_name=_("دسته‌بندی"),
     )
 
     class Meta:
-        abstract = True
+        verbose_name = _("SWOT سوال")
+        verbose_name_plural = _("SWOT سوالات")
 
     def __str__(self):
-        if self.custom_name:
-            return self.custom_name
-        if self.name:
-            return self.get_name_display()
-        return "Unnamed"
+        return f"{self.get_category_display()}: {self.text}"
 
-    def clean(self):
-        errors = {}
-        if not self.name and not self.custom_name:
-            errors['name'] = _(
-                "Either a predefined name or a custom name must be provided.")
-            errors['custom_name'] = _(
-                "Either a predefined name or a custom name must be provided.")
-        if self.name and self.custom_name:
-            errors['name'] = _(
-                "Cannot provide both a predefined name and a custom name.")
-            errors['custom_name'] = _(
-                "Cannot provide both a predefined name and a custom name.")
-        if self.custom_name and not self.custom_name.strip():
-            errors['custom_name'] = _("Custom name cannot be empty.")
 
-        if errors:
-            raise ValidationError(errors)
+class SWOTOption(LifecycleModelMixin, models.Model):
+    company = models.ForeignKey(
+        "company.CompanyProfile", verbose_name=_("شرکت"), on_delete=models.CASCADE, null=False, blank=False
+    )
+    question = models.ForeignKey(
+        SWOTQuestion, verbose_name=_("سوال"), on_delete=models.PROTECT, null=True, blank=True
+    )
+    answer = models.TextField(verbose_name=_("پاسخ"), blank=True, null=True)
+    category = models.CharField(
+        max_length=20, choices=SWOTCategory.choices, verbose_name=_("دسته‌بندی"))
+    external_factor = models.CharField(
+        max_length=50,
+        choices=ExternalFactors.choices,
+        verbose_name=_("عامل خارجی"),
+        blank=True,
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True, verbose_name=_("تاریخ ایجاد"))
+    updated_at = models.DateTimeField(
+        auto_now=True, verbose_name=_("تاریخ بروزرسانی"))
 
-    @classmethod
-    def generate_constraints(cls, prefix: str):
-        return [
+    class Meta:
+        verbose_name = _("SWOT گزینه")
+        verbose_name_plural = _("SWOT گزینه‌ها")
+        constraints = [
             models.UniqueConstraint(
-                fields=['name'],
-                condition=models.Q(name__isnull=False),
-                name=f'unique_{prefix}_name'
-            ),
-            models.UniqueConstraint(
-                fields=['custom_name'],
-                condition=models.Q(custom_name__isnull=False),
-                name=f'unique_{prefix}_custom_name'
-            ),
+                fields=['company', 'question', 'category'],
+                condition=models.Q(question__isnull=False),
+                name='unique_company_question_category'
+            )
+        ]
+        indexes = [
+            models.Index(fields=['company', 'category']),
+            models.Index(fields=['question']),
         ]
 
+    def __str__(self):
+        if self.question and self.answer:
+            return f"{self.get_category_display()}: {self.question.text}"
+        return f"{self.get_category_display()}"
 
-class SWOTStrengthOption(SWOTOption):
+    @hook(BEFORE_CREATE)
+    @hook(BEFORE_UPDATE)
+    def set_category_as_the_question_and_validate_external_factors(self):
+        self.__set_category()
+        self.__check_for_external_factors()
 
-    class Meta:
-        verbose_name = _("SWOT Strength Option")
-        verbose_name_plural = _("SWOT Strengths Option")
-        # Adding unique constraints to ensure that either name or custom_name is unique
-        constraints = SWOTOption.generate_constraints('strength')
+    def __set_category(self):
+        if self.question:
+            self.category = self.question.category
 
+    def __check_for_external_factors(self):
+        if self.category in ['Opportunity', 'Threat'] and not self.external_factor:
+            self.external_factor = ExternalFactors.NONE
+            return ValidationError(
+                {"external_factor": _(
+                    "External factor must be specified for Opportunities and Threats.")}
+            )
 
-class SWOTWeaknessOption(SWOTOption):
+    @hook(AFTER_CREATE)
+    @hook(AFTER_UPDATE)
+    def create_or_update_swot_matrix_after_new_options_addition(self):
+        """
+    After each SWOTOption is created or updated, this hook checks if the corresponding
+    SWOTMatrix for the company exists. If it does, it adds the new option; if not, it creates it.
+    """
+        with atomic():
+            matrix, created = SWOTMatrix.objects.get_or_create(
+                company=self.company)
 
-    class Meta:
-        verbose_name = _("SWOT Weakness Option")
-        verbose_name_plural = _("SWOT Weaknesses Option")
-        # Adding unique constraints to ensure that either name or custom_name is unique
-        constraints = SWOTOption.generate_constraints('weakness')
-
-
-class SWOTOpportunityOption(SWOTOption):
-
-    class Meta:
-        verbose_name = _("SWOT Opportunity Option")
-        verbose_name_plural = _("SWOT Opportunities Option")
-        # Adding unique constraints to ensure that either name or custom_name is unique
-        constraints = SWOTOption.generate_constraints('opportunity')
-
-
-class SWOTThreatOption(SWOTOption):
-
-    class Meta:
-        verbose_name = _("SWOT Threat Option")
-        verbose_name_plural = _("SWOT Threats Option")
-        # Adding unique constraints to ensure that either name or custom_name is unique
-        constraints = SWOTOption.generate_constraints('threat')
+            # Only add the new option if it's not already there
+            if not matrix.options.filter(id=self.id).exists():
+                matrix.options.add(self)
 
 
-class SWOTMatrix(models.Model):
+class SWOTMatrix(LifecycleModelMixin, models.Model):
     company = models.ForeignKey(
         'company.CompanyProfile',
-        verbose_name=_("Company"),
+        verbose_name=_("شرکت"),
         null=False,
         blank=False,
         on_delete=models.CASCADE,
         related_name="swot_matrices"
     )
-
-    strengths = models.ManyToManyField(
-        SWOTStrengthOption,
-        verbose_name=_("Strengths Options"),
-        related_name="swot_matrices_strengths"
+    options = models.ManyToManyField(
+        SWOTOption,
+        verbose_name=_("گزینه‌های SWOT"),
+        related_name="swot_matrices"
     )
-    weaknesses = models.ManyToManyField(
-        SWOTWeaknessOption,
-        verbose_name=_("Weaknesses Options"),
-        related_name="swot_matrices_weaknesses"
-    )
-    opportunities = models.ManyToManyField(
-        SWOTOpportunityOption,
-        verbose_name=_("Opportunities Options"),
-        related_name="swot_matrices_opportunities"
-    )
-    threats = models.ManyToManyField(
-        SWOTThreatOption,
-        verbose_name=_("Threats Options"),
-        related_name="swot_matrices_threats"
-    )
-
+    is_approved = models.BooleanField(
+        _("مورد تایید قرار گرفته است"), default=False)
     created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name=_("Created At")
-    )
+        auto_now_add=True, verbose_name=_("تاریخ ایجاد"))
     updated_at = models.DateTimeField(
-        auto_now=True,
-        verbose_name=_("Updated At")
-    )
+        auto_now=True, verbose_name=_("تاریخ بروزرسانی"))
 
     class Meta:
-        verbose_name = _("SWOT Matrix")
-        verbose_name_plural = _("SWOT Matrices")
+        verbose_name = _("SWOT ماتریس")
+        verbose_name_plural = _("SWOT ماتریس‌ها")
         constraints = [
             models.UniqueConstraint(
                 fields=['company'],
@@ -298,61 +287,51 @@ class SWOTMatrix(models.Model):
     def __str__(self):
         return f"{self.company.company_title!r} SWOT"
 
+    @hook(AFTER_UPDATE, condition=WhenFieldValueChangesTo("is_approved", True))
+    def start_analysing_task(self):
+        from management.tasks import generate_swot_analysis
+        generate_swot_analysis.delay(self.id)
 
-class SWOTAnalysis(models.Model):
-    swot_matrix = models.ForeignKey(
-        SWOTMatrix,
-        verbose_name=_("SWOT Matrix"),
-        null=False,
-        blank=False,
-        on_delete=models.CASCADE,
-        related_name="swot_analysis"
-    )
+    @property
+    def strengths(self):
+        return self.options.filter(category='Strength')
 
-    so_analysis = models.TextField(
-        verbose_name=_("SO Analysis"),
-        null=True,
-        blank=True
-    )
-    st_analysis = models.TextField(
-        verbose_name=_("ST Analysis"),
-        null=True,
-        blank=True
-    )
-    wo_analysis = models.TextField(
-        verbose_name=_("WO Analysis"),
-        null=True,
-        blank=True
-    )
-    wt_analysis = models.TextField(
-        verbose_name=_("WT Analysis"),
-        null=True,
-        blank=True
-    )
+    @property
+    def weaknesses(self):
+        return self.options.filter(category='Weakness')
 
-    is_approved = models.BooleanField(
-        verbose_name=_("Is Approved"),
-        default=False
-    )
+    @property
+    def opportunities(self):
+        return self.options.filter(category='Opportunity')
+
+    @property
+    def threats(self):
+        return self.options.filter(category='Threat')
+
+
+class SWOTAnalysis(LifecycleModelMixin, models.Model):
+    matrix = models.ForeignKey(SWOTMatrix, verbose_name=_(
+        "ماتریس"), on_delete=models.CASCADE, related_name="analysis")
+
+    so = models.TextField(verbose_name=_("تحلیل نقاط قوت و فرصت‌ها"))
+    st = models.TextField(verbose_name=_("تحلیل نقاط قوت و تهدیدات"))
+    wo = models.TextField(verbose_name=_("تحلیل نقاط ضعف و فرصت‌ها"))
+    wt = models.TextField(verbose_name=_("تحلیل نقاط قوت و تهدیدات"))
 
     created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name=_("Created At")
-    )
+        auto_now_add=True, verbose_name=_("تاریخ ایجاد"))
     updated_at = models.DateTimeField(
-        auto_now=True,
-        verbose_name=_("Updated At")
-    )
+        auto_now=True, verbose_name=_("تاریخ بروزرسانی"))
 
     class Meta:
-        verbose_name = _("SWOT Analysis")
-        verbose_name_plural = _("SWOT Analysis")
+        verbose_name = _("SWOT تحلیل")
+        verbose_name_plural = _("SWOT تحلیل‌ها")
         constraints = [
             models.UniqueConstraint(
-                fields=['swot_matrix'],
-                name='unique_swot_analysis'
+                fields=['matrix'],
+                name='unique_matrix_analysis_swot'
             )
         ]
 
     def __str__(self):
-        return f"{self.swot_matrix.company.company_title!r} SWOT Analysis"
+        return f"{self.matrix.company.company_title}"

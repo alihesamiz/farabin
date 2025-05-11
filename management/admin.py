@@ -1,8 +1,7 @@
+from django.utils.translation import gettext_lazy as _
 from django.contrib import admin
 
-from management.models import (HumanResource, PersonelInformation, OrganizationChartBase, SWOTAnalysis,
-                               SWOTStrengthOption, SWOTWeaknessOption, SWOTOpportunityOption, SWOTThreatOption, SWOTMatrix
-                               )
+from management.models import HumanResource, PersonelInformation, OrganizationChartBase, SWOTAnalysis, SWOTQuestion, SWOTOption, SWOTMatrix
 
 
 @admin.register(PersonelInformation)
@@ -32,47 +31,66 @@ class OrganizationChartAdmin(admin.ModelAdmin):
     list_filter = ['field', 'position_excel']
 
 
-class OptionsAdmin(admin.ModelAdmin):
-    list_display = ['name', 'custom_name']
-    search_fields = ['name', 'custom_name']
-    list_filter = ['name',]
-
-    def formfield_for_dbfield(self, db_field, request, **kwargs):
-        if db_field.name == 'name':
-            kwargs['required'] = False
-        return super().formfield_for_dbfield(db_field, request, **kwargs)
+@admin.register(SWOTQuestion)
+class SWOTQuestionAdmin(admin.ModelAdmin):
+    list_display = ["text", "category"]
+    search_fields = ["text", "category"]
+    list_filter = ["category"]
+    list_per_page = 20
 
 
-@admin.register(SWOTStrengthOption)
-class StrengthAdmin(OptionsAdmin):
-    ...
+@admin.register(SWOTOption)
+class SWOTOptionAdmin(admin.ModelAdmin):
+    list_display = [
+        "company_name",
+        "question",
+        "answer",
+        "category",
+        "external_factor",
+        "created_at",
+        "updated_at",
+    ]
+    list_filter = ["company__company_title", "category"]
+    search_fields = ["company__company_title", "answer"]
+    list_per_page = 20
 
-
-@admin.register(SWOTWeaknessOption)
-class WeaknessAdmin(OptionsAdmin):
-    ...
-
-
-@admin.register(SWOTOpportunityOption)
-class OpportunityAdmin(OptionsAdmin):
-    ...
-
-
-@admin.register(SWOTThreatOption)
-class ThreatAdmin(OptionsAdmin):
-    ...
+    @admin.display(description=_("Company Title"),)
+    def company_name(self, obj):
+        return obj.company.company_title
 
 
 @admin.register(SWOTMatrix)
 class SWOTMatrixAdmin(admin.ModelAdmin):
-    list_display = ['company',  'created_at']
-    list_filter = ['created_at',]
-    search_fields = ['company__company_title',]
-    filter_horizontal = ['strengths', 'weaknesses', 'opportunities', 'threats']
+    list_display = [
+        "company_name",
+        "created_at",
+        "updated_at"]
+    filter_horizontal = ["options"]
+    list_per_page = 20
+
+    @admin.display(description=_("Company Title"),)
+    def company_name(self, obj):
+        return obj.company.company_title
+
+    def formfield_for_manytomany(self, db_field, request, **kwargs):
+        if db_field.name == "options":
+            if request.user.is_superuser:
+                kwargs["queryset"] = SWOTOption.objects.all()
+            else:
+                kwargs["queryset"] = SWOTOption.objects.filter(
+                    company__user=request.user)
+        return super().formfield_for_manytomany(db_field, request, **kwargs)
 
 
 @admin.register(SWOTAnalysis)
 class SWOTAnalysisAdmin(admin.ModelAdmin):
-    list_display = ['swot_matrix', 'is_approved']
-    autocomplete_fields = ['swot_matrix']
-    search_fields = ['swot_matrix', "company__company_title", "is_approved"]
+    list_display = [
+        "__str__",
+        "created_at",
+        "updated_at",
+    ]
+    list_filter = [
+        "created_at",
+        "updated_at",
+    ]
+    list_per_page = 20
