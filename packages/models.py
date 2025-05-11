@@ -1,13 +1,17 @@
-from uuid import uuid4
 import decimal
 
 
-from django.core.exceptions import FieldError, ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.db.transaction import atomic
 from django.utils import timezone
 from django.db import models
+
+from django_lifecycle import AFTER_UPDATE
+from django_lifecycle.hooks import AFTER_CREATE, BEFORE_CREATE
+from django_lifecycle.conditions import WhenFieldValueIs
+from django_lifecycle.mixins import LifecycleModelMixin
+from django_lifecycle.decorators import hook
 
 User = get_user_model()
 
@@ -19,7 +23,7 @@ class PeriodChoices(models.TextChoices):
     ANNUALLY = "annually", _("Annually")
 
 
-class Service(models.Model):
+class Service(LifecycleModelMixin, models.Model):
 
     class ServiceType(models.TextChoices):
         FINANCIAL = "financial", _("Financial")
@@ -51,22 +55,22 @@ class Service(models.Model):
     def __str__(self) -> str:
         return self.get_name_display()
 
-    def save(self, *args, **kwargs):
-        not_created = self.pk is None
+    @hook(BEFORE_CREATE)
+    def set_default_period(self):
+        """
+        Hook to set the default period of the services
+        """
         with atomic():
-            if not_created:
-                self.period = PeriodChoices.MONTHLY
-                self.code_name = self._get_code_name(self.name)
+            self.period = PeriodChoices.MONTHLY
+            self.code_name = self.__get_code_name(self.name)
 
-            super().save(*args, **kwargs)
-
-    def _get_code_name(self, service_name: str):
+    def __get_code_name(self, service_name: str):
         for index, choice in enumerate(Service.ServiceType.choices):
             if service_name == choice[0]:
                 return index
 
 
-class Package(models.Model):
+class Package(LifecycleModelMixin, models.Model):
     class PackageName(models.TextChoices):
         DEMO = "demo", _("Demo")
         BRONZE = "bronze", _("Bronze")
@@ -102,23 +106,23 @@ class Package(models.Model):
     def __str__(self):
         return self.get_name_display()
 
-    def save(self, *args, **kwargs):
-        not_created = self.pk is None
+    @hook(BEFORE_CREATE, condition=WhenFieldValueIs("name", PackageName.DEMO))
+    def set_default_period(self):
+        """
+        Hook to set the default period of the package
+        """
         with atomic():
-            if not_created and self.name == self.PackageName.DEMO:
-                self.period = PeriodChoices.MONTHLY
-                self.price = decimal.Decimal(0.00)
-                self.code_name = self._get_code_name(self.name)
+            self.period = PeriodChoices.MONTHLY
+            self.price = decimal.Decimal(0.00)
+            self.code_name = self.__get_code_name(self.name)
 
-            super().save(*args, **kwargs)
-
-    def _get_code_name(self, package_name: str):
+    def __get_code_name(self, package_name: str):
         for index, choice in enumerate(self.PackageName.choices):
             if package_name == choice[0]:
                 return index
 
 
-class Subscription(models.Model):
+class Subscription(LifecycleModelMixin, models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="subscriptions", verbose_name=_("User"))
     package = models.ForeignKey(
@@ -142,20 +146,17 @@ class Subscription(models.Model):
         )
 
     def __str__(self):
-
         return f"{self.user.company.company_title} - روز{self.duration.days}"
 
-    def save(self, *args, **kwargs):
-        # On first save, set expires_at based on package.duration
-        if not self.pk:
-            with atomic():
-                now = timezone.now()
-                self.purchase_date = now
-                if self.package:
-                    self.duration = self._calculate_duration(
-                        self.package.period)
-                    self.expires_at = now + self.duration
-            super().save(*args, **kwargs)
+    @hook(BEFORE_CREATE)
+    def manage_subscription(self):
+        with atomic():
+            now = timezone.now()
+            self.purchase_date = now
+            if self.package:
+                self.duration = self._calculate_duration(
+                    self.package.period)
+                self.expires_at = now + self.duration
 
     def _calculate_duration(self, period):
         match period:
@@ -171,7 +172,7 @@ class Subscription(models.Model):
                 raise ValueError("Invalid period")
 
 
-class Order(models.Model):
+class Order(LifecycleModelMixin, models.Model):
     class OrderStatus(models.TextChoices):
         PENDING_STATUS = 'pending', _('Pending')
         PAID_STATUS = 'paid', _("Paid")
@@ -204,6 +205,34 @@ class Order(models.Model):
             if hasattr(self.user, "company") else self.user.phone_number
         )
         return f"{user_info} -> {self.created_at} : {self.get_status_display()}"
+
+    @hook(AFTER_UPDATE, condition=WhenFieldValueIs("status", OrderStatus.PAID_STATUS))
+    def create_subscription_of_confirmed_order(self):
+        """
+        Hook to create a subscription for the order if it is confirmed.
+        """
+        with atomic():
+
+            subscription, created = Subscription.objects.get_or_create(
+                user=self.user,
+                package=self.package
+            )
+
+            if not subscription.purchase_date:
+                subscription.purchase_date = timezone.now()
+
+            if self.service.exists():
+                subscription.service.set(
+                    self.service.all())
+
+                [duration := subscription._calculate_duration(
+                    ser.period) for ser in subscription.service.all()]
+                expires_at = subscription.purchase_date + duration
+                Subscription.objects.filter(pk=subscription.pk).update(
+                    duration=duration, expires_at=expires_at)
+
+            Order.objects.filter(pk=self.pk).update(
+                status=Order.OrderStatus.CONFIRMED_STATUS)
 
     def set_as_paid(self):
         with atomic():

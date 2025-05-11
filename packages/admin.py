@@ -22,9 +22,9 @@ class PackageAdmin(admin.ModelAdmin):
     filter_horizontal = ["services"]
     list_filter = ["is_active", "period"]
 
+    @admin.display(description=_("Services"))
     def services_name(self, obj: Package):
         return ", ".join(s.__str__() for s in obj.services.all())
-    services_name.short_description = _("Services")
 
 
 @admin.register(Subscription)
@@ -38,13 +38,13 @@ class SubscriptionAdmin(admin.ModelAdmin):
     filter_horizontal = ["service",]
     list_filter = ["package", "service__name"]
 
+    @admin.display(description=_("Services"))
     def services(self, obj: Subscription):
         return ", ".join(s.__str__() for s in obj.service.all())
-    services.short_description = _("Services")
 
+    @admin.display(description=_("Company Title"))
     def company_title(self, obj):
         return obj.user.company.company_title
-    company_title.short_description = _("Company Title")
 
 
 @admin.register(Order)
@@ -62,18 +62,19 @@ class OrderAdmin(admin.ModelAdmin):
     ordering = ("-created_at",)
     list_filter = ("status", "package__name", "status",)
     list_editable = ["status",]
+    filter_horizontal = ["service"]
 
+    @admin.display(description=_("Company Title"))
     def company_title(self, obj):
         return obj.user.company.company_title
-    company_title.short_description = _("Company Title")
 
+    @admin.display(description=_("Services"))
     def services(self, obj: Order):
         return ", ".join(s.__str__() for s in obj.service.all())
-    services.short_description = _("Services")
 
+    @admin.display(description=_("Price"))
     def price(self, obj: Order):
         if obj.package:
             return obj.package.price
         elif obj.service.all():
             return sum(s.price for s in obj.service.all())
-    price.short_description = _("Price")
