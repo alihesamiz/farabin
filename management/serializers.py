@@ -1,11 +1,12 @@
-from django.db import IntegrityError
+import logging
 
-from rest_framework.exceptions import ValidationError
 from rest_framework import serializers
 
-
-from management.models import HumanResource, PersonelInformation, OrganizationChartBase, SWOTMatrix, SWOTOpportunityOption, SWOTStrengthOption, SWOTThreatOption, SWOTWeaknessOption
+from management.models import HumanResource, PersonelInformation, OrganizationChartBase, SWOTMatrix, SWOTOption, SWOTQuestion
 from company.models import CompanyProfile
+
+
+logger = logging.getLogger("management")
 
 
 class HumanResourceCreateSerializer(serializers.ModelSerializer):
@@ -14,17 +15,26 @@ class HumanResourceCreateSerializer(serializers.ModelSerializer):
         fields = ['excel_file']  # , 'company']
 
     def validate_company(self, value):
+        logger.info(f"Validating company: {value}")
         if HumanResource.objects.filter(company=value).exists():
+            logger.warning(
+                f"Company {value} already has a Human Resource record.")
             raise serializers.ValidationError(
-                "Each company can only have one Human Resource record.")
+                "Each company can only have one Human Resource record."
+            )
+        logger.info("Company validation passed.")
         return value
 
     def create(self, validated_data):
         user = self.context['request'].user
         company = CompanyProfile.objects.get(user=user)
         validated_data['company'] = company
-
-        return super().create(validated_data)
+        logger.info(
+            f"Creating HumanResource for company: {company.company_title}")
+        instance = super().create(validated_data)
+        logger.info(
+            f"HumanResource created successfully with ID: {instance.id}")
+        return instance
 
 
 class HumanResourceUpdateSerializer(serializers.ModelSerializer):
@@ -61,11 +71,15 @@ class PersonelInformationSerializer(serializers.ModelSerializer):
         read_only_fields = ["id", "human_resource_id"]
 
     def get_reports_relation(self, obj):
+        logger.info(
+            f"Fetching reports_relation for PersonelInformation ID: {obj.id}")
         if not obj.reports_to.exists():
             return []
         return [f"{obj.position}-{person.position}" for person in obj.reports_to.all()]
 
     def get_coops_relation(self, obj):
+        logger.info(
+            f"Fetching coops_relation for PersonelInformation ID: {obj.id}")
         if not obj.cooperates_with.exists():
             return []
         return [f"{obj.position}-{person.position}" for person in obj.cooperates_with.all()]
@@ -82,11 +96,13 @@ class ChartNodeSerializer(serializers.ModelSerializer):
                   "coops_relation", "obligations"]
 
     def get_reports_relation(self, obj):
+        logger.info(f"Fetching reports_relation for ChartNode ID: {obj.id}")
         if not obj.reports_to.exists():
             return []
         return [f"{obj.position}-{person.position}" for person in obj.reports_to.all()]
 
     def get_coops_relation(self, obj):
+        logger.info(f"Fetching coops_relation for ChartNode ID: {obj.id}")
         if not obj.cooperates_with.exists():
             return []
         return [f"{obj.position}-{person.position}" for person in obj.cooperates_with.all()]
@@ -121,105 +137,84 @@ class OrganizationChartFileSerializer(serializers.ModelSerializer):
         fields = ["id", "position_excel_url"]
 
 
-class SWOTOptionSerializer(serializers.ModelSerializer):
+class SWOTQuestionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = None
-        fields = ['id', 'name', 'custom_name']
-        read_only_fields = ['id', 'custom_name']
-
-    def __init__(self, *args, **kwargs):
-        model = kwargs.pop('model', None)
-        super().__init__(*args, **kwargs)
-        if model:
-            self.Meta.model = model
-
-    def to_representation(self, instance):
-        return {'id': instance.id, 'name': instance.name} if instance.name else {'id': instance.id, 'name': instance.custom_name}
-
-    def create(self, validated_data):
-        name = validated_data.pop("name")
-        custom_name = validated_data.pop("custom_name")
-        if name:
-            instance = self.Meta.model.objects.create(
-                name=name, **validated_data)
-        else:
-            instance = self.Meta.model.objects.create(
-                custom_name=custom_name, **validated_data)
-        return instance
+        model = SWOTQuestion
+        fields = ["id", "text", "category"]
 
 
-class SWOTStrengthOptionSerializer(SWOTOptionSerializer):
-    class Meta(SWOTOptionSerializer.Meta):
-        model = SWOTStrengthOption
-
-
-class SWOTWeaknessOptionSerializer(SWOTOptionSerializer):
-    class Meta(SWOTOptionSerializer.Meta):
-        model = SWOTWeaknessOption
-
-
-class SWOTOpportunityOptionSerializer(SWOTOptionSerializer):
-    class Meta(SWOTOptionSerializer.Meta):
-        model = SWOTOpportunityOption
-
-
-class SWOTThreatOptionSerializer(SWOTOptionSerializer):
-    class Meta(SWOTOptionSerializer.Meta):
-        model = SWOTThreatOption
-
-
-class SWOTMatrixSerializer(serializers.ModelSerializer):
-    strengths = SWOTStrengthOptionSerializer(many=True)
-    weaknesses = SWOTWeaknessOptionSerializer(many=True)
-    opportunities = SWOTOpportunityOptionSerializer(many=True)
-    threats = SWOTThreatOptionSerializer(many=True)
-
+class SWOTOptionBaseSerializer(serializers.ModelSerializer):
     class Meta:
-        model = SWOTMatrix
-        fields = ['id', 'strengths', 'weaknesses', 'opportunities',
-                  'threats', 'created_at', 'updated_at']
-        read_only_fields = ['id', 'created_at', 'updated_at']
+        model = SWOTOption
+        fields = [
+            "id",
+            "company",
+            "question",
+            "answer",
+            "category",
+            "external_factor",
+            "created_at",
+            "updated_at",
+        ]
 
 
-class SWOTMatrixCreateSerializer(serializers.ModelSerializer):
-    strengths = serializers.PrimaryKeyRelatedField(
-        queryset=SWOTStrengthOption.objects.all(), many=True)
-    weaknesses = serializers.PrimaryKeyRelatedField(
-        queryset=SWOTWeaknessOption.objects.all(), many=True)
-    opportunities = serializers.PrimaryKeyRelatedField(
-        queryset=SWOTOpportunityOption.objects.all(), many=True)
-    threats = serializers.PrimaryKeyRelatedField(
-        queryset=SWOTThreatOption.objects.all(), many=True)
+class SWOTOptionSerializer(SWOTOptionBaseSerializer):
+    question = serializers.PrimaryKeyRelatedField(
+        queryset=SWOTQuestion.objects.all())
+    question_detail = SWOTQuestionSerializer(source='question', read_only=True)
 
+    class Meta(SWOTOptionBaseSerializer.Meta):
+        fields = SWOTOptionBaseSerializer.Meta.fields + [
+            "question_detail",
+        ]
+
+
+class SWOTOptionCreateSerializer(serializers.ModelSerializer):
     class Meta:
-        model = SWOTMatrix
-        fields = ['strengths', 'weaknesses', 'opportunities', 'threats']
+        model = SWOTOption
+        fields = [
+            "question",
+            "answer",
+            "category",
+            "external_factor"
+        ]
 
     def create(self, validated_data):
         user = self.context['request'].user
+        company = getattr(user, 'company', None)
 
-        strengths_data = validated_data.pop('strengths', [])
-        weaknesses_data = validated_data.pop('weaknesses', [])
-        opportunities_data = validated_data.pop('opportunities', [])
-        threats_data = validated_data.pop("threats", [])
-        try:
-            company = CompanyProfile.objects.get(user=user)
-
-            swot_instance, created = SWOTMatrix.objects.get_or_create(
-                company=company)
-
-            if not created:
-                for attr, value in validated_data.items():
-                    setattr(swot_instance, attr, value)
-                swot_instance.save()
-
-            swot_instance.strengths.set(strengths_data)
-            swot_instance.weaknesses.set(weaknesses_data)
-            swot_instance.opportunities.set(opportunities_data)
-            swot_instance.threats.set(threats_data)
-
-            return swot_instance
-
-        except IntegrityError:
+        if not company:
+            logger.error("User does not have an associated company.")
             raise serializers.ValidationError(
-                {"detail": "A SWOT record for this company already exists."})
+                {"company": "User does not have an associated company."}
+            )
+
+        validated_data["company"] = company
+        logger.info(f"Creating SWOTOption for company: {company.company_title}")
+        instance = super().create(validated_data)
+        logger.info(f"SWOTOption created successfully with ID: {instance.id}")
+        return instance
+
+class SWOTMatrixSerializer(serializers.ModelSerializer):
+    options = SWOTOptionBaseSerializer(many=True, read_only=True)
+    company = serializers.PrimaryKeyRelatedField(
+        queryset=CompanyProfile.objects.all())
+
+    strengths = SWOTOptionSerializer(many=True, read_only=True)
+    weaknesses = SWOTOptionSerializer(many=True, read_only=True)
+    opportunities = SWOTOptionSerializer(many=True, read_only=True)
+    threats = SWOTOptionSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = SWOTMatrix
+        fields = [
+            "id",
+            "company",
+            "options",
+            "strengths",
+            "weaknesses",
+            "opportunities",
+            "threats",
+            "created_at",
+            "updated_at",
+        ]
