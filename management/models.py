@@ -401,7 +401,7 @@ class SWOTAnalysis(LifecycleModelMixin, models.Model):
     so = models.TextField(verbose_name=_("تحلیل نقاط قوت و فرصت‌ها"))
     st = models.TextField(verbose_name=_("تحلیل نقاط قوت و تهدیدات"))
     wo = models.TextField(verbose_name=_("تحلیل نقاط ضعف و فرصت‌ها"))
-    wt = models.TextField(verbose_name=_("تحلیل نقاط قوت و تهدیدات"))
+    wt = models.TextField(verbose_name=_("تحلیل نقاط ضعف و تهدیدات"))
 
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("تاریخ ایجاد"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("تاریخ بروزرسانی"))
