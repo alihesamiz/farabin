@@ -13,7 +13,8 @@ class Command(BaseCommand):
     path: Path = Path(__file__).resolve().parent / "fixtures" / "excels"
 
     def handle(self, *args, **kwargs):
-        self.stdout.write(self.style.WARNING("Resolving Files path, be patient!"))
+        self.stdout.write(self.style.WARNING(
+            "Resolving Files path, be patient!"))
         self.__load_excel_files()
 
     def __load_excel_files(self):
@@ -21,7 +22,7 @@ class Command(BaseCommand):
             if file.is_file() and file.suffix == ".xlsx":
                 db_file = OrganizationChartBase.objects.get(
                     field=file.name.split(".")[0]
-                )
+                ) if OrganizationChartBase.objects.exists() else False
 
                 if not db_file:
                     with transaction.atomic():
@@ -32,8 +33,12 @@ class Command(BaseCommand):
                             )
                             org_chart.save()
 
-                    self.stdout.write(self.style.SUCCESS(f"Uploaded: {file.name}"))
-                self.stdout.write(
-                    self.style.ERROR(f"File With name {file.name} already exists")
-                )
-        self.stdout.write(self.style.SUCCESS("\nAll files processed successfully!"))
+                    self.stdout.write(self.style.SUCCESS(
+                        f"Uploaded: {file.name}"))
+                else:
+                    self.stdout.write(
+                        self.style.ERROR(
+                            f"File With name {file.name} already exists")
+                    )
+        self.stdout.write(self.style.SUCCESS(
+            "All files processed successfully!"))
