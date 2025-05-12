@@ -19,6 +19,56 @@ SECRET_KEY = env.get_value("FARABIN_SECRET_KEY")
 FARABIN_COHERE_API_KEY = env.get_value("FARABIN_COHERE_API_KEY")
 FARABIN_GEMINI_API_KEY = env.get_value("FARABIN_GEMINI_API_KEY")
 
+
+INSTALLED_APPS = [
+    "admin_interface",
+    "colorfield",
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "django.contrib.humanize",
+]
+
+
+PROJECT_APPS = [
+    "management",
+    "packages",
+    "finance",
+    "company",
+    "request",
+    "tickets",
+    "core",
+]
+
+THIRED_PARTY_APPS = [
+    "rest_framework_simplejwt",
+    "django_lifecycle_checks",
+    "django_celery_beat",
+    "drf_spectacular",
+    "rest_framework",
+    "nested_admin",
+    "corsheaders",
+]
+
+INSTALLED_APPS += PROJECT_APPS + THIRED_PARTY_APPS
+
+MIDDLEWARE = [
+    "django.middleware.locale.LocaleMiddleware",
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+]
+
+
 ROOT_URLCONF = "config.urls"
 
 TEMPLATES = [
@@ -107,22 +157,6 @@ SIMPLE_JWT = {
     "UPDATE_LAST_LOGIN": True,
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
-
-GRAPHENE = {
-    "SCHEMA": "management.schema.schema",
-    "MIDDLEWARE": [
-        "graphql_jwt.middleware.JSONWebTokenMiddleware",
-    ],
-}
-GRAPHQL_JWT = {
-    # 'JWT_PAYLOAD_HANDLER': 'management.utils.jwt_payload',
-    "JWT_AUTH_HEADER_PREFIX": "JWT",
-}
-
-AUTHENTICATION_BACKENDS = [
-    "graphql_jwt.backends.JSONWebTokenBackend",
-    "django.contrib.auth.backends.ModelBackend",
-]
 
 
 SPECTACULAR_SETTINGS = {
@@ -260,7 +294,45 @@ APP_REQUEST_TYPES = ["finance", "management"]
 FILE_PATH_EXCEPTION_MODELS = ["OrganizationChartBase"]
 
 
-# For retrievong of the files based on the company field
+# For retrieving of the files based on the company field
 HUMAN_RESOURCE_FILE_FIELDS = {
     "general": ["__all__"],
+}
+
+
+# For creating the automatic logs based on the apps
+APPS_TO_LOG = PROJECT_APPS
+
+for app in APPS_TO_LOG:
+    LOGGING["handlers"][f"{app}_logs_file"] = {
+        "level": "INFO",
+        "class": "logging.handlers.RotatingFileHandler",
+        "filename": LOG_DIR / f"{app}_logs.log",
+        "formatter": "verbose",
+        "maxBytes": 5 * 1024 * 1024,  # 5 MB
+        "backupCount": 3,
+    }
+
+    LOGGING["handlers"][f"{app}_errors_file"] = {
+        "level": "ERROR",
+        "class": "logging.handlers.RotatingFileHandler",
+        "filename": LOG_DIR / f"{app}_errors.log",
+        "formatter": "verbose",
+        "maxBytes": 5 * 1024 * 1024,  # 5 MB
+        "backupCount": 3,
+    }
+
+    LOGGING["loggers"][app] = {
+        "handlers": [f"{app}_logs_file", f"{app}_errors_file"],
+        "level": "INFO",
+        "propagate": False,
+    }
+
+LOGGING["handlers"]["rotating_file"] = {
+    "level": "INFO",
+    "class": "logging.handlers.RotatingFileHandler",
+    "filename": LOG_DIR / "rotating.log",
+    "maxBytes": 1024 * 1024 * 5,
+    "backupCount": 5,
+    "formatter": "verbose",
 }
