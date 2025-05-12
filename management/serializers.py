@@ -6,6 +6,7 @@ from management.models import (
     HumanResource,
     PersonelInformation,
     OrganizationChartBase,
+    SWOTAnalysis,
     SWOTMatrix,
     SWOTOption,
     SWOTQuestion,
@@ -216,7 +217,6 @@ class SWOTOptionCreateSerializer(serializers.ModelSerializer):
 
 
 class SWOTMatrixSerializer(serializers.ModelSerializer):
-    options = SWOTOptionBaseSerializer(many=True, read_only=True)
     company = serializers.PrimaryKeyRelatedField(queryset=CompanyProfile.objects.all())
 
     strengths = SWOTOptionSerializer(many=True, read_only=True)
@@ -229,7 +229,6 @@ class SWOTMatrixSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "company",
-            "options",
             "strengths",
             "weaknesses",
             "opportunities",
@@ -237,3 +236,11 @@ class SWOTMatrixSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
+
+
+class SWOTAnalysisSerializer(serializers.ModelSerializer):
+    matrix = SWOTMatrixSerializer(read_only=True)
+
+    class Meta:
+        model = SWOTAnalysis
+        fields = ["id", "so", "st", "wo", "wt", "matrix", "created_at", "updated_at"]

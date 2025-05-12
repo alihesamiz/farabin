@@ -15,32 +15,34 @@ from rest_framework.response import Response
 
 
 from management.serializers import (
-    ChartNodeSerializer,
-    HumanResourceSerializer,
     HumanResourceCreateSerializer,
     HumanResourceUpdateSerializer,
-    PersonelInformationSerializer,
+    HumanResourceSerializer,
+    ChartNodeSerializer,
     PersonelInformationUpdateSerializer,
     PersonelInformationCreateSerializer,
     OrganizationChartFileSerializer,
-    SWOTMatrixSerializer,
+    PersonelInformationSerializer,
     SWOTOptionCreateSerializer,
-    SWOTOptionSerializer,
+    SWOTAnalysisSerializer,
     SWOTQuestionSerializer,
+    SWOTMatrixSerializer,
+    SWOTOptionSerializer,
 )
 
 from management.models import (
-    HumanResource,
-    PersonelInformation,
     OrganizationChartBase,
-    SWOTMatrix,
+    PersonelInformation,
+    HumanResource,
     SWOTQuestion,
+    SWOTAnalysis,
+    SWOTMatrix,
     SWOTOption,
 )
 from management.paginations import (
-    PersonelPagination,
-    SWOTOptionPagination,
     SWOTQuestionPagination,
+    SWOTOptionPagination,
+    PersonnelPagination,
 )
 from management.utils import get_file_field
 
@@ -88,9 +90,9 @@ class HumanResourceViewSet(viewsets.ModelViewSet):
             )
 
 
-class PersonelInformationViewSet(viewsets.ModelViewSet):
+class PersonnelInformationViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
-    pagination_class = PersonelPagination
+    pagination_class = PersonnelPagination
 
     def get_queryset(self):
         company = self.request.user.company
@@ -256,3 +258,15 @@ class SWOTMatrixViewSet(viewsets.ModelViewSet):
         company = self.request.user.company
         logger.info(f"Fetching SWOT Matrices for company: {company.company_title}")
         return SWOTMatrix.objects.prefetch_related("options").filter(company=company)
+
+
+class SWOTAnalysisViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = SWOTAnalysisSerializer
+
+    def get_queryset(self):
+        company = self.request.user.company
+        logger.info(f"Fetching SWOT Analysis for company: {company.company_title}")
+        return SWOTAnalysis.objects.select_related("matrix").filter(
+            matrix__company=company
+        )
