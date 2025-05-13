@@ -22,6 +22,7 @@ from finance.models import (
     TaxDeclarationFile,
     BalanceReportFile,
     FinanceExcelFile,
+    Inflation,
 )
 from company.models import CompanyProfile
 
@@ -170,7 +171,6 @@ class BalanceReportFileAdmin(admin.ModelAdmin):
     company_title.short_description = _("Company Title")
 
     def delete_model(self, request: HttpRequest, obj: Any) -> None:
-
         if obj:
             with transaction.atomic():
                 obj.balance_report_file.delete(save=False)
@@ -181,7 +181,6 @@ class BalanceReportFileAdmin(admin.ModelAdmin):
         return super().delete_model(request, obj)
 
     def delete_queryset(self, request: HttpRequest, queryset: QuerySet) -> None:
-
         for obj in queryset:
             with transaction.atomic():
                 obj.balance_report_file.delete(save=False)
@@ -371,3 +370,10 @@ class AnalysisReportAdmin(admin.ModelAdmin):
         self.message_user(
             request, _("%d analysis report(s) marked as unpublished.") % updated_count
         )
+
+
+@admin.register(Inflation)
+class InflationAdmin(admin.ModelAdmin):
+    list_display = ["year", "cpi_value", "inflation_rate"]
+    search_fields = ["year"]
+    list_per_page = 20
