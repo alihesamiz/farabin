@@ -1,6 +1,9 @@
+from decimal import Decimal
 import numpy as np
 import inspect
 import logging
+
+from finance.models import Inflation
 
 logger = logging.getLogger("finance")
 
@@ -15,7 +18,6 @@ def current_asset_function(self, balance_report):
     logger.debug(f"Starting {function_name} calculations")
 
     if balance_report:
-
         self.balance_report_values["current_asset"].append(
             balance_report.total_current_asset
         )
@@ -516,7 +518,6 @@ def roe_function(self):
 
 
 def equity_per_total_non_current_asset_ratio_function(self):
-
     function_name = inspect.currentframe().f_code.co_name
     logger.debug(f"Starting {function_name} calculations")
 
@@ -951,3 +952,44 @@ def altman_bankruptcy_ratio_function(self):
         )
 
     logger.debug(f"Ending {function_name} calculations")
+
+
+def current_value_amount_with_cpi(from_year: int, to_year: int, amount: Decimal):
+    """To calculate the current value of the entered amount of money using the CPI values
+
+    Args:
+        from_year (int): the start year
+        to_year (int): the end year
+        amount (Decimal): amount of the money
+    """
+    function_name = inspect.currentframe().f_code.co_name
+
+    try:
+        logger.debug(f"Starting {function_name} calculations")
+
+        from_year_cpi = Inflation.objects.get(year=from_year).cpi_value
+        to_year_cpi = Inflation.objects.get(year=to_year).cpi_value
+        logger.debug(f"Ending {function_name} calculations")
+        return amount * (to_year_cpi / from_year_cpi)
+    except Inflation.DoesNotExist:
+        raise ValueError("CPI values not found for the given years")
+
+
+def current_value_amount_with_inflation_ratio(from_year: int, amount: Decimal):
+    """To calculate the current value of the entered amount of money using the inflation ratios
+
+    Args:
+        from_year (int): the start year
+        amount (Decimal): amount of the money
+    """
+    function_name = inspect.currentframe().f_code.co_name
+
+    try:
+        logger.debug(f"Starting {function_name} calculations")
+
+        from_year_inflation_rate = Inflation.objects.get(year=from_year).inflation_rate
+        logger.debug(f"Ending {function_name} calculations")
+
+        return (amount * (Decimal(100) + from_year_inflation_rate)) / 100
+    except Inflation.DoesNotExist:
+        raise ValueError("Inflation Rate not found for the given years")

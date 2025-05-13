@@ -1,3 +1,4 @@
+from decimal import Decimal
 import os
 
 
@@ -14,7 +15,6 @@ from core.utils import GeneralUtils
 
 
 class FileAbstract(models.Model):
-
     company = models.ForeignKey(
         CompanyProfile, on_delete=models.SET_NULL, null=True, verbose_name=_("Company")
     )
@@ -26,7 +26,6 @@ class FileAbstract(models.Model):
     is_sent = models.BooleanField(default=False, verbose_name=_("Is Sent"))
 
     class Meta:
-
         abstract = True
 
 
@@ -38,7 +37,6 @@ def get_tax_file_upload_path(instance, filename):
 
 
 class TaxDeclarationFile(FileAbstract):
-
     company = models.ForeignKey(
         CompanyProfile,
         on_delete=models.CASCADE,
@@ -92,7 +90,6 @@ def get_non_tax_file_upload_path(instance, filename):
 
 
 class BalanceReportFile(FileAbstract):
-
     MONTH_CHOICES = [(str(i), f"{i}") for i in range(1, 14)]
 
     company = models.ForeignKey(
@@ -487,7 +484,6 @@ class ProfitLossStatement(models.Model):
 
 
 class BalanceReport(models.Model):
-
     financial_asset = models.ForeignKey(
         "FinancialAsset",
         on_delete=models.CASCADE,
@@ -819,7 +815,6 @@ class AccountTurnOver(models.Model):
 
 
 class FinancialAsset(models.Model):
-
     company = models.ForeignKey(
         CompanyProfile,
         on_delete=models.CASCADE,
@@ -850,7 +845,6 @@ class FinancialAsset(models.Model):
 
 
 class FinancialData(models.Model):
-
     is_published = models.BooleanField(
         default=False,
         help_text=_(
@@ -1054,7 +1048,6 @@ class FinancialData(models.Model):
 
 
 class AnalysisReport(models.Model):
-
     DEBT_CHART = "debt"
     ASSET_CHART = "asset"
     SALE_CHART = "sale"
@@ -1143,3 +1136,35 @@ class AnalysisReport(models.Model):
 
     def __str__(self):
         return f"{self.calculated_data.financial_asset.company.company_title} › {self.calculated_data.financial_asset.year} › {self.chart_name}"
+
+
+class Inflation(models.Model):
+    year = models.SmallIntegerField(
+        verbose_name=_("سال"),
+        db_index=True,
+        null=False,
+        blank=False,
+        unique=True,
+        validators=[
+            MinValueValidator(1315, message="Year must be greater than 1315"),
+            MaxValueValidator(1450, message="Year must be smaller than 1450"),
+        ],
+    )
+    cpi_value = models.DecimalField(
+        verbose_name=_("عدد شاخص"),
+        decimal_places=4,
+        max_digits=10,
+        validators=[
+            MinValueValidator(Decimal(0), message="Values must be greater than '0'")
+        ],
+    )
+    inflation_rate = models.DecimalField(
+        verbose_name=_("نرخ تورم"), decimal_places=1, max_digits=4
+    )
+
+    class Meta:
+        verbose_name = _("تورم")
+        verbose_name_plural = _("تورم")
+
+    def __str__(self):
+        return f"{self.year}: ({self.cpi_value}, {self.inflation_rate} )"
