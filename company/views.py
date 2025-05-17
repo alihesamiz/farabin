@@ -1,8 +1,6 @@
-from management.models import HumanResource
 import importlib
 import logging
 
-from django.shortcuts import get_object_or_404
 from django.core.cache import cache
 from django.db.models import Count
 from django.conf import settings
@@ -10,15 +8,37 @@ from django.conf import settings
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
-from rest_framework.decorators import action
-from rest_framework import status, viewsets
 from rest_framework.views import APIView
+from rest_framework import viewsets
+from rest_framework import status
 
 
-from company.serializers import CompanyProfileSerializer, CompanyProfileCreateSerializer
-from company.models import CompanyProfile
+from company.serializers import (
+    CompanyProfileSerializer,
+    CompanyProfileCreateSerializer,
+    LifeCycleDeclineSerializer,
+    LifeCycleFeatureSerializer,
+    LifeCycleGrowthSerializer,
+    LifeCycleIntroductionSerializer,
+    LifeCycleMaturitySerializer,
+    LifeCycleQuantitativePlaceCreateUpdateSerializer,
+    LifeCycleQuantitativePlaceSerializer,
+    LifeCycleTheoreticalPlaceCreateUpdateSerializer,
+    LifeCycleTheoreticalPlaceSerializer,
+)
+from company.models import (
+    CompanyProfile,
+    LifeCycleDecline,
+    LifeCycleFeature,
+    LifeCycleGrowth,
+    LifeCycleIntroduction,
+    LifeCycleMaturity,
+    LifeCycleQuantitative,
+    LifeCycleTheoretical,
+)
 
 from finance.models import TaxDeclarationFile, BalanceReportFile
+from management.models import HumanResource
 from tickets.models import Ticket
 
 logger = logging.getLogger("company")
@@ -28,7 +48,6 @@ class CompanyProfileViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-
         try:
             queryset = CompanyProfile.objects.select_related("user").filter(
                 user=self.request.user
@@ -57,33 +76,8 @@ class CompanyProfileViewSet(viewsets.ModelViewSet):
 
         return CompanyProfileSerializer
 
-    # @action(detail=False, methods=['get'])
-    # def retrieve_profile(self, request, pk=None):
-
-    #     try:
-    #         queryset = self.get_queryset()
-    #         print(queryset)
-    #         company_profile = get_object_or_404(queryset, pk=pk)
-    #         serializer = CompanyProfileSerializer(company_profile)
-    #         logger.info(
-    #             "Company profile retrieved successfully",
-    #             extra={"user_id": request.user.id, "profile_id": pk}
-    #         )
-    #         return Response(serializer.data)
-
-    #     except Exception as e:
-    #         logger.error(
-    #             "Failed to retrieve company profile",
-    #             extra={"user_id": request.user.id,
-    #                    "profile_id": pk, "error": str(e)},
-    #             exc_info=True
-    #         )
-    #         raise NotFound(detail=f"Company profile not found.{
-    #                        e}", code=status.HTTP_404_NOT_FOUND)
-
 
 class DashboardViewSet(APIView):
-
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
@@ -158,3 +152,80 @@ class DashboardViewSet(APIView):
             return Response(
                 {"error": "An error occurred while fetching dashboard data"}, status=500
             )
+
+
+class LifeCycleFeatureViewSet(viewsets.ModelViewSet):
+    queryset = LifeCycleFeature.objects.all()
+    serializer_class = LifeCycleFeatureSerializer
+
+
+class LifeCycleDeclineViewSet(viewsets.ModelViewSet):
+    queryset = LifeCycleDecline.objects.all()
+    serializer_class = LifeCycleDeclineSerializer
+
+
+class LifeCycleMaturityViewSet(viewsets.ModelViewSet):
+    queryset = LifeCycleMaturity.objects.all()
+    serializer_class = LifeCycleMaturitySerializer
+
+
+class LifeCycleGrowthViewSet(viewsets.ModelViewSet):
+    queryset = LifeCycleGrowth.objects.all()
+    serializer_class = LifeCycleGrowthSerializer
+
+
+class LifeCycleIntroductionViewSet(viewsets.ModelViewSet):
+    queryset = LifeCycleIntroduction.objects.all()
+    serializer_class = LifeCycleIntroductionSerializer
+
+
+class LifeCycleStateViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+
+    def get_serializer_class(self):
+        kind = self.request.query_params.get("kind")
+        match kind:
+            case "theoretical":
+                if self.action in ["update", "partial_update", "create"]:
+                    return LifeCycleTheoreticalPlaceCreateUpdateSerializer
+                return LifeCycleTheoreticalPlaceSerializer
+            case "quantitative":
+                if self.action in ["update", "partial_update", "create"]:
+                    return LifeCycleQuantitativePlaceCreateUpdateSerializer
+                return LifeCycleQuantitativePlaceSerializer
+            case _:
+                raise NotFound(
+                    detail="Kind not recognized.",
+                    code=status.HTTP_404_NOT_FOUND,
+                )
+
+    def get_queryset(self):
+        company = getattr(self.request.user, "company", None)
+        if not company:
+            raise NotFound(
+                detail="User is not associated with any company.",
+                code=status.HTTP_404_NOT_FOUND,
+            )
+
+        kind = self.request.query_params.get("kind")
+        match kind:
+            case "theoretical":
+                return LifeCycleTheoretical.objects.select_related(
+                    "company",
+                    "feature",
+                    "decline",
+                    "maturity",
+                    "growth",
+                    "introduction",
+                ).filter(company=company)
+            case "quantitative":
+                return (
+                    LifeCycleQuantitative.objects.select_related("company")
+                    .prefetch_related("resource")
+                    .filter(company=company)
+                )
+            case _:
+                raise NotFound(
+                    detail='Kind not recognized. choices are: "theoretical", "quantitative" ',
+                    code=status.HTTP_404_NOT_FOUND,
+                )
