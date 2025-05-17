@@ -2,6 +2,7 @@ from uuid import uuid4
 import logging
 
 from django.utils.translation import gettext_lazy as _
+from django.core.exceptions import ValidationError  # noqa: F401
 from django.contrib.auth import get_user_model
 from django.db import models
 
@@ -217,3 +218,205 @@ class CompanyService(models.Model):
 
     def __str__(self) -> str:
         return f"{self.company.company_title} › {self.service.name} ({'Active' if self.is_active else 'Inactive'})"
+
+
+class LifeCycleKind(models.TextChoices):
+    """Life cycle kind choices."""
+
+    THEORICAL = "theorical", _("نظری")
+
+
+class LifeCycleFeature(models.Model):
+    """Represents a feature in the life cycle model."""
+
+    name = models.CharField(max_length=255, verbose_name=_("ویژگی"))
+
+    weight = models.DecimalField(verbose_name=_("وزن"), max_digits=5, decimal_places=2)
+
+    class Meta:
+        verbose_name = _("چرخه عمر ویژگی‌")
+        verbose_name_plural = _("چرخه عمر ویژگی‌ها")
+
+    def __str__(self):
+        return f"{self.name}:{self.weight}"
+
+
+class LifeCycleDecline(models.Model):
+    """Represents a  in the life cycle model."""
+
+    name = models.CharField(max_length=255, verbose_name=_("ویژگی"))
+
+    class Meta:
+        verbose_name = _("چرخه عمر افول")
+        verbose_name_plural = _("چرخه عمر افول")
+
+    def __str__(self):
+        return self.name
+
+
+class LifeCycleMaturity(models.Model):
+    """Represents a  in the life cycle model."""
+
+    name = models.CharField(max_length=255, verbose_name=_("ویژگی"))
+
+    class Meta:
+        verbose_name = _("چرخه عمر بلوغ")
+        verbose_name_plural = _("چرخه عمر بلوغ")
+
+    def __str__(self):
+        return self.name
+
+
+class LifeCycleGrowth(models.Model):
+    """Represents a  in the life cycle model."""
+
+    name = models.CharField(max_length=255, verbose_name=_("ویژگی"))
+
+    class Meta:
+        verbose_name = _("چرخه عمر رشد")
+        verbose_name_plural = _("چرخه عمر رشد")
+
+    def __str__(self):
+        return self.name
+
+
+class LifeCycleIntroduction(models.Model):
+    """Represents a  in the life cycle model."""
+
+    name = models.CharField(max_length=255, verbose_name=_("ویژگی"))
+
+    class Meta:
+        verbose_name = _("چرخه عمر معرفی")
+        verbose_name_plural = _("چرخه عمر معرفی")
+
+    def __str__(self):
+        return self.name
+
+
+class LifeCycleTheoretical(LifecycleModelMixin, models.Model):
+    company = models.ForeignKey(
+        CompanyProfile,
+        verbose_name=_("شرکت"),
+        on_delete=models.CASCADE,
+        null=False,
+        blank=False,
+    )
+    feature = models.ForeignKey(
+        LifeCycleFeature,
+        verbose_name=_("ویژگی"),
+        related_name="life_cycle",
+        on_delete=models.CASCADE,
+    )
+    decline = models.ForeignKey(
+        LifeCycleDecline,
+        verbose_name=_("افول"),
+        on_delete=models.CASCADE,
+        related_name="life_cycle",
+    )
+    maturity = models.ForeignKey(
+        LifeCycleMaturity,
+        verbose_name=_("بلوغ"),
+        on_delete=models.CASCADE,
+        related_name="life_cycle",
+    )
+    growth = models.ForeignKey(
+        LifeCycleGrowth,
+        verbose_name=_("رشد"),
+        on_delete=models.CASCADE,
+        related_name="life_cycle",
+    )
+    introduction = models.ForeignKey(
+        LifeCycleIntroduction,
+        verbose_name=_("معرفی"),
+        on_delete=models.CASCADE,
+        related_name="life_cycle",
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("تاریخ ایجاد"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("تاریخ بروزرسانی"))
+
+    class Meta:
+        verbose_name = _("چرخه عمر جایگاه نظری")
+        verbose_name_plural = _("چرخه عمر جایگاه نظری")
+        constraints = [
+            models.UniqueConstraint(
+                name="unique_company_theoretical_place", fields=["company", "feature"]
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.get_kind_display()} - {self.company.company_title}"
+
+    def _get_weights(self):
+        return self.feature.weight
+
+
+class LifeCycleFinancialResource(models.Model):
+    RESOURCE_TYPES = [
+        ("operational", _("عملیاتی")),
+        ("finance", _("تامین مالی")),
+        ("invest", _("سرمایه گذاری")),
+    ]
+
+    name = models.CharField(max_length=50, choices=RESOURCE_TYPES, unique=True)
+
+    class Meta:
+        verbose_name = _("چرخه عمر منابع مالی")
+        verbose_name_plural = _("چرخه عمر منابع مالی")
+
+    def __str__(self):
+        return self.get_name_display()
+
+
+class LifeCycleQuantitative(models.Model):
+    PLACES = {
+        "introduction": ("finance"),
+        "growth": ("operational", "finance"),
+        "maturity": ("operational"),
+        "recession 1": "",
+        "recession 2": ("operational", "finance", "invest"),
+        "recession 3": ("operational", "invest"),
+        "decline 1": ("finance", "invest"),
+        "decline 2": ("invest"),
+    }
+
+    company = models.ForeignKey(
+        CompanyProfile,
+        verbose_name=_("شرکت"),
+        on_delete=models.CASCADE,
+    )
+
+    resource = models.ManyToManyField(
+        LifeCycleFinancialResource,
+        verbose_name=_("منابع"),
+        related_name="life_cycle",
+        blank=True,
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("تاریخ ایجاد"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("تاریخ بروزرسانی"))
+
+    class Meta:
+        verbose_name = _("چرخه عمر جایگاه کمی")
+        verbose_name_plural = _("چرخه عمر جایگاه کمی")
+        constraints = [
+            models.UniqueConstraint(
+                name="unique_company_qunatitative_place", fields=["company"]
+            )
+        ]
+
+    def __str__(self):
+        resource_names = ", ".join([str(res) for res in self.resource.all()])
+        return f"{resource_names} - {self.company.company_title}"
+
+    @property
+    def place(self):
+        resources = set([resource.name for resource in self.resource.all()])
+        resources = [resource.name for resource in self.resource.all().order_by("id")]
+
+        for place, values in self.PLACES.items():
+            if len(resources) > 1 or len(resources) == 0:
+                if list(values) == resources:
+                    return place
+            else:
+                if values == resources[0]:
+                    return place
+        return None
