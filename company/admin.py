@@ -3,7 +3,20 @@ from django.contrib import messages
 from django.contrib import admin
 
 
-from company.models import CompanyProfile, CompanyService, LifeCycle, License
+from company.models import (
+    CompanyProfile,
+    CompanyService,
+    LifeCycle,
+    License,
+    LifeCycleFinancialResource,
+    LifeCycleQuantitative,
+    LifeCycleTheoretical,
+    LifeCycleDecline,
+    LifeCycleGrowth,
+    LifeCycleIntroduction,
+    LifeCycleMaturity,
+    LifeCycleFeature,
+)
 
 
 class LifeCycleInline(admin.StackedInline):
@@ -100,3 +113,115 @@ class CompanyServiceAdmin(admin.ModelAdmin):
         )
 
     actions = [activate_services, deactivate_services]
+
+
+@admin.register(LifeCycleFeature)
+class LifeCycleFeatureAdmin(admin.ModelAdmin):
+    list_display = ("name", "weight")
+    search_fields = ("name",)
+    list_filter = ("weight",)
+    ordering = ("name",)
+    list_per_page = 20
+
+
+# Admin for LifeCycleDecline
+@admin.register(LifeCycleDecline)
+class LifeCycleDeclineAdmin(admin.ModelAdmin):
+    list_display = ("name",)
+    search_fields = ("name",)
+    ordering = ("name",)
+    list_per_page = 20
+
+
+# Admin for LifeCycleMaturity
+@admin.register(LifeCycleMaturity)
+class LifeCycleMaturityAdmin(admin.ModelAdmin):
+    list_display = ("name",)
+    search_fields = ("name",)
+    ordering = ("name",)
+    list_per_page = 20
+
+
+# Admin for LifeCycleGrowth
+@admin.register(LifeCycleGrowth)
+class LifeCycleGrowthAdmin(admin.ModelAdmin):
+    list_display = ("name",)
+    search_fields = ("name",)
+    ordering = ("name",)
+    list_per_page = 20
+
+
+# Admin for LifeCycleIntroduction
+@admin.register(LifeCycleIntroduction)
+class LifeCycleIntroductionAdmin(admin.ModelAdmin):
+    list_display = ("name",)
+    search_fields = ("name",)
+    ordering = ("name",)
+    list_per_page = 20
+
+
+# Admin for LifeCyclePlace
+@admin.register(LifeCycleTheoretical)
+class LifeCyclePlaceAdmin(admin.ModelAdmin):
+    list_display = (
+        "company__company_title",
+        "feature",
+        "decline",
+        "maturity",
+        "growth",
+        "introduction",
+        "created_at",
+        "updated_at",
+    )
+    list_filter = ("company", "created_at", "updated_at")
+    search_fields = ("company__company_title", "feature__name")
+    date_hierarchy = "created_at"
+    list_per_page = 20
+    ordering = ("-created_at",)
+    autocomplete_fields = [
+        "company",
+        "feature",
+        "decline",
+        "maturity",
+        "growth",
+        "introduction",
+    ]
+
+    # Configure autocomplete search fields
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "company":
+            kwargs["queryset"] = db_field.related_model.objects.all()
+        elif db_field.name in [
+            "feature",
+            "decline",
+            "maturity",
+            "growth",
+            "introduction",
+        ]:
+            kwargs["queryset"] = db_field.related_model.objects.all()
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+
+@admin.register(LifeCycleFinancialResource)
+class LifeCycleFinancialResourceAdmin(admin.ModelAdmin): ...
+
+
+@admin.register(LifeCycleQuantitative)
+class LifeCycleQuantitaticeAdmin(admin.ModelAdmin):
+    list_display = [
+        "company__company_title",
+        "resource_value",
+        "created_at",
+        "updated_at",
+    ]
+    filter_horizontal = ["resource"]
+
+    @admin.display(description=_("چرخه عمر منابع مالی"))
+    def resource_value(self, obj: LifeCycleQuantitative):
+        return " | ".join(
+            [resource.get_name_display() for resource in obj.resource.all()]
+        )
+
+    @admin.display(description=_("شرکت"))
+    def company__company_title(self, obj: LifeCycleQuantitative):
+        return obj.company.company_title
