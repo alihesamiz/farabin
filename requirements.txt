@@ -41,7 +41,7 @@ et_xmlfile==2.0.0
 fastavro==1.10.0
 filelock==3.16.1
 Flask==3.1.1
-flask-cors==5.0.1
+flask-cors==6.0.0
 Flask-Login==0.6.3
 flower==2.0.1
 fonttools==4.55.0
