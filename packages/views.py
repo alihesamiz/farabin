@@ -2,6 +2,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from rest_framework import status
 
 
 from packages.serializers import (
@@ -11,13 +12,10 @@ from packages.serializers import (
     ServiceSerializer,
     SubscriptionSerializer,
 )
-from packages.models import Order, Package, Service, Subscription
+from packages.models import (Order, Package, Service, Subscription,)
 
 
 class ServiceViewSet(ModelViewSet):
-    """
-    >>> List the services
-    """
 
     permission_classes = [IsAuthenticated]
     serializer_class = ServiceSerializer
@@ -72,29 +70,8 @@ class OrderViewSet(ModelViewSet):
             return OrderCreateSerializer
         return OrderSerializer
 
-    #
-    #  Below is written with action which is not really aligned with RestFull APIs so the successive `query_params` are using.
-    #
-    # @action(methods=["get"], detail=False, url_path="confirmed")
-    # def confirmed_orders(self, request):
-    #     user = request.user
-    #     confirmed_orders = Order.get_by_status(
-    #         Order.OrderStatus.CONFIRMED_STATUS, user)
-    #     serializer = self.get_serializer(confirmed_orders, many=True)
-    #     return Response(serializer.data)
-
-    # @action(methods=["get"], detail=False, url_path="canceled")
-    # def canceled_orders(self, request):
-    #     user = request.user
-    #     canceled_orders = Order.get_by_status(
-    #         Order.OrderStatus.CANCELED_STATUS, user)
-    #     serializer = self.get_serializer(canceled_orders, many=True)
-    #     return Response(serializer.data)
-
-    # @action(methods=["get"], detail=False, url_path="paid")
-    # def confirmed_orders(self, request):
-    #     user = request.user
-    #     confirmed_orders = Order.get_by_status(
-    #         Order.OrderStatus.PAID_STATUS, user)
-    #     serializer = self.get_serializer(confirmed_orders, many=True)
-    #     return Response(serializer.data)
+    @action(detail=True, methods=["post"])
+    def check_out(self, request, pk=None):
+        order = self.get_object()
+        order.set_as_paid()
+        return Response({"message": "Order has been paid"}, status=status.HTTP_200_OK)
