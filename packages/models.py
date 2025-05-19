@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator
 import decimal
 
 
@@ -7,9 +8,8 @@ from django.db.transaction import atomic
 from django.utils import timezone
 from django.db import models
 
-from django_lifecycle import AFTER_UPDATE
-from django_lifecycle.hooks import AFTER_CREATE, BEFORE_CREATE
-from django_lifecycle.conditions import WhenFieldValueIs
+from django_lifecycle.conditions import WhenFieldValueIs, WhenFieldValueChangesTo
+from django_lifecycle.hooks import AFTER_UPDATE, BEFORE_CREATE, BEFORE_UPDATE
 from django_lifecycle.mixins import LifecycleModelMixin
 from django_lifecycle.decorators import hook
 
@@ -55,7 +55,8 @@ class Service(LifecycleModelMixin, models.Model):
         blank=True,
         null=True,
     )
-    is_active = models.BooleanField(default=False, verbose_name=_("Is Active?"))
+    is_active = models.BooleanField(
+        default=False, verbose_name=_("Is Active?"))
 
     class Meta:
         verbose_name = _("Service")
@@ -112,9 +113,12 @@ class Package(LifecycleModelMixin, models.Model):
         blank=True,
         null=True,
     )
-    is_active = models.BooleanField(default=False, verbose_name=_("Is Active?"))
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created At"))
-    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
+    is_active = models.BooleanField(
+        default=False, verbose_name=_("Is Active?"))
+    created_at = models.DateTimeField(
+        auto_now_add=True, verbose_name=_("Created At"))
+    updated_at = models.DateTimeField(
+        auto_now=True, verbose_name=_("Updated At"))
 
     class Meta:
         verbose_name = _("Package")
@@ -202,6 +206,48 @@ class Subscription(LifecycleModelMixin, models.Model):
                 raise ValueError("Invalid period")
 
 
+class Promotion(LifecycleModelMixin, models.Model):
+    coupon = models.CharField(verbose_name=_(
+        'کد تخفیف'), max_length=10, unique=True)
+    discount = models.DecimalField(verbose_name=_(
+        'تخفیف'), max_digits=4, decimal_places=2)
+    validated_from = models.DateTimeField(
+        verbose_name=_('معتبر از'), auto_now_add=True)
+    validated_until = models.DateTimeField(
+        verbose_name=_('معتبر تا'), null=True, blank=True)
+    available_for = models.SmallIntegerField(verbose_name=_(
+        'تعداد قابل استفاده'), null=True, blank=True, validators=[MinValueValidator(0)])
+    is_active = models.BooleanField(verbose_name=_('فعال است'), default=False)
+
+    class Meta:
+        verbose_name = _('تخفیف')
+        verbose_name_plural = _('تخفیف‌ها')
+
+    def __str__(self):
+        return f'{self.coupon!r}, {self.discount}%'
+
+    @hook(BEFORE_CREATE)
+    def set_discount_as_percentage(self):
+        self.discount = self.discount/100
+
+    @property
+    def duration(self):
+        if self.validated_until:
+            return self.validated_until - self.validated_from
+        return float('inf')
+
+    @property
+    def is_available(self):
+        return self.available_for > 0 and self.is_active and (not self.validated_until or self.validated_until > timezone.now())
+
+    def decrease_availability(self):
+        if self.is_available:
+            self.available_for -= 1
+            self.save(update_fields=['available_for'])
+            return True
+        return False
+
+
 class Order(LifecycleModelMixin, models.Model):
     class OrderStatus(models.TextChoices):
         PENDING_STATUS = "pending", _("Pending")
@@ -229,7 +275,11 @@ class Order(LifecycleModelMixin, models.Model):
     service = models.ManyToManyField(
         Service, related_name="orders", blank=True, verbose_name=_("Service")
     )
-    created_at = models.DateTimeField(verbose_name=_("Created At"), auto_now_add=True)
+    coupon = models.ForeignKey(Promotion, on_delete=models.SET_NULL, null=True, blank=True,
+                               verbose_name=_("کد تخفیف"))
+
+    created_at = models.DateTimeField(
+        verbose_name=_("Created At"), auto_now_add=True)
 
     class Meta:
         verbose_name = _("Order")
@@ -237,6 +287,9 @@ class Order(LifecycleModelMixin, models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=["user", "package"], name="user_unique_package_order"
+            ),
+            models.UniqueConstraint(
+                fields=["user", "coupon"], name="unique_user_order_coupon"
             )
         ]
 
@@ -278,12 +331,23 @@ class Order(LifecycleModelMixin, models.Model):
                 status=Order.OrderStatus.CONFIRMED_STATUS
             )
 
+    @hook(BEFORE_UPDATE, condition=WhenFieldValueChangesTo("status", OrderStatus.PAID_STATUS))
     def set_as_paid(self):
         with atomic():
-            self.status = self.OrderStatus.PAID_STATUS
-            self.save()
+            if self.coupon and self.coupon.is_available:
+                self.coupon.decrease_availability()
 
     @classmethod
     def get_by_status(cls, status, user=None):
         qs = cls.objects.filter(status=status)
         return qs.filter(user=user) if user else qs
+
+    @property
+    def total_price(self):
+        price = sum([item.price for item in [self.package] +
+                    list(self.service.all()) if item])
+
+        if self.coupon and self.coupon.is_available:
+            discount_value = decimal.Decimal(1) - (self.coupon.discount)
+            return price * discount_value
+        return price
