@@ -1,16 +1,10 @@
-from django.db.models import Sum
-from rest_framework.serializers import (
-    ModelSerializer,
-    HyperlinkedIdentityField,
-    PrimaryKeyRelatedField,
-    SerializerMethodField,
-)
+from rest_framework import serializers
 
-from packages.models import Order, Package, Service, Subscription
+from packages.models import Order, Package, Promotion, Service, Subscription
 
 
-class ServiceSerializer(ModelSerializer):
-    url = HyperlinkedIdentityField(view_name="services-detail", read_only=True)
+class ServiceSerializer(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name="services-detail", read_only=True)
 
     class Meta:
         model = Service
@@ -33,7 +27,7 @@ class ServiceSerializer(ModelSerializer):
         )
 
 
-class PackageSerializer(ModelSerializer):
+class PackageSerializer(serializers.ModelSerializer):
     services = ServiceSerializer(many=True, read_only=True)
 
     class Meta:
@@ -56,7 +50,7 @@ class PackageSerializer(ModelSerializer):
         )
 
 
-class SubscriptionSerializer(ModelSerializer):
+class SubscriptionSerializer(serializers.ModelSerializer):
     package = PackageSerializer(read_only=True)
     service = ServiceSerializer(many=True, read_only=True)
 
@@ -72,10 +66,9 @@ class SubscriptionSerializer(ModelSerializer):
         ]
 
 
-class OrderSerializer(ModelSerializer):
+class OrderSerializer(serializers.ModelSerializer):
     package = PackageSerializer(read_only=True)
     services = ServiceSerializer(many=True, read_only=True)
-    total_price = SerializerMethodField()
 
     class Meta:
         model = Order
@@ -85,32 +78,28 @@ class OrderSerializer(ModelSerializer):
             "status",
             "package",
             "services",
-            "total_price",
             "created_at",
+            "coupon",
+            "total_price",
         ]
-        read_only_fields = ["status", "created_at", "package", "services", "user"]
-
-    def get_total_price(self, obj: Order):
-        if obj.package:
-            print("sadsad")
-            return obj.package.price
-        else:
-            result = obj.service.aggregate(total=Sum("price"))
-            print(result)
-            return result["total"] or 0
+        read_only_fields = ["status", "created_at",
+                            "package", "services", "user"]
 
 
-class OrderCreateSerializer(ModelSerializer):
-    package_id = PrimaryKeyRelatedField(
+class OrderCreateSerializer(serializers.ModelSerializer):
+    package_id = serializers.PrimaryKeyRelatedField(
         queryset=Package.objects.all(), source="package"
     )
-    service_id = PrimaryKeyRelatedField(
+    service_id = serializers.PrimaryKeyRelatedField(
         queryset=Service.objects.all(), source="service"
+    )
+    coupon_id = serializers.PrimaryKeyRelatedField(
+        queryset=Promotion.objects.all(), source="coupon"
     )
 
     class Meta:
         model = Order
-        fields = ["id", "package_id", "service_id"]
+        fields = ["id", "package_id", "service_id", "coupon_id"]
 
     def create(self, validated_data):
         user = self.context["request"].user
