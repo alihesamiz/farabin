@@ -1,6 +1,8 @@
 # Python bytecode
 *.py[cod]
 __pycache__/
+*.mypy_cache/
+*.ruff_cache/
 *.pyc
 
 # Django specific
@@ -50,7 +52,7 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-
+*.lock
 # PyInstaller
 #  Usually these files are written by a python script from a template
 *.manifest
@@ -74,13 +76,13 @@ coverage.xml
 .pytest_cache/
 
 # pyenv
-.python-version
+# .python-version
 
 # Celery stuff
 celerybeat-schedule
 
 # virtualenv
-venv/
+.venv/
 ENV/
 env/
 env.bak/
