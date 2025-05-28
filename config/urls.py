@@ -11,13 +11,13 @@ from drf_spectacular.views import (
 
 urlpatterns = [
     path("farabin-admin/", admin.site.urls),
-    path("management/", include("management.urls")),
-    path("packages/", include("packages.urls")),
-    path("finance/", include("finance.urls")),
-    path("company/", include("company.urls")),
-    path("requests/", include("request.urls")),
-    path("tickets/", include("tickets.urls")),
-    path("auth/", include("core.urls")),
+    path("management/", include("apps.management.urls")),
+    path("packages/", include("apps.packages.urls")),
+    path("finance/", include("apps.finance.urls")),
+    path("company/", include("apps.company.urls")),
+    path("requests/", include("apps.request.urls")),
+    path("tickets/", include("apps.tickets.urls")),
+    path("auth/", include("apps.core.urls")),
 ]
 if settings.DEBUG:
     from debug_toolbar.toolbar import debug_toolbar_urls

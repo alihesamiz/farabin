@@ -1,0 +1,160 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-28 18:25+0330\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: apps/tickets/admin.py:18 apps/tickets/admin.py:23
+msgid "Members count"
+msgstr "تعداد اعضا"
+
+#: apps/tickets/admin.py:38 apps/tickets/models.py:98
+#: apps/tickets/models.py:129 apps/tickets/models.py:151
+msgid "Department"
+msgstr "دپارتمان"
+
+#: apps/tickets/admin.py:39 apps/tickets/models.py:130
+msgid "Departments"
+msgstr "دپارتمان‌ها"
+
+#: apps/tickets/admin.py:61
+msgid "Phone Number"
+msgstr "شماره تلفن"
+
+#: apps/tickets/admin.py:98
+msgid "Company Title"
+msgstr "نام شرکت"
+
+#: apps/tickets/apps.py:8 apps/tickets/models.py:17 apps/tickets/models.py:40
+#: apps/tickets/models.py:117
+msgid "Ticket"
+msgstr "تیکت"
+
+#: apps/tickets/models.py:21 apps/tickets/models.py:158
+msgid "Agent"
+msgstr "کارمند"
+
+#: apps/tickets/models.py:24 apps/tickets/models.py:44
+#: apps/tickets/models.py:92
+msgid "Comment"
+msgstr "پیام"
+
+#: apps/tickets/models.py:26 apps/tickets/models.py:46
+#: apps/tickets/models.py:109
+msgid "Created At"
+msgstr "ایجاد شده در"
+
+#: apps/tickets/models.py:28 apps/tickets/models.py:48
+#: apps/tickets/models.py:110
+msgid "Updated At"
+msgstr "بروزرسانی شده در"
+
+#: apps/tickets/models.py:31
+msgid "Ticket Answer"
+msgstr "پاسخ تیکت"
+
+#: apps/tickets/models.py:32
+msgid "Ticket Answers"
+msgstr "پاسخ‌های تیکت"
+
+#: apps/tickets/models.py:51
+msgid "Ticket Comment"
+msgstr "پیام تیکت"
+
+#: apps/tickets/models.py:52
+msgid "Ticket Comments"
+msgstr "پیام تیکت"
+
+#: apps/tickets/models.py:67
+msgid "New"
+msgstr "جدید"
+
+#: apps/tickets/models.py:68
+msgid "In Progress"
+msgstr "در حال بررسی"
+
+#: apps/tickets/models.py:69
+msgid "Resolved"
+msgstr "پاسخ داده‌شده"
+
+#: apps/tickets/models.py:70
+msgid "Closed"
+msgstr "بسته شده"
+
+#: apps/tickets/models.py:78
+msgid "Low"
+msgstr "کم"
+
+#: apps/tickets/models.py:79
+msgid "Medium"
+msgstr "متوسط"
+
+#: apps/tickets/models.py:80
+msgid "High"
+msgstr "زیاد"
+
+#: apps/tickets/models.py:87
+msgid "Issuer"
+msgstr "سازنده"
+
+#: apps/tickets/models.py:90
+msgid "Subject"
+msgstr "عنوان"
+
+#: apps/tickets/models.py:95
+msgid "Service"
+msgstr "سرویس"
+
+#: apps/tickets/models.py:102
+msgid "Status"
+msgstr "وضعیت"
+
+#: apps/tickets/models.py:107
+msgid "Priority"
+msgstr "اولویت"
+
+#: apps/tickets/models.py:118
+msgid "Tickets"
+msgstr "تیکت‌ها"
+
+#: apps/tickets/models.py:122
+msgid "Name"
+msgstr "نام"
+
+#: apps/tickets/models.py:123
+msgid "Description"
+msgstr "توضیحات"
+
+#: apps/tickets/models.py:136
+msgid "First Name"
+msgstr "نام"
+
+#: apps/tickets/models.py:140
+msgid "Last Name"
+msgstr "نام خانوادگی"
+
+#: apps/tickets/models.py:143
+msgid "Email"
+msgstr "ایمیل"
+
+#: apps/tickets/models.py:145
+msgid "User"
+msgstr "کاربر"
+
+#: apps/tickets/models.py:159
+msgid "Agents"
+msgstr "کارمندان"

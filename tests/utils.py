@@ -2,7 +2,7 @@ import pytest
 
 from rest_framework.test import APIClient
 
-from core.models import OTP, User
+from apps.core.models import OTP, User
 
 
 @pytest.fixture
