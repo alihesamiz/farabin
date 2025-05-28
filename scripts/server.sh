@@ -2,8 +2,9 @@
 
 source env.sh
 
-python manage.py makemigrations --noinput
-python manage.py migrate --noinput
+WORKERS=$(python -c "import os; print(os.cpu_count())")
+
+python manage.py migrate
 
 python manage.py load_departments
 python manage.py load_cities
@@ -17,8 +18,4 @@ python manage.py load_swot_questions
 
 python manage.py collectstatic --noinput
 
-python manage.py makemigrations
-python manage.py migrate
-
-gunicorn --bind 0.0.0.0:8000 --workers 3 config.wsgi:application
-# gunicorn --bind 0.0.0.0:8000 --workers 3 config.wsgi:application
+gunicorn --bind 0.0.0.0:"$FARABIN_PORT" --workers "$WORKERS" config.wsgi:application
