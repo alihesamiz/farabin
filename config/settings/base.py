@@ -34,13 +34,13 @@ INSTALLED_APPS = [
 
 
 PROJECT_APPS = [
-    "management",
-    "packages",
-    "finance",
-    "company",
-    "request",
-    "tickets",
-    "core",
+    "apps.management",
+    "apps.packages",
+    "apps.finance",
+    "apps.company",
+    "apps.request",
+    "apps.tickets",
+    "apps.core",
 ]
 
 THIRED_PARTY_APPS = [
@@ -188,10 +188,12 @@ CELERY_QUEUES = (
     Queue("high_priority", routing_key="task.high_priority"),
 )
 CELERY_DEFAULT_QUEUE = "default"
-CELERY_RESULT_BACKEND = f'redis://{env.get_value("FARABIN_REDIS_HOST")}:{env.get_value(
-    "FARABIN_REDIS_PORT")}/{env.get_value("FARABIN_REDIS_ASYNC_DATABASE")}'
-CELERY_BROKER_URL = f'redis://{env.get_value("FARABIN_REDIS_HOST")}:{env.get_value(
-    "FARABIN_REDIS_PORT")}/{env.get_value("FARABIN_REDIS_ASYNC_DATABASE")}'
+CELERY_RESULT_BACKEND = f"redis://{env.get_value('FARABIN_REDIS_HOST')}:{
+    env.get_value('FARABIN_REDIS_PORT')
+}/{env.get_value('FARABIN_REDIS_ASYNC_DATABASE')}"
+CELERY_BROKER_URL = f"redis://{env.get_value('FARABIN_REDIS_HOST')}:{
+    env.get_value('FARABIN_REDIS_PORT')
+}/{env.get_value('FARABIN_REDIS_ASYNC_DATABASE')}"
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_TASK_REJECT_ON_WORKER_LOST = True
 CELERY_TASK_RESULT_EXPIRES = 3600
@@ -200,7 +202,7 @@ CELERY_TASK_ACKS_LATE = True
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": f'redis://{env.get_value("FARABIN_REDIS_HOST")}:{env.get_value("FARABIN_REDIS_PORT")}/{env.get_value("FARABIN_REDIS_CACHE_DATABASE")}',
+        "LOCATION": f"redis://{env.get_value('FARABIN_REDIS_HOST')}:{env.get_value('FARABIN_REDIS_PORT')}/{env.get_value('FARABIN_REDIS_CACHE_DATABASE')}",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "KEY_PREFIX": "farabin_cache",
