@@ -53,8 +53,8 @@ class HumanResource(LifecycleModelMixin, models.Model):
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("تاریخ بروزرسانی"))
 
     class Meta:
-        verbose_name = _("منابع انسانی")
-        verbose_name_plural = _("منابع انسانی")
+        verbose_name = _("منابع انسانی شرکت‌ها")
+        verbose_name_plural = _("منابع انسانی شرکت‌ها")
         constraints = [
             models.UniqueConstraint(fields=["company"], name="unique_company_hr")
         ]
@@ -69,8 +69,10 @@ class HumanResource(LifecycleModelMixin, models.Model):
         """
         from management.tasks import process_personnel_excel
 
-        logger.info("Starting the process of creating personnel information.")
-        process_personnel_excel.delay(self.id)
+        logger.info(
+            f"Starting the process of creating personnel information with the id:{self.pk}"
+        )
+        process_personnel_excel.delay(self.pk)
 
         logger.info("Process of creating personnel information started successfully.")
         return
@@ -83,6 +85,30 @@ class HumanResource(LifecycleModelMixin, models.Model):
         file_path = self.excel_file.path
         if os.path.exists(file_path):
             os.remove(file_path)
+
+
+class Position(models.Model):
+    code = models.PositiveIntegerField(verbose_name=_("کد موقعیت"), unique=True)
+    position = models.CharField(verbose_name=_("موقعیت"), max_length=150, unique=True)
+
+    class Meta:
+        verbose_name = _("موقعیت شغلی")
+        verbose_name_plural = _("موقعیت‌های شغلی")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["code", "position"], name="unique_position_code"
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.code}:{self.position}"
+
+    @classmethod
+    def get_postition_by_code(cls, code: int):
+        try:
+            return cls.objects.get(code=code).position
+        except Exception:
+            raise Exception(f"No position found with the given code {code}")
 
 
 class PersonelInformation(models.Model):
@@ -182,7 +208,6 @@ def get_chart_excel_file_upload_path(instance, filename):
 
 
 class OrganizationChartBase(LifecycleModelMixin, models.Model):
-
     field = models.CharField(
         verbose_name=_("زمینه"), max_length=150, null=False, blank=False
     )
@@ -197,8 +222,8 @@ class OrganizationChartBase(LifecycleModelMixin, models.Model):
     )
 
     class Meta:
-        verbose_name = _("نمودار سازمانی")
-        verbose_name_plural = _("نمودارهای سازمانی")
+        verbose_name = _("فایل‌ خام نمودار سازمانی")
+        verbose_name_plural = _("فایل‌های خام نمودار سازمانی")
 
     def __str__(self):
         return f"{self.field.title()}"

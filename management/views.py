@@ -38,6 +38,7 @@ from management.models import (
     SWOTAnalysis,
     SWOTMatrix,
     SWOTOption,
+    Position,
 )
 from management.paginations import (
     SWOTQuestionPagination,
@@ -96,18 +97,10 @@ class PersonnelInformationViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         company = self.request.user.company
-
-        human_resource_id = self.kwargs.get("human_resource_pk")
-
-        if human_resource_id:
-            logger.info(
-                f"Fetching PersonelInformation for HumanResource ID: {human_resource_id}"
-            )
-            return PersonelInformation.objects.select_related("human_resource").filter(
-                human_resource__id=human_resource_id, human_resource__company=company
-            )
-
-        return PersonelInformation.objects.none()
+        logger.info(f"Fetching PersonelInformation for HumanResource ID: {company.id}")
+        return PersonelInformation.objects.select_related("human_resource").filter(
+            human_resource__company=company
+        )
 
     def get_serializer_class(self):
         if self.action == "create":
@@ -152,7 +145,6 @@ class OrganizationChartFileViewSet(viewsets.ReadOnlyModelViewSet):
 
     @action(detail=False, methods=["GET"], url_name="download", url_path="download")
     def download(self, request):
-
         queryset = self.get_queryset().first()
         if not queryset:
             logger.warning(
@@ -201,7 +193,13 @@ class ChartNodeViewSet(viewsets.ReadOnlyModelViewSet):
         Example request:
             GET /chartnodes/positions/?pos=Manager,Developer
         """
-        positions_param = request.query_params.get("pos")
+        position = request.query_params.get("pos")
+        positions_param = (
+            position
+            if isinstance(position, str)
+            else Position.get_postition_by_code(position)
+        )
+
         if not positions_param:
             return Response(
                 {"detail": "Query parameter 'positions' is required."}, status=400

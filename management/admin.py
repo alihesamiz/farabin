@@ -3,6 +3,7 @@ from django.contrib import admin
 
 from management.models import (
     HumanResource,
+    Position,
     PersonelInformation,
     OrganizationChartBase,
     SWOTAnalysis,
@@ -25,6 +26,12 @@ class PersonelInformationAdmin(admin.ModelAdmin):
         "reports_to",
         "cooperates_with",
     ]
+
+
+@admin.register(Position)
+class PostitionAdmin(admin.ModelAdmin):
+    list_display = ["code", "position"]
+    search_fields = ["code", "position"]
 
 
 @admin.register(HumanResource)
