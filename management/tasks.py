@@ -6,7 +6,6 @@ from collections import defaultdict
 from openpyxl import load_workbook
 from celery import shared_task
 import logging
-import cohere
 
 from django.db.transaction import atomic
 from django.conf import settings
@@ -16,7 +15,7 @@ from management.models import (
     PersonelInformation,
     SWOTMatrix,
     SWOTAnalysis,
-    SWOTCategory,
+    Position,
 )
 
 
@@ -67,6 +66,7 @@ def process_personnel_excel(self, id: int):
             # Normalize data
             name = name.strip().title()
             position = position.strip().upper()
+            is_exist = Position.objects.filter(position=position).exists()
             obligations = obligations.strip()
             reports_to_positions = (
                 [p.strip().upper() for p in reports_to_position.strip().split(",")]
@@ -84,6 +84,7 @@ def process_personnel_excel(self, id: int):
                 name=name,
                 obligations=obligations,
                 position=position,
+                is_exist=is_exist,
             )
             personnel_list.append(person)
 
@@ -165,10 +166,10 @@ def generate_swot_analysis(self, id: int):
         prompt = f"""
     Create a detailed SWOT analysis in Persian language based on the following parameters provided. Present the output in a well-organized format with headings for each section.
         SWOT Parameters:
-        Strengths,Opportunities: {combinations_dict['so']}
-        Strengths,Threats: {combinations_dict['st']}
-        Weaknesses,Opportunities: {combinations_dict['wo']}
-        Weaknesses,Threats: {combinations_dict['wt']}
+        Strengths,Opportunities: {combinations_dict["so"]}
+        Strengths,Threats: {combinations_dict["st"]}
+        Weaknesses,Opportunities: {combinations_dict["wo"]}
+        Weaknesses,Threats: {combinations_dict["wt"]}
 
         Output Requirements:
 
