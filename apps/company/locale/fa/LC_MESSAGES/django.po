@@ -1,0 +1,316 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-28 18:25+0330\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: apps/company/admin.py:66
+msgid "National Code"
+msgstr "کد ثبت ملی شرکت"
+
+#: apps/company/admin.py:71 apps/company/models.py:122
+msgid "Special Field"
+msgstr "حوزه تخصصی"
+
+#: apps/company/admin.py:74 apps/company/models.py:131
+msgid "Capital Providing Method"
+msgstr "راه‌های تامین سرمایه"
+
+#: apps/company/admin.py:93
+msgid "Activate selected services"
+msgstr "فعالسازی سرویس‌های انتخابی"
+
+#: apps/company/admin.py:98
+msgid "{} service(s) were successfully marked as active."
+msgstr "{} سرویس با موفقیت فعال شدند"
+
+#: apps/company/admin.py:104
+msgid "Deactivate selected services"
+msgstr "غیرفعالسازی سرویس‌های انتخابی"
+
+#: apps/company/admin.py:109
+msgid "{} service(s) were successfully marked as deactive."
+msgstr "{} سرویس با موفقیت غیرفعال شدند"
+
+#: apps/company/admin.py:219 apps/company/models.py:363
+#: apps/company/models.py:364
+msgid "چرخه عمر منابع مالی"
+msgstr ""
+
+#: apps/company/admin.py:225 apps/company/models.py:299
+#: apps/company/models.py:384
+msgid "شرکت"
+msgstr ""
+
+#: apps/company/apps.py:8 apps/company/models.py:200
+msgid "Company"
+msgstr "شرکت"
+
+#: apps/company/models.py:27
+msgid "Operational"
+msgstr "عملیاتی"
+
+#: apps/company/models.py:28
+msgid "Finance"
+msgstr "تسهیلات مالی"
+
+#: apps/company/models.py:29
+msgid "Invest"
+msgstr "سرمایه‌گذاری"
+
+#: apps/company/models.py:35
+msgid "Capital Providing"
+msgstr "تامین سرمایه"
+
+#: apps/company/models.py:39
+msgid "Life Cycle"
+msgstr "چرخه عمر"
+
+#: apps/company/models.py:40
+msgid "Life Cycles"
+msgstr "چرخه‌های عمر"
+
+#: apps/company/models.py:47 apps/company/models.py:58
+msgid "Name"
+msgstr "نام"
+
+#: apps/company/models.py:53
+msgid "Special Tech"
+msgstr "حوزه تخصصی"
+
+#: apps/company/models.py:54
+msgid "Special Techs"
+msgstr "حوزه‌های تخصصی"
+
+#: apps/company/models.py:64
+msgid "Tech Field"
+msgstr "حوزه فناوری"
+
+#: apps/company/models.py:65
+msgid "Tech Fields"
+msgstr "حوزه‌های فناوری"
+
+#: apps/company/models.py:72
+msgid "User"
+msgstr "کاربر"
+
+#: apps/company/models.py:75
+msgid "Company Title"
+msgstr "عنوان شرکت"
+
+#: apps/company/models.py:78
+msgid "Email"
+msgstr "ایمیل"
+
+#: apps/company/models.py:84
+msgid "Manager Social Code"
+msgstr "کد ملی مدیرعامل"
+
+#: apps/company/models.py:89
+msgid "Manager Full Name"
+msgstr "نام کامل مدیرعامل"
+
+#: apps/company/models.py:95
+msgid "Manager Phone Number"
+msgstr "شماره تماس مدیرعامل"
+
+#: apps/company/models.py:104
+msgid "Office Phone Number"
+msgstr "شماره تماس دفتر"
+
+#: apps/company/models.py:109
+msgid "License Types"
+msgstr "نوع گواهی"
+
+#: apps/company/models.py:115
+msgid "Technical Field"
+msgstr "حوزه فناوری"
+
+#: apps/company/models.py:126
+msgid "Insurance List"
+msgstr "تعداد لیست بیمه‌شدگان"
+
+#: apps/company/models.py:136
+msgid "Province"
+msgstr "استان"
+
+#: apps/company/models.py:140
+msgid "City"
+msgstr "شهر"
+
+#: apps/company/models.py:143
+msgid "Address"
+msgstr "آدرس"
+
+#: apps/company/models.py:145
+msgid "Is Active?"
+msgstr "فعال است؟"
+
+#: apps/company/models.py:148
+msgid "Company Profile"
+msgstr "پروفایل شرکت"
+
+#: apps/company/models.py:149
+msgid "Company Profiles"
+msgstr "پروفایل شرکت‌ها"
+
+#: apps/company/models.py:173
+msgid "Industrial town"
+msgstr "عضو شهرک صنعتی"
+
+#: apps/company/models.py:174
+msgid "Technological"
+msgstr "فناور"
+
+#: apps/company/models.py:175
+msgid "Knowledge base"
+msgstr "دانش بنیان"
+
+#: apps/company/models.py:176
+msgid "Others"
+msgstr "سایر"
+
+#: apps/company/models.py:183
+msgid "License Code"
+msgstr "کد گواهی"
+
+#: apps/company/models.py:185
+msgid "License Name"
+msgstr "نام گواهی"
+
+#: apps/company/models.py:188
+msgid "License"
+msgstr "گواهی"
+
+#: apps/company/models.py:189
+msgid "Licenses"
+msgstr "گواهی‌ها"
+
+#: apps/company/models.py:205
+msgid "Service"
+msgstr "خدمت"
+
+#: apps/company/models.py:208
+msgid "Activate"
+msgstr "فعالسازی"
+
+#: apps/company/models.py:211
+msgid "Purchased Date"
+msgstr "تاریخ خرید"
+
+#: apps/company/models.py:216
+msgid "Company Service"
+msgstr "خدمت شرکت"
+
+#: apps/company/models.py:217
+msgid "Company Services"
+msgstr "خدمت‌های شرکت‌ها"
+
+#: apps/company/models.py:226
+msgid "نظری"
+msgstr ""
+
+#: apps/company/models.py:232 apps/company/models.py:247
+#: apps/company/models.py:260 apps/company/models.py:273
+#: apps/company/models.py:286 apps/company/models.py:306
+msgid "ویژگی"
+msgstr ""
+
+#: apps/company/models.py:234
+msgid "وزن"
+msgstr ""
+
+#: apps/company/models.py:237
+msgid "چرخه عمر ویژگی‌"
+msgstr ""
+
+#: apps/company/models.py:238
+msgid "چرخه عمر ویژگی‌ها"
+msgstr ""
+
+#: apps/company/models.py:250 apps/company/models.py:251
+msgid "چرخه عمر افول"
+msgstr ""
+
+#: apps/company/models.py:263 apps/company/models.py:264
+msgid "چرخه عمر بلوغ"
+msgstr ""
+
+#: apps/company/models.py:276 apps/company/models.py:277
+msgid "چرخه عمر رشد"
+msgstr ""
+
+#: apps/company/models.py:289 apps/company/models.py:290
+msgid "چرخه عمر معرفی"
+msgstr ""
+
+#: apps/company/models.py:312
+msgid "افول"
+msgstr ""
+
+#: apps/company/models.py:318
+msgid "بلوغ"
+msgstr ""
+
+#: apps/company/models.py:324
+msgid "رشد"
+msgstr ""
+
+#: apps/company/models.py:330
+msgid "معرفی"
+msgstr ""
+
+#: apps/company/models.py:334 apps/company/models.py:394
+msgid "تاریخ ایجاد"
+msgstr ""
+
+#: apps/company/models.py:335 apps/company/models.py:395
+msgid "تاریخ بروزرسانی"
+msgstr ""
+
+#: apps/company/models.py:338 apps/company/models.py:339
+msgid "چرخه عمر جایگاه نظری"
+msgstr ""
+
+#: apps/company/models.py:355
+msgid "عملیاتی"
+msgstr ""
+
+#: apps/company/models.py:356
+msgid "تامین مالی"
+msgstr ""
+
+#: apps/company/models.py:357
+msgid "سرمایه گذاری"
+msgstr ""
+
+#: apps/company/models.py:390
+msgid "منابع"
+msgstr ""
+
+#: apps/company/models.py:398 apps/company/models.py:399
+msgid "چرخه عمر جایگاه کمی"
+msgstr ""
+
+#~ msgid "Profile Active"
+#~ msgstr "فعالسازی"
+
+#~ msgid "Newbie"
+#~ msgstr "نوپا"
+
+#~ msgid "Innovative"
+#~ msgstr "نوآور"
