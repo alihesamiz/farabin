@@ -1,11 +1,9 @@
-from django.utils.translation import gettext_lazy as _
-
-from config.settings.base import *
+from config.settings.base import *  # noqa: F403
 
 
-DEBUG = env.bool("FARABIN_DEBUG", default=False)
+DEBUG = env.bool("FARABIN_DEBUG", default=False)  # noqa: F405
 
-ALLOWED_HOSTS = env.list(
+ALLOWED_HOSTS = env.list(  # noqa: F405
     "FARABIN_ALLOWED_HOSTS",
     default=["saramad.farabinbrand.com", "farabinback.farbinbrand.com", "0.0.0.0"],
 )
@@ -17,11 +15,11 @@ INTERNAL_IPS = None
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "PASSWORD": env.get_value("FARABIN_DB_PASSWORD"),
-        "NAME": env.get_value("FARABIN_DB_NAME"),
-        "USER": env.get_value("FARABIN_DB_USER"),
-        "HOST": env.get_value("FARABIN_DB_HOST"),
-        "PORT": env.get_value("FARABIN_DB_PORT"),
+        "PASSWORD": env.get_value("FARABIN_DB_PASSWORD"),  # noqa: F405
+        "NAME": env.get_value("FARABIN_DB_NAME"),  # noqa: F405
+        "USER": env.get_value("FARABIN_DB_USER"),  # noqa: F405
+        "HOST": env.get_value("FARABIN_DB_HOST"),  # noqa: F405
+        "PORT": env.get_value("FARABIN_DB_PORT"),  # noqa: F405
     }
 }
 

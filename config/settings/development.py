@@ -1,18 +1,16 @@
-from django.utils.translation import gettext_lazy as _
-
-from config.settings.base import *
+from config.settings.base import *  # noqa: F403
 
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
-INSTALLED_APPS += [
+INSTALLED_APPS += [  # noqa: F405
     "debug_toolbar",
 ]
 
 INTERNAL_IPS = ["127.0.0.1"]
 
-MIDDLEWARE += [
+MIDDLEWARE += [  # noqa: F405
     "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
@@ -20,7 +18,7 @@ MIDDLEWARE += [
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",  # noqa: F405
     }
 }
 
