@@ -19,6 +19,7 @@ dump.rdb
 *static/
 !/static/finance/
 staticfiles/
+!/apps/finance/static/
 
 # Environment variables
 # .env
