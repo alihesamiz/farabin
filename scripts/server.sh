@@ -3,7 +3,7 @@
 source env.sh
 
 WORKERS=$(python -c "import os; print(os.cpu_count())")
-
+FARABIN_PORT=$(python -c "import os; print(os.getenv('FARABIN_PORT', '8000'))")
 python manage.py migrate
 
 python manage.py load_departments
