@@ -5,7 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "django==5.1.9",
+    "django==5.1.10",
     "amqp ==5.3.1",
     "asgiref ==3.8.1",
     "attrs ==24.2.0",
