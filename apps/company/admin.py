@@ -16,6 +16,8 @@ from apps.company.models import (
     LifeCycleIntroduction,
     LifeCycleMaturity,
     LifeCycleFeature,
+    CompanyQuestionnaire,
+    CompanyAnswer
 )
 
 
@@ -88,7 +90,8 @@ class CompanyServiceAdmin(admin.ModelAdmin):
     autocomplete_fields = ["company"]
     list_display = ["company", "service", "is_active", "purchased_date"]
 
-    search_fields = ["company__company_title", "service__description", "purchased_date"]
+    search_fields = ["company__company_title",
+                     "service__description", "purchased_date"]
 
     @admin.action(description=_("Activate selected services"))
     def activate_services(self, request, queryset):
@@ -203,7 +206,8 @@ class LifeCyclePlaceAdmin(admin.ModelAdmin):
 
 
 @admin.register(LifeCycleFinancialResource)
-class LifeCycleFinancialResourceAdmin(admin.ModelAdmin): ...
+class LifeCycleFinancialResourceAdmin(admin.ModelAdmin):
+    ...
 
 
 @admin.register(LifeCycleQuantitative)
@@ -225,3 +229,19 @@ class LifeCycleQuantitaticeAdmin(admin.ModelAdmin):
     @admin.display(description=_("شرکت"))
     def company__company_title(self, obj: LifeCycleQuantitative):
         return obj.company.company_title
+
+
+@admin.register(CompanyQuestionnaire)
+class CompanyQuestionnaireAdmin(admin.ModelAdmin):
+    list_display = ("company", "questionnaire", "submitted_at")
+    list_filter = ("questionnaire", "submitted_at")
+    search_fields = ("company__name",)
+
+
+@admin.register(CompanyAnswer)
+class CompanyAnswerAdmin(admin.ModelAdmin):
+    list_display = ("company_questionnaire", "question",
+                    "selected_choice", "answered_at")
+    list_filter = ("question",)
+    autocomplete_fields = ("company_questionnaire",
+                           "question", "selected_choice")

@@ -11,8 +11,7 @@ from django_lifecycle.mixins import LifecycleModelMixin
 from django_lifecycle.hooks import AFTER_CREATE
 from django_lifecycle.decorators import hook
 
-from apps.core.validators import phone_number_validator, landline_number_validator
-
+from apps.core.validators import Validator as _validator
 logger = logging.getLogger("company")
 
 User = get_user_model()
@@ -72,7 +71,8 @@ class CompanyProfile(LifecycleModelMixin, models.Model):
         User, on_delete=models.CASCADE, related_name="company", verbose_name=_("User")
     )
 
-    company_title = models.CharField(max_length=255, verbose_name=_("Company Title"))
+    company_title = models.CharField(
+        max_length=255, verbose_name=_("Company Title"))
 
     email = models.EmailField(
         max_length=255, unique=True, verbose_name=_("Email"), null=True, blank=True
@@ -86,12 +86,13 @@ class CompanyProfile(LifecycleModelMixin, models.Model):
         null=True,
     )
 
-    manager_name = models.CharField(max_length=255, verbose_name=_("Manager Full Name"))
+    manager_name = models.CharField(
+        max_length=255, verbose_name=_("Manager Full Name"))
 
     manager_phone_number = models.CharField(
         max_length=11,
         unique=True,
-        validators=[phone_number_validator],
+        validators=[_validator.phone_number_model_regex_validator],
         verbose_name=_("Manager Phone Number"),
         null=True,
         blank=True,
@@ -100,13 +101,14 @@ class CompanyProfile(LifecycleModelMixin, models.Model):
     office_phone_number = models.CharField(
         max_length=11,
         unique=True,
-        validators=[landline_number_validator],
+        validators=[_validator.landline_number_model_regex_validator],
         verbose_name=_("Office Phone Number"),
         null=True,
         blank=True,
     )
 
-    license = models.ManyToManyField("License", verbose_name=_("License Types"))
+    license = models.ManyToManyField(
+        "License", verbose_name=_("License Types"))
 
     tech_field = models.ForeignKey(
         "TechField",
@@ -142,7 +144,8 @@ class CompanyProfile(LifecycleModelMixin, models.Model):
 
     address = models.CharField(max_length=255, verbose_name=_("Address"))
 
-    is_active = models.BooleanField(default=False, verbose_name=_("Is Active?"))
+    is_active = models.BooleanField(
+        default=False, verbose_name=_("Is Active?"))
 
     class Meta:
         verbose_name = _("Company Profile")
@@ -231,7 +234,8 @@ class LifeCycleFeature(models.Model):
 
     name = models.CharField(max_length=255, verbose_name=_("ویژگی"))
 
-    weight = models.DecimalField(verbose_name=_("وزن"), max_digits=5, decimal_places=2)
+    weight = models.DecimalField(verbose_name=_(
+        "وزن"), max_digits=5, decimal_places=2)
 
     class Meta:
         verbose_name = _("چرخه عمر ویژگی‌")
@@ -331,8 +335,10 @@ class LifeCycleTheoretical(LifecycleModelMixin, models.Model):
         on_delete=models.CASCADE,
         related_name="life_cycle",
     )
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("تاریخ ایجاد"))
-    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("تاریخ بروزرسانی"))
+    created_at = models.DateTimeField(
+        auto_now_add=True, verbose_name=_("تاریخ ایجاد"))
+    updated_at = models.DateTimeField(
+        auto_now=True, verbose_name=_("تاریخ بروزرسانی"))
 
     class Meta:
         verbose_name = _("چرخه عمر جایگاه نظری")
@@ -391,8 +397,10 @@ class LifeCycleQuantitative(models.Model):
         related_name="life_cycle",
         blank=True,
     )
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("تاریخ ایجاد"))
-    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("تاریخ بروزرسانی"))
+    created_at = models.DateTimeField(
+        auto_now_add=True, verbose_name=_("تاریخ ایجاد"))
+    updated_at = models.DateTimeField(
+        auto_now=True, verbose_name=_("تاریخ بروزرسانی"))
 
     class Meta:
         verbose_name = _("چرخه عمر جایگاه کمی")
@@ -405,12 +413,13 @@ class LifeCycleQuantitative(models.Model):
 
     def __str__(self):
         resource_names = ", ".join([str(res) for res in self.resource.all()])
-        return f"{resource_names} - {self.company.company_title}"
+        return f"{resource_names!s} - {self.company.company_title!s}"
 
     @property
     def place(self):
         resources = set([resource.name for resource in self.resource.all()])
-        resources = [resource.name for resource in self.resource.all().order_by("id")]
+        resources = [
+            resource.name for resource in self.resource.all().order_by("id")]
 
         for place, values in self.PLACES.items():
             if len(resources) > 1 or len(resources) == 0:
@@ -420,3 +429,38 @@ class LifeCycleQuantitative(models.Model):
                 if values == resources[0]:
                     return place
         return None
+
+
+class CompanyQuestionnaire(models.Model):
+    company = models.ForeignKey(
+        "company.CompanyProfile", on_delete=models.CASCADE, verbose_name=_("شرکت"))
+    questionnaire = models.ForeignKey(
+        "core.Questionnaire", on_delete=models.CASCADE, verbose_name=_("پرسشنامه"))
+    submitted_at = models.DateTimeField(
+        auto_now_add=True, verbose_name=_("تاریخ ثبت"))
+
+    class Meta:
+        verbose_name = _("پرسشنامه شرکت")
+        verbose_name_plural = _("پرسشنامه‌های شرکت‌ها")
+
+    def __str__(self):
+        return f"{self.company!s} - {self.questionnaire!s}"
+
+
+class CompanyAnswer(models.Model):
+    company_questionnaire = models.ForeignKey(
+        "CompanyQuestionnaire", on_delete=models.CASCADE, related_name="answers", verbose_name=_("پرسشنامه‌ شرکت")
+    )
+    question = models.ForeignKey(
+        "core.Question", on_delete=models.CASCADE, verbose_name=_("سوال"))
+    selected_choice = models.ForeignKey(
+        "core.QuestionChoice", on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_("گزینه انتخابی"))
+    answered_at = models.DateTimeField(
+        auto_now_add=True, verbose_name=_("تاریخ پاسخ"))
+
+    class Meta:
+        verbose_name = _("پاسخ شرکت")
+        verbose_name_plural = _("پاسخ‌های شرکت‌ها")
+
+    def __str__(self):
+        return f"{self.question!s}: {self.selected_choice!s}"
