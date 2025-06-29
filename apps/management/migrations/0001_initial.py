@@ -33,7 +33,8 @@ class Migration(migrations.Migration):
                     models.FileField(
                         max_length=150,
                         upload_to=apps.management.models.get_chart_excel_file_upload_path,
-                        validators=[apps.core.validators.excel_file_validator],
+                        validators=[
+                            apps.core.validators.Validator.excel_file_validator],
                         verbose_name="Position Excel",
                     ),
                 ),
@@ -59,21 +60,25 @@ class Migration(migrations.Migration):
                     "excel_file",
                     models.FileField(
                         upload_to=apps.management.models.get_hr_file_upload_path,
-                        validators=[apps.core.validators.excel_file_validator],
+                        validators=[
+                            apps.core.validators.Validator.excel_file_validator],
                         verbose_name="Excel File",
                     ),
                 ),
                 (
                     "is_approved",
-                    models.BooleanField(default=False, verbose_name="Is Approved"),
+                    models.BooleanField(
+                        default=False, verbose_name="Is Approved"),
                 ),
                 (
                     "create_at",
-                    models.DateTimeField(auto_now_add=True, verbose_name="Created At"),
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Created At"),
                 ),
                 (
                     "updated_at",
-                    models.DateTimeField(auto_now=True, verbose_name="Updated At"),
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Updated At"),
                 ),
                 (
                     "company",
@@ -103,10 +108,12 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 ("name", models.CharField(max_length=250, verbose_name="Full Name")),
-                ("position", models.CharField(max_length=150, verbose_name="Position")),
+                ("position", models.CharField(
+                    max_length=150, verbose_name="Position")),
                 (
                     "obligations",
-                    models.CharField(max_length=150, verbose_name="Obligation"),
+                    models.CharField(
+                        max_length=150, verbose_name="Obligation"),
                 ),
                 (
                     "human_resource",

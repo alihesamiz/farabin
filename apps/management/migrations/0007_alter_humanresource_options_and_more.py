@@ -73,7 +73,7 @@ class Migration(migrations.Migration):
             name="excel_file",
             field=models.FileField(
                 upload_to=apps.management.models.get_hr_file_upload_path,
-                validators=[apps.core.validators.excel_file_validator],
+                validators=[apps.core.validators.Validator.excel_file_validator],
                 verbose_name="فایل اکسل",
             ),
         ),
@@ -98,7 +98,7 @@ class Migration(migrations.Migration):
             field=models.FileField(
                 max_length=150,
                 upload_to=apps.management.models.get_chart_excel_file_upload_path,
-                validators=[apps.core.validators.excel_file_validator],
+                validators=[apps.core.validators.Validator.excel_file_validator],
                 verbose_name="فایل اکسل موقعیت",
             ),
         ),
