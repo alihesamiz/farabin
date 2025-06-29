@@ -17,7 +17,7 @@ from django_lifecycle.conditions import WhenFieldValueChangesTo
 from django_lifecycle.mixins import LifecycleModelMixin
 from django_lifecycle.decorators import hook
 
-from apps.core.validators import excel_file_validator
+from apps.core.validators import Validator as _validator
 from apps.core.utils import GeneralUtils
 
 
@@ -25,7 +25,8 @@ logger = logging.getLogger("management")
 
 
 def get_hr_file_upload_path(instance, filename):
-    path = GeneralUtils(path="hr_files", fields=[""]).rename_folder(instance, filename)
+    path = GeneralUtils(path="hr_files", fields=[
+                        ""]).rename_folder(instance, filename)
     return path
 
 
@@ -44,19 +45,23 @@ class HumanResource(LifecycleModelMixin, models.Model):
         blank=False,
         null=False,
         upload_to=get_hr_file_upload_path,
-        validators=[excel_file_validator],
+        validators=[_validator.excel_file_validator],
     )
 
-    is_approved = models.BooleanField(verbose_name=_("تأیید شده"), default=False)
+    is_approved = models.BooleanField(
+        verbose_name=_("تأیید شده"), default=False)
 
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("تاریخ ایجاد"))
-    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("تاریخ بروزرسانی"))
+    created_at = models.DateTimeField(
+        auto_now_add=True, verbose_name=_("تاریخ ایجاد"))
+    updated_at = models.DateTimeField(
+        auto_now=True, verbose_name=_("تاریخ بروزرسانی"))
 
     class Meta:
         verbose_name = _("منابع انسانی شرکت‌ها")
         verbose_name_plural = _("منابع انسانی شرکت‌ها")
         constraints = [
-            models.UniqueConstraint(fields=["company"], name="unique_company_hr")
+            models.UniqueConstraint(
+                fields=["company"], name="unique_company_hr")
         ]
 
     def __str__(self):
@@ -74,7 +79,8 @@ class HumanResource(LifecycleModelMixin, models.Model):
         )
         process_personnel_excel.delay(self.pk)
 
-        logger.info("Process of creating personnel information started successfully.")
+        logger.info(
+            "Process of creating personnel information started successfully.")
         return
 
     @hook(AFTER_DELETE)
@@ -88,8 +94,10 @@ class HumanResource(LifecycleModelMixin, models.Model):
 
 
 class Position(models.Model):
-    code = models.PositiveIntegerField(verbose_name=_("کد موقعیت"), unique=True)
-    position = models.CharField(verbose_name=_("موقعیت"), max_length=150, unique=True)
+    code = models.PositiveIntegerField(
+        verbose_name=_("کد موقعیت"), unique=True)
+    position = models.CharField(verbose_name=_(
+        "موقعیت"), max_length=150, unique=True)
 
     class Meta:
         verbose_name = _("موقعیت شغلی")
@@ -137,7 +145,8 @@ class PersonelInformation(models.Model):
         "self", verbose_name=_("همکاری با (پرسنل)"), blank=True
     )
 
-    obligations = models.TextField(verbose_name=_("وظایف"), null=False, blank=False)
+    obligations = models.TextField(
+        verbose_name=_("وظایف"), null=False, blank=False)
 
     is_exist = models.BooleanField(verbose_name=_("موجود است"), default=False)
 
@@ -218,7 +227,7 @@ class OrganizationChartBase(LifecycleModelMixin, models.Model):
         null=False,
         blank=False,
         upload_to=get_chart_excel_file_upload_path,
-        validators=[excel_file_validator],
+        validators=[_validator.excel_file_validator],
     )
 
     class Meta:
@@ -245,7 +254,8 @@ class ExternalFactors(models.TextChoices):
     ECONOMIC = "Economic", _("اقتصادی (مانند روندهای بازار، تورم)")
     SOCIAL = "Social", _("اجتماعی (مانند تغییرات فرهنگی، جمعیت‌شناسی)")
     TECHNOLOGICAL = "Technological", _("فناوری (مانند نوآوری، اتوماسیون)")
-    ENVIRONMENTAL = "Environmental", _("محیطی (مانند پایداری، تغییرات آب و هوایی)")
+    ENVIRONMENTAL = "Environmental", _(
+        "محیطی (مانند پایداری، تغییرات آب و هوایی)")
     LEGAL = "Legal", _("قانونی (مانند انطباق، قوانین)")
     NONE = "None", _("هیچ‌کدام")
 
@@ -298,8 +308,10 @@ class SWOTOption(LifecycleModelMixin, models.Model):
         verbose_name=_("عامل خارجی"),
         blank=True,
     )
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("تاریخ ایجاد"))
-    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("تاریخ بروزرسانی"))
+    created_at = models.DateTimeField(
+        auto_now_add=True, verbose_name=_("تاریخ ایجاد"))
+    updated_at = models.DateTimeField(
+        auto_now=True, verbose_name=_("تاریخ بروزرسانی"))
 
     class Meta:
         verbose_name = _("SWOT گزینه")
@@ -356,7 +368,8 @@ class SWOTOption(LifecycleModelMixin, models.Model):
         SWOTMatrix for the company exists. If it does, it adds the new option; if not, it creates it.
         """
         with atomic():
-            matrix, created = SWOTMatrix.objects.get_or_create(company=self.company)
+            matrix, created = SWOTMatrix.objects.get_or_create(
+                company=self.company)
 
             # Only add the new option if it's not already there
             if not matrix.options.filter(id=self.id).exists():
@@ -375,15 +388,19 @@ class SWOTMatrix(LifecycleModelMixin, models.Model):
     options = models.ManyToManyField(
         SWOTOption, verbose_name=_("گزینه‌های SWOT"), related_name="swot_matrices"
     )
-    is_approved = models.BooleanField(_("مورد تایید قرار گرفته است"), default=False)
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("تاریخ ایجاد"))
-    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("تاریخ بروزرسانی"))
+    is_approved = models.BooleanField(
+        _("مورد تایید قرار گرفته است"), default=False)
+    created_at = models.DateTimeField(
+        auto_now_add=True, verbose_name=_("تاریخ ایجاد"))
+    updated_at = models.DateTimeField(
+        auto_now=True, verbose_name=_("تاریخ بروزرسانی"))
 
     class Meta:
         verbose_name = _("SWOT ماتریس")
         verbose_name_plural = _("SWOT ماتریس‌ها")
         constraints = [
-            models.UniqueConstraint(fields=["company"], name="unique_company_swot")
+            models.UniqueConstraint(
+                fields=["company"], name="unique_company_swot")
         ]
 
     def __str__(self):
@@ -428,8 +445,10 @@ class SWOTAnalysis(LifecycleModelMixin, models.Model):
     wo = models.TextField(verbose_name=_("تحلیل نقاط ضعف و فرصت‌ها"))
     wt = models.TextField(verbose_name=_("تحلیل نقاط ضعف و تهدیدات"))
 
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("تاریخ ایجاد"))
-    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("تاریخ بروزرسانی"))
+    created_at = models.DateTimeField(
+        auto_now_add=True, verbose_name=_("تاریخ ایجاد"))
+    updated_at = models.DateTimeField(
+        auto_now=True, verbose_name=_("تاریخ بروزرسانی"))
 
     class Meta:
         verbose_name = _("SWOT تحلیل")

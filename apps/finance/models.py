@@ -10,7 +10,7 @@ from django.db import models
 
 from apps.company.models import CompanyProfile
 
-from apps.core.validators import pdf_file_validator, excel_file_validator
+from apps.core.validators import Validator as _validator
 from apps.core.utils import GeneralUtils
 
 
@@ -48,7 +48,7 @@ class TaxDeclarationFile(FileAbstract):
     tax_file = models.FileField(
         verbose_name=_("File"),
         upload_to=get_tax_file_upload_path,
-        validators=[pdf_file_validator],
+        validators=[_validator.pdf_file_validator],
         blank=True,
         null=True,
     )
@@ -106,7 +106,7 @@ class BalanceReportFile(FileAbstract):
 
     balance_report_file = models.FileField(
         verbose_name=_("Balance Report File"),
-        validators=[pdf_file_validator],
+        validators=[_validator.pdf_file_validator],
         upload_to=get_non_tax_file_upload_path,
         blank=True,
         null=True,
@@ -114,7 +114,7 @@ class BalanceReportFile(FileAbstract):
 
     profit_loss_file = models.FileField(
         verbose_name=_("Profit Loss File"),
-        validators=[pdf_file_validator],
+        validators=[_validator.pdf_file_validator],
         upload_to=get_non_tax_file_upload_path,
         blank=True,
         null=True,
@@ -122,7 +122,7 @@ class BalanceReportFile(FileAbstract):
 
     sold_product_file = models.FileField(
         verbose_name=_("Sold Product File"),
-        validators=[pdf_file_validator],
+        validators=[_validator.pdf_file_validator],
         upload_to=get_non_tax_file_upload_path,
         blank=True,
         null=True,
@@ -130,7 +130,7 @@ class BalanceReportFile(FileAbstract):
 
     account_turnover_file = models.FileField(
         verbose_name=_("Account Turn Over File"),
-        validators=[pdf_file_validator],
+        validators=[_validator.pdf_file_validator],
         upload_to=get_non_tax_file_upload_path,
         blank=True,
         null=True,
@@ -192,7 +192,7 @@ class FinanceExcelFile(models.Model):
     finance_excel_file = models.FileField(
         verbose_name=_("Finance Excel File"),
         upload_to=get_finance_excel_file_upload_path,
-        validators=[excel_file_validator],
+        validators=[_validator.excel_file_validator],
         blank=False,
         null=False,
     )
@@ -209,7 +209,8 @@ class FinanceExcelFile(models.Model):
     def save(self, *args, **kwargs):
         if self.pk:
             # Fetch the current instance safely
-            existing_instance = FinanceExcelFile.objects.filter(pk=self.pk).first()
+            existing_instance = FinanceExcelFile.objects.filter(
+                pk=self.pk).first()
 
             if (
                 existing_instance
@@ -831,7 +832,8 @@ class FinancialAsset(models.Model):
         validators=[MinValueValidator(1), MaxValueValidator(13)],
     )
 
-    is_tax_record = models.BooleanField(default=False, verbose_name=_("Is Tax Record"))
+    is_tax_record = models.BooleanField(
+        default=False, verbose_name=_("Is Tax Record"))
 
     class Meta:
         unique_together = [["company", "year", "month"]]
@@ -1033,9 +1035,11 @@ class FinancialData(models.Model):
         decimal_places=2,
         verbose_name=_("Employee Termination Benefit Reserve"),
     )
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created At"))
+    created_at = models.DateTimeField(
+        auto_now_add=True, verbose_name=_("Created At"))
 
-    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
+    updated_at = models.DateTimeField(
+        auto_now=True, verbose_name=_("Updated At"))
 
     def __str__(self) -> str:
         if self.financial_asset.month:
@@ -1119,9 +1123,11 @@ class AnalysisReport(models.Model):
         help_text=_("Enter the analysis text for each chart"),
     )
 
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created At"))
+    created_at = models.DateTimeField(
+        auto_now_add=True, verbose_name=_("Created At"))
 
-    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
+    updated_at = models.DateTimeField(
+        auto_now=True, verbose_name=_("Updated At"))
 
     is_published = models.BooleanField(
         default=False,
@@ -1155,7 +1161,8 @@ class Inflation(models.Model):
         decimal_places=4,
         max_digits=10,
         validators=[
-            MinValueValidator(Decimal(0), message="Values must be greater than '0'")
+            MinValueValidator(
+                Decimal(0), message="Values must be greater than '0'")
         ],
     )
     inflation_rate = models.DecimalField(
