@@ -1,24 +1,27 @@
-from datetime import timedelta
 import logging
 
-from django.contrib.auth import get_user_model
-from django.utils import timezone
+from django.contrib.auth import get_user_model  # type: ignore
 
+from rest_framework.viewsets import ModelViewSet, ViewSet  # type: ignore
+from rest_framework.permissions import IsAuthenticated  # type : ignore
+from rest_framework.decorators import action  # type: ignore
 
-from rest_framework.exceptions import AuthenticationFailed
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from rest_framework import status, viewsets
+from constants.responses import APIResponse
 
-
-from apps.company.models import CompanyProfile
+from apps.core.permissions import Unautherized
+from apps.core.services import (
+    AuthService as _auth_service,
+    UserService as _user_service,
+)
+from apps.core.repositories import UserRepository as _user_repo
 from apps.core.tasks import send_otp_task
-from apps.core.utils import GeneralUtils
-from apps.core.models import OTP
 from apps.core.serializers import (
-    OTPVerifySerializer,
+    LoginSerializer,
     OTPSendSerializer,
+    OTPVerifySerializer,
+    PasswordResetSerializer,
+    UserProfileSerializer,
+    UserProfileUpdateSerializer,
 )
 
 
@@ -27,68 +30,46 @@ User = get_user_model()
 logger = logging.getLogger("core")
 
 
-class OTPViewSet(viewsets.ViewSet):
+class AuthViewSet(ViewSet):
     """
     A ViewSet for sending and verifying OTP.
     """
 
-    util = GeneralUtils()
-    COOLDOWN_PERIOD = timedelta(minutes=3)
+    def get_serializer_class(self):
+        if self.action == "request_otp":
+            return OTPSendSerializer
+        elif self.action == "verify_otp":
+            return OTPVerifySerializer
+        elif self.action == "login":
+            return LoginSerializer
+        elif self.action == "reset_password":
+            return PasswordResetSerializer
+        return super().get_serializer_class()
+
+    permission_classes = [Unautherized]
 
     @action(detail=False, methods=["get", "post"], url_path="send", url_name="otp-send")
-    def send_otp(self, request):
+    def request_otp(self, request):
         logger.info("Received OTP send request.", extra={"request_data": request.data})
 
         serializer = OTPSendSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         phone_number = serializer.validated_data["phone_number"]
-        national_code = serializer.validated_data["national_code"]
+        social_code = serializer.validated_data["social_code"]
 
-        try:
-            user, created = User.objects.get_or_create(
-                phone_number=phone_number, defaults={"national_code": national_code}
-            )
-            if not user.is_active:
-                logger.warning(f"OTP request denied for inactive user {user.id}.")
-                raise AuthenticationFailed("User account is disabled.")
+        user = _user_service.create_user_with_phone_number(phone_number, social_code)
+        _auth_service.otp_expiry_check(user)
+        send_otp_task.delay(user.id, phone_number)
+        logger.info(
+            f"OTP for user {user.id} sent successfully.", extra={"user_id": user.id}
+        )
 
-            if not created and user.national_code != national_code:
-                logger.warning(
-                    f"OTP request mismatch for user {user.id}: Incorrect national code."
-                )
-                return Response(
-                    {"error": "The national code does not match the phone number."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+        _user_service.create_company_user()
 
-            last_otp = OTP.objects.filter(user=user).last()
-
-            if last_otp and timezone.now() < last_otp.created_at + self.COOLDOWN_PERIOD:
-                logger.warning(
-                    f"Too many OTP requests for user {user.id}. Cooldown period in effect."
-                )
-                return Response(
-                    {"error": "You can`t request a new OTP."},
-                    status=status.HTTP_429_TOO_MANY_REQUESTS,
-                )
-
-            send_otp_task.delay(user.id, phone_number)
-            logger.info(
-                f"OTP for user {user.id} sent successfully.", extra={"user_id": user.id}
-            )
-
-            return Response(
-                {"message": "OTP sent successfully."}, status=status.HTTP_200_OK
-            )
-
-        except Exception as e:
-            logger.error(
-                f"Error sending OTP for user {phone_number}: {str(e)}", exc_info=True
-            )
-            return Response(
-                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+        return APIResponse.success(
+            message="OTP sent successfully.", data={"user_id": user.id}
+        )
 
     @action(
         detail=False, methods=["get", "post"], url_path="verify", url_name="otp-verify"
@@ -104,55 +85,68 @@ class OTPViewSet(viewsets.ViewSet):
         phone_number = serializer.validated_data["phone_number"]
         otp_code = serializer.validated_data["otp_code"]
 
-        try:
-            otp = (
-                OTP.objects.filter(user__phone_number=phone_number, otp_code=otp_code)
-                .select_related("user")
-                .last()
-            )
+        user = _auth_service.otp_validation_returns_user(phone_number, otp_code)
+        access_token, refresh_token = _auth_service.generate_tokens_for_user(user)
 
-            if otp and otp.is_valid() and otp.otp_code == otp_code:
-                user = otp.user
+        logger.info(
+            f"OTP for user {user.id} verified successfully.", extra={"user_id": user.id}
+        )
 
-                if not user.is_active:
-                    logger.warning(
-                        f"OTP verification failed for inactive user {user.id}."
-                    )
-                    raise AuthenticationFailed("User account is disabled.")
+        return APIResponse.success(
+            message="OTP verified successfully.",
+            data={
+                "access": access_token,
+                "refresh": refresh_token,
+            },
+        )
 
-                if not user.is_superuser:
-                    company, created = CompanyProfile.objects.get_or_create(user=user)
-                    logger.info(
-                        f"Company profile {'created' if created else 'retrieved'} for user {user.id}."
-                    )
+    # TODO: After the user verified its otp, it most be redirected to the company profile page to create a new profile
 
-                refresh = RefreshToken.for_user(user)
+    @action(detail=False, methods=["post"], url_path="login")
+    def login(self, request):
+        serializer = LoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
-                access_token = str(refresh.access_token)
+        phone_number = serializer.validated_data["phone_number"]
+        password = serializer.validated_data["password"]
 
-                otp.delete()
-                logger.info(
-                    f"OTP for user {user.id} verified successfully.",
-                    extra={"user_id": user.id},
-                )
+        user = _user_service.check_user_password_returns_user(phone_number, password)
+        access_token, refresh_token = _auth_service.generate_tokens_for_user(user)
 
-                return Response(
-                    {
-                        "message": "OTP verified successfully.",
-                        "refresh": str(refresh),
-                        "access": access_token,
-                    },
-                    status=status.HTTP_200_OK,
-                )
-            else:
-                logger.warning(f"Invalid OTP attempt for phone number {phone_number}.")
-                return Response(
-                    {"error": "Invalid OTP."}, status=status.HTTP_400_BAD_REQUEST
-                )
-        except User.DoesNotExist:
-            logger.error(
-                f"OTP verification failed: User with phone number {phone_number} does not exist."
-            )
-            return Response(
-                {"error": "User does not exist."}, status=status.HTTP_404_NOT_FOUND
-            )
+        return APIResponse.success(
+            message="Login successful.",
+            data={
+                "access": access_token,
+                "refresh": refresh_token,
+                "completed_profile": user.is_profile_complete,
+            },
+        )
+
+    @action(detail=False, methods=["post"], url_path="reset-password")
+    def reset_password(self, request):
+        self.permission_classes = [IsAuthenticated]
+        serializer = PasswordResetSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        cpwd = serializer.validated_data["current_password"]
+        npwd = serializer.validated_data["new_password"]
+        npwd1 = serializer.validated_data["new_password2"]
+
+        phone_number = self.request.user.phone_number
+
+        _user_service.reset_user_password(phone_number, cpwd, npwd, npwd1)
+
+        return APIResponse.success(message="Password reset successfully.")
+
+
+class UserProfileViewSet(ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserProfileSerializer
+
+    def get_serializer_class(self):
+        if self.action in ["update", "partial_update"]:
+            return UserProfileUpdateSerializer
+        return UserProfileSerializer
+
+    def get_queryset(self):
+        return _user_repo.get_user_by_id(self.request.user.id)
