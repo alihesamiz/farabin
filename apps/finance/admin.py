@@ -58,23 +58,23 @@ class BalanceReportInline(admin.StackedInline):
 @admin.register(FinanceExcelFile)
 class FinanceExcelFileAdmin(admin.ModelAdmin):
     list_display = [
-        "company_title",
+        "title",
         "finance_excel_file",
         "is_saved",
         "is_sent",
     ]
 
-    search_fields = ["company__company_title"]
+    search_fields = ["company__title"]
 
-    @admin.display(ordering="company__company_title")
-    def company_title(self, finance_excel: FinanceExcelFile):
+    @admin.display(ordering="company__title")
+    def title(self, finance_excel: FinanceExcelFile):
         return (
-            finance_excel.company.company_title
-            if finance_excel.company.company_title
+            finance_excel.company.title
+            if finance_excel.company.title
             else "-"
         )
 
-    company_title.short_description = _("Company Title")
+    title.short_description = _("Company Title")
 
     def delete_model(self, request: HttpRequest, obj: Any):
         with atomic():
@@ -104,24 +104,24 @@ class FinanceExcelFileAdmin(admin.ModelAdmin):
 @admin.register(TaxDeclarationFile)
 class TaxFileAdmin(admin.ModelAdmin):
     list_display = [
-        "company_title",
+        "title",
         "year",
         "tax_file",
         "is_saved",
         "is_sent",
     ]
 
-    search_fields = ["company__company_title", "year"]
+    search_fields = ["company__title", "year"]
 
-    @admin.display(ordering="company__company_title")
-    def company_title(self, tax_declaration: TaxDeclarationFile):
+    @admin.display(ordering="company__title")
+    def title(self, tax_declaration: TaxDeclarationFile):
         return (
-            tax_declaration.company.company_title
-            if tax_declaration.company.company_title
+            tax_declaration.company.title
+            if tax_declaration.company.title
             else "-"
         )
 
-    company_title.short_description = _("Company Title")
+    title.short_description = _("Company Title")
 
     def delete_model(self, request: HttpRequest, obj: Any):
         with atomic():
@@ -151,7 +151,7 @@ class TaxFileAdmin(admin.ModelAdmin):
 @admin.register(BalanceReportFile)
 class BalanceReportFileAdmin(admin.ModelAdmin):
     list_display = [
-        "company_title",
+        "title",
         "month",
         "year",
         "balance_report_file",
@@ -162,13 +162,13 @@ class BalanceReportFileAdmin(admin.ModelAdmin):
         "is_sent",
     ]
 
-    search_fields = ["company__company_title", "year", "month"]
+    search_fields = ["company__title", "year", "month"]
 
-    @admin.display(ordering="company__company_title")
-    def company_title(self, tax_declaration: TaxDeclarationFile):
-        return tax_declaration.company.company_title
+    @admin.display(ordering="company__title")
+    def title(self, tax_declaration: TaxDeclarationFile):
+        return tax_declaration.company.title
 
-    company_title.short_description = _("Company Title")
+    title.short_description = _("Company Title")
 
     def delete_model(self, request: HttpRequest, obj: Any) -> None:
         if obj:
@@ -205,7 +205,7 @@ class BalanceReportFileAdmin(admin.ModelAdmin):
 @admin.register(FinancialAsset)
 class FinancialAssestAdmin(admin.ModelAdmin):
     autocomplete_fields = ["company"]
-    list_display = ["company_title", "year", "month"]
+    list_display = ["title", "year", "month"]
     inlines = [
         BalanceReportInline,
         ProfitStatementInline,
@@ -213,49 +213,49 @@ class FinancialAssestAdmin(admin.ModelAdmin):
         AccountTurnOverInline,
     ]
 
-    search_fields = ["company__company_title", "year", "month"]
+    search_fields = ["company__title", "year", "month"]
 
-    list_filter = ["company__company_title", "year", "month"]
+    list_filter = ["company__title", "year", "month"]
 
-    @admin.display(ordering="company_title")
-    def company_title(self, financial_asset: FinancialAsset):
-        return financial_asset.company.company_title
+    @admin.display(ordering="title")
+    def title(self, financial_asset: FinancialAsset):
+        return financial_asset.company.title
 
-    company_title.short_description = _("Company Title")
-    company_title.admin_order_field = "company_title"
+    title.short_description = _("Company Title")
+    title.admin_order_field = "title"
 
 
 @admin.register(FinancialData)
 class CalculatedDataAdmin(admin.ModelAdmin):
     autocomplete_fields = ["financial_asset"]
     list_display = [
-        "company_title",
+        "title",
         "financial_year",
         "financial_month",
         "is_published",
     ]
     search_fields = [
-        "financial_asset__company__company_title",
+        "financial_asset__company__title",
         "financial_asset__year",
         "financial_asset__month",
         "is_published",
-        "financial_asset__company__company_title",
+        "financial_asset__company__title",
     ]
 
     list_filter = [
-        "financial_asset__company__company_title",
+        "financial_asset__company__title",
         "financial_asset__year",
         "financial_asset__month",
         "financial_asset__company",
         "is_published",
     ]
 
-    sortable_by = ["company_title", "financial_year", "financial_month"]
+    sortable_by = ["title", "financial_year", "financial_month"]
 
-    def company_title(self, obj):
-        return obj.financial_asset.company.company_title
+    def title(self, obj):
+        return obj.financial_asset.company.title
 
-    company_title.short_description = _("Company Title")  # Custom column name
+    title.short_description = _("Company Title")  # Custom column name
 
     def financial_year(self, obj):
         return obj.financial_asset.year
@@ -291,12 +291,12 @@ class AnalysisReportAdmin(admin.ModelAdmin):
 
     autocomplete_fields = ["calculated_data"]
     search_fields = [
-        "calculated_data__financial_asset__company__company_title",
+        "calculated_data__financial_asset__company__title",
         "chart_name",
         "period",
     ]
     # list_filter = [
-    #     'calculated_data__financial_asset__company__company_title', 'is_published', 'period', 'chart_name']
+    #     'calculated_data__financial_asset__company__title', 'is_published', 'period', 'chart_name']
 
     actions = ["mark_as_published", "mark_as_unpublished"]
 
@@ -308,7 +308,7 @@ class AnalysisReportAdmin(admin.ModelAdmin):
         company_id = request.GET.get("company")
 
         company_queryset = CompanyProfile.objects.filter(
-            company_title__icontains=search_term
+            title__icontains=search_term
         )
 
         if company_id:
@@ -350,7 +350,7 @@ class AnalysisReportAdmin(admin.ModelAdmin):
             company = obj.calculated_data.financial_asset.company
             if company:
                 url = reverse("company_financial_data", args=[company.id])
-                return format_html('<a href="{}">{}</a>', url, company.company_title)
+                return format_html('<a href="{}">{}</a>', url, company.title)
         return format_html('<a href="#">{}</a>', _("No data available"))
 
     chart.short_description = _("Chart")
