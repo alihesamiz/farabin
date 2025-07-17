@@ -15,7 +15,6 @@ urlpatterns = [
     path("packages/", include("apps.packages.urls")),
     path("finance/", include("apps.finance.urls")),
     path("company/", include("apps.company.urls")),
-    path("requests/", include("apps.request.urls")),
     path("tickets/", include("apps.tickets.urls")),
     path("auth/", include("apps.core.urls")),
 ]

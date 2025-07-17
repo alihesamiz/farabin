@@ -1,13 +1,12 @@
+import os
+import tempfile
 from datetime import timedelta
 from pathlib import Path
-import tempfile
-import environ
-import os
+from typing import Any, Dict
 
-from kombu import Queue
-
-from django.utils.translation import gettext_lazy as _
-
+import environ  # type: ignore
+from django.utils.translation import gettext_lazy as _  # type: ignore
+from kombu import Queue  # type: ignore
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -34,11 +33,11 @@ INSTALLED_APPS = [
 
 
 PROJECT_APPS = [
+    "apps.questionnaire",
     "apps.management",
     "apps.packages",
     "apps.finance",
     "apps.company",
-    "apps.request",
     "apps.tickets",
     "apps.core",
 ]
@@ -215,9 +214,7 @@ CACHES = {
 LOG_DIR = Path(tempfile.gettempdir()) / "saramad_logs"
 
 os.makedirs(LOG_DIR, exist_ok=True) if not os.path.exists(LOG_DIR) else None
-
-
-LOGGING = {
+LOGGING: Dict[str, Any] = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
@@ -289,8 +286,6 @@ LOGGING = {
 }
 
 # For automatically adding apps into the request type
-APP_REQUEST_TYPES = ["finance", "management"]
-
 
 # For the custom file path exceptions
 FILE_PATH_EXCEPTION_MODELS = ["OrganizationChartBase"]
@@ -306,7 +301,7 @@ HUMAN_RESOURCE_FILE_FIELDS = {
 APPS_TO_LOG = PROJECT_APPS
 
 for app in APPS_TO_LOG:
-    LOGGING["handlers"][f"{app}_logs_file"] = {
+    LOGGING["handlers"][f"{app}_logs_file"] = {  # type: ignore
         "level": "INFO",
         "class": "logging.handlers.RotatingFileHandler",
         "filename": LOG_DIR / f"{app}_logs.log",
@@ -315,7 +310,7 @@ for app in APPS_TO_LOG:
         "backupCount": 3,
     }
 
-    LOGGING["handlers"][f"{app}_errors_file"] = {
+    LOGGING["handlers"][f"{app}_errors_file"] = {  # type: ignore
         "level": "ERROR",
         "class": "logging.handlers.RotatingFileHandler",
         "filename": LOG_DIR / f"{app}_errors.log",
@@ -324,13 +319,13 @@ for app in APPS_TO_LOG:
         "backupCount": 3,
     }
 
-    LOGGING["loggers"][app] = {
+    LOGGING["loggers"][app] = {  # type: ignore
         "handlers": [f"{app}_logs_file", f"{app}_errors_file"],
         "level": "INFO",
         "propagate": False,
     }
 
-LOGGING["handlers"]["rotating_file"] = {
+LOGGING["handlers"]["rotating_file"] = {  # type: ignore
     "level": "INFO",
     "class": "logging.handlers.RotatingFileHandler",
     "filename": LOG_DIR / "rotating.log",
@@ -338,3 +333,6 @@ LOGGING["handlers"]["rotating_file"] = {
     "backupCount": 5,
     "formatter": "verbose",
 }
+
+
+COOLDOWN_PERIOD = timedelta(minutes=3)

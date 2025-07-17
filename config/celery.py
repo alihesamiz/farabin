@@ -1,11 +1,10 @@
 from __future__ import absolute_import, unicode_literals
-from celery.schedules import crontab
-from django.conf import settings
-from celery import Celery
+
 import os
 
-from config.settings import development
-
+from celery import Celery  # type: ignore
+from celery.schedules import crontab  # type: ignore
+from django.conf import settings  # type: ignore
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.development")
 
@@ -17,14 +16,6 @@ app.autodiscover_tasks()
 
 
 app.conf.beat_schedule = {
-    "delete_expiered_otp": {
-        "task": "core.tasks.delete_expiered_otp",
-        "schedule": crontab(minute="*/60"),
-        "options": {"queue": "default"},
-    }
-}
-
-app.conf.beat_schedule = {
     "backup-database-every-sunday-and-wednesday-at-8pm": {
         "task": "core.tasks.backup_database",
         "schedule": crontab(hour=20, minute=0, day_of_week="0,3"),
@@ -34,9 +25,9 @@ app.conf.beat_schedule = {
 
 
 app.conf.update(
-    CELERY_QUEUES=development.CELERY_QUEUES,
-    # CELERY_ROUTES=development.CELERY_ROUTES,
-    CELERY_DEFAULT_QUEUE=development.CELERY_DEFAULT_QUEUE,
+    CELERY_QUEUES=settings.CELERY_QUEUES,
+    # CELERY_ROUTES=settings.CELERY_ROUTES,
+    CELERY_DEFAULT_QUEUE=settings.CELERY_DEFAULT_QUEUE,
     CELERY_DEFAULT_EXCHANGE="tasks",
     CELERY_DEFAULT_ROUTING_KEY="task.default",
 )
