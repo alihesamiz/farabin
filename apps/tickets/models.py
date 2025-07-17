@@ -1,155 +1,174 @@
-from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
-
+from apps.core.models import TimeStampedModel
 from apps.core.utils import GeneralUtils
-
+from constants.validators import Validator as _validator
 
 User = get_user_model()
 
 
-class TicketAnswer(models.Model):
-    ticket = models.ForeignKey(
-        "Ticket",
-        on_delete=models.CASCADE,
-        verbose_name=_("Ticket"),
-        related_name="answers",
-    )
-    agent = models.ForeignKey(
-        "Agent", on_delete=models.CASCADE, verbose_name=_("Agent")
-    )
+class Ticket(TimeStampedModel):
+    class ServiceName(models.TextChoices):
+        FINANCIAL = "financial", _("Financial")
+        MANAGEMENT = "management", _("Management")
+        MIS = "mis", _("MIS")
+        RAD = "rad", _("R&D")
+        MARKETING = "marketing", _("Marketing")
+        PRODUCTION = "production", _("Production")
 
-    comment = models.TextField(verbose_name=_("Comment"))
+    class TicketStatus(models.TextChoices):
+        NEW = "new", _("New")
+        OPEN = "open", _("Open")
+        IN_PROGRESS = "ip", _("In Progress")
+        RESOLVED = "resolved", _("Resolved")
+        CLOSED = "closed", _("Closed")
 
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created At"))
-
-    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
-
-    class Meta:
-        verbose_name = _("Ticket Answer")
-        verbose_name_plural = _("Ticket Answers")
-
-
-class TicketComment(models.Model):
-    ticket = models.ForeignKey(
-        "Ticket",
-        on_delete=models.CASCADE,
-        verbose_name=_("Ticket"),
-        related_name="comments",
-    )
-
-    comment = models.TextField(verbose_name=_("Comment"))
-
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created At"))
-
-    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
-
-    class Meta:
-        verbose_name = _("Ticket Comment")
-        verbose_name_plural = _("Ticket Comments")
-
-
-class Ticket(models.Model):
-    ATTACHMENT_FILE_PATH = GeneralUtils(
-        path="ticket_attachments", fields=["service", "created_at"]
-    )
-
-    STATUS_NEW = "new"
-    STATUS_IN_PROGRESS = "in_progress"
-    STATUS_RESOLVED = "resolved"
-    STATUS_CLOSED = "closed"
-
-    STATUS_CHOICES = [
-        (STATUS_NEW, _("New")),
-        (STATUS_IN_PROGRESS, _("In Progress")),
-        (STATUS_RESOLVED, _("Resolved")),
-        (STATUS_CLOSED, _("Closed")),
-    ]
-
-    PRIORITY_LOW = "low"
-    PRIORITY_MEDIUM = "medium"
-    PRIORITY_HIGH = "high"
-
-    PRIORITY_CHOICES = [
-        (PRIORITY_LOW, _("Low")),
-        (PRIORITY_MEDIUM, _("Medium")),
-        (PRIORITY_HIGH, _("High")),
-    ]
+    class TicketPriority(models.TextChoices):
+        LOW = "low", _("Low")
+        MEDIUM = "med", _("Medium")
+        HIGH = "high", _("High")
+        CRITICAL = "crit", _("Critical")
 
     issuer = models.ForeignKey(
-        "company.CompanyProfile",
-        on_delete=models.SET_NULL,
-        null=True,
+        "company.CompanyUser",
+        on_delete=models.CASCADE,
+        related_name="tickets",
         verbose_name=_("Issuer"),
     )
-
-    subject = models.CharField(max_length=255, verbose_name=_("Subject"))
-
-    comment = models.TextField(verbose_name=_("Comment"))
-
-    service = models.ForeignKey(
-        "core.Service", on_delete=models.CASCADE, verbose_name=_("Service")
+    title = models.CharField(
+        max_length=100,
+        verbose_name=_("Title"),
     )
-    department = models.ForeignKey(
-        "Department", on_delete=models.CASCADE, verbose_name=_("Department")
+    description = models.TextField(
+        verbose_name=_("Description"),
+    )
+    service = models.CharField(
+        max_length=10,
+        choices=ServiceName.choices,
+        verbose_name=_("Service"),
     )
     status = models.CharField(
-        max_length=255,
+        max_length=8,
+        choices=TicketStatus.choices,
+        default=TicketStatus.NEW,
         verbose_name=_("Status"),
-        choices=STATUS_CHOICES,
-        default=STATUS_NEW,
     )
     priority = models.CharField(
-        max_length=255, verbose_name=_("Priority"), choices=PRIORITY_CHOICES
+        max_length=4,
+        choices=TicketPriority.choices,
+        default=TicketPriority.LOW,
+        verbose_name=_("Priority"),
     )
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created At"))
-    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
+    attachments = GenericRelation("Attachment")
 
     def __str__(self):
-        return f"{self.subject} : {self.priority}"
+        return f"{self.issuer.company}({self.priority}): {self.title}"
 
     class Meta:
-        ordering = ["-updated_at"]
         verbose_name = _("Ticket")
         verbose_name_plural = _("Tickets")
 
 
-class Department(models.Model):
-    name = models.CharField(max_length=255, verbose_name=_("Name"))
-    description = models.TextField(verbose_name=_("Description"))
+class TicketReply(TimeStampedModel):
+    issuer = models.ForeignKey(
+        "company.CompanyUser",
+        on_delete=models.CASCADE,
+        related_name="ticket_replies",
+        verbose_name=_("Issuer"),
+    )
+    ticket = models.ForeignKey(
+        Ticket,
+        on_delete=models.CASCADE,
+        related_name="replies",
+        verbose_name=_("Ticket"),
+    )
+    description = models.TextField(
+        verbose_name=_("Description"),
+    )
+    parent = models.ForeignKey(
+        "self",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="child_replies",
+    )
+    attachments = GenericRelation("Attachment")
 
-    def __str__(self) -> str:
-        return f"{self.name}"
+    def __str__(self):
+        if self.parent:
+            return f"Reply by {self.issuer} to Reply({self.parent.id})"
+        return f"Reply by {self.issuer} to Ticket({self.ticket.pk})"
 
     class Meta:
-        verbose_name = _("Department")
-        verbose_name_plural = _("Departments")
+        verbose_name = _("Ticket Reply")
+        verbose_name_plural = _("Ticket Replies")
 
 
-class Agent(models.Model):
-    first_name = models.CharField(
-        max_length=255, verbose_name=_("First Name"), null=True, blank=True
-    )
+def get_ticket_attachment_file_upload_path(instance, filename):
+    path = GeneralUtils(
+        path="tickets_attachements", fields=["ticket__service"]
+    ).rename_folder(instance, filename)
+    return path
 
-    last_name = models.CharField(
-        max_length=255, verbose_name=_("Last Name"), null=True, blank=True
-    )
 
-    email = models.EmailField(verbose_name=_("Email"), null=True, blank=True)
+class Attachment(TimeStampedModel):
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey("content_type", "object_id")
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name=_("User"))
-
-    department = models.ForeignKey(
-        Department,
-        on_delete=models.CASCADE,
-        related_name="agents",
-        verbose_name=_("Department"),
+    file = models.FileField(
+        upload_to="tickets/",
+        null=True,
+        blank=True,
+        verbose_name=_("File"),
+        validators=[_validator.ticket_file_validator],
     )
 
     def __str__(self):
-        return f"{self.user}"
+        return f"Attachment for {self.content_object}"
+
+
+class Agent(TimeStampedModel):
+    agent = models.OneToOneField(
+        User,
+        verbose_name=_("Agent"),
+        on_delete=models.CASCADE,
+        related_name="agents",
+    )
+
+    def __str__(self):
+        return f"{self.agent.first_name} {self.agent.last_name}"
 
     class Meta:
         verbose_name = _("Agent")
         verbose_name_plural = _("Agents")
+
+
+class TicketAnswer(TimeStampedModel):
+    issuer = models.ForeignKey(
+        Agent,
+        on_delete=models.CASCADE,
+        related_name="tickets",
+        verbose_name=_("Issuer"),
+    )
+    ticket = models.ForeignKey(
+        Ticket,
+        verbose_name=_("Ticket"),
+        on_delete=models.CASCADE,
+        related_name=_("answers"),
+    )
+    description = models.TextField(
+        verbose_name=_("Description"),
+    )
+    attachments = GenericRelation("Attachment")
+
+    def __str__(self):
+        return f"{self.issuer.agent.first_name} {self.issuer.agent.last_name}"
+
+    class Meta:
+        verbose_name = _("Ticket Answer")
+        verbose_name_plural = _("Ticket Answers")
