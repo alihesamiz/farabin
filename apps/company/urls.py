@@ -14,11 +14,13 @@ from apps.company.views import (
     LifeCycleMaturityViewSet,
     LifeCycleStateViewSet,
 )
+from apps.company.views.company import CompanyUserViewSet
 
 
 router = DefaultRouter()
 
 router.register(r"profile", CompanyProfileViewSet, basename="profile")
+router.register(r"users", CompanyUserViewSet, basename="users")
 router.register(r"features", LifeCycleFeatureViewSet, basename="lifecyclefeature")
 router.register(r"declines", LifeCycleDeclineViewSet, basename="lifecycledecline")
 router.register(r"maturities", LifeCycleMaturityViewSet, basename="lifecyclematurity")
