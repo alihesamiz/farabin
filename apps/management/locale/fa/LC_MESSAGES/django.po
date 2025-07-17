@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-13 11:35+0330\n"
+"POT-Creation-Date: 2025-07-17 09:06+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,218 +26,208 @@ msgstr "عنوان شرکت"
 msgid "Management"
 msgstr "بخش مدیریت"
 
-#: apps/management/models.py:36 apps/management/models.py:235
-#: apps/management/models.py:328
+#: apps/management/models.py:34 apps/management/models.py:217
+#: apps/management/models.py:305
 msgid "شرکت"
 msgstr ""
 
-#: apps/management/models.py:44
+#: apps/management/models.py:42
 msgid "فایل اکسل"
 msgstr ""
 
-#: apps/management/models.py:52
+#: apps/management/models.py:49
 msgid "تأیید شده"
 msgstr ""
 
-#: apps/management/models.py:55 apps/management/models.py:258
-#: apps/management/models.py:340 apps/management/models.py:395
-msgid "تاریخ ایجاد"
-msgstr ""
-
-#: apps/management/models.py:57 apps/management/models.py:260
-#: apps/management/models.py:342 apps/management/models.py:397
-msgid "تاریخ بروزرسانی"
-msgstr ""
-
-#: apps/management/models.py:60 apps/management/models.py:61
+#: apps/management/models.py:52 apps/management/models.py:53
 msgid "منابع انسانی شرکت‌ها"
 msgstr ""
 
-#: apps/management/models.py:98
+#: apps/management/models.py:87
 msgid "کد موقعیت"
 msgstr ""
 
-#: apps/management/models.py:100
+#: apps/management/models.py:88
 msgid "موقعیت"
 msgstr ""
 
-#: apps/management/models.py:103 apps/management/models.py:132
+#: apps/management/models.py:91 apps/management/models.py:118
 msgid "موقعیت شغلی"
 msgstr ""
 
-#: apps/management/models.py:104
+#: apps/management/models.py:92
 msgid "موقعیت‌های شغلی"
 msgstr ""
 
-#: apps/management/models.py:120
+#: apps/management/models.py:106
 msgid "منابع انسانی"
 msgstr ""
 
-#: apps/management/models.py:128
+#: apps/management/models.py:114
 msgid "نام کامل"
 msgstr ""
 
-#: apps/management/models.py:136
+#: apps/management/models.py:122
 msgid "گزارش به (پرسنل)"
 msgstr ""
 
-#: apps/management/models.py:140
+#: apps/management/models.py:126
 msgid "همکاری با (پرسنل)"
 msgstr ""
 
-#: apps/management/models.py:144
+#: apps/management/models.py:129
 msgid "وظایف"
 msgstr ""
 
-#: apps/management/models.py:146
+#: apps/management/models.py:131
 msgid "موجود است"
 msgstr ""
 
-#: apps/management/models.py:149 apps/management/models.py:150
+#: apps/management/models.py:134 apps/management/models.py:135
 msgid "اطلاعات پرسنل"
 msgstr ""
 
-#: apps/management/models.py:167
+#: apps/management/models.py:150
 msgid "زمینه"
 msgstr ""
 
-#: apps/management/models.py:171
+#: apps/management/models.py:154
 msgid "فایل اکسل موقعیت"
 msgstr ""
 
-#: apps/management/models.py:180
+#: apps/management/models.py:163
 msgid "فایل‌ خام نمودار سازمانی"
 msgstr ""
 
-#: apps/management/models.py:181
+#: apps/management/models.py:164
 msgid "فایل‌های خام نمودار سازمانی"
 msgstr ""
 
-#: apps/management/models.py:199
+#: apps/management/models.py:182
 msgid "سیاسی (مانند مقررات، سیاست‌های دولتی)"
 msgstr ""
 
-#: apps/management/models.py:200
+#: apps/management/models.py:183
 msgid "اقتصادی (مانند روندهای بازار، تورم)"
 msgstr ""
 
-#: apps/management/models.py:201
+#: apps/management/models.py:184
 msgid "اجتماعی (مانند تغییرات فرهنگی، جمعیت‌شناسی)"
 msgstr ""
 
-#: apps/management/models.py:202
+#: apps/management/models.py:185
 msgid "فناوری (مانند نوآوری، اتوماسیون)"
 msgstr ""
 
-#: apps/management/models.py:204
+#: apps/management/models.py:186
 msgid "محیطی (مانند پایداری، تغییرات آب و هوایی)"
 msgstr ""
 
-#: apps/management/models.py:205
+#: apps/management/models.py:187
 msgid "قانونی (مانند انطباق، قوانین)"
 msgstr ""
 
-#: apps/management/models.py:206
+#: apps/management/models.py:188
 msgid "هیچ‌کدام"
 msgstr ""
 
-#: apps/management/models.py:210
+#: apps/management/models.py:192
 msgid "نقطه قوت"
 msgstr ""
 
-#: apps/management/models.py:211
+#: apps/management/models.py:193
 msgid "نقطه ضعف"
 msgstr ""
 
-#: apps/management/models.py:212
+#: apps/management/models.py:194
 msgid "فرصت"
 msgstr ""
 
-#: apps/management/models.py:213
+#: apps/management/models.py:195
 msgid "تهدید"
 msgstr ""
 
-#: apps/management/models.py:217 apps/management/models.py:242
+#: apps/management/models.py:199 apps/management/models.py:224
 msgid "سوال"
 msgstr ""
 
-#: apps/management/models.py:221 apps/management/models.py:249
+#: apps/management/models.py:203 apps/management/models.py:231
 msgid "دسته‌بندی"
 msgstr ""
 
-#: apps/management/models.py:225
+#: apps/management/models.py:207
 msgid "SWOT سوال"
 msgstr ""
 
-#: apps/management/models.py:226
+#: apps/management/models.py:208
 msgid "SWOT سوالات"
 msgstr ""
 
-#: apps/management/models.py:247
+#: apps/management/models.py:229
 msgid "پاسخ"
 msgstr ""
 
-#: apps/management/models.py:254
+#: apps/management/models.py:236
 msgid "عامل خارجی"
 msgstr ""
 
-#: apps/management/models.py:263
+#: apps/management/models.py:241
 msgid "SWOT گزینه"
 msgstr ""
 
-#: apps/management/models.py:264
+#: apps/management/models.py:242
 msgid "SWOT گزینه‌ها"
 msgstr ""
 
-#: apps/management/models.py:304
+#: apps/management/models.py:282
 msgid "External factor must be specified for Opportunities and Threats."
 msgstr "عامل خارجی باید برای فرصت‌ها و تهدیدها مشخص شود."
 
-#: apps/management/models.py:335
+#: apps/management/models.py:312
 msgid "گزینه‌های SWOT"
 msgstr ""
 
-#: apps/management/models.py:338
+#: apps/management/models.py:314
 msgid "مورد تایید قرار گرفته است"
 msgstr ""
 
-#: apps/management/models.py:345
+#: apps/management/models.py:317
 msgid "SWOT ماتریس"
 msgstr ""
 
-#: apps/management/models.py:346
+#: apps/management/models.py:318
 msgid "SWOT ماتریس‌ها"
 msgstr ""
 
-#: apps/management/models.py:384
+#: apps/management/models.py:355
 msgid "ماتریس"
 msgstr ""
 
-#: apps/management/models.py:389
+#: apps/management/models.py:360
 msgid "تحلیل نقاط قوت و فرصت‌ها"
 msgstr ""
 
-#: apps/management/models.py:390
+#: apps/management/models.py:361
 msgid "تحلیل نقاط قوت و تهدیدات"
 msgstr ""
 
-#: apps/management/models.py:391
+#: apps/management/models.py:362
 msgid "تحلیل نقاط ضعف و فرصت‌ها"
 msgstr ""
 
-#: apps/management/models.py:392
+#: apps/management/models.py:363
 msgid "تحلیل نقاط ضعف و تهدیدات"
 msgstr ""
 
-#: apps/management/models.py:400
+#: apps/management/models.py:366
 msgid "SWOT تحلیل"
 msgstr ""
 
-#: apps/management/models.py:401
+#: apps/management/models.py:367
 msgid "SWOT تحلیل‌ها"
 msgstr ""
 
-#: apps/management/views.py:72
+#: apps/management/views/views.py:71
 msgid ""
 "Each company can only have one Human Resource record. To replace, you must "
 "first delete the previous record."
@@ -245,15 +235,15 @@ msgstr ""
 "هر شرکت تنها میتواند یک فایل منابع انسانی را بارگذاری کند. برای جایگزینی "
 "ابتدا فایل قبلی را حذف کنید."
 
-#: apps/management/views.py:81
+#: apps/management/views/views.py:80
 msgid "An error occurred while saving the Human Resource record."
 msgstr "هنگام ذخیره فایل منابع انسانی خطایی رخ داد."
 
-#: apps/management/views.py:115
+#: apps/management/views/views.py:114
 msgid "Invalid or missing HumanResource record for this company."
 msgstr "رکورد منابع انسانی مناسبی برای شرکت پیدا نشد."
 
-#: apps/management/views.py:141
+#: apps/management/views/views.py:140
 msgid "Not found an associated file with your profile"
 msgstr "فایلی متناسب با پروفایل شرکت شما یافت نشد. باپشتیبانی تماس بگیرید."
 

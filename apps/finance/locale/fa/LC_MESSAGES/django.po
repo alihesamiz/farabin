@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-13 11:35+0330\n"
+"POT-Creation-Date: 2025-07-17 09:06+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,13 +23,13 @@ msgstr ""
 msgid "Company Title"
 msgstr "نام شرکت"
 
-#: apps/finance/admin.py:263 apps/finance/models.py:22
-#: apps/finance/models.py:826
+#: apps/finance/admin.py:263 apps/finance/models/models.py:21
+#: apps/finance/models/models.py:824
 msgid "Year"
 msgstr "سال"
 
-#: apps/finance/admin.py:268 apps/finance/models.py:104
-#: apps/finance/models.py:829
+#: apps/finance/admin.py:268 apps/finance/models/models.py:103
+#: apps/finance/models/models.py:827
 msgid "Month"
 msgstr "ماه"
 
@@ -72,731 +72,733 @@ msgstr "%d تحلیل از دسترسی کاربر خارج شد"
 msgid "Finance"
 msgstr "بخش مالی"
 
-#: apps/finance/models.py:19 apps/finance/models.py:44
-#: apps/finance/models.py:99 apps/finance/models.py:188
-#: apps/finance/models.py:823
+#: apps/finance/models/models.py:18 apps/finance/models/models.py:43
+#: apps/finance/models/models.py:98 apps/finance/models/models.py:187
+#: apps/finance/models/models.py:821 apps/finance/models/sales.py:23
+#: apps/finance/models/sales.py:100
 msgid "Company"
 msgstr "شرکت"
 
-#: apps/finance/models.py:24 apps/finance/models.py:200
+#: apps/finance/models/models.py:23 apps/finance/models/models.py:199
 msgid "Is Saved"
 msgstr "ذخیره‌ شود"
 
-#: apps/finance/models.py:26 apps/finance/models.py:202
+#: apps/finance/models/models.py:25 apps/finance/models/models.py:201
 msgid "Is Sent"
 msgstr "ارسال شود"
 
-#: apps/finance/models.py:49
+#: apps/finance/models/models.py:48
 msgid "File"
 msgstr "فایل"
 
-#: apps/finance/models.py:60
+#: apps/finance/models/models.py:59
 msgid "Finance Tax Declaration"
 msgstr "فایل اظهارنامه مالی"
 
-#: apps/finance/models.py:61
+#: apps/finance/models/models.py:60
 msgid "Finance Tax Declarations"
 msgstr "فایل اظهارنامه‌های مالی"
 
-#: apps/finance/models.py:108
+#: apps/finance/models/models.py:107
 msgid "Balance Report File"
 msgstr "فایل ترازنامه"
 
-#: apps/finance/models.py:116
+#: apps/finance/models/models.py:115
 msgid "Profit Loss File"
 msgstr "فایل صورت سود و زیان"
 
-#: apps/finance/models.py:124
+#: apps/finance/models/models.py:123
 msgid "Sold Product File"
 msgstr "فایل هزینه کالای فروخته شده"
 
-#: apps/finance/models.py:132
+#: apps/finance/models/models.py:131
 msgid "Account Turn Over File"
 msgstr "فایل گردش حساب"
 
-#: apps/finance/models.py:143
+#: apps/finance/models/models.py:142
 msgid "Finance Balance Report File"
 msgstr "فایل ترازنامه مالی"
 
-#: apps/finance/models.py:144
+#: apps/finance/models/models.py:143
 msgid "Finance Balance Reports File"
 msgstr "فایل ترازنامه‌های مالی"
 
-#: apps/finance/models.py:193 apps/finance/models.py:205
+#: apps/finance/models/models.py:192 apps/finance/models/models.py:204
 msgid "Finance Excel File"
 msgstr "فایل اکسل مالی"
 
-#: apps/finance/models.py:206
+#: apps/finance/models/models.py:205
 msgid "Finance Excel Files"
 msgstr "فایل‌های اکسل مالی"
 
-#: apps/finance/models.py:245 apps/finance/models.py:331
-#: apps/finance/models.py:492 apps/finance/models.py:713
-#: apps/finance/models.py:840 apps/finance/models.py:862
+#: apps/finance/models/models.py:243 apps/finance/models/models.py:329
+#: apps/finance/models/models.py:490 apps/finance/models/models.py:711
+#: apps/finance/models/models.py:837 apps/finance/models/models.py:859
 msgid "Financial Asset"
 msgstr "عدد مالی"
 
-#: apps/finance/models.py:248 apps/finance/models.py:922
+#: apps/finance/models/models.py:246 apps/finance/models/models.py:919
 msgid "Consuming Material"
 msgstr "مواد اولیه مصرفی"
 
-#: apps/finance/models.py:251
+#: apps/finance/models/models.py:249
 msgid "Direct Wage"
 msgstr "دستمزد مستقیم"
 
-#: apps/finance/models.py:257 apps/finance/models.py:931
+#: apps/finance/models/models.py:255 apps/finance/models/models.py:928
 msgid "Construction Overhead"
 msgstr "سربار ساخت"
 
-#: apps/finance/models.py:263
+#: apps/finance/models/models.py:261
 msgid "Production Total Price"
 msgstr "جمع هزینه تولید"
 
-#: apps/finance/models.py:269
+#: apps/finance/models/models.py:267
 msgid "Current Constructing Product First Period"
 msgstr "کالای در جریان تولید اول دوره"
 
-#: apps/finance/models.py:275
+#: apps/finance/models/models.py:273
 msgid "Current Constructing Product End Period"
 msgstr "کالای در جریان تولید پایان دوره"
 
-#: apps/finance/models.py:281
+#: apps/finance/models/models.py:279
 msgid "Produced Product Total Price"
 msgstr "هزینه تمام شده کالای تولید شده"
 
-#: apps/finance/models.py:287
+#: apps/finance/models/models.py:285
 msgid "First Period Produced Inventory"
 msgstr "ذخیره کالای تولید شده اول دوره"
 
-#: apps/finance/models.py:293
+#: apps/finance/models/models.py:291
 msgid "Period Bought Product"
 msgstr "کالای خریداری شده در طول دوره"
 
-#: apps/finance/models.py:299
+#: apps/finance/models/models.py:297
 msgid "Ready for Sale Product"
 msgstr "کالای اماده به فروش"
 
-#: apps/finance/models.py:305 apps/finance/models.py:508
+#: apps/finance/models/models.py:303 apps/finance/models/models.py:506
 msgid "End Period Inventory"
 msgstr "موجودی مواد و کالای پایان دوره"
 
-#: apps/finance/models.py:308
+#: apps/finance/models/models.py:306
 msgid "Other Product"
 msgstr "سایر"
 
-#: apps/finance/models.py:314
+#: apps/finance/models/models.py:312
 msgid "Sold Product Total Price"
 msgstr "جمع هزینه کالای فروخته شده"
 
-#: apps/finance/models.py:322
+#: apps/finance/models/models.py:320
 msgid "Sold Product Fee"
 msgstr "هزینه کالای فروخته شده"
 
-#: apps/finance/models.py:323
+#: apps/finance/models/models.py:321
 msgid "Sold Products Fee"
 msgstr "هزینه کالاهای فروخته شده"
 
-#: apps/finance/models.py:334
+#: apps/finance/models/models.py:332
 msgid "Operational Income"
 msgstr "درآمد عملیاتی"
 
-#: apps/finance/models.py:340 apps/finance/models.py:902
+#: apps/finance/models/models.py:338 apps/finance/models/models.py:899
 msgid "Operational Income Expense"
 msgstr "مخارج درامد عملیاتی"
 
-#: apps/finance/models.py:343 apps/finance/models.py:892
+#: apps/finance/models/models.py:341 apps/finance/models/models.py:889
 msgid "Gross Profit"
 msgstr "سود ناخالص"
 
-#: apps/finance/models.py:346 apps/finance/models.py:940
+#: apps/finance/models/models.py:344 apps/finance/models/models.py:937
 msgid "Salary Fee"
 msgstr "هزینه دستمزد"
 
-#: apps/finance/models.py:349 apps/finance/models.py:906
+#: apps/finance/models/models.py:347 apps/finance/models/models.py:903
 msgid "Marketing Fee"
 msgstr "هزینه بازاریابی"
 
-#: apps/finance/models.py:355
+#: apps/finance/models/models.py:353
 msgid "Doubtful Burnt Claims Fee"
 msgstr "هزینه دارایی های مشکوک الوصول و سوخت شده"
 
-#: apps/finance/models.py:358
+#: apps/finance/models/models.py:356
 msgid "Attendance Fee"
 msgstr "هزینه حضور هیئت مدیره"
 
-#: apps/finance/models.py:361
+#: apps/finance/models/models.py:359
 msgid "Accounting Fee"
 msgstr "هزینه حسابداری و حسابرسی"
 
-#: apps/finance/models.py:364
+#: apps/finance/models/models.py:362
 msgid "Consulting Fee"
 msgstr "هزینه مشاوره"
 
-#: apps/finance/models.py:367
+#: apps/finance/models/models.py:365
 msgid "Rental Fee"
 msgstr "هزینه اجاره غیر از محل شرکت"
 
-#: apps/finance/models.py:373
+#: apps/finance/models/models.py:371
 msgid "Other General Expense"
 msgstr "سایر هزینه‌های عمومی"
 
-#: apps/finance/models.py:379
+#: apps/finance/models/models.py:377
 msgid "Total General Expense"
 msgstr "جمع هزینه مخارج عمومی"
 
-#: apps/finance/models.py:385
+#: apps/finance/models/models.py:383
 msgid "Other Operational Income"
 msgstr "سایر درآمدهای عملیاتی"
 
-#: apps/finance/models.py:391
+#: apps/finance/models/models.py:389
 msgid "Other Operational Expense"
 msgstr "سایر مخارج عملیاتی"
 
-#: apps/finance/models.py:394 apps/finance/models.py:913
+#: apps/finance/models/models.py:392 apps/finance/models/models.py:910
 msgid "Operational Profit"
 msgstr "سود عملیاتی"
 
-#: apps/finance/models.py:400
+#: apps/finance/models/models.py:398
 msgid "Immovable Property Sale Profit"
 msgstr "سود حاصل از فروش دارایی غیر منقول"
 
-#: apps/finance/models.py:406
+#: apps/finance/models/models.py:404
 msgid "Other Assets Sale Profit"
 msgstr "سود حاصل از فروش سایر دارایی‌ها"
 
-#: apps/finance/models.py:412
+#: apps/finance/models/models.py:410
 msgid "Material Sale Profit"
 msgstr "سود فروش مواد اولیه"
 
-#: apps/finance/models.py:418
+#: apps/finance/models/models.py:416
 msgid "Investment Sale Profit"
 msgstr "سود فروش سرمایه گذاری"
 
-#: apps/finance/models.py:424
+#: apps/finance/models/models.py:422
 msgid "Interpretation Profit"
 msgstr "سود تسعیری"
 
-#: apps/finance/models.py:427
+#: apps/finance/models/models.py:425
 msgid "Dividend Profit"
 msgstr "سود سهام‌الشرکا"
 
-#: apps/finance/models.py:430
+#: apps/finance/models/models.py:428
 msgid "Investment Profit"
 msgstr "سود سرمایه‌گذاری"
 
-#: apps/finance/models.py:436
+#: apps/finance/models/models.py:434
 msgid "Bank Deposit Profit"
 msgstr "سود سپرده بانکی"
 
-#: apps/finance/models.py:439
+#: apps/finance/models/models.py:437
 msgid "Rental Income"
 msgstr "درآمد اجاره"
 
-#: apps/finance/models.py:442
+#: apps/finance/models/models.py:440
 msgid "Incidental Income"
 msgstr "درآمد های تصادفی"
 
-#: apps/finance/models.py:448
+#: apps/finance/models/models.py:446
 msgid "Other Non-Operational Income/Expense"
 msgstr "سایر درآمد/هزینه های عملیاتی"
 
-#: apps/finance/models.py:454
+#: apps/finance/models/models.py:452
 msgid "Net Value Other Non-Operational Income/Expense"
 msgstr "مقدار خاصل سایر درآمد/هزینه های غیر عملیاتی"
 
-#: apps/finance/models.py:457
+#: apps/finance/models/models.py:455
 msgid "Financial Expense"
 msgstr "مخارج مالی"
 
-#: apps/finance/models.py:460 apps/finance/models.py:916
+#: apps/finance/models/models.py:458 apps/finance/models/models.py:913
 msgid "Proceed Profit"
 msgstr "سود ویژه"
 
-#: apps/finance/models.py:466
+#: apps/finance/models/models.py:464
 msgid "Current Year Income Tax"
 msgstr "مالیات بر درآمد سال جاری"
 
-#: apps/finance/models.py:472
+#: apps/finance/models/models.py:470
 msgid "Previous Year Income Tax"
 msgstr "مالیات بر درآمد سال گذشته"
 
-#: apps/finance/models.py:475 apps/finance/models.py:716
+#: apps/finance/models/models.py:473 apps/finance/models/models.py:714
 msgid "Profit After Tax"
 msgstr "سود بعد از کسر مالیات"
 
-#: apps/finance/models.py:483
+#: apps/finance/models/models.py:481
 msgid "Profit And Loss Statement"
 msgstr "صورت سود و زیان"
 
-#: apps/finance/models.py:484
+#: apps/finance/models/models.py:482
 msgid "Profit And Loss Statements"
 msgstr "صورت‌های سود و زیان"
 
-#: apps/finance/models.py:496
+#: apps/finance/models/models.py:494 apps/finance/models/sales.py:85
 msgid "Advance Payment"
 msgstr "پیشپرداخت"
 
-#: apps/finance/models.py:502
+#: apps/finance/models/models.py:500
 msgid "First Period Inventory"
 msgstr "موجودی مواد و کالای اول دوره"
 
-#: apps/finance/models.py:514
+#: apps/finance/models/models.py:512
 msgid "Recievable Trade Account"
 msgstr "حساب دریافتنی تجاری"
 
-#: apps/finance/models.py:520
+#: apps/finance/models/models.py:518
 msgid "Short term Investment"
 msgstr "سرمایه‌گذاری کوتاه مدت"
 
-#: apps/finance/models.py:524
+#: apps/finance/models/models.py:522
 msgid "Cash Balance"
 msgstr "تراز نقدی"
 
-#: apps/finance/models.py:531
+#: apps/finance/models/models.py:529
 msgid "Non-current assets held for sale"
 msgstr "دارایی های غیر جاری نگهداری شده برای فروش"
 
-#: apps/finance/models.py:537 apps/finance/models.py:659
+#: apps/finance/models/models.py:535 apps/finance/models/models.py:657
 msgid "Current Partner/Shareholder"
 msgstr "جاری شرکا/سهامداران"
 
-#: apps/finance/models.py:543
+#: apps/finance/models/models.py:541
 msgid "Total Current Asset"
 msgstr "جمع دارایی‌های جاری"
 
-#: apps/finance/models.py:552
+#: apps/finance/models/models.py:550
 msgid "Tangible Fixed Asset"
 msgstr "دارایی‌های ثابت مشهود"
 
-#: apps/finance/models.py:558
+#: apps/finance/models/models.py:556
 msgid "Property Investment"
 msgstr "سرمایه‌گذاری ملک"
 
-#: apps/finance/models.py:561
+#: apps/finance/models/models.py:559
 msgid "Intangible Asset"
 msgstr "دارایی‌های ثابت نامشهود"
 
-#: apps/finance/models.py:567
+#: apps/finance/models/models.py:565
 msgid "Long Term Investment"
 msgstr "سرمایه‌گذاری طولانی مدت"
 
-#: apps/finance/models.py:573
+#: apps/finance/models/models.py:571
 msgid "Long Term Receivable"
 msgstr "دریافتنی‌های طولانی مدت"
 
-#: apps/finance/models.py:576
+#: apps/finance/models/models.py:574
 msgid "Other Asset"
 msgstr "سایر دارایی‌ها"
 
-#: apps/finance/models.py:582
+#: apps/finance/models/models.py:580
 msgid "Total Non-Current Asset"
 msgstr "جمع دارایی های غیرجاری"
 
-#: apps/finance/models.py:587
+#: apps/finance/models/models.py:585
 msgid "Wealth"
 msgstr "سرمایه"
 
-#: apps/finance/models.py:590 apps/finance/models.py:761
+#: apps/finance/models/models.py:588 apps/finance/models/models.py:759
 msgid "Wealth Increase"
 msgstr "افزایش سرمایه"
 
-#: apps/finance/models.py:593
+#: apps/finance/models/models.py:591
 msgid "Share Spend"
 msgstr "صرف سهام"
 
-#: apps/finance/models.py:599
+#: apps/finance/models/models.py:597
 msgid "Treasury Share Spend"
 msgstr "صرف سهام خزانه"
 
-#: apps/finance/models.py:602 apps/finance/models.py:758
+#: apps/finance/models/models.py:600 apps/finance/models/models.py:756
 msgid "Legal Reserve"
 msgstr "اندوخته قانونی"
 
-#: apps/finance/models.py:605
+#: apps/finance/models/models.py:603
 msgid "Other Reserve"
 msgstr "سایر اندوخته‌ها"
 
-#: apps/finance/models.py:611
+#: apps/finance/models/models.py:609
 msgid "Asset Revaluation Surplus and Other Unrealized Gains"
 msgstr "مازاد تجدید ارزیابی دارایی‌ها و سایر سود‌های تحقق نیافته"
 
-#: apps/finance/models.py:617
+#: apps/finance/models/models.py:615
 msgid "Accumulated Profit and Loss"
 msgstr "سود و زیان انباشته"
 
-#: apps/finance/models.py:620
+#: apps/finance/models/models.py:618
 msgid "Treasury Share"
 msgstr "سهام خزانه"
 
-#: apps/finance/models.py:627
+#: apps/finance/models/models.py:625
 msgid "Ownership right total"
 msgstr "جمع حقوق مالکانه"
 
-#: apps/finance/models.py:632 apps/finance/models.py:1021
+#: apps/finance/models/models.py:630 apps/finance/models/models.py:1018
 msgid "Trade Payable"
 msgstr "پرداختنی‌های تجاری"
 
-#: apps/finance/models.py:635
+#: apps/finance/models/models.py:633
 msgid "Paid Tax"
 msgstr "مالیات پرداختی"
 
-#: apps/finance/models.py:638
+#: apps/finance/models/models.py:636
 msgid "Dividend Payable"
 msgstr "سود سهام پرداختنی"
 
-#: apps/finance/models.py:641
+#: apps/finance/models/models.py:639
 msgid "Financial Facility"
 msgstr "تسهیلات مالی"
 
-#: apps/finance/models.py:644 apps/finance/models.py:1027
+#: apps/finance/models/models.py:642 apps/finance/models/models.py:1024
 msgid "Reserves"
 msgstr "ذخایر"
 
-#: apps/finance/models.py:647 apps/finance/models.py:1024
+#: apps/finance/models/models.py:645 apps/finance/models/models.py:1021
 msgid "Advance"
 msgstr "پیش‌دریافت‌ها"
 
-#: apps/finance/models.py:653
+#: apps/finance/models/models.py:651
 msgid "Liability related to non-current asset held for sale"
 msgstr "بدهی‌های مرتبط با دارایی‌های غیر جاری نگهداری شده برای فروش"
 
-#: apps/finance/models.py:662
+#: apps/finance/models/models.py:660
 msgid "Total Current Debt"
 msgstr "جمع بدهی‌های جاری"
 
-#: apps/finance/models.py:667
+#: apps/finance/models/models.py:665
 msgid "Longterm Payable"
 msgstr "پرداختنی‌های بلند مدت"
 
-#: apps/finance/models.py:673
+#: apps/finance/models/models.py:671
 msgid "Longterm Financial Facilities"
 msgstr "تسهیلات مالی بلند مدت"
 
-#: apps/finance/models.py:679
+#: apps/finance/models/models.py:677
 msgid "Reserve Employee Termination Benefit"
 msgstr "دخیره مزایای پایان خدمت کارکنان"
 
-#: apps/finance/models.py:685
+#: apps/finance/models/models.py:683
 msgid "Total Non-Current Debt"
 msgstr "جمع بدهی‌های غیرجاره"
 
-#: apps/finance/models.py:689 apps/finance/models.py:895
+#: apps/finance/models/models.py:687 apps/finance/models/models.py:892
 msgid "Net Sale"
 msgstr "فروش خالص"
 
-#: apps/finance/models.py:692 apps/finance/models.py:919
+#: apps/finance/models/models.py:690 apps/finance/models/models.py:916
 msgid "Net Profit"
 msgstr "سود خالص"
 
-#: apps/finance/models.py:704
+#: apps/finance/models/models.py:702
 msgid "Balance Report"
 msgstr "ترازنامه"
 
-#: apps/finance/models.py:705
+#: apps/finance/models/models.py:703
 msgid "Balance Reports"
 msgstr "ترازنامه‌ها"
 
-#: apps/finance/models.py:722
+#: apps/finance/models/models.py:720
 msgid "First Year  Accumulated Profit"
 msgstr "سود(زیان) انباشه ابتدای سال"
 
-#: apps/finance/models.py:725
+#: apps/finance/models/models.py:723
 msgid "Correcting Mistake"
 msgstr "اصلاح اشتباهات"
 
-#: apps/finance/models.py:731
+#: apps/finance/models/models.py:729
 msgid "Accounting Method Change"
 msgstr "تغییر در رویه حسابداری"
 
-#: apps/finance/models.py:737
+#: apps/finance/models/models.py:735
 msgid "First Year`s Accumulated Profit Balanced"
 msgstr "سود(زیاد) انباشته ابتدای سال تعدیل شده"
 
-#: apps/finance/models.py:743
+#: apps/finance/models/models.py:741
 msgid "Transfer From Reserve"
 msgstr "انتقال از اندوخته‌ها"
 
-#: apps/finance/models.py:749
+#: apps/finance/models/models.py:747
 msgid "Other Account Turnover"
 msgstr "سایر"
 
-#: apps/finance/models.py:752
+#: apps/finance/models/models.py:750
 msgid "Allocable Profit"
 msgstr "سود قابل تخصیص"
 
-#: apps/finance/models.py:755
+#: apps/finance/models/models.py:753
 msgid "Share Profit"
 msgstr "سود سهام مصوب"
 
-#: apps/finance/models.py:767
+#: apps/finance/models/models.py:765
 msgid "Current Wealt Increase"
 msgstr "افزایش سرمایه در جریان"
 
-#: apps/finance/models.py:770
+#: apps/finance/models/models.py:768
 msgid "Other Reserves"
 msgstr "سایر اندوخته‌ها"
 
-#: apps/finance/models.py:776
+#: apps/finance/models/models.py:774
 msgid "Treasury Share Purchase"
 msgstr "خرید سهام خزانه"
 
-#: apps/finance/models.py:782
+#: apps/finance/models/models.py:780
 msgid "Treasury Share Sale"
 msgstr "فروش سهام خزانه"
 
-#: apps/finance/models.py:788
+#: apps/finance/models/models.py:786
 msgid "Treasury Share Sale Profit"
 msgstr "سود(زیان) حاصل از فروش سهام خزانه"
 
-#: apps/finance/models.py:791
+#: apps/finance/models/models.py:789
 msgid "Board Reward"
 msgstr "پاداش هیئت مدیره"
 
-#: apps/finance/models.py:794
+#: apps/finance/models/models.py:792
 msgid "Other Profit"
 msgstr "سایر"
 
-#: apps/finance/models.py:800
+#: apps/finance/models/models.py:798
 msgid "Total Allocated Profit"
 msgstr "جمع تخصیص سود"
 
-#: apps/finance/models.py:806
+#: apps/finance/models/models.py:804
 msgid "End Year`s Accumulated profit"
 msgstr "سود(زیان) انباشته در پایان سال"
 
-#: apps/finance/models.py:814
+#: apps/finance/models/models.py:812
 msgid "Account TurnOver"
 msgstr "گردش حساب"
 
-#: apps/finance/models.py:815
+#: apps/finance/models/models.py:813
 msgid "Accounts Turnovers"
 msgstr "گردش حساب‌ها"
 
-#: apps/finance/models.py:836
+#: apps/finance/models/models.py:833
 msgid "Is Tax Record"
 msgstr "ایا اظهارنامه‌است؟"
 
-#: apps/finance/models.py:841
+#: apps/finance/models/models.py:838
 msgid "Financial Assets"
 msgstr "اعداد مالی(وارد شده از اظهارنامه)"
 
-#: apps/finance/models.py:853
+#: apps/finance/models/models.py:850
 msgid "Define whether the reports are published and shown to the user or not."
 msgstr "مشخص کنید که ایا نتیجه برای کاربر نمایش داده شود یا نه"
 
-#: apps/finance/models.py:855
+#: apps/finance/models/models.py:852
 msgid "Publish for user"
 msgstr "انتشار برای کاربر"
 
-#: apps/finance/models.py:865
+#: apps/finance/models/models.py:862
 msgid "Current Asset"
 msgstr "جمع دارایی‌های جاری"
 
-#: apps/finance/models.py:868
+#: apps/finance/models/models.py:865
 msgid "Non-Current Asset"
 msgstr "جمع دارایی های غیرجاری"
 
-#: apps/finance/models.py:871
+#: apps/finance/models/models.py:868
 msgid "Total Asset"
 msgstr "جمع دارایی‌های جاری"
 
-#: apps/finance/models.py:874
+#: apps/finance/models/models.py:871
 msgid "Current Debt"
 msgstr " بدهی‌های جاری"
 
-#: apps/finance/models.py:877
+#: apps/finance/models/models.py:874
 msgid "Non-Current Debt"
 msgstr " بدهی غیرجاری"
 
-#: apps/finance/models.py:880
+#: apps/finance/models/models.py:877
 msgid "Total Debt"
 msgstr "جمع بدهی‌های جاری"
 
-#: apps/finance/models.py:883
+#: apps/finance/models/models.py:880
 msgid "Total Equity"
 msgstr "مجموع حقوق سهام داران"
 
-#: apps/finance/models.py:889
+#: apps/finance/models/models.py:886
 msgid "Total Equity and Debt Sum"
 msgstr "جمع بدهی‌های جاری"
 
-#: apps/finance/models.py:910
+#: apps/finance/models/models.py:907
 msgid "Inventory Average"
 msgstr "میانگین انبار"
 
-#: apps/finance/models.py:925
+#: apps/finance/models/models.py:922
 msgid "Production Fee"
 msgstr "هزینه مستقیم"
 
-#: apps/finance/models.py:937
+#: apps/finance/models/models.py:934
 msgid "Total Production Price"
 msgstr "جمع هزینه کالای فروخته شده"
 
-#: apps/finance/models.py:946
+#: apps/finance/models/models.py:943
 msgid "Production Salary Fee"
 msgstr "هزینه مستقیم"
 
-#: apps/finance/models.py:949
+#: apps/finance/models/models.py:946
 msgid "Usability"
 msgstr "کارایی"
 
-#: apps/finance/models.py:952
+#: apps/finance/models/models.py:949
 msgid "Efficiency"
 msgstr "اثربخشی"
 
-#: apps/finance/models.py:958
+#: apps/finance/models/models.py:955
 msgid "Return on Assets (ROA)"
 msgstr "ROA"
 
-#: apps/finance/models.py:964
+#: apps/finance/models/models.py:961
 msgid "Return on Assets Before Tax (ROAB)"
 msgstr "ROA`"
 
-#: apps/finance/models.py:970
+#: apps/finance/models/models.py:967
 msgid "Return on Equity (ROE)"
 msgstr "ROE"
 
-#: apps/finance/models.py:976
+#: apps/finance/models/models.py:973
 msgid "Gross Profit Margin"
 msgstr "حاشیه سود ناخالص"
 
-#: apps/finance/models.py:982
+#: apps/finance/models/models.py:979
 msgid "Profit Margin Ratio"
 msgstr "نسبت حاشیه سود"
 
-#: apps/finance/models.py:985
+#: apps/finance/models/models.py:982
 msgid "Debt Ratio"
 msgstr "نسبت بدهی"
 
-#: apps/finance/models.py:988
+#: apps/finance/models/models.py:985
 msgid "Capital Ratio"
 msgstr "نسبت سرمایه"
 
-#: apps/finance/models.py:991
+#: apps/finance/models/models.py:988
 msgid "Proprietary Ratio"
 msgstr "نسبت مالکانه"
 
-#: apps/finance/models.py:997
+#: apps/finance/models/models.py:994
 msgid "Equity to Total Debt Ratio"
 msgstr "نیست حقوق صاحبان سهیم به کل بدهی"
 
-#: apps/finance/models.py:1003
+#: apps/finance/models/models.py:1000
 msgid "Equity to Non-Current Asset Ratio"
 msgstr "نسبت حقوق صاحبان سهام به دارایی غیرجاری"
 
-#: apps/finance/models.py:1006
+#: apps/finance/models/models.py:1003
 msgid "Current Ratio"
 msgstr "نسبت جاری"
 
-#: apps/finance/models.py:1009
+#: apps/finance/models/models.py:1006
 msgid "Instant Ratio"
 msgstr "نسبت آنی"
 
-#: apps/finance/models.py:1012
+#: apps/finance/models/models.py:1009
 msgid "Stock Turnover"
 msgstr "گردش حساب‌ها"
 
-#: apps/finance/models.py:1018
+#: apps/finance/models/models.py:1015
 msgid "Altman Bankruptcy Ratio"
 msgstr "نسبت ورشکستگی آلتمن"
 
-#: apps/finance/models.py:1030
+#: apps/finance/models/models.py:1027
 msgid "Long Term Payable"
 msgstr "پرداختنی‌های بلند مدت"
 
-#: apps/finance/models.py:1036
+#: apps/finance/models/models.py:1033
 msgid "Employee Termination Benefit Reserve"
 msgstr "دخیره مزایای پایان خدمت کارکنان"
 
-#: apps/finance/models.py:1039 apps/finance/models.py:1127
+#: apps/finance/models/models.py:1035 apps/finance/models/models.py:1121
 msgid "Created At"
 msgstr "ساخته شده در"
 
-#: apps/finance/models.py:1042 apps/finance/models.py:1130
+#: apps/finance/models/models.py:1037 apps/finance/models/models.py:1123
+#: apps/finance/models/sales.py:60
 msgid "Updated At"
 msgstr "بروزرسانی شده در"
 
-#: apps/finance/models.py:1050
+#: apps/finance/models/models.py:1045
 msgid "Financial Data"
 msgstr "مقدار مالی"
 
-#: apps/finance/models.py:1051
+#: apps/finance/models/models.py:1046
 msgid "Financial Datas"
 msgstr "مقادیر مالی(مقادیر محاسبه شده)"
 
-#: apps/finance/models.py:1071
+#: apps/finance/models/models.py:1066
 msgid "Debt Chart"
 msgstr "نمودار بدهی"
 
-#: apps/finance/models.py:1072
+#: apps/finance/models/models.py:1067
 msgid "Asset Chart"
 msgstr "نمودار دارایی"
 
-#: apps/finance/models.py:1073
+#: apps/finance/models/models.py:1068
 msgid "Sale Chart"
 msgstr "نمودار فروش"
 
-#: apps/finance/models.py:1074
+#: apps/finance/models/models.py:1069
 msgid "Equity Chart"
 msgstr "نمودار حقوق صاحبان سهام"
 
-#: apps/finance/models.py:1075
+#: apps/finance/models/models.py:1070
 msgid "Life Cycle Chart"
 msgstr "نمودار چرخه عخمر"
 
-#: apps/finance/models.py:1076
+#: apps/finance/models/models.py:1071
 msgid "Bankrupsy Chart"
 msgstr "نمودار ورشکستگی آلتمن"
 
-#: apps/finance/models.py:1077
+#: apps/finance/models/models.py:1072
 msgid "Profitability Chart"
 msgstr "نمودار سودآوری"
 
-#: apps/finance/models.py:1078
+#: apps/finance/models/models.py:1073
 msgid "Salary Chart"
 msgstr "نمودار دستمزد"
 
-#: apps/finance/models.py:1079
+#: apps/finance/models/models.py:1074
 msgid "Inventory Chart"
 msgstr "نمودار انبار"
 
-#: apps/finance/models.py:1080
+#: apps/finance/models/models.py:1075
 msgid "Agility Chart"
 msgstr "نمودار چابکی"
 
-#: apps/finance/models.py:1081
+#: apps/finance/models/models.py:1076
 msgid "Liquidity Chart"
 msgstr "نمودار نقدینگی"
 
-#: apps/finance/models.py:1082
+#: apps/finance/models/models.py:1077
 msgid "Leverage Chart"
 msgstr "نمودار اهرمی"
 
-#: apps/finance/models.py:1083
+#: apps/finance/models/models.py:1078
 msgid "Cost Chart"
 msgstr "نمودار هزینه"
 
-#: apps/finance/models.py:1084
+#: apps/finance/models/models.py:1079
 msgid "Profit Chart"
 msgstr "نمودار سود"
 
-#: apps/finance/models.py:1089
+#: apps/finance/models/models.py:1084
 msgid "Monthly"
 msgstr "ماهانه"
 
-#: apps/finance/models.py:1090
+#: apps/finance/models/models.py:1085
 msgid "Yearly"
 msgstr "سالانه"
 
-#: apps/finance/models.py:1096
+#: apps/finance/models/models.py:1091
 msgid "Period"
 msgstr "دوره"
 
-#: apps/finance/models.py:1108
+#: apps/finance/models/models.py:1103
 msgid "Calculated Data"
 msgstr "داده‌ محاسباتی"
 
-#: apps/finance/models.py:1110
+#: apps/finance/models/models.py:1105
 msgid ""
 "Select company assosiated with the year for entering the analysis text "
 "report. it would be better to only choose the last yaer of each company"
@@ -804,53 +806,189 @@ msgstr ""
 "شرکت مرتبط با سال را برای ورود متن تحلیلات وارد کنید.(بهتر است تنها سال اخر "
 "را انتخاب کنید) "
 
-#: apps/finance/models.py:1116
+#: apps/finance/models/models.py:1111
 msgid "Chart Name"
 msgstr "اسم نمودار"
 
-#: apps/finance/models.py:1117
+#: apps/finance/models/models.py:1112
 msgid "Enter the name of each chart"
 msgstr "نام هر نمودار را وارد کنید"
 
-#: apps/finance/models.py:1122
+#: apps/finance/models/models.py:1117
 msgid "Analysis Text"
 msgstr "توضیح تحلیلات"
 
-#: apps/finance/models.py:1123
+#: apps/finance/models/models.py:1118
 msgid "Enter the analysis text for each chart"
 msgstr "تحلیل  هر نمودار را وارد کنید"
 
-#: apps/finance/models.py:1134
+#: apps/finance/models/models.py:1127
 msgid "Published"
 msgstr "منتشر شود؟"
 
-#: apps/finance/models.py:1135
+#: apps/finance/models/models.py:1128
 msgid "Select to publish the analysis report"
 msgstr "برای انتشار گزارش تحلیل انتخاب کنید"
 
-#: apps/finance/models.py:1139
+#: apps/finance/models/models.py:1132
 msgid "Analysis Report"
 msgstr "تحلیل"
 
-#: apps/finance/models.py:1140 apps/finance/views.py:660
+#: apps/finance/models/models.py:1133 apps/finance/views/financial.py:660
 msgid "Analysis Reports"
 msgstr "تحلیل‌ها"
 
-#: apps/finance/models.py:1149
+#: apps/finance/models/models.py:1142
 msgid "سال"
 msgstr ""
 
-#: apps/finance/models.py:1160
+#: apps/finance/models/models.py:1153
 msgid "عدد شاخص"
 msgstr ""
 
-#: apps/finance/models.py:1169
+#: apps/finance/models/models.py:1161
 msgid "نرخ تورم"
 msgstr ""
 
-#: apps/finance/models.py:1173 apps/finance/models.py:1174
+#: apps/finance/models/models.py:1165 apps/finance/models/models.py:1166
 msgid "تورم"
 msgstr ""
+
+#: apps/finance/models/sales.py:12 apps/finance/models/sales.py:81
+msgid "Online"
+msgstr ""
+
+#: apps/finance/models/sales.py:13
+msgid "Offline"
+msgstr ""
+
+#: apps/finance/models/sales.py:16
+msgid "Cash"
+msgstr ""
+
+#: apps/finance/models/sales.py:17
+msgid "Installment"
+msgstr ""
+
+#: apps/finance/models/sales.py:27 apps/finance/models/sales.py:104
+msgid "Customer Name"
+msgstr "اسم مشتری"
+
+#: apps/finance/models/sales.py:31 apps/finance/models/sales.py:108
+msgid "Product Code"
+msgstr "کد کالا"
+
+#: apps/finance/models/sales.py:34 apps/finance/models/sales.py:111
+msgid "Sold Amount"
+msgstr "مقدار/میزان فروخته شده"
+
+#: apps/finance/models/sales.py:40 apps/finance/models/sales.py:117
+msgid "Unit Price"
+msgstr "قیمت واحد"
+
+#: apps/finance/models/sales.py:45
+msgid "Discount Price"
+msgstr "قیمت تخفیف داده شده"
+
+#: apps/finance/models/sales.py:51 apps/finance/models/sales.py:130
+msgid "Sale Method"
+msgstr "روش فروش"
+
+#: apps/finance/models/sales.py:57
+msgid "Payment Method"
+msgstr "روش پرداخت"
+
+#: apps/finance/models/sales.py:59
+msgid "Sold At"
+msgstr "تاریخ فروش"
+
+#: apps/finance/models/sales.py:66
+msgid "Domestic Sale"
+msgstr "فروش داخلی"
+
+#: apps/finance/models/sales.py:67
+msgid "Domestic Sales"
+msgstr "فروش‌های داخلی"
+
+#: apps/finance/models/sales.py:82
+msgid "Exhibition"
+msgstr "نمایشگاه"
+
+#: apps/finance/models/sales.py:86
+msgid "Open Account"
+msgstr "حساب باز"
+
+#: apps/finance/models/sales.py:87
+msgid "Receivable"
+msgstr "دریافتنی‌"
+
+#: apps/finance/models/sales.py:88
+msgid "Document"
+msgstr "اسناد"
+
+#: apps/finance/models/sales.py:91
+msgid "Land"
+msgstr "زمینی"
+
+#: apps/finance/models/sales.py:92
+msgid "Rail"
+msgstr "ریلی"
+
+#: apps/finance/models/sales.py:93
+msgid "Sea"
+msgstr "دریایی"
+
+#: apps/finance/models/sales.py:94
+msgid "Air"
+msgstr "هوایی"
+
+#: apps/finance/models/sales.py:119
+msgid "Contract Date"
+msgstr "تاریخ قرارداد"
+
+#: apps/finance/models/sales.py:120
+msgid "Delivery Date"
+msgstr "تاریخ تحویل"
+
+#: apps/finance/models/sales.py:121
+msgid "Target Country"
+msgstr "کشور مقصد"
+
+#: apps/finance/models/sales.py:122
+msgid "Area"
+msgstr "منطقه"
+
+#: apps/finance/models/sales.py:124
+msgid "Customer Approval"
+msgstr "تاییدیه مشتری"
+
+#: apps/finance/models/sales.py:136
+msgid "Payment Status"
+msgstr "وضعیت پرداختی"
+
+#: apps/finance/models/sales.py:142
+msgid "Transfer Condition"
+msgstr "وضعیت انتقال"
+
+#: apps/finance/models/sales.py:146
+msgid "Trading Currency"
+msgstr "ارز معاملاتی"
+
+#: apps/finance/models/sales.py:150
+msgid "Exchange Rate"
+msgstr "میزان تبدیل"
+
+#: apps/finance/models/sales.py:154
+msgid "Sale Amount"
+msgstr "مقدار/میزان فروخته شده"
+
+#: apps/finance/models/sales.py:161
+msgid "Foreign Sale"
+msgstr "فروش خارجی"
+
+#: apps/finance/models/sales.py:162
+msgid "Foreign Sales"
+msgstr "فروش‌های خارجی"
 
 #: apps/finance/utils.py:74 apps/finance/utils_depraceted.py:9
 msgid "Start"
@@ -888,10 +1026,10 @@ msgstr "افول ۱"
 msgid "Decline 2"
 msgstr "افول ۲"
 
-#: apps/finance/views.py:657
+#: apps/finance/views/financial.py:657
 msgid "Home"
 msgstr "شروع"
 
-#: apps/finance/views.py:658
+#: apps/finance/views/financial.py:658
 msgid "finance"
 msgstr "بخش مالی"

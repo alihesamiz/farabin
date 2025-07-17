@@ -1,0 +1,88 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-07-17 09:06+0330\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+#: apps/questionnaire/apps.py:8
+msgid "Questionnaire"
+msgstr ""
+
+#: apps/questionnaire/models.py:9 apps/questionnaire/models.py:24
+#: apps/questionnaire/models.py:38 apps/questionnaire/models.py:41
+#: apps/questionnaire/models.py:66
+msgid "سوال"
+msgstr ""
+
+#: apps/questionnaire/models.py:10
+msgid "Title"
+msgstr ""
+
+#: apps/questionnaire/models.py:12
+msgid "Weight"
+msgstr ""
+
+#: apps/questionnaire/models.py:15
+msgid "شاخص سوال"
+msgstr ""
+
+#: apps/questionnaire/models.py:16
+msgid "شاخص‌های سوالات"
+msgstr ""
+
+#: apps/questionnaire/models.py:26
+msgid "پاسخ"
+msgstr ""
+
+#: apps/questionnaire/models.py:27
+msgid "امتیاز"
+msgstr ""
+
+#: apps/questionnaire/models.py:30
+msgid "گزینه‌ سوال"
+msgstr ""
+
+#: apps/questionnaire/models.py:31
+msgid "گزینه‌های سوالات"
+msgstr ""
+
+#: apps/questionnaire/models.py:42 apps/questionnaire/models.py:51
+msgid "سوالات"
+msgstr ""
+
+#: apps/questionnaire/models.py:49
+msgid "عنوان"
+msgstr ""
+
+#: apps/questionnaire/models.py:55 apps/questionnaire/models.py:64
+msgid "پرسشنامه"
+msgstr ""
+
+#: apps/questionnaire/models.py:56
+msgid "پرسشنامه‌ها"
+msgstr ""
+
+#: apps/questionnaire/models.py:67
+msgid "عدد ترتیب"
+msgstr ""
+
+#: apps/questionnaire/models.py:70
+msgid "سوال پرسشنامه"
+msgstr ""
+
+#: apps/questionnaire/models.py:71
+msgid "سوالات پرسشنامه‌ها"
+msgstr ""

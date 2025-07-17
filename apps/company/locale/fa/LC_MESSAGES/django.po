@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-13 11:35+0330\n"
+"POT-Creation-Date: 2025-07-17 09:06+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,11 +18,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: apps/company/admin.py:67 apps/company/models/profile.py:116
+#: apps/company/admin.py:67 apps/company/models/profile.py:115
 msgid "Special Field"
 msgstr "حوزه تخصصی"
 
-#: apps/company/admin.py:70 apps/company/models/profile.py:125
+#: apps/company/admin.py:70 apps/company/models/profile.py:124
 msgid "Capital Providing Method"
 msgstr "راه‌های تامین سرمایه"
 
@@ -34,340 +34,341 @@ msgstr ""
 msgid "شرکت"
 msgstr ""
 
-#: apps/company/apps.py:8 apps/company/models/life_cycle.py:126
-#: apps/company/models/life_cycle.py:218 apps/company/models/profile.py:172
-#: apps/company/models/profile.py:205 apps/company/models/profile.py:289
+#: apps/company/apps.py:8 apps/company/models/life_cycle.py:123
+#: apps/company/models/life_cycle.py:215 apps/company/models/profile.py:171
+#: apps/company/models/profile.py:211 apps/company/models/profile.py:295
 msgid "Company"
 msgstr "شرکت"
 
-#: apps/company/models/life_cycle.py:13 apps/company/models/life_cycle.py:184
+#: apps/company/models/life_cycle.py:9 apps/company/models/life_cycle.py:181
 msgid "Operational"
 msgstr "عملیاتی"
 
-#: apps/company/models/life_cycle.py:14 apps/company/models/life_cycle.py:185
+#: apps/company/models/life_cycle.py:10 apps/company/models/life_cycle.py:182
 msgid "Finance"
 msgstr "تسهیلات مالی"
 
-#: apps/company/models/life_cycle.py:15
+#: apps/company/models/life_cycle.py:11
 msgid "Invest"
 msgstr "سرمایه‌گذاری"
 
-#: apps/company/models/life_cycle.py:21
-msgid "Capital Providing"
-msgstr "تامین سرمایه"
-
-#: apps/company/models/life_cycle.py:25
-msgid "Life Cycle"
-msgstr "چرخه عمر"
-
-#: apps/company/models/life_cycle.py:26
-msgid "Life Cycles"
-msgstr "چرخه‌های عمر"
-
-#: apps/company/models/life_cycle.py:35
-msgid "Theoretical"
-msgstr "نظری"
-
-#: apps/company/models/life_cycle.py:43 apps/company/models/life_cycle.py:64
-#: apps/company/models/life_cycle.py:80 apps/company/models/life_cycle.py:96
-#: apps/company/models/life_cycle.py:112 apps/company/models/life_cycle.py:193
-#: apps/company/models/profile.py:18 apps/company/models/profile.py:29
+#: apps/company/models/life_cycle.py:17 apps/company/models/life_cycle.py:40
+#: apps/company/models/life_cycle.py:61 apps/company/models/life_cycle.py:77
+#: apps/company/models/life_cycle.py:93 apps/company/models/life_cycle.py:109
+#: apps/company/models/life_cycle.py:190 apps/company/models/profile.py:17
+#: apps/company/models/profile.py:28
 msgid "Name"
 msgstr "نام"
 
-#: apps/company/models/life_cycle.py:46
+#: apps/company/models/life_cycle.py:22
+msgid "Life Cycle"
+msgstr "چرخه عمر"
+
+#: apps/company/models/life_cycle.py:23
+msgid "Life Cycles"
+msgstr "چرخه‌های عمر"
+
+#: apps/company/models/life_cycle.py:32
+msgid "Theoretical"
+msgstr "نظری"
+
+#: apps/company/models/life_cycle.py:43
 msgid "Weight"
 msgstr "وزن"
 
-#: apps/company/models/life_cycle.py:55
+#: apps/company/models/life_cycle.py:52
 msgid "Life Cycle Feature"
 msgstr "ویژگی چرخه عمر"
 
-#: apps/company/models/life_cycle.py:56
+#: apps/company/models/life_cycle.py:53
 msgid "Life Cycle Features"
 msgstr "ویژگی‌های چرخه‌های عمر"
 
-#: apps/company/models/life_cycle.py:71
+#: apps/company/models/life_cycle.py:68
 msgid "Life Cycle Decline"
 msgstr "افول چرخه عمر"
 
-#: apps/company/models/life_cycle.py:72
+#: apps/company/models/life_cycle.py:69
 msgid "Life Cycle Declines"
 msgstr "افول چرخه‌های عمر"
 
-#: apps/company/models/life_cycle.py:87 apps/company/models/life_cycle.py:88
+#: apps/company/models/life_cycle.py:84 apps/company/models/life_cycle.py:85
 msgid "Life Cycle Maturity"
 msgstr "بلوغ چرخه عمر"
 
-#: apps/company/models/life_cycle.py:103 apps/company/models/life_cycle.py:104
+#: apps/company/models/life_cycle.py:100 apps/company/models/life_cycle.py:101
 msgid "Life Cycle Growth"
 msgstr "رشد چرخه عمر"
 
-#: apps/company/models/life_cycle.py:119 apps/company/models/life_cycle.py:120
+#: apps/company/models/life_cycle.py:116 apps/company/models/life_cycle.py:117
 msgid "Life Cycle Introduction"
 msgstr "معرفی چرخه عمر"
 
-#: apps/company/models/life_cycle.py:133
+#: apps/company/models/life_cycle.py:130
 msgid "Feature"
 msgstr "ویژگی"
 
-#: apps/company/models/life_cycle.py:139
+#: apps/company/models/life_cycle.py:136
 msgid "Decline"
 msgstr "افول"
 
-#: apps/company/models/life_cycle.py:145
+#: apps/company/models/life_cycle.py:142
 msgid "Maturity"
 msgstr "بلوغ"
 
-#: apps/company/models/life_cycle.py:151
+#: apps/company/models/life_cycle.py:148
 msgid "Growth"
 msgstr "رشد"
 
-#: apps/company/models/life_cycle.py:157
+#: apps/company/models/life_cycle.py:154
 msgid "Introduction"
 msgstr "معرفی"
 
-#: apps/company/models/life_cycle.py:163 apps/company/models/life_cycle.py:164
+#: apps/company/models/life_cycle.py:160 apps/company/models/life_cycle.py:161
 msgid "Theoretical Life Cycle Place"
 msgstr "جایگاه نظری چرخه عمر"
 
-#: apps/company/models/life_cycle.py:186
+#: apps/company/models/life_cycle.py:183
 msgid "Investment"
 msgstr "سرمایه‌گذاری"
 
-#: apps/company/models/life_cycle.py:200
+#: apps/company/models/life_cycle.py:197
 msgid "Life Cycle Financial Resource"
 msgstr "منبع مالی چرخه عمر"
 
-#: apps/company/models/life_cycle.py:201
+#: apps/company/models/life_cycle.py:198
 msgid "Life Cycle Financial Resources"
 msgstr "منابع مالی چرخه عمر"
 
-#: apps/company/models/life_cycle.py:224
+#: apps/company/models/life_cycle.py:221
 msgid "Resources"
 msgstr "منابع"
 
-#: apps/company/models/life_cycle.py:230
+#: apps/company/models/life_cycle.py:245
 msgid "Life Cycle Quantitative Position"
 msgstr "جایگاه کمی چرخه عمر"
 
-#: apps/company/models/life_cycle.py:231
+#: apps/company/models/life_cycle.py:246
 msgid "Life Cycle Quantitative Positions"
 msgstr "جایگاه کمی چرخه عمر"
 
-#: apps/company/models/profile.py:24
+#: apps/company/models/profile.py:23
 msgid "Special Tech"
 msgstr "حوزه تخصصی"
 
-#: apps/company/models/profile.py:25
+#: apps/company/models/profile.py:24
 msgid "Special Techs"
 msgstr "حوزه‌های تخصصی"
 
-#: apps/company/models/profile.py:35
+#: apps/company/models/profile.py:34
 msgid "Tech Field"
 msgstr "حوزه فناوری"
 
-#: apps/company/models/profile.py:36
+#: apps/company/models/profile.py:35
 msgid "Tech Fields"
 msgstr "حوزه‌های فناوری"
 
-#: apps/company/models/profile.py:46
+#: apps/company/models/profile.py:45
 msgid "Industrial town"
 msgstr "عضو شهرک صنعتی"
 
-#: apps/company/models/profile.py:47
+#: apps/company/models/profile.py:46
 msgid "Technological"
 msgstr "فناور"
 
-#: apps/company/models/profile.py:48
+#: apps/company/models/profile.py:47
 msgid "Knowledge base"
 msgstr "دانش بنیان"
 
-#: apps/company/models/profile.py:49
+#: apps/company/models/profile.py:48
 msgid "Others"
 msgstr "سایر"
 
-#: apps/company/models/profile.py:56
+#: apps/company/models/profile.py:55
 msgid "License Code"
 msgstr "کد گواهی"
 
-#: apps/company/models/profile.py:60
+#: apps/company/models/profile.py:59
 msgid "License Name"
 msgstr "نام گواهی"
 
-#: apps/company/models/profile.py:67
+#: apps/company/models/profile.py:66
 msgid "License"
 msgstr "گواهی"
 
-#: apps/company/models/profile.py:68
+#: apps/company/models/profile.py:67
 msgid "Licenses"
 msgstr "گواهی‌ها"
 
-#: apps/company/models/profile.py:80
+#: apps/company/models/profile.py:79
 msgid "Company Title"
 msgstr "عنوان شرکت"
 
-#: apps/company/models/profile.py:85
+#: apps/company/models/profile.py:84
 msgid "Email"
 msgstr "ایمیل"
 
-#: apps/company/models/profile.py:92
+#: apps/company/models/profile.py:91
 msgid "Company National Registration Code"
 msgstr "کد ثبت ملی شرکت"
 
-#: apps/company/models/profile.py:98
+#: apps/company/models/profile.py:97
 msgid "Office Phone Number"
 msgstr "شماره تماس دفتر"
 
-#: apps/company/models/profile.py:104
+#: apps/company/models/profile.py:103
 msgid "License Types"
 msgstr "نوع گواهی"
 
-#: apps/company/models/profile.py:110
+#: apps/company/models/profile.py:109
 msgid "Technical Field"
 msgstr "حوزه فناوری"
 
-#: apps/company/models/profile.py:120
+#: apps/company/models/profile.py:119
 msgid "Insurance List Count"
 msgstr "تعداد لیست بیمه‌شدگان"
 
-#: apps/company/models/profile.py:131
+#: apps/company/models/profile.py:130
 msgid "Province"
 msgstr "استان"
 
-#: apps/company/models/profile.py:137
+#: apps/company/models/profile.py:136
 msgid "City"
 msgstr "شهر"
 
-#: apps/company/models/profile.py:141
+#: apps/company/models/profile.py:140
 msgid "Address"
 msgstr "آدرس"
 
-#: apps/company/models/profile.py:145
+#: apps/company/models/profile.py:144
 msgid "Is Active?"
 msgstr "فعال است؟"
 
-#: apps/company/models/profile.py:152
+#: apps/company/models/profile.py:151
 msgid "Company Profile"
 msgstr "پروفایل شرکت"
 
-#: apps/company/models/profile.py:153
+#: apps/company/models/profile.py:152
 msgid "Company Profiles"
 msgstr "پروفایل شرکت‌ها"
 
-#: apps/company/models/profile.py:158
+#: apps/company/models/profile.py:157
 msgid "Manager"
 msgstr "مدیر اصلی"
 
-#: apps/company/models/profile.py:159
+#: apps/company/models/profile.py:158
 msgid "Admin"
 msgstr "مدیر"
 
-#: apps/company/models/profile.py:160
+#: apps/company/models/profile.py:159
 msgid "Staff"
 msgstr "کارمند"
 
-#: apps/company/models/profile.py:166 apps/company/models/profile.py:185
-#: apps/company/models/profile.py:257
+#: apps/company/models/profile.py:165 apps/company/models/profile.py:191
+#: apps/company/models/profile.py:263
 msgid "Company User"
 msgstr "کاربر شرکت"
 
-#: apps/company/models/profile.py:178
+#: apps/company/models/profile.py:179
 msgid "Role"
 msgstr "نقش"
 
-#: apps/company/models/profile.py:186
-msgid "Company Users"
-msgstr "کاربران شرکت‌ها"
-
-#: apps/company/models/profile.py:211 apps/company/models/profile.py:261
-msgid "Service"
-msgstr "خدمت"
-
-#: apps/company/models/profile.py:215
-msgid "Activate"
-msgstr "فعالسازی"
-
-#: apps/company/models/profile.py:219
-msgid "Purchased At"
-msgstr "تاریخ خرید"
-
-#: apps/company/models/profile.py:222 apps/company/models/profile.py:265
+#: apps/company/models/profile.py:184 apps/company/models/profile.py:228
+#: apps/company/models/profile.py:271
 msgid "Deleted At"
 msgstr "تاریخ حذف"
 
-#: apps/company/models/profile.py:231
+#: apps/company/models/profile.py:192
+msgid "Company Users"
+msgstr "کاربران شرکت‌ها"
+
+#: apps/company/models/profile.py:217 apps/company/models/profile.py:267
+msgid "Service"
+msgstr "خدمت"
+
+#: apps/company/models/profile.py:221
+msgid "Activate"
+msgstr "فعالسازی"
+
+#: apps/company/models/profile.py:225
+msgid "Purchased At"
+msgstr "تاریخ خرید"
+
+#: apps/company/models/profile.py:237
 msgid "Company Service"
 msgstr "خدمت شرکت"
 
-#: apps/company/models/profile.py:232
+#: apps/company/models/profile.py:238
 msgid "Company Services"
 msgstr "خدمت‌های شرکت‌ها"
 
-#: apps/company/models/profile.py:246
+#: apps/company/models/profile.py:252
 msgid "Financial"
 msgstr "تسهیلات مالی"
 
-#: apps/company/models/profile.py:247
+#: apps/company/models/profile.py:253
 msgid "Management"
 msgstr "مدیریت"
 
-#: apps/company/models/profile.py:248
+#: apps/company/models/profile.py:254
 msgid "MIS"
 msgstr "MIS"
 
-#: apps/company/models/profile.py:249
+#: apps/company/models/profile.py:255
 msgid "R&D"
 msgstr "تحقیق و توسعه"
 
-#: apps/company/models/profile.py:250
+#: apps/company/models/profile.py:256
 msgid "Marketing"
 msgstr "بازایابی"
 
-#: apps/company/models/profile.py:251
+#: apps/company/models/profile.py:257
 msgid "Production"
 msgstr "تولید"
 
-#: apps/company/models/profile.py:274
+#: apps/company/models/profile.py:280
 msgid "Company User Service Permission"
 msgstr "دسترسی به خدمات کاربر شرکت"
 
-#: apps/company/models/profile.py:275
+#: apps/company/models/profile.py:281
 msgid "Company User Service Permissions"
 msgstr "دسترسی به خدمات کاربر شرکت"
 
-#: apps/company/models/profile.py:294
+#: apps/company/models/profile.py:300
 msgid "Questionnaire"
 msgstr "پرسشنامه"
 
-#: apps/company/models/profile.py:297
+#: apps/company/models/profile.py:303
 msgid "Submitted At"
 msgstr "تاریخ ثبت"
 
-#: apps/company/models/profile.py:304 apps/company/models/profile.py:313
+#: apps/company/models/profile.py:310 apps/company/models/profile.py:319
 msgid "Company Questionnaire"
 msgstr "پرسشنامه شرکت"
 
-#: apps/company/models/profile.py:305
+#: apps/company/models/profile.py:311
 msgid "Company Questionnaires"
 msgstr "پرسشنامه‌های شرکت‌ها"
 
-#: apps/company/models/profile.py:316
+#: apps/company/models/profile.py:322
 msgid "Question"
 msgstr "پرسش"
 
-#: apps/company/models/profile.py:323
+#: apps/company/models/profile.py:329
 msgid "Selected Choice"
 msgstr "گزینه‌های انتخاب شده"
 
-#: apps/company/models/profile.py:325
+#: apps/company/models/profile.py:331
 msgid "Answered At"
 msgstr "تاریخ پاسخ"
 
-#: apps/company/models/profile.py:331
+#: apps/company/models/profile.py:337
 msgid "Company Answer"
 msgstr "پاسخ شرکت"
 
-#: apps/company/models/profile.py:332
+#: apps/company/models/profile.py:338
 msgid "Company Answers"
 msgstr "پاسخ‌های شرکت‌ها"
+
+#~ msgid "Capital Providing"
+#~ msgstr "تامین سرمایه"

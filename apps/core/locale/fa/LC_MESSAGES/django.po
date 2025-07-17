@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-13 11:35+0330\n"
+"POT-Creation-Date: 2025-07-17 09:06+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,15 +18,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: apps/core/admin.py:35
+#: apps/core/admin.py:32
 msgid "Personal info"
 msgstr "اطلاعات شخصی"
 
-#: apps/core/admin.py:47
+#: apps/core/admin.py:44
 msgid "Permissions"
 msgstr "اجازه‌ها"
 
-#: apps/core/admin.py:58
+#: apps/core/admin.py:55
 msgid "Important dates"
 msgstr "تاریخ‌های مهم"
 
@@ -96,36 +96,32 @@ msgstr "کد"
 msgid "OTPs"
 msgstr "کدها"
 
-#: apps/core/models.py:137 apps/core/models.py:157
+#: apps/core/models.py:137 apps/core/models.py:165
 msgid "Name"
 msgstr "نام"
 
-#: apps/core/models.py:144 apps/core/models.py:163
+#: apps/core/models.py:144 apps/core/models.py:171
 msgid "Province"
 msgstr "استان"
 
-#: apps/core/models.py:152
+#: apps/core/models.py:151
 msgid "City"
 msgstr "شهر"
 
-#: apps/core/models.py:153
+#: apps/core/models.py:152
 msgid "Cities"
 msgstr "شهرها"
 
-#: apps/core/models.py:164
+#: apps/core/models.py:172
 msgid "Provinces"
 msgstr "استان‌ها"
 
-#: apps/core/validators.py:11 apps/core/validators.py:19
-msgid "Phone number must be in 09XXXXXXXXX format."
-msgstr "شماره تلفن را به صورت صحیح وارد نمایید."
+#~ msgid "Phone number must be in 09XXXXXXXXX format."
+#~ msgstr "شماره تلفن را به صورت صحیح وارد نمایید."
 
-#: apps/core/validators.py:12 apps/core/validators.py:20
-msgid "Invalid_phone_number"
-msgstr "شماره تلفن نامعتبر"
+#~ msgid "Invalid_phone_number"
+#~ msgstr "شماره تلفن نامعتبر"
 
-#: apps/core/validators.py:40 apps/core/validators.py:48
-#: apps/core/validators.py:56
 #, python-brace-format
-msgid "File size should be less than {max_file_size}"
-msgstr "حجم فایل باید کمتر از {max_file_size} باشد."
+#~ msgid "File size should be less than {max_file_size}"
+#~ msgstr "حجم فایل باید کمتر از {max_file_size} باشد."
