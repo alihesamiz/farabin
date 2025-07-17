@@ -1,11 +1,14 @@
 from django.utils.translation import gettext_lazy as _
-from django.contrib import messages
+
+# from django.contrib import messages
 from django.contrib import admin
 
 
 from apps.company.models import (
     CompanyProfile,
+    CompanyUser,
     CompanyService,
+    CompanyUserServicePermission,
     LifeCycle,
     License,
     LifeCycleFinancialResource,
@@ -17,7 +20,7 @@ from apps.company.models import (
     LifeCycleMaturity,
     LifeCycleFeature,
     CompanyQuestionnaire,
-    CompanyAnswer
+    CompanyAnswer,
 )
 
 
@@ -31,7 +34,7 @@ class LifeCycleInline(admin.StackedInline):
 @admin.register(LifeCycle)
 class LifeCycleAdmin(admin.ModelAdmin):
     list_display = [
-        "capital_providing",
+        "name",
     ]
 
 
@@ -45,12 +48,9 @@ class LicenseAdmin(admin.ModelAdmin):
 
 @admin.register(CompanyProfile)
 class CompanyAdmin(admin.ModelAdmin):
-    autocomplete_fields = ["user"]
-    search_fields = ["company_title", "manager_name"]
+    search_fields = ["title"]
     list_display = [
-        "company_title",
-        "national_code",
-        "manager_name",
+        "title",
         "tech_field",
         "special_field_display",
         "insurance_list",
@@ -60,12 +60,6 @@ class CompanyAdmin(admin.ModelAdmin):
     readonly_fields = ["id"]
 
     filter_horizontal = ("capital_providing_method", "license")
-
-    @admin.display(ordering="national_code")
-    def national_code(self, company_profile: CompanyProfile):
-        return company_profile.user.national_code
-
-    national_code.short_description = _("National Code")
 
     def special_field_display(self, company_profile: CompanyProfile):
         return company_profile.special_field
@@ -85,37 +79,36 @@ class CompanyAdmin(admin.ModelAdmin):
         )
 
 
-@admin.register(CompanyService)
-class CompanyServiceAdmin(admin.ModelAdmin):
-    autocomplete_fields = ["company"]
-    list_display = ["company", "service", "is_active", "purchased_date"]
+# @admin.register(CompanyService)
+# class CompanyServiceAdmin(admin.ModelAdmin):
+#     autocomplete_fields = ["company"]
+#     list_display = ["company", "service", "is_active", "purchased_date"]
 
-    search_fields = ["company__company_title",
-                     "service__description", "purchased_date"]
+#     search_fields = ["company__title", "service__description", "purchased_date"]
 
-    @admin.action(description=_("Activate selected services"))
-    def activate_services(self, request, queryset):
-        updated_count = queryset.update(is_active=True)
-        self.message_user(
-            request,
-            _("{} service(s) were successfully marked as active.").format(
-                updated_count
-            ),
-            messages.SUCCESS,
-        )
+#     @admin.action(description=_("Activate selected services"))
+#     def activate_services(self, request, queryset):
+#         updated_count = queryset.update(is_active=True)
+#         self.message_user(
+#             request,
+#             _("{} service(s) were successfully marked as active.").format(
+#                 updated_count
+#             ),
+#             messages.SUCCESS,
+#         )
 
-    @admin.action(description=_("Deactivate selected services"))
-    def deactivate_services(self, request, queryset):
-        updated_count = queryset.update(is_active=False)
-        self.message_user(
-            request,
-            _("{} service(s) were successfully marked as deactive.").format(
-                updated_count
-            ),
-            messages.SUCCESS,
-        )
+#     @admin.action(description=_("Deactivate selected services"))
+#     def deactivate_services(self, request, queryset):
+#         updated_count = queryset.update(is_active=False)
+#         self.message_user(
+#             request,
+#             _("{} service(s) were successfully marked as deactive.").format(
+#                 updated_count
+#             ),
+#             messages.SUCCESS,
+#         )
 
-    actions = [activate_services, deactivate_services]
+#     actions = [activate_services, deactivate_services]
 
 
 @admin.register(LifeCycleFeature)
@@ -167,7 +160,7 @@ class LifeCycleIntroductionAdmin(admin.ModelAdmin):
 @admin.register(LifeCycleTheoretical)
 class LifeCyclePlaceAdmin(admin.ModelAdmin):
     list_display = (
-        "company__company_title",
+        "company__title",
         "feature",
         "decline",
         "maturity",
@@ -177,7 +170,7 @@ class LifeCyclePlaceAdmin(admin.ModelAdmin):
         "updated_at",
     )
     list_filter = ("company", "created_at", "updated_at")
-    search_fields = ("company__company_title", "feature__name")
+    search_fields = ("company__title", "feature__name")
     date_hierarchy = "created_at"
     list_per_page = 20
     ordering = ("-created_at",)
@@ -206,14 +199,13 @@ class LifeCyclePlaceAdmin(admin.ModelAdmin):
 
 
 @admin.register(LifeCycleFinancialResource)
-class LifeCycleFinancialResourceAdmin(admin.ModelAdmin):
-    ...
+class LifeCycleFinancialResourceAdmin(admin.ModelAdmin): ...
 
 
 @admin.register(LifeCycleQuantitative)
 class LifeCycleQuantitaticeAdmin(admin.ModelAdmin):
     list_display = [
-        "company__company_title",
+        "company__title",
         "resource_value",
         "created_at",
         "updated_at",
@@ -227,8 +219,8 @@ class LifeCycleQuantitaticeAdmin(admin.ModelAdmin):
         )
 
     @admin.display(description=_("شرکت"))
-    def company__company_title(self, obj: LifeCycleQuantitative):
-        return obj.company.company_title
+    def company__title(self, obj: LifeCycleQuantitative):
+        return obj.company.title
 
 
 @admin.register(CompanyQuestionnaire)
@@ -240,8 +232,42 @@ class CompanyQuestionnaireAdmin(admin.ModelAdmin):
 
 @admin.register(CompanyAnswer)
 class CompanyAnswerAdmin(admin.ModelAdmin):
-    list_display = ("company_questionnaire", "question",
-                    "selected_choice", "answered_at")
+    list_display = (
+        "company_questionnaire",
+        "question",
+        "selected_choice",
+        "answered_at",
+    )
     list_filter = ("question",)
-    autocomplete_fields = ("company_questionnaire",
-                           "question", "selected_choice")
+    autocomplete_fields = ("company_questionnaire", "question", "selected_choice")
+
+
+@admin.register(CompanyService)
+class CompanyServiceAdmin(admin.ModelAdmin):
+    list_display = [
+        "company",
+        "service",
+        "is_active",
+        "purchased_at",
+        "deleted_at",
+    ]
+
+
+@admin.register(CompanyUser)
+class CompanyUserAdmin(admin.ModelAdmin):
+    list_display = [
+        "user",
+        "company",
+        "role",
+    ]
+
+
+@admin.register(CompanyUserServicePermission)
+class CompanyUserServicePermissionAdmin(admin.ModelAdmin):
+    list_display = [
+        "company_user",
+        "service",
+        "created_at",
+        "updated_at",
+        "deleted_at",
+    ]
