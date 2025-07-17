@@ -68,15 +68,15 @@ class SWOTOptionAdmin(admin.ModelAdmin):
         "created_at",
         "updated_at",
     ]
-    list_filter = ["company__company_title", "category"]
-    search_fields = ["company__company_title", "answer"]
+    list_filter = ["company__title", "category"]
+    search_fields = ["company__title", "answer"]
     list_per_page = 20
 
     @admin.display(
         description=_("Company Title"),
     )
     def company_name(self, obj):
-        return obj.company.company_title
+        return obj.company.title
 
 
 @admin.register(SWOTMatrix)
@@ -89,7 +89,7 @@ class SWOTMatrixAdmin(admin.ModelAdmin):
         description=_("Company Title"),
     )
     def company_name(self, obj):
-        return obj.company.company_title
+        return obj.company.title
 
     def formfield_for_manytomany(self, db_field, request, **kwargs):
         if db_field.name == "options":
