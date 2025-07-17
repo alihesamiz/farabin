@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-28 18:25+0330\n"
+"POT-Creation-Date: 2025-07-13 11:35+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,21 +18,17 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: apps/core/admin.py:33
+#: apps/core/admin.py:35
 msgid "Personal info"
 msgstr "اطلاعات شخصی"
 
-#: apps/core/admin.py:35
+#: apps/core/admin.py:47
 msgid "Permissions"
 msgstr "اجازه‌ها"
 
-#: apps/core/admin.py:46
+#: apps/core/admin.py:58
 msgid "Important dates"
 msgstr "تاریخ‌های مهم"
-
-#: apps/core/admin.py:83 apps/core/models.py:148
-msgid "Price"
-msgstr "قیمت"
 
 #: apps/core/apps.py:8
 msgid "Core"
@@ -42,122 +38,94 @@ msgstr "اصلی"
 msgid "Editor"
 msgstr "ویرایشگر"
 
-#: apps/core/models.py:24
+#: apps/core/models.py:20
+msgid "Created At"
+msgstr "تاریخ ایجاد"
+
+#: apps/core/models.py:21
+msgid "Updated At"
+msgstr "تاریخ بروزرسانی"
+
+#: apps/core/models.py:30
+msgid "First name"
+msgstr "نام"
+
+#: apps/core/models.py:36
+msgid "Last name"
+msgstr "نام خانوادگی"
+
+#: apps/core/models.py:44
 msgid "Phone Number"
 msgstr "شماره تلفن"
 
-#: apps/core/models.py:27
-msgid "National Code"
-msgstr "شناسه ملی"
+#: apps/core/models.py:47
+msgid "Social Code"
+msgstr "کد ملی"
 
-#: apps/core/models.py:35
+#: apps/core/models.py:55
 msgid "groups"
 msgstr "گروه‌ها"
 
-#: apps/core/models.py:38
+#: apps/core/models.py:58
 msgid ""
 "The groups this user belongs to. A user will get all permissions granted to "
 "each of their groups."
 msgstr ""
 
-#: apps/core/models.py:46
+#: apps/core/models.py:66
 msgid "user permissions"
 msgstr "اجازه‌های کاربر"
 
-#: apps/core/models.py:48
+#: apps/core/models.py:68
 msgid "Specific permissions for this user."
 msgstr "اجازه‌های اختاصاصی برای این کاربر"
 
-#: apps/core/models.py:84
+#: apps/core/models.py:112
 msgid "User"
 msgstr "کاربر"
 
-#: apps/core/models.py:85
+#: apps/core/models.py:113
 msgid "Users"
 msgstr "کاربران"
 
-#: apps/core/models.py:104
+#: apps/core/models.py:132
 msgid "OTP"
 msgstr "کد"
 
-#: apps/core/models.py:105
+#: apps/core/models.py:133
 msgid "OTPs"
 msgstr "کدها"
 
-#: apps/core/models.py:110 apps/core/models.py:131
+#: apps/core/models.py:137 apps/core/models.py:157
 msgid "Name"
 msgstr "نام"
 
-#: apps/core/models.py:117 apps/core/models.py:137
+#: apps/core/models.py:144 apps/core/models.py:163
 msgid "Province"
 msgstr "استان"
 
-#: apps/core/models.py:125
+#: apps/core/models.py:152
 msgid "City"
 msgstr "شهر"
 
-#: apps/core/models.py:126
+#: apps/core/models.py:153
 msgid "Cities"
 msgstr "شهرها"
 
-#: apps/core/models.py:138
+#: apps/core/models.py:164
 msgid "Provinces"
 msgstr "استان‌ها"
 
-#: apps/core/models.py:143
-msgid "Service Name"
-msgstr "نام سرویس"
-
-#: apps/core/models.py:145
-msgid "Service Description"
-msgstr "شرح سرویس"
-
-#: apps/core/models.py:152
-msgid "Service Active"
-msgstr "فعالسازی"
-
-#: apps/core/models.py:156
-msgid "Service"
-msgstr "سرویس"
-
-#: apps/core/models.py:157
-msgid "Services"
-msgstr "سرویس‌ها"
-
-#: apps/core/serializers.py:22 apps/core/serializers.py:65
-msgid "Phone number must contain only digits."
-msgstr "شماره تلفن تنها شامل اعداد است"
-
-#: apps/core/serializers.py:30 apps/core/serializers.py:73
-msgid "Phone number must be 11 digits long."
-msgstr "شماره تلفن را به صورت صحیح وارد نمایید."
-
-#: apps/core/serializers.py:41
-msgid "National Code must contain only digits."
-msgstr "شناسه ملی تنها شامل اعداد است"
-
-#: apps/core/serializers.py:49
-msgid "National Code must be 11 digits long."
-msgstr "طول شناسه ملی ۱۱ رقم است"
-
-#: apps/core/serializers.py:84
-msgid "OTP code must contain only digits."
-msgstr "کد ورود تنها شامل اعداد است"
-
-#: apps/core/serializers.py:92
-msgid "OTP code must be 6 digits long."
-msgstr "طول کد ورود ۶ عدد است"
-
-#: apps/core/validators.py:7 apps/core/validators.py:13
+#: apps/core/validators.py:11 apps/core/validators.py:19
 msgid "Phone number must be in 09XXXXXXXXX format."
 msgstr "شماره تلفن را به صورت صحیح وارد نمایید."
 
-#: apps/core/validators.py:8 apps/core/validators.py:14
+#: apps/core/validators.py:12 apps/core/validators.py:20
 msgid "Invalid_phone_number"
 msgstr "شماره تلفن نامعتبر"
 
-#: apps/core/validators.py:35 apps/core/validators.py:42
-#: apps/core/validators.py:49
+#: apps/core/validators.py:40 apps/core/validators.py:48
+#: apps/core/validators.py:56
 #, python-brace-format
 msgid "File size should be less than {max_file_size}"
 msgstr "حجم فایل باید کمتر از {max_file_size} باشد."
