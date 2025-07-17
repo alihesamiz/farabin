@@ -1,36 +1,34 @@
 import logging
 import os
 
-from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
-from django.db.transaction import atomic
 from django.db import models
-
+from django.db.transaction import atomic
+from django.utils.translation import gettext_lazy as _
+from django_lifecycle.conditions import WhenFieldValueChangesTo
+from django_lifecycle.decorators import hook
 from django_lifecycle.hooks import (
+    AFTER_CREATE,
+    AFTER_DELETE,
+    AFTER_UPDATE,
     BEFORE_CREATE,
     BEFORE_UPDATE,
-    AFTER_CREATE,
-    AFTER_UPDATE,
-    AFTER_DELETE,
 )
-from django_lifecycle.conditions import WhenFieldValueChangesTo
 from django_lifecycle.mixins import LifecycleModelMixin
-from django_lifecycle.decorators import hook
 
-from apps.core.validators import Validator as _validator
+from apps.core.models import TimeStampedModel
 from apps.core.utils import GeneralUtils
-
+from constants.validators import Validator as _validator
 
 logger = logging.getLogger("management")
 
 
 def get_hr_file_upload_path(instance, filename):
-    path = GeneralUtils(path="hr_files", fields=[
-                        ""]).rename_folder(instance, filename)
+    path = GeneralUtils(path="hr_files", fields=[""]).rename_folder(instance, filename)
     return path
 
 
-class HumanResource(LifecycleModelMixin, models.Model):
+class HumanResource(LifecycleModelMixin, TimeStampedModel):
     company = models.ForeignKey(
         "company.CompanyProfile",
         verbose_name=_("شرکت"),
@@ -48,24 +46,17 @@ class HumanResource(LifecycleModelMixin, models.Model):
         validators=[_validator.excel_file_validator],
     )
 
-    is_approved = models.BooleanField(
-        verbose_name=_("تأیید شده"), default=False)
-
-    created_at = models.DateTimeField(
-        auto_now_add=True, verbose_name=_("تاریخ ایجاد"))
-    updated_at = models.DateTimeField(
-        auto_now=True, verbose_name=_("تاریخ بروزرسانی"))
+    is_approved = models.BooleanField(verbose_name=_("تأیید شده"), default=False)
 
     class Meta:
         verbose_name = _("منابع انسانی شرکت‌ها")
         verbose_name_plural = _("منابع انسانی شرکت‌ها")
         constraints = [
-            models.UniqueConstraint(
-                fields=["company"], name="unique_company_hr")
+            models.UniqueConstraint(fields=["company"], name="unique_company_hr")
         ]
 
     def __str__(self):
-        return f"{self.company.company_title}"  # › {self.excel_file}"
+        return f"{self.company.title}"  # › {self.excel_file}"
 
     @hook(AFTER_CREATE, condition=WhenFieldValueChangesTo("is_approved", True))
     def start_process_personnel_excel(self):
@@ -79,8 +70,7 @@ class HumanResource(LifecycleModelMixin, models.Model):
         )
         process_personnel_excel.delay(self.pk)
 
-        logger.info(
-            "Process of creating personnel information started successfully.")
+        logger.info("Process of creating personnel information started successfully.")
         return
 
     @hook(AFTER_DELETE)
@@ -94,10 +84,8 @@ class HumanResource(LifecycleModelMixin, models.Model):
 
 
 class Position(models.Model):
-    code = models.PositiveIntegerField(
-        verbose_name=_("کد موقعیت"), unique=True)
-    position = models.CharField(verbose_name=_(
-        "موقعیت"), max_length=150, unique=True)
+    code = models.PositiveIntegerField(verbose_name=_("کد موقعیت"), unique=True)
+    position = models.CharField(verbose_name=_("موقعیت"), max_length=150, unique=True)
 
     class Meta:
         verbose_name = _("موقعیت شغلی")
@@ -110,13 +98,6 @@ class Position(models.Model):
 
     def __str__(self):
         return f"{self.code}:{self.position}"
-
-    @classmethod
-    def get_postition_by_code(cls, code: int):
-        try:
-            return cls.objects.get(code=code).position
-        except Exception:
-            raise Exception(f"No position found with the given code {code}")
 
 
 class PersonelInformation(models.Model):
@@ -145,8 +126,7 @@ class PersonelInformation(models.Model):
         "self", verbose_name=_("همکاری با (پرسنل)"), blank=True
     )
 
-    obligations = models.TextField(
-        verbose_name=_("وظایف"), null=False, blank=False)
+    obligations = models.TextField(verbose_name=_("وظایف"), null=False, blank=False)
 
     is_exist = models.BooleanField(verbose_name=_("موجود است"), default=False)
 
@@ -156,57 +136,6 @@ class PersonelInformation(models.Model):
 
     def __str__(self):
         return f"{self.name}"
-
-    @classmethod
-    def grouped_chart_data(cls, company):
-        """
-        This functions gather the data for each person with the aggregated
-        'reports-to' and 'cooperates-with' values
-        """
-        queryset = cls.objects.prefetch_related("human_resource__company").filter(
-            human_resource__company=company
-        )
-        grouped_data = {}
-
-        for person in queryset:
-            pos = person.position
-            name = person.name
-            key = (pos, name)
-
-            if key not in grouped_data:
-                grouped_data[key] = {
-                    "personnel": [],
-                    "aggregated_reports_to": set(),
-                    "aggregated_cooperates_with": set(),
-                }
-            grouped_data[key]["personnel"].append(person.position)
-
-            if person.reports_to.exists():
-                for report in person.reports_to.all():
-                    grouped_data[key]["aggregated_reports_to"].add(
-                        (report.position, report.name)
-                    )
-
-            if person.cooperates_with.exists():
-                for cooperate in person.cooperates_with.all():
-                    grouped_data[key]["aggregated_cooperates_with"].add(
-                        (cooperate.position, cooperate.name)
-                    )
-
-        response_data = {}
-        for (pos, name), data in grouped_data.items():
-            response_data[f"{pos} | {name}"] = {
-                "aggregated_reports_to": [
-                    {"position": position, "name": report_name}
-                    for position, report_name in data["aggregated_reports_to"]
-                ],
-                "aggregated_cooperates_with": [
-                    {"position": position, "name": cooperate_name}
-                    for position, cooperate_name in data["aggregated_cooperates_with"]
-                ],
-            }
-
-        return response_data
 
 
 def get_chart_excel_file_upload_path(instance, filename):
@@ -254,8 +183,7 @@ class ExternalFactors(models.TextChoices):
     ECONOMIC = "Economic", _("اقتصادی (مانند روندهای بازار، تورم)")
     SOCIAL = "Social", _("اجتماعی (مانند تغییرات فرهنگی، جمعیت‌شناسی)")
     TECHNOLOGICAL = "Technological", _("فناوری (مانند نوآوری، اتوماسیون)")
-    ENVIRONMENTAL = "Environmental", _(
-        "محیطی (مانند پایداری، تغییرات آب و هوایی)")
+    ENVIRONMENTAL = "Environmental", _("محیطی (مانند پایداری، تغییرات آب و هوایی)")
     LEGAL = "Legal", _("قانونی (مانند انطباق، قوانین)")
     NONE = "None", _("هیچ‌کدام")
 
@@ -283,7 +211,7 @@ class SWOTQuestion(models.Model):
         return f"{self.get_category_display()}: {self.text}"
 
 
-class SWOTOption(LifecycleModelMixin, models.Model):
+class SWOTOption(LifecycleModelMixin, TimeStampedModel):
     company = models.ForeignKey(
         "company.CompanyProfile",
         verbose_name=_("شرکت"),
@@ -308,10 +236,6 @@ class SWOTOption(LifecycleModelMixin, models.Model):
         verbose_name=_("عامل خارجی"),
         blank=True,
     )
-    created_at = models.DateTimeField(
-        auto_now_add=True, verbose_name=_("تاریخ ایجاد"))
-    updated_at = models.DateTimeField(
-        auto_now=True, verbose_name=_("تاریخ بروزرسانی"))
 
     class Meta:
         verbose_name = _("SWOT گزینه")
@@ -368,15 +292,14 @@ class SWOTOption(LifecycleModelMixin, models.Model):
         SWOTMatrix for the company exists. If it does, it adds the new option; if not, it creates it.
         """
         with atomic():
-            matrix, created = SWOTMatrix.objects.get_or_create(
-                company=self.company)
+            matrix, created = SWOTMatrix.objects.get_or_create(company=self.company)
 
             # Only add the new option if it's not already there
             if not matrix.options.filter(id=self.id).exists():
                 matrix.options.add(self)
 
 
-class SWOTMatrix(LifecycleModelMixin, models.Model):
+class SWOTMatrix(LifecycleModelMixin, TimeStampedModel):
     company = models.ForeignKey(
         "company.CompanyProfile",
         verbose_name=_("شرکت"),
@@ -388,23 +311,17 @@ class SWOTMatrix(LifecycleModelMixin, models.Model):
     options = models.ManyToManyField(
         SWOTOption, verbose_name=_("گزینه‌های SWOT"), related_name="swot_matrices"
     )
-    is_approved = models.BooleanField(
-        _("مورد تایید قرار گرفته است"), default=False)
-    created_at = models.DateTimeField(
-        auto_now_add=True, verbose_name=_("تاریخ ایجاد"))
-    updated_at = models.DateTimeField(
-        auto_now=True, verbose_name=_("تاریخ بروزرسانی"))
+    is_approved = models.BooleanField(_("مورد تایید قرار گرفته است"), default=False)
 
     class Meta:
         verbose_name = _("SWOT ماتریس")
         verbose_name_plural = _("SWOT ماتریس‌ها")
         constraints = [
-            models.UniqueConstraint(
-                fields=["company"], name="unique_company_swot")
+            models.UniqueConstraint(fields=["company"], name="unique_company_swot")
         ]
 
     def __str__(self):
-        return f"{self.company.company_title!r} SWOT"
+        return f"{self.company.title!r} SWOT"
 
     @hook(AFTER_UPDATE, condition=WhenFieldValueChangesTo("is_approved", True))
     def start_analysing_task(self):
@@ -432,7 +349,7 @@ class SWOTMatrix(LifecycleModelMixin, models.Model):
         return self.options.filter(category="Threat")
 
 
-class SWOTAnalysis(LifecycleModelMixin, models.Model):
+class SWOTAnalysis(LifecycleModelMixin, TimeStampedModel):
     matrix = models.ForeignKey(
         SWOTMatrix,
         verbose_name=_("ماتریس"),
@@ -445,11 +362,6 @@ class SWOTAnalysis(LifecycleModelMixin, models.Model):
     wo = models.TextField(verbose_name=_("تحلیل نقاط ضعف و فرصت‌ها"))
     wt = models.TextField(verbose_name=_("تحلیل نقاط ضعف و تهدیدات"))
 
-    created_at = models.DateTimeField(
-        auto_now_add=True, verbose_name=_("تاریخ ایجاد"))
-    updated_at = models.DateTimeField(
-        auto_now=True, verbose_name=_("تاریخ بروزرسانی"))
-
     class Meta:
         verbose_name = _("SWOT تحلیل")
         verbose_name_plural = _("SWOT تحلیل‌ها")
@@ -460,4 +372,4 @@ class SWOTAnalysis(LifecycleModelMixin, models.Model):
         ]
 
     def __str__(self):
-        return f"{self.matrix.company.company_title}"
+        return f"{self.matrix.company.title}"
