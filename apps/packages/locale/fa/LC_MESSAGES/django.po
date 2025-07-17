@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-28 18:25+0330\n"
+"POT-Creation-Date: 2025-07-13 11:35+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: apps/packages/admin.py:37 apps/packages/admin.py:67
-#: apps/packages/admin.py:109
+#: apps/packages/admin.py:109 apps/packages/models.py:62
 msgid "Services"
 msgstr "سرویس‌ها"
 
@@ -27,7 +27,8 @@ msgstr "سرویس‌ها"
 msgid "Company Title"
 msgstr "نام شرکت"
 
-#: apps/packages/admin.py:113
+#: apps/packages/admin.py:113 apps/packages/models.py:49
+#: apps/packages/models.py:170
 msgid "Price"
 msgstr "قیمت"
 
@@ -35,19 +36,19 @@ msgstr "قیمت"
 msgid "قیمت کلی"
 msgstr ""
 
-#: apps/packages/admin.py:138
+#: apps/packages/admin.py:140
 msgid "قابل دسترس است"
 msgstr ""
 
-#: apps/packages/admin.py:142 apps/packages/models.py:172
+#: apps/packages/admin.py:144
 msgid "بازه زمانی"
 msgstr ""
 
-#: apps/packages/admin.py:146
+#: apps/packages/admin.py:148
 msgid "غیرفعال کردن تخفیف"
 msgstr ""
 
-#: apps/packages/admin.py:151
+#: apps/packages/admin.py:153
 msgid "{}کد تخفیف غیرفعال شد(ند)."
 msgstr ""
 
@@ -59,318 +60,220 @@ msgstr ""
 msgid "{}کد تخفیف فعال شد(ند)."
 msgstr ""
 
-#: apps/packages/apps.py:8
+#: apps/packages/apps.py:8 apps/packages/models.py:185
 msgid "Packages"
 msgstr "بسته‌ها"
 
 #: apps/packages/models.py:20
-msgid "ماهانه"
-msgstr ""
+msgid "Monthly"
+msgstr "ماهانه"
 
 #: apps/packages/models.py:21
-msgid "سه ماهه"
-msgstr ""
+msgid "Quarterly"
+msgstr "فصلی"
 
 #: apps/packages/models.py:22
-msgid "شش ماهه"
-msgstr ""
+msgid "Semi-Annually"
+msgstr "۶ ماهه"
 
 #: apps/packages/models.py:23
-msgid "سالانه"
-msgstr ""
+msgid "Annually"
+msgstr "سالانه"
+
+#: apps/packages/models.py:28
+msgid "Financial"
+msgstr "مالی"
 
 #: apps/packages/models.py:29
-msgid "مالی"
-msgstr ""
+msgid "Marketing"
+msgstr "بازاریابی"
 
 #: apps/packages/models.py:30
-msgid "بازاریابی"
-msgstr ""
+msgid "Management"
+msgstr "مدیریا"
 
 #: apps/packages/models.py:31
-msgid "مدیریت"
-msgstr ""
+msgid "Production"
+msgstr "تولید"
 
 #: apps/packages/models.py:32
-msgid "ساخت و تولید"
-msgstr ""
-
-#: apps/packages/models.py:33
-msgid "مدیریت سامانه اطلاعاتی"
-msgstr ""
+msgid "Management Information System"
+msgstr "مدیریت اطلاعات سیستم"
 
 #: apps/packages/models.py:35
-msgid "تحقیق و توسعه"
+msgid "Research and Development"
+msgstr "تحقیقات و توسعه"
+
+#: apps/packages/models.py:39 apps/packages/models.py:156
+msgid "Name"
 msgstr ""
 
-#: apps/packages/models.py:39 apps/packages/models.py:93
-msgid "نام"
-msgstr ""
-
-#: apps/packages/models.py:45 apps/packages/models.py:98
-msgid "کد"
+#: apps/packages/models.py:45 apps/packages/models.py:161
+msgid "Code"
 msgstr ""
 
 #: apps/packages/models.py:47
-msgid "شرح سرویس"
-msgstr ""
+msgid "Service Description"
+msgstr "ویژگی سرویس"
 
-#: apps/packages/models.py:49 apps/packages/models.py:107
-msgid "قیمت"
-msgstr ""
+#: apps/packages/models.py:54 apps/packages/models.py:175
+msgid "Period"
+msgstr "بازه زمانی"
 
-#: apps/packages/models.py:54 apps/packages/models.py:112
-msgid "دوره زمانی"
-msgstr ""
+#: apps/packages/models.py:58 apps/packages/models.py:179
+#: apps/packages/models.py:236
+#, fuzzy
+#| msgid "Is Active"
+msgid "Active"
+msgstr "فعال است؟"
 
-#: apps/packages/models.py:59 apps/packages/models.py:117
-#: apps/packages/models.py:176
-msgid "فعال"
-msgstr ""
+#: apps/packages/models.py:61 apps/packages/models.py:167
+#: apps/packages/models.py:222 apps/packages/models.py:353
+msgid "Service"
+msgstr "سرویس"
 
-#: apps/packages/models.py:62 apps/packages/models.py:104
-#: apps/packages/models.py:162 apps/packages/models.py:283
-msgid "سرویس"
-msgstr ""
+#: apps/packages/models.py:148
+msgid "Demo"
+msgstr "آزمایشی"
 
-#: apps/packages/models.py:63
-msgid "سرویس‌ها"
-msgstr ""
+#: apps/packages/models.py:149
+msgid "Bronze"
+msgstr "برنزی"
 
-#: apps/packages/models.py:85
-msgid "آزمایشی"
-msgstr ""
+#: apps/packages/models.py:150
+msgid "Silver"
+msgstr "نقره‌ای"
 
-#: apps/packages/models.py:86
-msgid "برنزی"
-msgstr ""
+#: apps/packages/models.py:151
+msgid "Gold"
+msgstr "طلایی"
 
-#: apps/packages/models.py:87
-msgid "نقره‌ای"
-msgstr ""
+#: apps/packages/models.py:152
+msgid "Platinum"
+msgstr "پلاتینیوم"
 
-#: apps/packages/models.py:88
-msgid "طلایی"
-msgstr ""
+#: apps/packages/models.py:164
+msgid "Package Description"
+msgstr "ویژگی بسته"
 
-#: apps/packages/models.py:89
-msgid "پلاتینیوم"
-msgstr ""
+#: apps/packages/models.py:180 apps/packages/models.py:363
+msgid "Created At"
+msgstr "ایجاد شده در"
 
-#: apps/packages/models.py:101
-msgid "شرح بسته"
-msgstr ""
+#: apps/packages/models.py:181
+msgid "Updated At"
+msgstr "بروزرسانی شده در"
 
-#: apps/packages/models.py:119 apps/packages/models.py:289
-msgid "تاریخ ایجاد"
-msgstr ""
+#: apps/packages/models.py:184 apps/packages/models.py:219
+#: apps/packages/models.py:349
+msgid "Package"
+msgstr "بسته"
 
-#: apps/packages/models.py:121
-msgid "تاریخ بروزرسانی"
-msgstr ""
+#: apps/packages/models.py:211 apps/packages/models.py:342
+msgid "User"
+msgstr "کاربر"
 
-#: apps/packages/models.py:124 apps/packages/models.py:159
-#: apps/packages/models.py:279
-msgid "بسته"
-msgstr ""
+#: apps/packages/models.py:225
+msgid "Purchase Date"
+msgstr "زمان خرید"
 
-#: apps/packages/models.py:125
-msgid "بسته‌ها"
-msgstr ""
-
-#: apps/packages/models.py:151 apps/packages/models.py:272
-msgid "کاربر"
-msgstr ""
-
-#: apps/packages/models.py:165
-msgid "تاریخ خرید"
-msgstr ""
-
-#: apps/packages/models.py:168
-msgid "تاریخ انقضا"
-msgstr ""
-
-#: apps/packages/models.py:171
-msgid "بازه زمانی به روز"
-msgstr ""
-
-#: apps/packages/models.py:179
-msgid "اشتراک"
-msgstr ""
-
-#: apps/packages/models.py:180
-msgid "اشتراک‌ها"
-msgstr ""
-
-#: apps/packages/models.py:218 apps/packages/models.py:286
-msgid "کد تخفیف"
-msgstr ""
-
-#: apps/packages/models.py:220 apps/packages/models.py:230
-msgid "تخفیف"
-msgstr ""
-
-#: apps/packages/models.py:222
-msgid "معتبر از"
-msgstr ""
-
-#: apps/packages/models.py:224
-msgid "معتبر تا"
-msgstr ""
-
-#: apps/packages/models.py:226
-msgid "تعداد قابل استفاده"
-msgstr ""
-
-#: apps/packages/models.py:227
-msgid "فعال است"
-msgstr ""
+#: apps/packages/models.py:228
+#, fuzzy
+#| msgid "Expiry Date"
+msgid "Expiration Date"
+msgstr "تاریخ انقضا"
 
 #: apps/packages/models.py:231
-msgid "تخفیف‌ها"
+#, fuzzy
+#| msgid "Duration in days"
+msgid "Time span in days"
+msgstr "بازه زمانی به روز"
+
+#: apps/packages/models.py:232
+msgid "Duration"
+msgstr "بازه زمانی"
+
+#: apps/packages/models.py:239
+msgid "Subscription"
+msgstr "اشتراک"
+
+#: apps/packages/models.py:240
+msgid "Subscriptions"
+msgstr "اشتراک‌ها"
+
+#: apps/packages/models.py:277
+msgid "Coupon Code"
 msgstr ""
 
-#: apps/packages/models.py:260
-msgid "در انتظار"
+#: apps/packages/models.py:279
+msgid "Discount"
 msgstr ""
 
-#: apps/packages/models.py:261
-msgid "پرداخت شده"
+#: apps/packages/models.py:282
+msgid "Valid From"
 msgstr ""
 
-#: apps/packages/models.py:262
-msgid "تایید شده"
+#: apps/packages/models.py:285
+msgid "Valid Until"
 msgstr ""
 
-#: apps/packages/models.py:263
-msgid "لغو شده"
-msgstr ""
-
-#: apps/packages/models.py:266
-msgid "وضعیت"
-msgstr ""
-
-#: apps/packages/models.py:292
-msgid "سفارش"
+#: apps/packages/models.py:288
+msgid "Available Uses"
 msgstr ""
 
 #: apps/packages/models.py:293
-msgid "سفارش‌ها"
+msgid "Is Active"
+msgstr "فعال است؟"
+
+#: apps/packages/models.py:296
+#, fuzzy
+#| msgid "Production"
+msgid "Promotion"
+msgstr "تولید"
+
+#: apps/packages/models.py:297
+#, fuzzy
+#| msgid "Production"
+msgid "Promotions"
+msgstr "تولید"
+
+#: apps/packages/models.py:330
+msgid "Pending"
+msgstr "در انتظار"
+
+#: apps/packages/models.py:331
+msgid "Paid"
 msgstr ""
 
-#~ msgid "Monthly"
-#~ msgstr "ماهانه"
+#: apps/packages/models.py:332
+msgid "Confirmed"
+msgstr "تایید شده"
 
-#~ msgid "Quarterly"
-#~ msgstr "فصلی"
+#: apps/packages/models.py:333
+msgid "Canceled"
+msgstr "لغو شده"
 
-#~ msgid "Semi-Annually"
-#~ msgstr "۶ ماهه"
+#: apps/packages/models.py:336
+msgid "Status"
+msgstr "وضعیت"
 
-#~ msgid "Annually"
-#~ msgstr "سالانه"
+#: apps/packages/models.py:360
+msgid "Coupon"
+msgstr ""
 
-#~ msgid "Financial"
-#~ msgstr "مالی"
+#: apps/packages/models.py:366
+msgid "Order"
+msgstr "سفارش"
 
-#~ msgid "Marketing"
-#~ msgstr "بازاریابی"
-
-#~ msgid "Management"
-#~ msgstr "مدیریا"
-
-#~ msgid "Production"
-#~ msgstr "تولید"
-
-#~ msgid "Management Information System"
-#~ msgstr "مدیریت اطلاعات سیستم"
-
-#~ msgid "Research and Development"
-#~ msgstr "تحقیقات و توسعه"
+#: apps/packages/models.py:367
+msgid "Orders"
+msgstr "سفارش‌ها"
 
 #~ msgid "Service Name"
 #~ msgstr "نام سرویس"
 
-#~ msgid "Service Description"
-#~ msgstr "ویژگی سرویس"
-
-#~ msgid "Period"
-#~ msgstr "بازه زمانی"
-
 #~ msgid "Is Active?"
 #~ msgstr "فعال است؟"
 
-#~ msgid "Service"
-#~ msgstr "سرویس"
-
-#~ msgid "Demo"
-#~ msgstr "آزمایشی"
-
-#~ msgid "Bronze"
-#~ msgstr "برنزی"
-
-#~ msgid "Silver"
-#~ msgstr "نقره‌ای"
-
-#~ msgid "Gold"
-#~ msgstr "طلایی"
-
-#~ msgid "Platinum"
-#~ msgstr "پلاتینیوم"
-
 #~ msgid "Package Name"
 #~ msgstr "نام بسته"
-
-#~ msgid "Package Description"
-#~ msgstr "ویژگی بسته"
-
-#~ msgid "Created At"
-#~ msgstr "ایجاد شده در"
-
-#~ msgid "Updated At"
-#~ msgstr "بروزرسانی شده در"
-
-#~ msgid "Package"
-#~ msgstr "بسته"
-
-#~ msgid "User"
-#~ msgstr "کاربر"
-
-#~ msgid "Purchase Date"
-#~ msgstr "زمان خرید"
-
-#~ msgid "Expiry Date"
-#~ msgstr "تاریخ انقضا"
-
-#~ msgid "Duration in days"
-#~ msgstr "بازه زمانی به روز"
-
-#~ msgid "Duration"
-#~ msgstr "بازه زمانی"
-
-#~ msgid "Is Active"
-#~ msgstr "فعال است؟"
-
-#~ msgid "Subscription"
-#~ msgstr "اشتراک"
-
-#~ msgid "Subscriptions"
-#~ msgstr "اشتراک‌ها"
-
-#~ msgid "Pending"
-#~ msgstr "در انتظار"
-
-#~ msgid "Confirmed"
-#~ msgstr "تایید شده"
-
-#~ msgid "Canceled"
-#~ msgstr "لغو شده"
-
-#~ msgid "Status"
-#~ msgstr "وضعیت"
-
-#~ msgid "Order"
-#~ msgstr "سفارش"
-
-#~ msgid "Orders"
-#~ msgstr "سفارش‌ها"
