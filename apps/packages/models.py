@@ -17,46 +17,49 @@ User = get_user_model()
 
 
 class PeriodChoices(models.TextChoices):
-    MONTHLY = "monthly", _("ماهانه")
-    QUARTERLY = "quarterly", _("سه ماهه")
-    SEMI_ANNUALLY = "semi_annually", _("شش ماهه")
-    ANNUALLY = "annually", _("سالانه")
+    MONTHLY = "monthly", _("Monthly")
+    QUARTERLY = "quarterly", _("Quarterly")
+    SEMI_ANNUALLY = "semi_annually", _("Semi-Annually")
+    ANNUALLY = "annually", _("Annually")
 
 
 class Service(LifecycleModelMixin, models.Model):
     class ServiceType(models.TextChoices):
-        FINANCIAL = "financial", _("مالی")
-        MARKETING = "marketing", _("بازاریابی")
-        MANAGEMENT = "management", _("مدیریت")
-        PRODUCTION = "production", _("ساخت و تولید")
-        MIS = "mis", _("مدیریت سامانه اطلاعاتی")
-        REASEARCH_AND_DEVELOPMENT = "research_and_development", _("تحقیق و توسعه")
+        FINANCIAL = "financial", _("Financial")
+        MARKETING = "marketing", _("Marketing")
+        MANAGEMENT = "management", _("Management")
+        PRODUCTION = "production", _("Production")
+        MIS = "mis", _("Management Information System")
+        RESEARCH_AND_DEVELOPMENT = (
+            "research_and_development",
+            _("Research and Development"),
+        )
 
     name = models.CharField(
-        verbose_name=_("نام"),
+        verbose_name=_("Name"),
         max_length=30,
         choices=ServiceType.choices,
         unique=True,
     )
     code_name = models.CharField(
-        verbose_name=_("کد"), blank=True, max_length=2, unique=True
+        verbose_name=_("Code"), blank=True, max_length=2, unique=True
     )
-    description = models.TextField(verbose_name=_("شرح سرویس"))
+    description = models.TextField(verbose_name=_("Service Description"))
     price = models.DecimalField(
-        decimal_places=2, max_digits=20, verbose_name=_("قیمت"), blank=True, null=True
+        decimal_places=2, max_digits=20, verbose_name=_("Price"), blank=True, null=True
     )
     period = models.CharField(
         max_length=20,
         choices=PeriodChoices.choices,
-        verbose_name=_("دوره زمانی"),
+        verbose_name=_("Period"),
         blank=True,
         null=True,
     )
-    is_active = models.BooleanField(default=False, verbose_name=_("فعال"))
+    is_active = models.BooleanField(default=False, verbose_name=_("Active"))
 
     class Meta:
-        verbose_name = _("سرویس")
-        verbose_name_plural = _("سرویس‌ها")
+        verbose_name = _("Service")
+        verbose_name_plural = _("Services")
 
     def __str__(self) -> str:
         return self.get_name_display()
@@ -68,52 +71,118 @@ class Service(LifecycleModelMixin, models.Model):
         """
         with atomic():
             self.period = PeriodChoices.MONTHLY
-            self.code_name = self.__get_code_name(self.name)
+            # self.code_name = self.__get_code_name(self.name)
 
-    def __get_code_name(self, service_name: str):
-        for index, choice in enumerate(Service.ServiceType.choices):
-            if service_name == choice[0]:
-                return index
+    # def __get_code_name(self, package_name: str):
+    #     return self.PackageName.values.index(package_name)
+
+
+# class UserModulePermission(models.Model):
+#     user = models.ForeignKey(
+#         User,
+#         on_delete=models.CASCADE,
+#         related_name="module_permission",
+#         verbose_name=_("User"),
+#     )
+#     company = models.ForeignKey(
+#         "company.CompanyProfile",
+#         on_delete=models.CASCADE,
+#         related_name="module_permission",
+#         verbose_name=_("Company"),
+#     )
+#     module = models.ForeignKey(
+#         ServiceModule,
+#         verbose_name=_("Module"),
+#         on_delete=models.CASCADE,
+#         related_name="module_permission",
+#     )
+#     can_access = models.BooleanField(default=False, verbose_name=_("Can Access"))
+
+#     def __str__(self):
+#         return f"Company({self.company.title}) user({self.user.phone_number}) access to module: {self.module.name}"
+
+#     class Meta:
+#         verbose_name = _("User module permission")
+#         verbose_name_plural = _("User module permissions")
+#         constraints = [
+#             models.UniqueConstraint(
+#                 name="unique_user_company_module_permission",
+#                 fields=[
+#                     "user",
+#                     "company",
+#                     "module",
+#                 ],
+#             )
+#         ]
+
+
+# class PackagePermission(models.Model):
+#     name = models.CharField(max_length=255, unique=True)
+#     codename = models.CharField(max_length=100, unique=True)
+#     description = models.TextField(blank=True)
+#     service = models.ManyToManyField(
+#         "packages.Service", blank=True, related_name="permissions"
+#     )
+#     package = models.ForeignKey(
+#         "packages.Package",
+#         on_delete=models.CASCADE,
+#         null=True,
+#         blank=True,
+#         related_name="permissions",
+#     )
+
+#     def __str__(self):
+#         return self.name
+
+
+# class UserPermission(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     permission = models.ForeignKey(PackagePermission, on_delete=models.CASCADE)
+
+#     class Meta:
+#         unique_together = ("user", "permission")
 
 
 class Package(LifecycleModelMixin, models.Model):
     class PackageName(models.TextChoices):
-        DEMO = "demo", _("آزمایشی")
-        BRONZE = "bronze", _("برنزی")
-        SILVER = "silver", _("نقره‌ای")
-        GOLD = "gold", _("طلایی")
-        PLATINUM = "platinum", _("پلاتینیوم")
+        DEMO = "demo", _("Demo")
+        BRONZE = "bronze", _("Bronze")
+        SILVER = "silver", _("Silver")
+        GOLD = "gold", _("Gold")
+        PLATINUM = "platinum", _("Platinum")
 
     name = models.CharField(
         max_length=30,
-        verbose_name=_("نام"),
+        verbose_name=_("Name"),
         unique=True,
         choices=PackageName.choices,
     )
     code_name = models.CharField(
-        verbose_name=_("کد"), blank=True, max_length=2, unique=True
+        verbose_name=_("Code"), blank=True, max_length=2, unique=True
     )
-    description = models.TextField(verbose_name=_("شرح بسته"), blank=True, null=True)
+    description = models.TextField(
+        verbose_name=_("Package Description"), blank=True, null=True
+    )
     services = models.ManyToManyField(
-        Service, verbose_name=_("سرویس"), related_name="packages", blank=True
+        Service, verbose_name=_("Service"), related_name="packages", blank=True
     )
     price = models.DecimalField(
-        decimal_places=2, max_digits=20, verbose_name=_("قیمت"), blank=True
+        decimal_places=2, max_digits=20, verbose_name=_("Price"), blank=True
     )
     period = models.CharField(
         max_length=20,
         choices=PeriodChoices.choices,
-        verbose_name=_("دوره زمانی"),
+        verbose_name=_("Period"),
         blank=True,
         null=True,
     )
-    is_active = models.BooleanField(default=False, verbose_name=_("فعال"))
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("تاریخ ایجاد"))
-    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("تاریخ بروزرسانی"))
+    is_active = models.BooleanField(default=False, verbose_name=_("Active"))
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created At"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
 
     class Meta:
-        verbose_name = _("بسته")
-        verbose_name_plural = _("بسته‌ها")
+        verbose_name = _("Package")
+        verbose_name_plural = _("Packages")
 
     def __str__(self):
         return self.get_name_display()
@@ -139,7 +208,7 @@ class Subscription(LifecycleModelMixin, models.Model):
         User,
         on_delete=models.CASCADE,
         related_name="subscriptions",
-        verbose_name=_("کاربر"),
+        verbose_name=_("User"),
     )
     package = models.ForeignKey(
         Package,
@@ -147,28 +216,28 @@ class Subscription(LifecycleModelMixin, models.Model):
         related_name="subscriptions",
         null=True,
         blank=True,
-        verbose_name=_("بسته"),
+        verbose_name=_("Package"),
     )
     service = models.ManyToManyField(
-        Service, related_name="subscriptions", blank=True, verbose_name=_("سرویس")
+        Service, related_name="subscriptions", blank=True, verbose_name=_("Service")
     )
     purchase_date = models.DateTimeField(
-        auto_now_add=True, verbose_name=_("تاریخ خرید")
+        auto_now_add=True, verbose_name=_("Purchase Date")
     )
     expires_at = models.DateTimeField(
-        verbose_name=_("تاریخ انقضا"), blank=True, null=True
+        verbose_name=_("Expiration Date"), blank=True, null=True
     )
     duration = models.DurationField(
-        help_text=_("بازه زمانی به روز"),
-        verbose_name=_("بازه زمانی"),
+        help_text=_("Time span in days"),
+        verbose_name=_("Duration"),
         blank=True,
         null=True,
     )
-    is_active = models.BooleanField(default=True, verbose_name=_("فعال"))
+    is_active = models.BooleanField(default=True, verbose_name=_("Active"))
 
     class Meta:
-        verbose_name = _("اشتراک")
-        verbose_name_plural = _("اشتراک‌ها")
+        verbose_name = _("Subscription")
+        verbose_name_plural = _("Subscriptions")
         constraints = [
             models.UniqueConstraint(
                 fields=["user", "package"], name="unique_user_package"
@@ -179,7 +248,7 @@ class Subscription(LifecycleModelMixin, models.Model):
         ]
 
     def __str__(self):
-        return f"{self.user.company.company_title} - روز{self.duration.days}"
+        return f"{self.user.company.title} - {self.duration.days} days"
 
     @hook(BEFORE_CREATE)
     def manage_subscription(self):
@@ -205,25 +274,27 @@ class Subscription(LifecycleModelMixin, models.Model):
 
 
 class Promotion(LifecycleModelMixin, models.Model):
-    coupon = models.CharField(verbose_name=_("کد تخفیف"), max_length=10, unique=True)
+    coupon = models.CharField(verbose_name=_("Coupon Code"), max_length=10, unique=True)
     discount = models.DecimalField(
-        verbose_name=_("تخفیف"), max_digits=4, decimal_places=2
+        verbose_name=_("Discount"), max_digits=4, decimal_places=2
     )
-    validated_from = models.DateTimeField(verbose_name=_("معتبر از"), auto_now_add=True)
+    validated_from = models.DateTimeField(
+        verbose_name=_("Valid From"), auto_now_add=True
+    )
     validated_until = models.DateTimeField(
-        verbose_name=_("معتبر تا"), null=True, blank=True
+        verbose_name=_("Valid Until"), null=True, blank=True
     )
     available_for = models.SmallIntegerField(
-        verbose_name=_("تعداد قابل استفاده"),
+        verbose_name=_("Available Uses"),
         null=True,
         blank=True,
         validators=[MinValueValidator(0)],
     )
-    is_active = models.BooleanField(verbose_name=_("فعال است"), default=False)
+    is_active = models.BooleanField(verbose_name=_("Is Active"), default=False)
 
     class Meta:
-        verbose_name = _("تخفیف")
-        verbose_name_plural = _("تخفیف‌ها")
+        verbose_name = _("Promotion")
+        verbose_name_plural = _("Promotions")
 
     def __str__(self):
         return f"{self.coupon!r}, {self.discount}%"
@@ -256,44 +327,44 @@ class Promotion(LifecycleModelMixin, models.Model):
 
 class Order(LifecycleModelMixin, models.Model):
     class OrderStatus(models.TextChoices):
-        PENDING_STATUS = "pending", _("در انتظار")
-        PAID_STATUS = "paid", _("پرداخت شده")
-        CONFIRMED_STATUS = "confirmed", _("تایید شده")
-        CANCELED_STATUS = "canceled", _("لغو شده")
+        PENDING_STATUS = "pending", _("Pending")
+        PAID_STATUS = "paid", _("Paid")
+        CONFIRMED_STATUS = "confirmed", _("Confirmed")
+        CANCELED_STATUS = "canceled", _("Canceled")
 
     status = models.CharField(
-        verbose_name=_("وضعیت"),
+        verbose_name=_("Status"),
         choices=OrderStatus.choices,
         max_length=10,
         default=OrderStatus.PENDING_STATUS,
     )
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, verbose_name=_("کاربر"), related_name="order"
+        User, on_delete=models.CASCADE, verbose_name=_("User"), related_name="order"
     )
     package = models.ForeignKey(
         Package,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        verbose_name=_("بسته"),
+        verbose_name=_("Package"),
         related_name="order",
     )
     service = models.ManyToManyField(
-        Service, related_name="orders", blank=True, verbose_name=_("سرویس")
+        Service, related_name="orders", blank=True, verbose_name=_("Service")
     )
     coupon = models.ForeignKey(
         Promotion,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        verbose_name=_("کد تخفیف"),
+        verbose_name=_("Coupon"),
     )
 
-    created_at = models.DateTimeField(verbose_name=_("تاریخ ایجاد"), auto_now_add=True)
+    created_at = models.DateTimeField(verbose_name=_("Created At"), auto_now_add=True)
 
     class Meta:
-        verbose_name = _("سفارش")
-        verbose_name_plural = _("سفارش‌ها")
+        verbose_name = _("Order")
+        verbose_name_plural = _("Orders")
         constraints = [
             models.UniqueConstraint(
                 fields=["user", "package"], name="unique_user_package_order"
@@ -308,8 +379,8 @@ class Order(LifecycleModelMixin, models.Model):
 
     def __str__(self):
         user_info = (
-            getattr(self.user.company, "company_title", None)
-            if hasattr(self.user, "company")
+            getattr(self.user.company_user.company, "title", None)
+            if hasattr(self.user.company_user, "company")
             else self.user.phone_number
         )
         return f"{user_info} -> {self.created_at} : {self.get_status_display()}"

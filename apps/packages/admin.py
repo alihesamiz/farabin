@@ -2,7 +2,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib import messages
 from django.contrib import admin
 
-from apps.packages.models import Order, Promotion, Service, Package, Subscription
+from apps.packages.models import Order, Promotion, Service, Package, Subscription#,PackagePermission#,ServiceModule,UserModulePermission,UserPermission
 
 
 @admin.register(Service)
@@ -162,3 +162,37 @@ class PromotionAdmin(admin.ModelAdmin):
             _("{}کد تخفیف فعال شد(ند).").format(updated_count),
             messages.SUCCESS,
         )
+
+
+
+# @admin.register(PackagePermission)
+# class PackagePermissionAdmin(admin.ModelAdmin):
+#     list_display = ("name", "codename", "description")
+#     search_fields = ("name", "codename")
+
+
+# @admin.register(UserPermission)
+# class UserPermissionAdmin(admin.ModelAdmin):
+#     list_display = ("user", "permission")
+#     list_filter = ("permission",)
+#     search_fields = ("user__username", "permission__name")
+
+
+# @admin.register(ServiceModule)
+# class ServiceModuleAdmin(admin.ModelAdmin):
+#     list_display = [
+#         "service",
+#         "name",
+#         "description",
+#     ]
+#     search_fields = ["service__name"]
+
+
+# @admin.register(UserModulePermission)
+# class UserModulePermissionAdmin(admin.ModelAdmin):
+#     list_display = [
+#         "user",
+#         "company",
+#         "module",
+#         "can_access",
+#     ]
