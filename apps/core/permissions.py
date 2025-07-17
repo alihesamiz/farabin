@@ -1,37 +1,42 @@
-from django.utils import timezone
-
-from rest_framework.permissions import BasePermission
-
-from apps.packages.models import Subscription
+from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 
-class SubscriptionBasedPermission(BasePermission):
+class IsManagerOrReadOnly(BasePermission):
     def has_permission(self, request, view):
-        # Define the required service or package for the ViewSet
-        required_service = getattr(view, "required_service", None)  # Set in ViewSet
-        required_package = getattr(view, "required_package", None)  # Set in ViewSet
-
-        if not request.user.is_authenticated:
+        if not request.user or not request.user.is_authenticated:
+            return False
+        if request.method in SAFE_METHODS:
+            return True
+        try:
+            return request.user.company_user.role == "manager"
+        except AttributeError:
             return False
 
-        # Check if the user has an active subscription that includes the required service or package
-        active_subscriptions = Subscription.objects.filter(
-            user=request.user, expires_at__gt=timezone.now()
-        )
 
-        if required_service:
-            # Check if any active subscription's package includes the required service
-            return active_subscriptions.filter(
-                package__services__id=required_service.id
-            ).exists()
-        elif required_package:
-            # Check if any active subscription is for the required package
-            return active_subscriptions.filter(package__id=required_package.id).exists()
+class HasAccessToService(BasePermission):
+    def has_permission(self, request, view):
+        from apps.company.models import CompanyUser
 
-        return False
+        if not request.user or not request.user.is_authenticated:
+            return False
 
-    def has_object_permission(self, request, view, obj):
-        # Optional: Add object-level checks (e.g., user can only edit their own subscriptions)
-        if isinstance(obj, Subscription):
-            return obj.user == request.user
-        return self.has_permission(request, view)
+        try:
+            company_user = request.user.company_user
+        except AttributeError:
+            return False
+
+        if company_user.role == CompanyUser.Role.MANAGER:
+            return True
+
+        service_name = getattr(view, "service_attr", None)
+        if not service_name:
+            return False
+
+        return company_user.service_permissions.filter(
+            service=service_name, deleted_at__isnull=True
+        ).exists()
+
+
+class Unautherized(BasePermission):
+    def has_permission(self, request, view):
+        return bool(not request.user or not request.user.is_authenticated)
