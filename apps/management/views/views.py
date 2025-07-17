@@ -1,0 +1,247 @@
+import logging
+import os
+
+
+from django.utils.translation import gettext_lazy as _
+from django.http import FileResponse
+from django.db import IntegrityError
+
+
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from rest_framework.exceptions import ValidationError
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework import status
+
+
+from apps.management.serializers import (
+    HumanResourceCreateSerializer,
+    HumanResourceUpdateSerializer,
+    HumanResourceSerializer,
+    ChartNodeSerializer,
+    PersonelInformationUpdateSerializer,
+    PersonelInformationCreateSerializer,
+    OrganizationChartFileSerializer,
+    PersonelInformationSerializer,
+    SWOTOptionCreateSerializer,
+    SWOTAnalysisSerializer,
+    SWOTQuestionSerializer,
+    SWOTMatrixSerializer,
+    SWOTOptionSerializer,
+)
+
+from apps.management.models import (
+    SWOTAnalysis,
+    Position,
+)
+from apps.management.paginations import (
+    SWOTQuestionPagination,
+    SWOTOptionPagination,
+    PersonnelPagination,
+)
+from apps.management.repositories import ManagementRepo as _repo
+from apps.management.views.mixin import ViewSetMixin
+
+logger = logging.getLogger("management")
+
+
+class HumanResourceViewSet(ViewSetMixin, ModelViewSet):
+    def get_queryset(self):
+        return _repo.get_human_resource_record(self.get_user())
+
+    def get_serializer_class(self):
+        if self.action == "create":
+            return HumanResourceCreateSerializer
+        elif self.action in ["update", "partial_update"]:
+            return HumanResourceUpdateSerializer
+        return HumanResourceSerializer
+
+    def perform_create(self, serializer):
+        try:
+            logger.info("Attempting to save new Human Resource record.")
+            serializer.save()
+            logger.info("Human Resource record created successfully.")
+        except IntegrityError:
+            logger.error(
+                "IntegrityError: Trying to create a second Human Resource record for the company."
+            )
+            raise ValidationError(
+                {
+                    "error": _(
+                        "Each company can only have one Human Resource record. To replace, you must first delete the previous record."
+                    )
+                }
+            )
+        except Exception as e:
+            logger.error(f"Error while saving new Human Resource record: {str(e)}")
+            raise ValidationError(
+                {
+                    "error": _(
+                        "An error occurred while saving the Human Resource record."
+                    )
+                }
+            )
+
+
+class PersonnelInformationViewSet(ViewSetMixin, ModelViewSet):
+    pagination_class = PersonnelPagination
+
+    def get_queryset(self):
+        user = self.get_user()
+        logger.info(f"Fetching PersonelInformation for HumanResource ID: {user.id}")
+        return _repo.get_personnel_info(user)
+
+    def get_serializer_class(self):
+        if self.action == "create":
+            return PersonelInformationCreateSerializer
+        elif self.action in ["update", "partial_update"]:
+            return PersonelInformationUpdateSerializer
+        return PersonelInformationSerializer
+
+    def perform_create(self, serializer):
+        company = self.get_company()
+
+        human_resource_id = self.kwargs.get("human_resource_pk")
+        human_resource = company.hrfiles.filter(id=human_resource_id).first()
+
+        if not human_resource:
+            logger.error(
+                f"HumanResource ID {human_resource_id} not found for company {company.title}."
+            )
+            raise ValidationError(
+                {
+                    "human_resource": _(
+                        "Invalid or missing HumanResource record for this company."
+                    )
+                }
+            )
+
+        logger.info(
+            f"Creating PersonelInformation for HumanResource ID: {human_resource_id}"
+        )
+        serializer.save(human_resource=human_resource)
+
+
+class OrganizationChartFileViewSet(ViewSetMixin, ReadOnlyModelViewSet):
+    serializer_class = OrganizationChartFileSerializer
+    http_method_names = ["get"]
+
+    def get_queryset(self):
+        return _repo.get_company_base_chart_file(self.get_user())
+
+    @action(detail=False, methods=["GET"], url_name="download", url_path="download")
+    def download(self, request):
+        queryset = self.get_queryset().first()
+        if not queryset:
+            logger.warning(
+                "No associated OrganizationChart file found for the user's profile."
+            )
+            return Response(
+                {"error": _("Not found an associated file with your profile")},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        file_path = queryset.position_excel.path
+        company_name = self.get_company().title
+        logger.info(
+            f"Returning Excel file for company {company_name}. File path: {file_path}"
+        )
+
+        return FileResponse(
+            open(file_path, "rb"),
+            as_attachment=True,
+            filename=os.path.basename(file_path),
+        )
+
+
+class ChartNodeViewSet(ViewSetMixin, ReadOnlyModelViewSet):
+    serializer_class = ChartNodeSerializer
+
+    def get_queryset(self):
+        return _repo.get_personnel_info(self.get_user())
+
+    def list(self, request, *args, **kwargs):
+        data = _repo.get_personnel_info_grouped_chart_data(self.get_user())
+        return Response(data)
+
+    @action(detail=False, methods=["get"], url_name="positions", url_path="positions")
+    def by_positions(self, request, *args, **kwargs):
+        """
+        Custom action that expects a query parameter 'positions' (comma-separated values).
+        It returns a JSON response where each key is a position and the value is a list
+        of personnel (serialized) who hold that position.
+
+        Example request:
+            GET /chartnodes/positions/?pos=Manager,Developer
+        """
+        pos_param: str = request.query_params.get("pos")
+
+        if not pos_param:
+            return Response(
+                {"detail": "Query parameter 'pos' is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Resolve position names if a numeric code is passed
+        if pos_param.isdigit():
+            try:
+                pos_param = _repo.get_position_by_code(int(pos_param))
+            except Position.DoesNotExist:
+                return Response(
+                    {"detail": f"No position found with code {pos_param}."},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+
+        positions = [p.strip() for p in pos_param.split(",") if p.strip()]
+
+        if not positions:
+            return Response(
+                {"detail": "No valid positions found in 'pos' parameter."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Delegate to repository
+        grouped_data = _repo.get_personnel_info_by_position(
+            self.get_queryset(), self.get_serializer, positions
+        )
+        return Response(grouped_data, status=status.HTTP_200_OK)
+
+
+class SWOTQuestionViewSet(ViewSetMixin, ModelViewSet):
+    pagination_class = SWOTQuestionPagination
+    serializer_class = SWOTQuestionSerializer
+    queryset = _repo.get_swot_questions()
+    http_method_names = ["get"]
+
+
+class SWOTOptionViewSet(ViewSetMixin, ModelViewSet):
+    serializer_class = SWOTOptionSerializer
+    pagination_class = SWOTOptionPagination
+
+    def get_serializer_class(self):
+        if self.action == "create":
+            logger.debug("Using SWOTOptionCreateSerializer for creation.")
+            return SWOTOptionCreateSerializer
+        return super().get_serializer_class()
+
+    def get_queryset(self):
+        return _repo.get_company_swot_options(self.get_user())
+
+
+class SWOTMatrixViewSet(ViewSetMixin, ModelViewSet):
+    serializer_class = SWOTMatrixSerializer
+    http_method_names = ["get"]
+
+    def get_queryset(self):
+        return _repo.get_company_swot_matrix(self.get_user())
+
+
+class SWOTAnalysisViewSet(ViewSetMixin, ModelViewSet):
+    serializer_class = SWOTAnalysisSerializer
+
+    def get_queryset(self):
+        company = self.get_company()
+        logger.info(f"Fetching SWOT Analysis for company: {company.title}")
+        return SWOTAnalysis.objects.select_related("matrix").filter(
+            matrix__company=company
+        )
