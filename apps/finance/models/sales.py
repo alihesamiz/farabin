@@ -2,8 +2,6 @@ from django.utils.translation import gettext_lazy as _
 from django.db import models
 
 
-from apps.company.models import CompanyProfile
-
 from constants.validators import Validator as _validator
 
 
@@ -17,7 +15,7 @@ class DomesticSale(models.Model):
         INSTALLEMENT = "installment", _("Installment")
 
     company = models.ForeignKey(
-        CompanyProfile,
+        "company.CompanyProfile",
         on_delete=models.CASCADE,
         related_name="domestic_sales",
         verbose_name=_("Company"),
@@ -94,7 +92,7 @@ class ForeignSale(models.Model):
         AIR = "air", _("Air")
 
     company = models.ForeignKey(
-        CompanyProfile,
+        "company.CompanyProfile",
         on_delete=models.CASCADE,
         related_name="foreign_sales",
         verbose_name=_("Company"),
