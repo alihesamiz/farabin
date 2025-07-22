@@ -68,11 +68,7 @@ class FinanceExcelFileAdmin(admin.ModelAdmin):
 
     @admin.display(ordering="company__title")
     def title(self, finance_excel: FinanceExcelFile):
-        return (
-            finance_excel.company.title
-            if finance_excel.company.title
-            else "-"
-        )
+        return finance_excel.company.title if finance_excel.company.title else "-"
 
     title.short_description = _("Company Title")
 
@@ -115,11 +111,7 @@ class TaxFileAdmin(admin.ModelAdmin):
 
     @admin.display(ordering="company__title")
     def title(self, tax_declaration: TaxDeclarationFile):
-        return (
-            tax_declaration.company.title
-            if tax_declaration.company.title
-            else "-"
-        )
+        return tax_declaration.company.title if tax_declaration.company.title else "-"
 
     title.short_description = _("Company Title")
 
@@ -307,9 +299,7 @@ class AnalysisReportAdmin(admin.ModelAdmin):
         """
         company_id = request.GET.get("company")
 
-        company_queryset = CompanyProfile.objects.filter(
-            title__icontains=search_term
-        )
+        company_queryset = CompanyProfile.objects.filter(title__icontains=search_term)
 
         if company_id:
             company = CompanyProfile.objects.get(id=company_id)
