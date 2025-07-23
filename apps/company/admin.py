@@ -54,61 +54,28 @@ class CompanyAdmin(admin.ModelAdmin):
         "tech_field",
         "special_field_display",
         "insurance_list",
-        "capital_providing_method_display",
+        # "capital_providing_method_display",
     ]
 
     readonly_fields = ["id"]
 
     filter_horizontal = ("capital_providing_method", "license")
 
+    @admin.display(description=_("Special Field"))
     def special_field_display(self, company_profile: CompanyProfile):
         return company_profile.special_field
 
-    special_field_display.short_description = _("Special Field")
-
-    @admin.display(
-        description=_("Capital Providing Method"),
-        ordering="capital_providing_method_display",
-    )
-    def capital_providing_method_display(self, company_profile: CompanyProfile):
-        return ", ".join(
-            [
-                cycle.get_capital_providing_display()
-                for cycle in company_profile.capital_providing_method.all()
-            ]
-        )
-
-
-# @admin.register(CompanyService)
-# class CompanyServiceAdmin(admin.ModelAdmin):
-#     autocomplete_fields = ["company"]
-#     list_display = ["company", "service", "is_active", "purchased_date"]
-
-#     search_fields = ["company__title", "service__description", "purchased_date"]
-
-#     @admin.action(description=_("Activate selected services"))
-#     def activate_services(self, request, queryset):
-#         updated_count = queryset.update(is_active=True)
-#         self.message_user(
-#             request,
-#             _("{} service(s) were successfully marked as active.").format(
-#                 updated_count
-#             ),
-#             messages.SUCCESS,
-#         )
-
-#     @admin.action(description=_("Deactivate selected services"))
-#     def deactivate_services(self, request, queryset):
-#         updated_count = queryset.update(is_active=False)
-#         self.message_user(
-#             request,
-#             _("{} service(s) were successfully marked as deactive.").format(
-#                 updated_count
-#             ),
-#             messages.SUCCESS,
-#         )
-
-#     actions = [activate_services, deactivate_services]
+    # @admin.display(
+    #     description=_("Capital Providing Method"),
+    #     ordering="capital_providing_method_display",
+    # )
+    # def capital_providing_method_display(self, company_profile: CompanyProfile):
+    #     return ", ".join(
+    #         [
+    #             cycle.get_capital_providing_display()
+    #             for cycle in company_profile.capital_providing_method.all()
+    #         ]
+    #     )
 
 
 @admin.register(LifeCycleFeature)

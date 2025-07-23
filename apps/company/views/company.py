@@ -25,7 +25,7 @@ from apps.company.serializers import (
 from apps.company.repositories import CompanyRepository as _repo
 from apps.company.services import CompanyService as _service
 
-from apps.finance.models.models import TaxDeclarationFile, BalanceReportFile
+from apps.finance.models.finance import TaxDeclarationFile, BalanceReportFile
 from apps.management.models import HumanResource
 
 logger = logging.getLogger("company")
