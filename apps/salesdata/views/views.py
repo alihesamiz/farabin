@@ -62,7 +62,7 @@ class CompanyProductFileViewSet(ViewSetMixin, ModelViewSet):
     def get_queryset(self):
         company = self.get_company()
         is_deleted = bool(self.request.query_params.get("is_deleted"))
-        return _repo.get_customers_file_of_company(company, is_deleted)
+        return _repo.get_products_file_of_company(company, is_deleted)
 
 
 class CompanyCustomerViewSet(ViewSetMixin, ModelViewSet):

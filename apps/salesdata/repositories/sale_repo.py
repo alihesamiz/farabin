@@ -1,4 +1,9 @@
-from apps.salesdata.models import ProductData, CustomerSaleData, CustomerSaleFile
+from apps.salesdata.models import (
+    ProductData,
+    CustomerSaleData,
+    CustomerSaleFile,
+    ProductDataFile,
+)
 
 
 class SaleRepository:
@@ -15,8 +20,15 @@ class SaleRepository:
         return cls.get_company_data(CustomerSaleData, company)
 
     @classmethod
-    def get_customers_file_of_company(cls, company, is_deleted: bool = False):
-        is_deleted = is_deleted if is_deleted in [True, False] else False
+    def get_customers_file_of_company(cls, company, is_deleted: bool = True):
+        is_deleted = is_deleted if is_deleted in [True, False] else True
         return cls.get_company_data(CustomerSaleFile, company).filter(
+            deleted_at__isnull=is_deleted
+        )
+
+    @classmethod
+    def get_products_file_of_company(cls, company, is_deleted: bool = True):
+        is_deleted = is_deleted if is_deleted in [True, False] else True
+        return cls.get_company_data(ProductDataFile, company).filter(
             deleted_at__isnull=is_deleted
         )
