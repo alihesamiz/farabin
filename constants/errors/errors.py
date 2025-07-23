@@ -36,3 +36,15 @@ class PasswordMismatchError(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_detail = "New passwords do not match."
     default_code = "password_mismatch"
+
+
+class CustomerAlreadyExistsError(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = "A customer with this name already exists."
+    default_code = "customer_already_exists"
+
+
+class ProductAlreadyExistsError(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = "A Product with this name already exists."
+    default_code = "product_already_exists"
