@@ -32,6 +32,10 @@ class CompanyProductViewSet(ViewSetMixin, ModelViewSet):
         "created_at",
         "updated_at",
     ]
+    search_fields = [
+        "name",
+        "code",
+    ]
     ordering = ["name"]
 
     def get_queryset(self):
@@ -77,6 +81,9 @@ class CompanyCustomerViewSet(ViewSetMixin, ModelViewSet):
         "area",
         "first_purchase_date",
         "last_purchase_date",
+    ]
+    search_fields = [
+        "name",
     ]
     ordering = ["name"]
 

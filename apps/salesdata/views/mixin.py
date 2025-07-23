@@ -52,7 +52,7 @@ class ViewSetMixin:
     }
     default_serializer_class = Serializer
     pagination_class = BasePagination
-    filter_backends = [filters.OrderingFilter]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
 
     def get_company(self):
         return self.get_user().company_user.company
