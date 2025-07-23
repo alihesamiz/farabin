@@ -36,6 +36,7 @@ PROJECT_APPS = [
     "apps.questionnaire",
     "apps.management",
     "apps.packages",
+    "apps.salesdata",
     "apps.finance",
     "apps.company",
     "apps.tickets",
