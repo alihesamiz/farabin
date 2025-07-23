@@ -1,3 +1,6 @@
+from typing import List, Optional, Tuple
+
+import pandas as pd
 import numpy as np
 import requests
 import logging
@@ -7,9 +10,9 @@ import os
 
 from django.core.files.storage import default_storage
 from django.utils.deconstruct import deconstructible
+from django.db.models.base import Model
 from django.conf import settings
 from django.db import models
-
 
 from apps.core.models import User
 
@@ -200,3 +203,101 @@ class GeneralUtils:
 
     def deconstruct(self):
         return ("core.GeneralUtils", [self.path, self.fields], {})
+
+
+class ModelExcelReader:
+    """
+    ModelExcelReader
+
+    This class takes a Django model and an instance of that model, reads an Excel file
+    (from the specified file field on the instance), and creates model objects based on the
+    Excel data. It optionally allows you to define which model fields to read,
+    or automatically uses all editable fields.
+
+    Parameters:
+    ----------
+    model : Model
+        The Django model class to create objects for. Must inherit from `django.db.models.Model`.
+
+    instance : Model
+        An instance of the provided Django model. The Excel file will be read from
+        the specified `file_field` on this instance.
+
+    model_field_to_read : Optional[List[str]], default=None
+        A list of field names on the model to read from the Excel file. If not provided,
+        all editable and non-auto-created fields on the model will be used.
+
+    file_field : str, default="file"
+        The name of the file field on the instance that points to the Excel file.
+
+    *args, **kwargs :
+        Additional arguments and keyword arguments passed to support extensibility.
+
+    Example:
+    -------
+    >>> reader = ModelExcelReader(YourModel, instance)
+    >>> is_created, msg = reader.create_instances()
+    >>> print(msg)
+    """
+
+    def __init__(
+        self,
+        model: Model,
+        company_id: str,
+        file_path: str,
+        model_field_to_read: Optional[List] = None,
+        file_field: str = "file",
+        *args,
+        **kwargs,
+    ):
+        self.model = model
+        self.company_id = company_id
+        self.file_path = file_path
+        if model_field_to_read and isinstance(model_field_to_read, list):
+            self.fields = model_field_to_read
+        else:
+            self.fields = self._get_model_fields()
+
+    def _get_model_fields(self):
+        return [field.name for field in self.model._meta.fields]
+
+    def read_excel(self):
+        try:
+            df = pd.read_excel(self.file_path)
+        except Exception as e:
+            raise ValueError(f"Error reading Excel file: {e}")
+
+        model_columns = [col for col in df.columns if col in self.fields]
+
+        if not model_columns:
+            raise ValueError(
+                "No matching columns found between the Excel file and model fields."
+            )
+
+        return df[model_columns]
+
+    def get_missing_columns(self):
+        """
+        Returns a list of model fields not present in the Excel file.
+        """
+        df = pd.read_excel(self.file_path)
+        missing = set(self.fields) - set(df.columns)
+        return list(missing)
+
+    def create_instance(self) -> Tuple[bool, str]:
+        """
+        Create model instances from Excel rows and bulk insert them.
+        """
+        df = self.read_excel()
+
+        objects = [
+            self.model(company=self.company_id, **row.dropna().to_dict())
+            for _, row in df.iterrows()
+        ]
+
+        if not objects:
+            return (False, print("No objects to create."))
+
+        self.model.objects.bulk_create(objects)
+
+        return (True, print(f"Inserted {len(objects)} {self.model.__name__} records."))

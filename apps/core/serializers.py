@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model  # type: ignore
 
 from rest_framework import serializers  # type: ignore
 
+from apps.core.models import City, Province
 from constants.validators import Validator as _validator
 
 
@@ -76,3 +77,22 @@ class UserProfileUpdateSerializer(serializers.ModelSerializer):
 
     def validate_social_code(self, value):
         return _validator.validate_social_code(value)
+
+
+class ProvinceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Province
+        fields = [
+            "id",
+            "name",
+        ]
+
+
+class CitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = City
+        fields = [
+            "id",
+            "name",
+            "province",
+        ]

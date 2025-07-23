@@ -3,9 +3,10 @@ import logging
 from django.contrib.auth import get_user_model  # type: ignore
 
 from rest_framework.viewsets import ModelViewSet, ViewSet  # type: ignore
-from rest_framework.permissions import IsAuthenticated  # type : ignore
+from rest_framework.permissions import IsAuthenticated, AllowAny  # type : ignore
 from rest_framework.decorators import action  # type: ignore
 
+from apps.core.models import City, Province
 from constants.responses import APIResponse
 
 from apps.core.permissions import Unautherized
@@ -22,6 +23,8 @@ from apps.core.serializers import (
     PasswordResetSerializer,
     UserProfileSerializer,
     UserProfileUpdateSerializer,
+    CitySerializer,
+    ProvinceSerializer,
 )
 
 
@@ -150,3 +153,16 @@ class UserProfileViewSet(ModelViewSet):
 
     def get_queryset(self):
         return _user_repo.get_user_by_id(self.request.user.id)
+
+
+class CityViewSet(ModelViewSet):
+    permission_classes = [AllowAny]
+    serializer_class = CitySerializer
+
+    queryset = City.objects.select_related("province").all()
+
+
+class ProvinceViewSet(ModelViewSet):
+    permission_classes = [AllowAny]
+    serializer_class = ProvinceSerializer
+    queryset = Province.objects.all()
