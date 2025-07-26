@@ -5,7 +5,6 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "django==5.1.10",
     "amqp ==5.3.1",
     "asgiref ==3.8.1",
     "attrs ==24.2.0",
@@ -105,6 +104,7 @@ dependencies = [
     "mypy ==1.15.0",
     "types-python-dateutil ==2.9.0.20250516",
     "celery[redis]>=5.4.0",
+    "django==5.1.10",
 ]
 
 [tool.ruff]
