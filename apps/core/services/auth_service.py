@@ -6,7 +6,7 @@ from django.conf import settings  # type: ignore
 
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from constants.errors.errors import OTPCooldownError, OTPExistsError
+from constants.errors.api_exception import OTPCooldownError, OTPExistsError
 
 
 from apps.core.repositories import AuthRepository as _auth_repo

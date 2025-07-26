@@ -1,32 +1,31 @@
 import logging
 
 from django.contrib.auth import get_user_model  # type: ignore
-
-from rest_framework.viewsets import ModelViewSet, ViewSet  # type: ignore
-from rest_framework.permissions import IsAuthenticated, AllowAny  # type : ignore
 from rest_framework.decorators import action  # type: ignore
+from rest_framework.permissions import AllowAny, IsAuthenticated  # type : ignore
+from rest_framework.viewsets import ModelViewSet, ViewSet  # type: ignore
 
 from apps.core.models import City, Province
-from constants.responses import APIResponse
-
 from apps.core.permissions import Unautherized
-from apps.core.services import (
-    AuthService as _auth_service,
-    UserService as _user_service,
-)
 from apps.core.repositories import UserRepository as _user_repo
-from apps.core.tasks import send_otp_task
 from apps.core.serializers import (
+    CitySerializer,
     LoginSerializer,
     OTPSendSerializer,
     OTPVerifySerializer,
     PasswordResetSerializer,
+    ProvinceSerializer,
     UserProfileSerializer,
     UserProfileUpdateSerializer,
-    CitySerializer,
-    ProvinceSerializer,
 )
-
+from apps.core.services import (
+    AuthService as _auth_service,
+)
+from apps.core.services import (
+    UserService as _user_service,
+)
+from apps.core.tasks import send_otp_task
+from constants.responses import APIResponse
 
 User = get_user_model()
 
@@ -68,7 +67,7 @@ class AuthViewSet(ViewSet):
             f"OTP for user {user.id} sent successfully.", extra={"user_id": user.id}
         )
 
-        _user_service.create_company_user()
+        _user_service.create_company_user(user)
 
         return APIResponse.success(
             message="OTP sent successfully.", data={"user_id": user.id}
@@ -100,6 +99,7 @@ class AuthViewSet(ViewSet):
             data={
                 "access": access_token,
                 "refresh": refresh_token,
+                "completed_profile": user.is_profile_complete,
             },
         )
 

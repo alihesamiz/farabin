@@ -1,9 +1,6 @@
 from django.urls import path  # type: ignore
-
-
-from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework.routers import DefaultRouter  # type: ignore
-
+from rest_framework_simplejwt.views import TokenRefreshView
 
 from apps.core.views import (
     AuthViewSet,
@@ -23,5 +20,5 @@ urlpatterns = router.urls
 
 
 urlpatterns += [
-    path("auth/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("refresh/", TokenRefreshView.as_view(), name="token-refresh"),
 ]

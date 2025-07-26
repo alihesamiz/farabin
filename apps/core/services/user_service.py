@@ -2,7 +2,7 @@ from apps.core.models import User
 from apps.core.repositories import UserRepository as _user_repo
 from django.db import IntegrityError  # type: ignore
 
-from constants.errors.errors import (
+from constants.errors.api_exception import (
     PasswordMismatchError,
     UserNotFoundError,
     UserAlreadyExistsError,
