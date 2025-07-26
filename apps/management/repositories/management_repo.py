@@ -1,18 +1,23 @@
+from django.conf import settings
+
 from apps.management.models import (
     HumanResource,
     OrganizationChartBase,
     PersonelInformation,
     Position,
+    SWOTCategory,
     SWOTMatrix,
     SWOTOption,
     SWOTQuestion,
 )
-from django.conf import settings
 
 
-class ManagementRepo:
+class ManagementRepository:
     def get_company(user):
         return user.company_user.company
+
+    def check_query_set_exists(qs):
+        return qs if qs.exists() else qs.none()
 
     def get_tech_field_file(field):
         """Returns the existing file based on the company given field"""
@@ -37,12 +42,13 @@ class ManagementRepo:
     @classmethod
     def get_human_resource_record(cls, user):
         company = cls.get_company(user)
-        return HumanResource.objects.select_related("company").filter(company=company)
+        qs = HumanResource.objects.select_related("company").filter(company=company)
+        return cls.check_query_set_exists(qs)
 
     @classmethod
     def get_personnel_info(cls, user):
         company = cls.get_company(user)
-        return (
+        qs = (
             PersonelInformation.objects.select_related("human_resource")
             .prefetch_related(
                 "reports_to",
@@ -51,6 +57,7 @@ class ManagementRepo:
             )
             .filter(human_resource__company=company)
         )
+        return cls.check_query_set_exists(qs)
 
     @classmethod
     def get_personnel_info_grouped_chart_data(cls, user):
@@ -124,26 +131,43 @@ class ManagementRepo:
 
     @classmethod
     def get_company_base_chart_file(cls, user):
-        field = user.company_user.company.tech_field
+        field = cls.get_company(user).tech_field  # user.company_user.company.tech_field
         file_field = cls.get_tech_field_file(field)
-        return OrganizationChartBase.objects.filter(field=file_field)
+        qs = OrganizationChartBase.objects.filter(field=file_field)
+        return cls.check_query_set_exists(qs)
 
     @classmethod
     def get_company_swot_options(cls, user):
         company = cls.get_company(user)
-        return SWOTOption.objects.select_related("company", "question").filter(
+        qs = SWOTOption.objects.select_related("company", "question").filter(
             company=company
         )
+        return cls.check_query_set_exists(qs)
 
     @classmethod
     def get_company_swot_matrix(cls, user):
         company = cls.get_company(user)
-        return (
+        qs = (
             SWOTMatrix.objects.select_related("company")
             .prefetch_related("options")
             .filter(company=company)
         )
+        return cls.check_query_set_exists(qs)
 
     @classmethod
-    def get_swot_questions(cls):
-        return SWOTQuestion.objects.all()
+    def get_swot_questions(cls, user=None, for_company=False, category=None):
+        qs = SWOTQuestion.objects.all()
+        if for_company:
+            print(for_company)
+            company = cls.get_company(user)
+            qs = qs.select_related("company").filter(company=company)
+        else:
+            qs = qs.filter(company__isnull=True)
+        if category and category.title() in cls.get_swot_question_categories():
+            qs = qs.filter(category=category)
+
+        return cls.check_query_set_exists(qs)
+
+    @staticmethod
+    def get_swot_question_categories():
+        return SWOTCategory.values

@@ -1,70 +1,60 @@
 import logging
 import os
 
-
-from django.utils.translation import gettext_lazy as _
-from django.http import FileResponse
 from django.db import IntegrityError
-
-
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
-from rest_framework.exceptions import ValidationError
-from rest_framework.decorators import action
-from rest_framework.response import Response
+from django.http import FileResponse
+from django.utils.translation import gettext_lazy as _
 from rest_framework import status
-
-
-from apps.management.serializers import (
-    HumanResourceCreateSerializer,
-    HumanResourceUpdateSerializer,
-    HumanResourceSerializer,
-    ChartNodeSerializer,
-    PersonelInformationUpdateSerializer,
-    PersonelInformationCreateSerializer,
-    OrganizationChartFileSerializer,
-    PersonelInformationSerializer,
-    SWOTOptionCreateSerializer,
-    SWOTAnalysisSerializer,
-    SWOTQuestionSerializer,
-    SWOTMatrixSerializer,
-    SWOTOptionSerializer,
-)
+from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
+from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from apps.management.models import (
-    SWOTAnalysis,
     Position,
+    SWOTAnalysis,
 )
 from apps.management.paginations import (
-    SWOTQuestionPagination,
-    SWOTOptionPagination,
     PersonnelPagination,
+    SWOTOptionPagination,
+    SWOTQuestionPagination,
 )
-from apps.management.repositories import ManagementRepo as _repo
+from apps.management.repositories import ManagementRepository as _repo
+from apps.management.serializers import (
+    ChartNodeSerializer,
+    HumanResourceCreateSerializer,
+    HumanResourceSerializer,
+    HumanResourceUpdateSerializer,
+    OrganizationChartFileSerializer,
+    PersonelInformationCreateSerializer,
+    PersonelInformationSerializer,
+    PersonelInformationUpdateSerializer,
+    SWOTAnalysisSerializer,
+    SWOTMatrixSerializer,
+    SWOTOptionCreateSerializer,
+    SWOTOptionSerializer,
+    SWOTQuestionSerializer,
+)
 from apps.management.views.mixin import ViewSetMixin
 
 logger = logging.getLogger("management")
 
 
 class HumanResourceViewSet(ViewSetMixin, ModelViewSet):
+    default_serializer_class = HumanResourceSerializer
+    action_serializer_class = {
+        "create": HumanResourceCreateSerializer,
+        "update": HumanResourceUpdateSerializer,
+        "partial_update": HumanResourceUpdateSerializer,
+    }
+
     def get_queryset(self):
         return _repo.get_human_resource_record(self.get_user())
 
-    def get_serializer_class(self):
-        if self.action == "create":
-            return HumanResourceCreateSerializer
-        elif self.action in ["update", "partial_update"]:
-            return HumanResourceUpdateSerializer
-        return HumanResourceSerializer
-
     def perform_create(self, serializer):
         try:
-            logger.info("Attempting to save new Human Resource record.")
             serializer.save()
-            logger.info("Human Resource record created successfully.")
         except IntegrityError:
-            logger.error(
-                "IntegrityError: Trying to create a second Human Resource record for the company."
-            )
             raise ValidationError(
                 {
                     "error": _(
@@ -85,18 +75,16 @@ class HumanResourceViewSet(ViewSetMixin, ModelViewSet):
 
 class PersonnelInformationViewSet(ViewSetMixin, ModelViewSet):
     pagination_class = PersonnelPagination
+    default_serializer_class = PersonelInformationSerializer
+    action_serializer_class = {
+        "create": PersonelInformationCreateSerializer,
+        "update": PersonelInformationUpdateSerializer,
+        "partial_update": PersonelInformationUpdateSerializer,
+    }
 
     def get_queryset(self):
         user = self.get_user()
-        logger.info(f"Fetching PersonelInformation for HumanResource ID: {user.id}")
         return _repo.get_personnel_info(user)
-
-    def get_serializer_class(self):
-        if self.action == "create":
-            return PersonelInformationCreateSerializer
-        elif self.action in ["update", "partial_update"]:
-            return PersonelInformationUpdateSerializer
-        return PersonelInformationSerializer
 
     def perform_create(self, serializer):
         company = self.get_company()
@@ -105,9 +93,6 @@ class PersonnelInformationViewSet(ViewSetMixin, ModelViewSet):
         human_resource = company.hrfiles.filter(id=human_resource_id).first()
 
         if not human_resource:
-            logger.error(
-                f"HumanResource ID {human_resource_id} not found for company {company.title}."
-            )
             raise ValidationError(
                 {
                     "human_resource": _(
@@ -115,15 +100,11 @@ class PersonnelInformationViewSet(ViewSetMixin, ModelViewSet):
                     )
                 }
             )
-
-        logger.info(
-            f"Creating PersonelInformation for HumanResource ID: {human_resource_id}"
-        )
         serializer.save(human_resource=human_resource)
 
 
 class OrganizationChartFileViewSet(ViewSetMixin, ReadOnlyModelViewSet):
-    serializer_class = OrganizationChartFileSerializer
+    default_serializer_class = OrganizationChartFileSerializer
     http_method_names = ["get"]
 
     def get_queryset(self):
@@ -142,10 +123,6 @@ class OrganizationChartFileViewSet(ViewSetMixin, ReadOnlyModelViewSet):
             )
 
         file_path = queryset.position_excel.path
-        company_name = self.get_company().title
-        logger.info(
-            f"Returning Excel file for company {company_name}. File path: {file_path}"
-        )
 
         return FileResponse(
             open(file_path, "rb"),
@@ -155,7 +132,7 @@ class OrganizationChartFileViewSet(ViewSetMixin, ReadOnlyModelViewSet):
 
 
 class ChartNodeViewSet(ViewSetMixin, ReadOnlyModelViewSet):
-    serializer_class = ChartNodeSerializer
+    default_serializer_class = ChartNodeSerializer
 
     def get_queryset(self):
         return _repo.get_personnel_info(self.get_user())
@@ -208,28 +185,28 @@ class ChartNodeViewSet(ViewSetMixin, ReadOnlyModelViewSet):
 
 
 class SWOTQuestionViewSet(ViewSetMixin, ModelViewSet):
-    pagination_class = SWOTQuestionPagination
-    serializer_class = SWOTQuestionSerializer
-    queryset = _repo.get_swot_questions()
     http_method_names = ["get"]
+    pagination_class = SWOTQuestionPagination
+    default_serializer_class = SWOTQuestionSerializer
+
+    def get_queryset(self):
+        category: str = self.request.query_params.get("category")
+        for_company: bool = bool(self.request.query_params.get("company"))
+        user = self.get_user()
+        return _repo.get_swot_questions(user, for_company, category)
 
 
 class SWOTOptionViewSet(ViewSetMixin, ModelViewSet):
-    serializer_class = SWOTOptionSerializer
+    action_serializer_class = {"create": SWOTOptionCreateSerializer}
+    default_serializer_class = SWOTOptionSerializer
     pagination_class = SWOTOptionPagination
-
-    def get_serializer_class(self):
-        if self.action == "create":
-            logger.debug("Using SWOTOptionCreateSerializer for creation.")
-            return SWOTOptionCreateSerializer
-        return super().get_serializer_class()
 
     def get_queryset(self):
         return _repo.get_company_swot_options(self.get_user())
 
 
 class SWOTMatrixViewSet(ViewSetMixin, ModelViewSet):
-    serializer_class = SWOTMatrixSerializer
+    default_serializer_class = SWOTMatrixSerializer
     http_method_names = ["get"]
 
     def get_queryset(self):
@@ -237,11 +214,10 @@ class SWOTMatrixViewSet(ViewSetMixin, ModelViewSet):
 
 
 class SWOTAnalysisViewSet(ViewSetMixin, ModelViewSet):
-    serializer_class = SWOTAnalysisSerializer
+    default_serializer_class = SWOTAnalysisSerializer
 
     def get_queryset(self):
         company = self.get_company()
-        logger.info(f"Fetching SWOT Analysis for company: {company.title}")
         return SWOTAnalysis.objects.select_related("matrix").filter(
             matrix__company=company
         )

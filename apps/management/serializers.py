@@ -4,15 +4,13 @@ from rest_framework import serializers
 
 from apps.management.models import (
     HumanResource,
-    PersonelInformation,
     OrganizationChartBase,
+    PersonelInformation,
     SWOTAnalysis,
     SWOTMatrix,
     SWOTOption,
     SWOTQuestion,
 )
-from apps.company.models import CompanyProfile
-
 
 logger = logging.getLogger("management")
 
@@ -33,12 +31,10 @@ class HumanResourceCreateSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        user = self.context["request"].user
-        company = CompanyProfile.objects.get(user=user)
+        company = self.context["company"]
         validated_data["company"] = company
-        logger.info(f"Creating HumanResource for company: {company.company_title}")
         instance = super().create(validated_data)
-        logger.info(f"HumanResource created successfully with ID: {instance.id}")
+
         return instance
 
 
@@ -172,7 +168,6 @@ class SWOTOptionBaseSerializer(serializers.ModelSerializer):
         model = SWOTOption
         fields = [
             "id",
-            "company",
             "question",
             "answer",
             "category",
@@ -195,28 +190,22 @@ class SWOTOptionSerializer(SWOTOptionBaseSerializer):
 class SWOTOptionCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = SWOTOption
-        fields = ["question", "answer", "category", "external_factor"]
+        fields = [
+            "question",
+            "answer",
+            # "category",
+            "external_factor",
+        ]
 
     def create(self, validated_data):
-        user = self.context["request"].user
-        company = getattr(user, "company", None)
-
-        if not company:
-            logger.error("User does not have an associated company.")
-            raise serializers.ValidationError(
-                {"company": "User does not have an associated company."}
-            )
-
+        company = self.context["company"]
         validated_data["company"] = company
-        logger.info(f"Creating SWOTOption for company: {company.company_title}")
         instance = super().create(validated_data)
-        logger.info(f"SWOTOption created successfully with ID: {instance.id}")
+
         return instance
 
 
 class SWOTMatrixSerializer(serializers.ModelSerializer):
-    company = serializers.PrimaryKeyRelatedField(queryset=CompanyProfile.objects.all())
-
     strengths = SWOTOptionSerializer(many=True, read_only=True)
     weaknesses = SWOTOptionSerializer(many=True, read_only=True)
     opportunities = SWOTOptionSerializer(many=True, read_only=True)
@@ -226,7 +215,6 @@ class SWOTMatrixSerializer(serializers.ModelSerializer):
         model = SWOTMatrix
         fields = [
             "id",
-            "company",
             "strengths",
             "weaknesses",
             "opportunities",
@@ -237,8 +225,14 @@ class SWOTMatrixSerializer(serializers.ModelSerializer):
 
 
 class SWOTAnalysisSerializer(serializers.ModelSerializer):
-    matrix = SWOTMatrixSerializer(read_only=True)
-
     class Meta:
         model = SWOTAnalysis
-        fields = ["id", "so", "st", "wo", "wt", "matrix", "created_at", "updated_at"]
+        fields = [
+            "id",
+            "so",
+            "st",
+            "wo",
+            "wt",
+            "created_at",
+            "updated_at",
+        ]

@@ -1,15 +1,15 @@
-from django.utils.translation import gettext_lazy as _
 from django.contrib import admin
+from django.utils.translation import gettext_lazy as _
 
 from apps.management.models import (
     HumanResource,
-    Position,
-    PersonelInformation,
     OrganizationChartBase,
+    PersonelInformation,
+    Position,
     SWOTAnalysis,
-    SWOTQuestion,
-    SWOTOption,
     SWOTMatrix,
+    SWOTOption,
+    SWOTQuestion,
 )
 
 
@@ -53,7 +53,7 @@ class OrganizationChartAdmin(admin.ModelAdmin):
 class SWOTQuestionAdmin(admin.ModelAdmin):
     list_display = ["text", "category"]
     search_fields = ["text", "category"]
-    list_filter = ["category"]
+    list_filter = ["company", "category"]
     list_per_page = 20
 
 

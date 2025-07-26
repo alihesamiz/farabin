@@ -196,6 +196,14 @@ class SWOTCategory(models.TextChoices):
 
 
 class SWOTQuestion(models.Model):
+    company = models.ForeignKey(
+        "company.CompanyProfile",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="swot_questions",
+        verbose_name=_("Company"),
+    )
     text = models.TextField(verbose_name=_("سوال"), unique=True)
     category = models.CharField(
         max_length=50,
@@ -216,17 +224,13 @@ class SWOTOption(LifecycleModelMixin, TimeStampedModel):
         "company.CompanyProfile",
         verbose_name=_("شرکت"),
         on_delete=models.CASCADE,
-        null=False,
-        blank=False,
     )
     question = models.ForeignKey(
         SWOTQuestion,
         verbose_name=_("سوال"),
         on_delete=models.PROTECT,
-        null=True,
-        blank=True,
     )
-    answer = models.TextField(verbose_name=_("پاسخ"), blank=True, null=True)
+    answer = models.TextField(verbose_name=_("پاسخ"))
     category = models.CharField(
         max_length=20, choices=SWOTCategory.choices, verbose_name=_("دسته‌بندی")
     )
@@ -236,6 +240,11 @@ class SWOTOption(LifecycleModelMixin, TimeStampedModel):
         verbose_name=_("عامل خارجی"),
         blank=True,
     )
+
+    def __str__(self):
+        if self.question and self.answer:
+            return f"{self.get_category_display()}: {self.question.text}"
+        return f"{self.get_category_display()}"
 
     class Meta:
         verbose_name = _("SWOT گزینه")
@@ -252,31 +261,31 @@ class SWOTOption(LifecycleModelMixin, TimeStampedModel):
             models.Index(fields=["question"]),
         ]
 
-    def __str__(self):
-        if self.question and self.answer:
-            return f"{self.get_category_display()}: {self.question.text}"
-        return f"{self.get_category_display()}"
-
     @hook(BEFORE_CREATE)
     @hook(BEFORE_UPDATE)
     def set_category_and_validate_external_factors(self):
         self.__set_category()
         self.__check_for_external_factors()
+        # self.save()
 
     def __set_category(self):
         """
         Set the category for each option as the questions category
         """
         if self.question:
+            print(self.category)
+
             self.category = self.question.category
+            print(self.category)
 
     def __check_for_external_factors(self):
         """
         If the category is either opportunity or theat asks for the external factor if none is provided
         """
-        if self.category in ["Opportunity", "Threat"] and not self.external_factor:
+        # print(self.category)
+        if self.category in ["opportunity", "threat"] and not self.external_factor:
             self.external_factor = ExternalFactors.NONE
-            return ValidationError(
+            raise ValidationError(
                 {
                     "external_factor": _(
                         "External factor must be specified for Opportunities and Threats."
@@ -313,6 +322,9 @@ class SWOTMatrix(LifecycleModelMixin, TimeStampedModel):
     )
     is_approved = models.BooleanField(_("مورد تایید قرار گرفته است"), default=False)
 
+    def __str__(self):
+        return f"{self.company.title!r} SWOT"
+
     class Meta:
         verbose_name = _("SWOT ماتریس")
         verbose_name_plural = _("SWOT ماتریس‌ها")
@@ -320,15 +332,12 @@ class SWOTMatrix(LifecycleModelMixin, TimeStampedModel):
             models.UniqueConstraint(fields=["company"], name="unique_company_swot")
         ]
 
-    def __str__(self):
-        return f"{self.company.title!r} SWOT"
-
     @hook(AFTER_UPDATE, condition=WhenFieldValueChangesTo("is_approved", True))
     def start_analysing_task(self):
         """
         Hook to start the SWOT analyze process when the matrix 'is_approved'
         """
-        from management.tasks import generate_swot_analysis
+        from apps.management.tasks import generate_swot_analysis
 
         generate_swot_analysis.delay(self.id)
 
@@ -362,6 +371,9 @@ class SWOTAnalysis(LifecycleModelMixin, TimeStampedModel):
     wo = models.TextField(verbose_name=_("تحلیل نقاط ضعف و فرصت‌ها"))
     wt = models.TextField(verbose_name=_("تحلیل نقاط ضعف و تهدیدات"))
 
+    def __str__(self):
+        return f"{self.matrix.company.title}"
+
     class Meta:
         verbose_name = _("SWOT تحلیل")
         verbose_name_plural = _("SWOT تحلیل‌ها")
@@ -370,6 +382,3 @@ class SWOTAnalysis(LifecycleModelMixin, TimeStampedModel):
                 fields=["matrix"], name="unique_matrix_analysis_swot"
             )
         ]
-
-    def __str__(self):
-        return f"{self.matrix.company.title}"
