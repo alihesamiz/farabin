@@ -273,16 +273,12 @@ class SWOTOption(LifecycleModelMixin, TimeStampedModel):
         Set the category for each option as the questions category
         """
         if self.question:
-            print(self.category)
-
             self.category = self.question.category
-            print(self.category)
 
     def __check_for_external_factors(self):
         """
         If the category is either opportunity or theat asks for the external factor if none is provided
         """
-        # print(self.category)
         if self.category in ["opportunity", "threat"] and not self.external_factor:
             self.external_factor = ExternalFactors.NONE
             raise ValidationError(
