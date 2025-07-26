@@ -1,30 +1,29 @@
 from typing import Any
 
-
-from django.utils.translation import gettext_lazy as _
-from django.db.models.query import QuerySet
-from django.utils.html import format_html
-from django.db.transaction import atomic
-from django.http import HttpRequest
+from django.contrib import admin
 from django.db import transaction
 from django.db.models import Max
-from django.contrib import admin
+from django.db.models.query import QuerySet
+from django.db.transaction import atomic
+from django.http import HttpRequest
 from django.urls import reverse
+from django.utils.html import format_html
+from django.utils.translation import gettext_lazy as _
 
+from apps.company.models import CompanyProfile
 from apps.finance.models import (
     AccountTurnOver,
     AnalysisReport,
-    FinancialData,
-    FinancialAsset,
-    ProfitLossStatement,
-    SoldProductFee,
     BalanceReport,
-    TaxDeclarationFile,
     BalanceReportFile,
     FinanceExcelFile,
+    FinancialAsset,
+    FinancialData,
     Inflation,
+    ProfitLossStatement,
+    SoldProductFee,
+    TaxDeclarationFile,
 )
-from apps.company.models import CompanyProfile
 
 
 class ProfitStatementInline(admin.StackedInline):
@@ -59,30 +58,28 @@ class BalanceReportInline(admin.StackedInline):
 class FinanceExcelFileAdmin(admin.ModelAdmin):
     list_display = [
         "title",
-        "finance_excel_file",
+        "file",
         "is_saved",
         "is_sent",
     ]
 
     search_fields = ["company__title"]
 
-    @admin.display(ordering="company__title")
+    @admin.display(description=_("Company Title"), ordering="company__title")
     def title(self, finance_excel: FinanceExcelFile):
         return finance_excel.company.title if finance_excel.company.title else "-"
 
-    title.short_description = _("Company Title")
-
     def delete_model(self, request: HttpRequest, obj: Any):
         with atomic():
-            if obj.finance_excel_file:
-                obj.finance_excel_file.delete(save=False)
+            if obj.file:
+                obj.file.delete(save=False)
             return super().delete_model(request, obj)
 
     def delete_queryset(self, request: HttpRequest, queryset: QuerySet) -> None:
         for obj in queryset:
             with atomic():
-                if obj.finance_excel_file:
-                    obj.finance_excel_file.delete(save=False)
+                if obj.file:
+                    obj.file.delete(save=False)
         return super().delete_queryset(request, queryset)
 
     def get_queryset(self, request):
@@ -102,30 +99,28 @@ class TaxFileAdmin(admin.ModelAdmin):
     list_display = [
         "title",
         "year",
-        "tax_file",
+        "file",
         "is_saved",
         "is_sent",
     ]
 
     search_fields = ["company__title", "year"]
 
-    @admin.display(ordering="company__title")
+    @admin.display(description=_("Company Title"), ordering="company__title")
     def title(self, tax_declaration: TaxDeclarationFile):
         return tax_declaration.company.title if tax_declaration.company.title else "-"
 
-    title.short_description = _("Company Title")
-
     def delete_model(self, request: HttpRequest, obj: Any):
         with atomic():
-            if obj.tax_file:
-                obj.tax_file.delete(save=False)
+            if obj.file:
+                obj.file.delete(save=False)
             return super().delete_model(request, obj)
 
     def delete_queryset(self, request: HttpRequest, queryset: QuerySet) -> None:
         for obj in queryset:
             with atomic():
-                if obj.tax_file:
-                    obj.tax_file.delete(save=False)
+                if obj.file:
+                    obj.file.delete(save=False)
         return super().delete_queryset(request, queryset)
 
     def get_queryset(self, request):
@@ -156,11 +151,9 @@ class BalanceReportFileAdmin(admin.ModelAdmin):
 
     search_fields = ["company__title", "year", "month"]
 
-    @admin.display(ordering="company__title")
+    @admin.display(description=_("Company Title"), ordering="company__title")
     def title(self, tax_declaration: TaxDeclarationFile):
         return tax_declaration.company.title
-
-    title.short_description = _("Company Title")
 
     def delete_model(self, request: HttpRequest, obj: Any) -> None:
         if obj:
@@ -209,12 +202,9 @@ class FinancialAssestAdmin(admin.ModelAdmin):
 
     list_filter = ["company__title", "year", "month"]
 
-    @admin.display(ordering="title")
+    @admin.display(ordering="title", description=_("Company Title"))
     def title(self, financial_asset: FinancialAsset):
         return financial_asset.company.title
-
-    title.short_description = _("Company Title")
-    title.admin_order_field = "title"
 
 
 @admin.register(FinancialData)

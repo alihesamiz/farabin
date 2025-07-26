@@ -8,8 +8,6 @@ from django.utils.translation import gettext_lazy as _
 
 from apps.company.models import CompanyProfile
 from apps.core.utils import GeneralUtils
-
-
 from constants.validators import Validator as _validator
 
 
@@ -44,12 +42,10 @@ class TaxDeclarationFile(FileAbstract):
         related_name="taxfiles",
     )
 
-    tax_file = models.FileField(
+    file = models.FileField(
         verbose_name=_("File"),
         upload_to=get_tax_file_upload_path,
         validators=[_validator.pdf_file_validator],
-        blank=True,
-        null=True,
     )
 
     def __str__(self) -> str:
@@ -58,7 +54,15 @@ class TaxDeclarationFile(FileAbstract):
     class Meta:
         verbose_name = _("Finance Tax Declaration")
         verbose_name_plural = _("Finance Tax Declarations")
-        unique_together = [["company", "year"]]
+        constraints = [
+            models.UniqueConstraint(
+                name="unique_company_tax_file_per_year",
+                fields=[
+                    "company",
+                    "year",
+                ],
+            ),
+        ]
 
     def save(self, *args, **kwargs):
         # Check if the tax_file is being updated
@@ -67,12 +71,10 @@ class TaxDeclarationFile(FileAbstract):
             existing_instance = TaxDeclarationFile.objects.get(pk=self.pk)
 
             # If the tax_file is being changed, delete the old file
-            if existing_instance.tax_file != self.tax_file:
+            if existing_instance.file != self.file:
                 # Delete the old file if it exists
                 old_file_path = (
-                    existing_instance.tax_file.path
-                    if existing_instance.tax_file
-                    else None
+                    existing_instance.file.path if existing_instance.file else None
                 )
                 if old_file_path and os.path.exists(old_file_path):
                     default_storage.delete(old_file_path)
@@ -94,7 +96,6 @@ class BalanceReportFile(FileAbstract):
     company = models.ForeignKey(
         CompanyProfile,
         on_delete=models.CASCADE,
-        null=True,
         verbose_name=_("Company"),
         related_name="reportfiles",
     )
@@ -107,32 +108,24 @@ class BalanceReportFile(FileAbstract):
         verbose_name=_("Balance Report File"),
         validators=[_validator.pdf_file_validator],
         upload_to=get_non_tax_file_upload_path,
-        blank=True,
-        null=True,
     )
 
     profit_loss_file = models.FileField(
         verbose_name=_("Profit Loss File"),
         validators=[_validator.pdf_file_validator],
         upload_to=get_non_tax_file_upload_path,
-        blank=True,
-        null=True,
     )
 
     sold_product_file = models.FileField(
         verbose_name=_("Sold Product File"),
         validators=[_validator.pdf_file_validator],
         upload_to=get_non_tax_file_upload_path,
-        blank=True,
-        null=True,
     )
 
     account_turnover_file = models.FileField(
         verbose_name=_("Account Turn Over File"),
         validators=[_validator.pdf_file_validator],
         upload_to=get_non_tax_file_upload_path,
-        blank=True,
-        null=True,
     )
 
     def __str__(self) -> str:
@@ -141,8 +134,15 @@ class BalanceReportFile(FileAbstract):
     class Meta:
         verbose_name = _("Finance Balance Report File")
         verbose_name_plural = _("Finance Balance Reports File")
-        unique_together = [
-            ["company", "month", "year"],
+        constraints = [
+            models.UniqueConstraint(
+                name="unique_company_balance_report_per_year",
+                fields=[
+                    "company",
+                    "year",
+                    "month",
+                ],
+            )
         ]
 
     def save(self, *args, **kwargs):
@@ -183,17 +183,14 @@ class FinanceExcelFile(models.Model):
     company = models.ForeignKey(
         CompanyProfile,
         on_delete=models.CASCADE,
-        null=True,
         verbose_name=_("Company"),
         related_name="excelfiles",
     )
 
-    finance_excel_file = models.FileField(
+    file = models.FileField(
         verbose_name=_("Finance Excel File"),
         upload_to=get_finance_excel_file_upload_path,
         validators=[_validator.excel_file_validator],
-        blank=False,
-        null=False,
     )
 
     is_saved = models.BooleanField(default=True, verbose_name=_("Is Saved"))
@@ -203,7 +200,15 @@ class FinanceExcelFile(models.Model):
     class Meta:
         verbose_name = _("Finance Excel File")
         verbose_name_plural = _("Finance Excel Files")
-        unique_together = [["company", "finance_excel_file"]]
+        constraints = [
+            models.UniqueConstraint(
+                name="unique_company_finance_excel_file",
+                fields=[
+                    "company",
+                    "file",
+                ],
+            )
+        ]
 
     def save(self, *args, **kwargs):
         if self.pk:
@@ -212,15 +217,15 @@ class FinanceExcelFile(models.Model):
 
             if (
                 existing_instance
-                and existing_instance.finance_excel_file
-                and existing_instance.finance_excel_file != self.finance_excel_file
+                and existing_instance.file
+                and existing_instance.file != self.file
             ):
-                old_file_path = existing_instance.finance_excel_file.path
+                old_file_path = existing_instance.file.path
                 if old_file_path and os.path.exists(old_file_path):
                     default_storage.delete(old_file_path)
         if (
             FinanceExcelFile.objects.filter(
-                company=self.company, finance_excel_file=self.finance_excel_file
+                company=self.company, finance_excel_file=self.file
             )
             .exclude(pk=self.pk)
             .exists()
@@ -232,7 +237,7 @@ class FinanceExcelFile(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self) -> str:
-        return f"{self.company.title} › {self.finance_excel_file}"
+        return f"{self.company.title} › {self.file}"
 
 
 class SoldProductFee(models.Model):
@@ -316,7 +321,6 @@ class SoldProductFee(models.Model):
         return f"{self.financial_asset}"
 
     class Meta:
-        unique_together = ("financial_asset",)
         verbose_name = _("Sold Product Fee")
         verbose_name_plural = _("Sold Products Fee")
 
@@ -477,7 +481,6 @@ class ProfitLossStatement(models.Model):
         return f"{self.financial_asset}"
 
     class Meta:
-        unique_together = ("financial_asset",)
         verbose_name = _("Profit And Loss Statement")
         verbose_name_plural = _("Profit And Loss Statements")
 
@@ -694,11 +697,6 @@ class BalanceReport(models.Model):
         return f"{self.financial_asset}"
 
     class Meta:
-        unique_together = [
-            [
-                "financial_asset",
-            ]
-        ]
         verbose_name = _("Balance Report")
         verbose_name_plural = _("Balance Reports")
 
@@ -808,7 +806,6 @@ class AccountTurnOver(models.Model):
         return f"{self.financial_asset}"
 
     class Meta:
-        unique_together = ("financial_asset",)
         verbose_name = _("Account TurnOver")
         verbose_name_plural = _("Accounts Turnovers")
 
@@ -836,6 +833,16 @@ class FinancialAsset(models.Model):
         unique_together = [["company", "year", "month"]]
         verbose_name = _("Financial Asset")
         verbose_name_plural = _("Financial Assets")
+        constraints = [
+            models.UniqueConstraint(
+                name="unique_company_financial_asset_per_year_month",
+                fields=[
+                    "company",
+                    "year",
+                    "month",
+                ],
+            )
+        ]
 
     def __str__(self):
         if self.month:
@@ -1131,7 +1138,15 @@ class AnalysisReport(models.Model):
     class Meta:
         verbose_name = _("Analysis Report")
         verbose_name_plural = _("Analysis Reports")
-        unique_together = ["chart_name", "calculated_data"]
+        constraints = [
+            models.UniqueConstraint(
+                name="unique_chart_per_data",
+                fields=[
+                    "chart_name",
+                    "calculated_data",
+                ],
+            )
+        ]
 
     def __str__(self):
         return f"{self.calculated_data.financial_asset.company.title} › {self.calculated_data.financial_asset.year} › {self.chart_name}"

@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from apps.company.models import CompanyProfile
 from apps.finance.models import (
     AnalysisReport,
     BalanceReportFile,
@@ -89,7 +88,7 @@ class SimpleBalanceReportSerializer(serializers.ModelSerializer):
 class TaxDeclarationCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = TaxDeclarationFile
-        fields = ["year", "tax_file"]
+        fields = ["year", "file"]
 
     def create(self, validated_data):
         user = self.context["request"].user
@@ -107,10 +106,10 @@ class TaxDeclarationCreateSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         # Handle file update
-        tax_file = validated_data.get("tax_file", None)
-        if tax_file and instance.tax_file != tax_file:
+        file = validated_data.get("file", None)
+        if file and instance.file != file:
             # Optionally, you can handle file replacement here too
-            old_file = instance.tax_file
+            old_file = instance.file
             if old_file:
                 old_file.delete()  # Delete the old file before saving the new one
 
@@ -120,7 +119,7 @@ class TaxDeclarationCreateSerializer(serializers.ModelSerializer):
 class TaxDeclarationSerializer(serializers.ModelSerializer):
     class Meta:
         model = TaxDeclarationFile
-        fields = ["id", "year", "tax_file", "is_saved", "is_sent"]
+        fields = ["id", "year", "file", "is_saved", "is_sent"]
 
 
 class SimpleTaxDeclarationSerializer(serializers.ModelSerializer):
@@ -132,7 +131,7 @@ class SimpleTaxDeclarationSerializer(serializers.ModelSerializer):
 class FinanceExcelFileSerializer(serializers.ModelSerializer):
     class Meta:
         model = FinanceExcelFile
-        fields = ["id", "company", "finance_excel_file", "is_saved", "is_sent"]
+        fields = ["id", "company", "file", "is_saved", "is_sent"]
 
 
 class BaseChartSerializer(serializers.Serializer):

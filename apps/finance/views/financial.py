@@ -69,11 +69,6 @@ class TaxDeclarationViewSet(ViewSetMixin, ModelViewSet):
     def get_queryset(self):
         return _repo.get_tax_files_for_company(self.get_company())
 
-    # def get_serializer_context(self):
-    #     context = super().get_serializer_context()
-    #     context["request"] = self.request
-    #     return context
-
     def destroy(self, request, *args, **kwargs):
         user_id = self.get_user().id
         try:
@@ -101,7 +96,7 @@ class TaxDeclarationViewSet(ViewSetMixin, ModelViewSet):
 
     def perform_destroy(self, instance):
         try:
-            file_path = instance.tax_file.path
+            file_path = instance.file.path
             folder_path = os.path.dirname(file_path)
             if file_path and default_storage.exists(file_path):
                 default_storage.delete(file_path)
@@ -128,7 +123,7 @@ class TaxDeclarationViewSet(ViewSetMixin, ModelViewSet):
         pk=None,
     ):
         tax_declaration = self.get_object()
-        pdf_path = tax_declaration.tax_file.path
+        pdf_path = tax_declaration.file.path
 
         if not os.path.exists(pdf_path):
             logger.warning(
@@ -144,7 +139,7 @@ class TaxDeclarationViewSet(ViewSetMixin, ModelViewSet):
         )
         response = FileResponse(open(pdf_path, "rb"), content_type="application/pdf")
         response["Content-Disposition"] = (
-            f'inline; filename="{tax_declaration.tax_file.name}"'
+            f'inline; filename="{tax_declaration.file.name}"'
         )
         response["X-Frame-Options"] = "ALLOWALL"
         return response
@@ -382,29 +377,12 @@ class FinanceAnalysisViewSet(ViewSetMixin, ModelViewSet):
         return super().get_serializer_class()
 
     def get_queryset(self):
-        company = self.get_company()
+        queryset = _repo.get_financial_data_for_company(self.get_company())
 
-        cache_key = f"finance_data_{company.id}"
+        if not queryset.exists():
+            raise NotFound(detail="No financial data found.")
 
-        cached_data = cache.get(cache_key)
-
-        if cached_data:
-            return cached_data
-        try:
-            queryset = _repo.get_financial_data_for_company(self.get_company())
-
-            cache.set(cache_key, queryset)
-
-            if not queryset.exists():
-                raise NotFound(detail="No financial data found.")
-
-            return queryset
-
-        except Exception as e:
-            raise NotFound(
-                detail=f"Error retrieving financial data.{e}",
-                code=status.HTTP_404_NOT_FOUND,
-            )
+        return queryset
 
     @action(detail=False, methods=["get"], url_path="analysis", url_name="analysis")
     def analysis(self, request):
