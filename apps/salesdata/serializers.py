@@ -9,7 +9,7 @@ from apps.salesdata.models import (
     ProductData,
     ProductDataFile,
 )
-from constants.errors.errors import (
+from constants.errors.api_exception import (
     CustomerAlreadyExistsError,
     ProductAlreadyExistsError,
 )
