@@ -1,5 +1,5 @@
-from rest_framework.exceptions import APIException  # type: ignore
 from rest_framework import status  # type: ignore
+from rest_framework.exceptions import APIException  # type: ignore
 
 
 class OTPExistsError(APIException):
@@ -48,3 +48,15 @@ class ProductAlreadyExistsError(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_detail = "A Product with this name already exists."
     default_code = "product_already_exists"
+
+
+class ObjectNotFoundError(APIException):
+    status_code = status.HTTP_404_NOT_FOUND
+    default_detail = "No object found"
+    default_code = "object_not_found"
+
+
+class NoCompanyAssignedError(APIException):
+    status_code = status.HTTP_403_FORBIDDEN
+    default_detail = "No Company is assigned with the user"
+    default_code = "no_company_assigned"
