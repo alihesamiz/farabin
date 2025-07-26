@@ -1,0 +1,19 @@
+meta {
+  name: Request/Verify OTP
+  type: http
+  seq: 1
+}
+
+post {
+  url: 127.0.0.1:8000/auth/verify/
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "phone_number": "09138038123",
+    "social_code": "1273670029",
+    "otp_code": "690272"
+  }
+}

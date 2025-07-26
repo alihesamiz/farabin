@@ -1,0 +1,18 @@
+meta {
+  name: Update Company Profile
+  type: http
+  seq: 5
+}
+
+patch {
+  url: 0.0.0.0:8000/company/profile/1ad605b4-bbe7-4a6e-bd6f-321cc2676bc7/
+  body: multipartForm
+  auth: inherit
+}
+
+body:multipart-form {
+  license: ol
+  ~insurance_list: 12
+  ~province: 2
+  ~address: tsettest
+}

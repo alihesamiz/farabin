@@ -1,0 +1,20 @@
+meta {
+  name: Add user to Company
+  type: http
+  seq: 1
+}
+
+post {
+  url: 127.0.0.1:8000/company/users/add/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "first_name": "test",
+    "last_name": "test",
+    "phone_number": "09138038123",
+    "social_code": "1273670029"
+  }
+}
