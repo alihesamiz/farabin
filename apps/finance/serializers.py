@@ -1,15 +1,15 @@
-from rest_framework.exceptions import ValidationError
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
+from apps.company.models import CompanyProfile
 from apps.finance.models import (
     AnalysisReport,
+    BalanceReportFile,
     FinanceExcelFile,
     FinancialAsset,
     FinancialData,
-    BalanceReportFile,
     TaxDeclarationFile,
 )
-from apps.company.models import CompanyProfile
 
 
 class BalanceReportCreateSerializer(serializers.ModelSerializer):
@@ -28,7 +28,7 @@ class BalanceReportCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = self.context["request"].user
-        company = CompanyProfile.objects.get(user=user)
+        company = user.company_user.company
         validated_data["company"] = company
 
         year = validated_data.get("year")
@@ -93,7 +93,7 @@ class TaxDeclarationCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = self.context["request"].user
-        company = CompanyProfile.objects.get(user=user)
+        company = user.company_user.company
         validated_data["company"] = company
 
         year = validated_data.get("year")

@@ -1,53 +1,45 @@
-from itertools import groupby
 import logging
 import os
+from itertools import groupby
 
-
-from django.contrib.admin.views.decorators import staff_member_required
-from django.views.decorators.clickjacking import xframe_options_exempt
-from django.utils.translation import gettext_lazy as _
-from django.core.files.storage import default_storage
-from django.utils.decorators import method_decorator
 from django.contrib.admin import site as admin_site
+from django.contrib.admin.views.decorators import staff_member_required
+from django.core.cache import cache
+from django.core.files.storage import default_storage
 from django.db.models.signals import post_save
 from django.db.transaction import atomic
 from django.http import FileResponse
-from django.core.cache import cache
 from django.shortcuts import render
 from django.urls import reverse
+from django.utils.decorators import method_decorator
+from django.utils.translation import gettext_lazy as _
 from django.views import View
-
-
-from rest_framework.permissions import IsAuthenticated
+from django.views.decorators.clickjacking import xframe_options_exempt
+from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
-from rest_framework.decorators import action
-from rest_framework import status, viewsets
-
+from rest_framework.viewsets import ModelViewSet
 
 from apps.company.models import CompanyProfile
-
-
+from apps.company.views import ViewSetMixin
 from apps.finance.models import (
-    AnalysisReport,
-    FinanceExcelFile,
+    BalanceReportFile,
     FinancialData,
     TaxDeclarationFile,
-    BalanceReportFile,
 )
+from apps.finance.repositories import FinanceRepository as _repo
 from apps.finance.serializers import (
-    FinanceExcelFileSerializer,
-    TaxDeclarationCreateSerializer,
-    TaxDeclarationSerializer,
-    BalanceReportCreateSerializer,
-    BalanceReportSerializer,
     AgilityChartSerializer,
     AnalysisReportListSerializer,
     AssetChartSerializer,
+    BalanceReportCreateSerializer,
+    BalanceReportSerializer,
     BankrupsyChartSerializer,
     CostChartSerializer,
     DebtChartSerializer,
     EquityChartSerializer,
+    FinanceExcelFileSerializer,
     FinancialDataSerializer,
     InventoryChartSerializer,
     LeverageChartSerializer,
@@ -57,44 +49,33 @@ from apps.finance.serializers import (
     ProfitibilityChartSerializer,
     SalaryChartSerializer,
     SaleChartSerializer,
+    TaxDeclarationCreateSerializer,
+    TaxDeclarationSerializer,
     YearlyFinanceDataSerializer,
 )
-
 
 logger = logging.getLogger("finance")
 
 
-class TaxDeclarationViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+class TaxDeclarationViewSet(ViewSetMixin, ModelViewSet):
+    action_serializer_class = {
+        "list": TaxDeclarationSerializer,
+        "retrieve": TaxDeclarationSerializer,
+        "create": TaxDeclarationCreateSerializer,
+        "update": TaxDeclarationCreateSerializer,
+        "partial_update": TaxDeclarationCreateSerializer,
+    }
 
     def get_queryset(self):
-        user_id = self.request.user.id
-        queryset = (
-            TaxDeclarationFile.objects.filter(company__user=self.request.user)
-            .select_related("company")
-            .order_by("-year")
-        )
+        return _repo.get_tax_files_for_company(self.get_company())
 
-        count = queryset.count()
-
-        logger.info(
-            "Fetched tax declarations", extra={"user_id": user_id, "count": count}
-        )
-        return queryset
-
-    def get_serializer_class(self):
-        logger.info(f"Action: {self.action}")
-        if self.action in ["create", "update"]:
-            return TaxDeclarationCreateSerializer
-        return TaxDeclarationSerializer
-
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context["request"] = self.request
-        return context
+    # def get_serializer_context(self):
+    #     context = super().get_serializer_context()
+    #     context["request"] = self.request
+    #     return context
 
     def destroy(self, request, *args, **kwargs):
-        user_id = request.user.id
+        user_id = self.get_user().id
         try:
             instance = self.get_object()
             file_id = instance.id
@@ -152,14 +133,14 @@ class TaxDeclarationViewSet(viewsets.ModelViewSet):
         if not os.path.exists(pdf_path):
             logger.warning(
                 "Requested PDF file not found",
-                extra={"user_id": request.user.id, "file_id": pk},
+                extra={"user_id": self.get_user().id, "file_id": pk},
             )
             return Response(
                 {"error": "File not found"}, status=status.HTTP_404_NOT_FOUND
             )
 
         logger.info(
-            "Serving PDF file", extra={"user_id": request.user.id, "file_id": pk}
+            "Serving PDF file", extra={"user_id": self.get_user().id, "file_id": pk}
         )
         response = FileResponse(open(pdf_path, "rb"), content_type="application/pdf")
         response["Content-Disposition"] = (
@@ -174,7 +155,7 @@ class TaxDeclarationViewSet(viewsets.ModelViewSet):
         years = list(self.get_queryset().values_list("year", flat=True).distinct())
         logger.info(
             "Fetched unique tax declaration years",
-            extra={"user_id": request.user.id, "years_count": len(years)},
+            extra={"user_id": self.get_user().id, "years_count": len(years)},
         )
 
         return Response(years, status=status.HTTP_200_OK)
@@ -185,10 +166,10 @@ class TaxDeclarationViewSet(viewsets.ModelViewSet):
         Update the 'is_sent' field to True for multiple TaxDeclaration instances.
         Expects a list of IDs in the request body.
         """
-        user_id = request.user.id
+        user_id = self.get_user().id
         ids = request.data.get("ids", [])
         queryset = TaxDeclarationFile.objects.filter(
-            id__in=ids, company__user=self.request.user
+            id__in=ids, company=self.get_company()
         )
 
         updated_count = queryset.update(is_sent=True)
@@ -207,21 +188,16 @@ class TaxDeclarationViewSet(viewsets.ModelViewSet):
         )
 
 
-class BalanceReportViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+class BalanceReportViewSet(ViewSetMixin, ModelViewSet):
+    action_serializer_class = {
+        "create": BalanceReportCreateSerializer,
+        "update": BalanceReportCreateSerializer,
+        "partial_update": BalanceReportCreateSerializer,
+    }
+    default_serializer_class = BalanceReportSerializer
 
     def get_queryset(self):
-        return (
-            BalanceReportFile.objects.filter(company__user=self.request.user)
-            .order_by("-year", "month")
-            .all()
-        )
-
-    def get_serializer_class(self):
-        if self.action in ["create", "update"]:
-            return BalanceReportCreateSerializer
-
-        return BalanceReportSerializer
+        return _repo.get_balance_report_files_for_company(self.get_company())
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -271,7 +247,7 @@ class BalanceReportViewSet(viewsets.ModelViewSet):
                 instance = self.get_object()
                 self.perform_destroy(instance)
                 logger.info(
-                    f"Balance report {instance.id} deleted successfully by user {request.user.id}"
+                    f"Balance report {instance.id} deleted successfully by user {self.get_user().id}"
                 )
                 return Response(
                     {"success": "files deleted"}, status=status.HTTP_204_NO_CONTENT
@@ -279,7 +255,7 @@ class BalanceReportViewSet(viewsets.ModelViewSet):
 
         except Exception as e:
             logger.error(
-                f"Failed to delete balance report {instance.id} - User: {request.user.id}, Error: {e}",
+                f"Failed to delete balance report {instance.id} - User: {self.get_user().id}, Error: {e}",
                 exc_info=True,
             )
             return Response(
@@ -307,12 +283,12 @@ class BalanceReportViewSet(viewsets.ModelViewSet):
 
                 instance.delete()
                 logger.info(
-                    f"Balance report {instance.id} and all associated files deleted by user {self.request.user.id}"
+                    f"Balance report {instance.id} and all associated files deleted by user {self.self.get_user().id}"
                 )
 
         except Exception as e:
             logger.error(
-                f"Failed to delete balance report files {instance.id} - User: {self.request.user.id}, Error: {e}",
+                f"Failed to delete balance report files {instance.id} - User: {self.self.get_user().id}, Error: {e}",
                 exc_info=True,
             )
 
@@ -339,7 +315,7 @@ class BalanceReportViewSet(viewsets.ModelViewSet):
     def send(self, request):
         ids = request.data.get("ids", [])
         queryset = BalanceReportFile.objects.filter(
-            id__in=ids, company__user=self.request.user
+            id__in=ids, company=self.get_company()
         )
 
         if not queryset.exists():
@@ -357,18 +333,14 @@ class BalanceReportViewSet(viewsets.ModelViewSet):
         )
 
 
-class FinanceExcelViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
-    serializer_class = FinanceExcelFileSerializer
+class FinanceExcelViewSet(ViewSetMixin, ModelViewSet):
+    default_serializer_class = FinanceExcelFileSerializer
 
     def get_queryset(self):
-        company = self.request.user.company_user.company
-        return FinanceExcelFile.objects.select_related("company").filter(
-            company=company
-        )
+        return _repo.get_financial_excel_files_for_company(self.get_company())
 
 
-class FinanceAnalysisViewSet(viewsets.ModelViewSet):
+class FinanceAnalysisViewSet(ViewSetMixin, ModelViewSet):
     CHART_SERIALIZER_MAP = {
         "debt": DebtChartSerializer,
         "asset": AssetChartSerializer,
@@ -384,16 +356,18 @@ class FinanceAnalysisViewSet(viewsets.ModelViewSet):
         "profit": ProfitChartSerializer,
         "salary": SalaryChartSerializer,
     }
+    action_serializer_class = {
+        "month": YearlyFinanceDataSerializer,
+    }
 
     http_method_names = ["get"]
 
-    permission_classes = [IsAuthenticated]
-
-    serializer_class = FinancialDataSerializer
+    default_serializer_class = FinancialDataSerializer
 
     def get_serializer_class(self):
         if self.action == "month":
             return YearlyFinanceDataSerializer
+        # print(self.action)
 
         elif self.action in ["chart", "chart_month"]:
             chart = self.kwargs.get("slug")
@@ -408,7 +382,7 @@ class FinanceAnalysisViewSet(viewsets.ModelViewSet):
         return super().get_serializer_class()
 
     def get_queryset(self):
-        company = self.request.user.company
+        company = self.get_company()
 
         cache_key = f"finance_data_{company.id}"
 
@@ -417,16 +391,7 @@ class FinanceAnalysisViewSet(viewsets.ModelViewSet):
         if cached_data:
             return cached_data
         try:
-            queryset = (
-                FinancialData.objects.select_related("financial_asset")
-                .prefetch_related("financial_asset__company")
-                .filter(
-                    financial_asset__company=company,
-                    financial_asset__is_tax_record=True,
-                    is_published=True,
-                )
-                .order_by("financial_asset__year", "financial_asset__month")
-            )
+            queryset = _repo.get_financial_data_for_company(self.get_company())
 
             cache.set(cache_key, queryset)
 
@@ -443,7 +408,7 @@ class FinanceAnalysisViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["get"], url_path="analysis", url_name="analysis")
     def analysis(self, request):
-        company = self.request.user.company
+        company = self.get_company()
         data_cache_key = f"finance_analysis_{company.id}"
         cached_data = cache.get(data_cache_key)
 
@@ -451,21 +416,7 @@ class FinanceAnalysisViewSet(viewsets.ModelViewSet):
             analysis = cached_data
 
         else:
-            analysis = (
-                AnalysisReport.objects.select_related("calculated_data")
-                .prefetch_related("calculated_data__financial_asset")
-                .filter(
-                    calculated_data__financial_asset__company=company,
-                    calculated_data__is_published=True,
-                )
-                .order_by(
-                    "chart_name",
-                    "-created_at",
-                    "calculated_data__financial_asset__year",
-                    "calculated_data__financial_asset__month",
-                )
-                .distinct("chart_name")
-            )
+            analysis = _repo.get_financial_analysis_for_company(self.get_company())
 
             cache.set(data_cache_key, analysis)
 
@@ -525,7 +476,7 @@ class FinanceAnalysisViewSet(viewsets.ModelViewSet):
         url_name="chart",
     )
     def chart(self, request, slug=None):
-        company = self.request.user.company
+        company = self.get_company()
 
         cache_key = f"finance_analysis_chart_yearly_{slug}_{company.id}"
 
@@ -534,15 +485,7 @@ class FinanceAnalysisViewSet(viewsets.ModelViewSet):
         if cached_data:
             return Response(cached_data)
 
-        queryset = (
-            FinancialData.objects.select_related("financial_asset")
-            .filter(
-                financial_asset__company=company,
-                financial_asset__is_tax_record=True,
-                is_published=True,
-            )
-            .order_by("financial_asset__year", "financial_asset__month")
-        )
+        queryset = _repo.get_financial_charts_for_company(self.get_company(), True)
 
         if not queryset.exists():
             raise NotFound(detail="No financial data found.")
@@ -564,7 +507,7 @@ class FinanceAnalysisViewSet(viewsets.ModelViewSet):
         url_name="chart-month",
     )
     def chart_month(self, request, slug=None):
-        company = self.request.user.company
+        company = self.get_company()
 
         cache_key = f"finance_analysis_chart_monthly_{slug}_{company.id}"
 
@@ -573,15 +516,7 @@ class FinanceAnalysisViewSet(viewsets.ModelViewSet):
         if cached_data:
             return Response(cached_data)
 
-        queryset = (
-            FinancialData.objects.select_related("financial_asset")
-            .filter(
-                financial_asset__company=company,
-                financial_asset__is_tax_record=False,
-                is_published=True,
-            )
-            .order_by("financial_asset__year", "financial_asset__month")
-        )
+        queryset = _repo.get_financial_charts_for_company(self.get_company(), False)
 
         if not queryset.exists():
             raise NotFound(detail="No financial data found.")
@@ -598,7 +533,7 @@ class FinanceAnalysisViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["get"], url_path="month", url_name="month")
     def month(self, request):
-        company = self.request.user.company
+        company = self.get_company()
 
         queryset = (
             FinancialData.objects.select_related("financial_asset")
@@ -660,7 +595,7 @@ class CompanyFinancialDataView(View):
                 "name": _("Analysis Reports"),
                 "url": reverse("admin:finance_analysisreport_changelist"),
             },
-            {"name": company.company_title, "url": ""},
+            {"name": company.title, "url": ""},
         ]
 
         year = []
