@@ -1,9 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-
 from apps.company.models import (
-    CompanyProfile,
     LifeCycleDecline,
     LifeCycleFeature,
     LifeCycleGrowth,
@@ -12,7 +10,6 @@ from apps.company.models import (
     LifeCycleQuantitative,
     LifeCycleTheoretical,
 )
-
 
 User = get_user_model()
 
@@ -123,27 +120,14 @@ class LifeCycleTheoreticalPlaceCreateUpdateSerializer(
 
     def create(self, validated_data):
         """Creates a LifeCyclePlace instance with nested objects."""
-        user = self.context["request"].user
-        try:
-            company = CompanyProfile.objects.get(company_user__user=user)
-        except CompanyProfile.DoesNotExist:
-            raise serializers.ValidationError("No company profile found for the user.")
+        validated_data["company"] = self.context["company"]
 
-        validated_data["company"] = company
         life_cycle_place = LifeCycleTheoretical.objects.create(**validated_data)
         return life_cycle_place
 
     def update(self, instance, validated_data):
         """Updates a LifeCyclePlace instance and its nested objects."""
-        # Extract nested data
-        user = self.context["request"].user
-        try:
-            company = CompanyProfile.objects.get(company_user__user=user)
-        except CompanyProfile.DoesNotExist:
-            raise serializers.ValidationError("No company profile found for the user.")
-
-        validated_data["company"] = company
-
+        validated_data["company"] = self.context["company"]
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
@@ -178,13 +162,8 @@ class LifeCycleQuantitativePlaceCreateUpdateSerializer(serializers.ModelSerializ
         read_only_fields = ["created_at", "updated_at"]
 
     def create(self, validated_data):
-        user = self.context["request"].user
-        try:
-            company = CompanyProfile.objects.get(company_user__user=user)
-        except CompanyProfile.DoesNotExist:
-            raise serializers.ValidationError("No company profile found for the user.")
+        validated_data["company"] = self.context["company"]
 
-        validated_data["company"] = company
         resources = validated_data.pop("resource", [])
         life_cycle_place = LifeCycleQuantitative.objects.create(**validated_data)
         life_cycle_place.resource.set(resources)
@@ -192,14 +171,8 @@ class LifeCycleQuantitativePlaceCreateUpdateSerializer(serializers.ModelSerializ
 
     def update(self, instance, validated_data):
         """Updates a LifeCyclePlace instance and its nested objects."""
-        # Extract nested data
-        user = self.context["request"].user
-        try:
-            company = CompanyProfile.objects.get(company_user__user=user)
-        except CompanyProfile.DoesNotExist:
-            raise serializers.ValidationError("No company profile found for the user.")
+        validated_data["company"] = self.context["company"]
 
-        validated_data["company"] = company
         resources = validated_data.pop("resource", [])
 
         for attr, value in validated_data.items():

@@ -1,11 +1,18 @@
-from apps.company.repositories import CompanyRepository as _repo
 from apps.company.models import CompanyUser
+from apps.company.repositories import CompanyRepository as _repo
 
 
 class CompanyService:
     @staticmethod
+    def create_company_user(user, company, role: str = CompanyUser.Role.STAFF):
+        """
+        Create a CompanyUser entry linking user to company.
+        """
+        return CompanyUser.objects.create(user=user, company=company, role=role)
+
+    @classmethod
     def add_user_to_company(
-        company, validated_data: dict, role: str = CompanyUser.Role.STAFF
+        cls, company, validated_data: dict, role: str = CompanyUser.Role.STAFF
     ):
         """
         Add a user to the given company. Creates a user if one does not exist.
@@ -18,6 +25,5 @@ class CompanyService:
         if not created:
             raise ValueError("User already exists!")
 
-        # Create company user
-        company_user = _repo.create_company_user(user, company, role)
+        company_user = cls.create_company_user(user, company, role)
         return company_user

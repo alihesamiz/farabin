@@ -1,6 +1,7 @@
 from rest_framework.serializers import Serializer
 
 from apps.core.permissions import IsManagerOrReadOnly
+from constants.errors.api_exception import NoCompanyAssignedError
 
 
 class ViewSetMixin:
@@ -49,10 +50,18 @@ class ViewSetMixin:
     default_serializer_class = Serializer
 
     def get_company(self):
-        return self.get_user().company_user.company
+        try:
+            return self.request.user.company_user.company
+        except Exception:
+            raise NoCompanyAssignedError()
 
     def get_user(self):
         return self.request.user
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["company"] = self.get_company()
+        return context
 
     def get_serializer_class(self):
         # Fetch the serializer class for the current action, or fallback to default

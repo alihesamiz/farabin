@@ -2,7 +2,6 @@ from django.contrib.auth import get_user_model
 
 from apps.company.models import CompanyProfile, CompanyUser
 
-
 User = get_user_model()
 
 
@@ -28,11 +27,11 @@ class CompanyRepository:
             return None
 
     @staticmethod
-    def get_company_user_for_company(company):
+    def get_company_user_for_company(company, not_deleted: bool = True):
         return CompanyUser.objects.select_related(
             "user",
             "company",
-        ).filter(company=company)
+        ).filter(company=company,deleted_at__isnull=not_deleted)
 
     @staticmethod
     def get_or_create_user(phone_number: str, defaults: dict):
@@ -40,10 +39,3 @@ class CompanyRepository:
         Get a user by phone number, or create one if it does not exist.
         """
         return User.objects.get_or_create(phone_number=phone_number, defaults=defaults)
-
-    @staticmethod
-    def create_company_user(user, company, role: str = CompanyUser.Role.STAFF):
-        """
-        Create a CompanyUser entry linking user to company.
-        """
-        return CompanyUser.objects.create(user=user, company=company, role=role)

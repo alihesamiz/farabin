@@ -1,27 +1,23 @@
 from django.contrib.auth import get_user_model
-from django.utils.timezone import now
 from django.db import IntegrityError
-
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import (
-    ModelSerializer,
-    BooleanField,
-    SlugRelatedField,
-    SlugField,
     CharField,
-    SerializerMethodField,
+    ModelSerializer,
     PrimaryKeyRelatedField,
+    SerializerMethodField,
+    SlugField,
+    SlugRelatedField,
 )
 
-from constants.validators import Validator as _validator
-
 from apps.company.models import (
-    CompanyUser,
     CompanyProfile,
+    CompanyUser,
     License,
     SpecialTech,
     TechField,
 )
+from constants.validators import Validator as _validator
 
 User = get_user_model()
 
@@ -38,6 +34,10 @@ class UserProfileSerializer(ModelSerializer):
             "social_code",
             "role",
         ]
+
+    def create(self, validated_data):
+        validated_data.pop("role", None)
+        return super().create(validated_data)
 
 
 class CompanyUserSerializer(ModelSerializer):
@@ -74,8 +74,7 @@ class CompanyUserCreateSerializer(ModelSerializer):
         ]
 
     def create(self, validated_data):
-        user = self.context["request"].user
-        validated_data["company"] = getattr(user.company_user, "company", None)
+        validated_data["company"] = self.context["company"]
 
         return CompanyUser.objects.select_related(
             "user",
@@ -84,28 +83,16 @@ class CompanyUserCreateSerializer(ModelSerializer):
 
 
 class CompanyUserUpdateSerializer(ModelSerializer):
-    delete = BooleanField(
-        required=False,
-        default=False,
-    )
-
     class Meta:
         model = CompanyUser
         fields = [
-            "id",
-            "user",
             "role",
-            "delete",
-            "company",
-            "created_at",
             "updated_at",
             "deleted_at",
         ]
 
     def update(self, instance, validated_data):
         for attr, value in validated_data.items():
-            if attr == "delete" and value is True:
-                instance.deleted_at = now()
             setattr(instance, attr, value)
 
         instance.save()

@@ -2,31 +2,26 @@ import logging
 
 from django.contrib.auth import get_user_model
 from django.db.models import Count
-
-from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from rest_framework.views import APIView
-
-from constants.responses import APIResponse
-
+from rest_framework.viewsets import ModelViewSet
 
 from apps.company.models.profile import CompanyUser
-from apps.company.views import ViewSetMixin
+from apps.company.repositories import CompanyRepository as _repo
 from apps.company.serializers import (
-    CompanyProfileSerializer,
-    CompanyUserSerializer,
     CompanyProfileCreateSerializer,
+    CompanyProfileSerializer,
     # CompanyProfileUpdateSerializer,
     CompanyUserCreateSerializer,
+    CompanyUserSerializer,
     CompanyUserUpdateSerializer,
     UserProfileSerializer,
 )
-
-from apps.company.repositories import CompanyRepository as _repo
 from apps.company.services import CompanyService as _service
-
-from apps.finance.models.finance import TaxDeclarationFile, BalanceReportFile
+from apps.company.views import ViewSetMixin
+from apps.finance.models.finance import BalanceReportFile, TaxDeclarationFile
 from apps.management.models import HumanResource
+from constants.responses import APIResponse
 
 logger = logging.getLogger("company")
 
@@ -69,6 +64,7 @@ class CompanyUserViewSet(ViewSetMixin, ModelViewSet):
         company = self.get_company()
 
         try:
+            print(serializer.validated_data)
             company_user = _service.add_user_to_company(
                 company=company, validated_data=serializer.validated_data, role=role
             )
