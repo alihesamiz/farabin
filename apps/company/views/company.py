@@ -64,7 +64,6 @@ class CompanyUserViewSet(ViewSetMixin, ModelViewSet):
         company = self.get_company()
 
         try:
-            print(serializer.validated_data)
             company_user = _service.add_user_to_company(
                 company=company, validated_data=serializer.validated_data, role=role
             )
