@@ -125,9 +125,9 @@ class AuthViewSet(ViewSet):
             },
         )
 
-    @action(detail=False, methods=["post"], url_path="reset-password")
+    @action(detail=False, methods=["post"], url_path="reset-password",permission_classes=[IsAuthenticated])
     def reset_password(self, request):
-        self.permission_classes = [IsAuthenticated]
+        # self.permission_classes = [IsAuthenticated]
         serializer = PasswordResetSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 

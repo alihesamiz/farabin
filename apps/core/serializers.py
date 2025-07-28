@@ -41,9 +41,9 @@ class LoginSerializer(serializers.Serializer):
 
 
 class PasswordResetSerializer(serializers.Serializer):
-    current_password = serializers.CharField(max_length=11)
-    new_password = serializers.CharField(max_length=11)
-    new_password2 = serializers.CharField(max_length=11)
+    current_password = serializers.CharField()
+    new_password = serializers.CharField()
+    new_password2 = serializers.CharField()
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
