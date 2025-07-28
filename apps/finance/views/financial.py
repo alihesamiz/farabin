@@ -28,6 +28,7 @@ from apps.finance.models import (
     FinancialData,
     TaxDeclarationFile,
 )
+from apps.finance.paginations import BasePagination
 from apps.finance.repositories import FinanceRepository as _repo
 from apps.finance.serializers import (
     AgilityChartSerializer,
@@ -65,6 +66,7 @@ class TaxDeclarationViewSet(ViewSetMixin, ModelViewSet):
         "update": TaxDeclarationCreateSerializer,
         "partial_update": TaxDeclarationCreateSerializer,
     }
+    pagination_class = BasePagination
 
     def get_queryset(self):
         return _repo.get_tax_files_for_company(self.get_company())
@@ -190,6 +192,7 @@ class BalanceReportViewSet(ViewSetMixin, ModelViewSet):
         "partial_update": BalanceReportCreateSerializer,
     }
     default_serializer_class = BalanceReportSerializer
+    pagination_class = BasePagination
 
     def get_queryset(self):
         return _repo.get_balance_report_files_for_company(self.get_company())
@@ -330,6 +333,7 @@ class BalanceReportViewSet(ViewSetMixin, ModelViewSet):
 
 class FinanceExcelViewSet(ViewSetMixin, ModelViewSet):
     default_serializer_class = FinanceExcelFileSerializer
+    pagination_class = BasePagination
 
     def get_queryset(self):
         return _repo.get_financial_excel_files_for_company(self.get_company())
@@ -358,6 +362,7 @@ class FinanceAnalysisViewSet(ViewSetMixin, ModelViewSet):
     http_method_names = ["get"]
 
     default_serializer_class = FinancialDataSerializer
+    pagination_class = BasePagination
 
     def get_serializer_class(self):
         if self.action == "month":
