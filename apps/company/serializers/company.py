@@ -161,14 +161,15 @@ class CompanyProfileCreateSerializer(ModelSerializer):
             "address",
         ]
 
-    def validate_email(self, value):
-        profile_id = self.instance.id if self.instance else None
+    # def validate_email(self, value):
+    #     profile_id = self.instance.id if self.instance else None
 
-        if CompanyProfile.objects.filter(email=value).exclude(id=profile_id).exists():
-            raise ValidationError(
-                "This email is already associated with another company profile."
-            )
-        return value
+    #     if CompanyProfile.objects.filter(email=value).exclude(id=profile_id).exists():
+    #         raise ValidationError(
+    #             "This email is already associated with another company profile."
+    #         )
+    #     return value
+
 
     def validate_social_code(self, value):
         return _validator.validate_social_code(value)
@@ -192,31 +193,69 @@ class CompanyProfileCreateSerializer(ModelSerializer):
                 }
             )
 
-    def update(self, instance, validated_data):
-        capital_providing_methods = validated_data.pop("capital_providing_method", [])
-        licenses = validated_data.pop("license", [])
+    # def update(self, instance, validated_data):
+    #     capital_providing_methods = validated_data.pop("capital_providing_method", [])
+    #     licenses = validated_data.pop("license", [])
 
-        if "email" in validated_data:
-            self.validate_email(validated_data["email"])
+    #     if "email" in validated_data:
+    #         self.validate_email(validated_data["email"])
+
+    #     for attr, value in validated_data.items():
+    #         setattr(instance, attr, value)
+
+    #     try:
+    #         instance.save()
+
+    #         if licenses is not None:
+    #             instance.license.set(licenses)
+
+    #         if capital_providing_methods is not None:
+    #             instance.capital_providing_method.set(capital_providing_methods)
+
+    #         return instance
+
+    #     except IntegrityError:
+    #         raise ValidationError(
+    #             {"email": "A company profile with this email already exists."}
+    #         )
+
+
+class CompanyProfileUpdateSerializer(ModelSerializer):
+    class Meta:
+        model = CompanyProfile
+        fields = [
+            "id",
+            "title",
+            "email",
+            "national_code",
+            "office_phone_number",
+            "license",
+            "tech_field",
+            "special_field",
+            "insurance_list",
+            "capital_providing_method",
+            "province",
+            "city",
+            "address",
+            "is_active",
+        ]
+        read_only_fields = ["id"]
+
+    def update(self, instance: CompanyProfile, validated_data):
+        licenses = validated_data.pop("license", None)
+        capital_providing_methods = validated_data.pop("capital_providing_method", None)
 
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
 
-        try:
-            instance.save()
+        if licenses is not None:
+            instance.license.set(licenses)
+        if capital_providing_methods is not None:
+            instance.capital_providing_method.set(capital_providing_methods)
 
-            if licenses is not None:
-                instance.license.set(licenses)
+        instance.save()
 
-            if capital_providing_methods is not None:
-                instance.capital_providing_method.set(capital_providing_methods)
-
-            return instance
-
-        except IntegrityError:
-            raise ValidationError(
-                {"email": "A company profile with this email already exists."}
-            )
+        return super().update(instance, validated_data)
 
 
 # class CompanyProfileUpdateSerializer(ModelSerializer): ...

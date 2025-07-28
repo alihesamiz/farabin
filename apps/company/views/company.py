@@ -11,7 +11,7 @@ from apps.company.repositories import CompanyRepository as _repo
 from apps.company.serializers import (
     CompanyProfileCreateSerializer,
     CompanyProfileSerializer,
-    # CompanyProfileUpdateSerializer,
+    CompanyProfileUpdateSerializer,
     CompanyUserCreateSerializer,
     CompanyUserSerializer,
     CompanyUserUpdateSerializer,
@@ -33,7 +33,8 @@ class CompanyProfileViewSet(ViewSetMixin, ModelViewSet):
         "list": CompanyProfileSerializer,
         "retrieve": CompanyProfileSerializer,
         "create": CompanyProfileCreateSerializer,
-        "update": CompanyProfileCreateSerializer,
+        "update": CompanyProfileUpdateSerializer,
+        "partial_update": CompanyProfileUpdateSerializer,
     }
     default_serializer_class = CompanyProfileSerializer
 
