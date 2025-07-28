@@ -1,10 +1,9 @@
-from django.utils.translation import gettext_lazy as _
 from django.db import models
-
-from constants.validators import Validator as _validator
+from django.utils.translation import gettext_lazy as _
 
 from apps.core.models import TimeStampedModel
 from apps.core.utils import GeneralUtils
+from constants.validators import Validator as _validator
 
 
 class DomesticSaleData(TimeStampedModel):
@@ -162,7 +161,7 @@ class ForeignSaleData(TimeStampedModel):
         verbose_name_plural = _("Foreign Sales")
 
 
-def get_product_date_file_upload_path(instance, filename):
+def get_customer_data_file_upload_path(instance, filename):
     path = GeneralUtils(path="sales_customer_files", fields=["company"]).rename_folder(
         instance, filename
     )
@@ -178,7 +177,7 @@ class CustomerSaleFile(TimeStampedModel):
     )
     file = models.FileField(
         verbose_name=_("File"),
-        upload_to=get_product_date_file_upload_path,
+        upload_to=get_customer_data_file_upload_path,
         validators=[_validator.excel_file_validator],
     )
 
@@ -260,7 +259,7 @@ class CustomerSaleData(TimeStampedModel):
         ]
 
 
-def get_product_date_file_upload_path(instance, filename):
+def get_product_data_file_upload_path(instance, filename):
     path = GeneralUtils(path="sales_customer_files", fields=["company"]).rename_folder(
         instance, filename
     )
@@ -276,7 +275,7 @@ class ProductDataFile(TimeStampedModel):
     )
     file = models.FileField(
         verbose_name=_("File"),
-        upload_to=get_product_date_file_upload_path,
+        upload_to=get_product_data_file_upload_path,
         validators=[_validator.excel_file_validator],
     )
 
