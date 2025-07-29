@@ -112,19 +112,19 @@ class CompanyUserUpdateSerializer(ModelSerializer):
 
 
 class CompanyProfileSerializer(ModelSerializer):
-    tech_field = SlugRelatedField(
-        slug_field="name",
-        queryset=TechField.objects.all(),
-    )
-    special_field = SlugRelatedField(
-        slug_field="name",
-        queryset=SpecialTech.objects.all(),
-    )
-    license = SlugRelatedField(
-        slug_field="name",
-        queryset=License.objects.all(),
-        many=True,
-    )
+    # tech_field = SlugRelatedField(
+    #     slug_field="name",
+    #     queryset=TechField.objects.all(),
+    # )
+    # special_field = SlugRelatedField(
+    #     slug_field="name",
+    #     queryset=SpecialTech.objects.all(),
+    # )
+    # license = SlugRelatedField(
+    #     slug_field="name",
+    #     queryset=License.objects.all(),
+    #     many=True,
+    # )
     capital_providing_method = SerializerMethodField()
     province = SlugField()
     city = SlugField()
