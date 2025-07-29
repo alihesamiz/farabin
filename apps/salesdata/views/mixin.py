@@ -65,3 +65,8 @@ class ViewSetMixin:
         if serializer_class is None:
             return self.default_serializer_class
         return serializer_class
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["company"] = self.get_company()
+        return context
