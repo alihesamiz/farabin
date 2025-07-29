@@ -1,0 +1,26 @@
+meta {
+  name: Patch Company User
+  type: http
+  seq: 7
+}
+
+patch {
+  url: 0.0.0.0:8000/company/users/1/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "user": {
+      "first_name": "test",
+      "last_name": "test"
+  //     "phone_number": "09138038121",
+  //     "social_code": "1273670027"
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+}
