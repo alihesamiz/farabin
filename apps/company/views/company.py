@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 from apps.company.models.profile import CompanyUser
+from apps.company.pagination import BasePagination
 from apps.company.repositories import CompanyRepository as _repo
 from apps.company.serializers import (
     CompanyProfileCreateSerializer,
@@ -52,6 +53,7 @@ class CompanyUserViewSet(ViewSetMixin, ModelViewSet):
         "add_user": UserProfileSerializer,
         "_": CompanyUserSerializer,
     }
+    pagination_class = BasePagination
 
     def get_queryset(self):
         return _repo.get_company_user_for_company(company=self.get_company())
