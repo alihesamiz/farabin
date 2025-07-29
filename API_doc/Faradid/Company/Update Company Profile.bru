@@ -4,16 +4,32 @@ meta {
   seq: 5
 }
 
-get {
+patch {
   url: 0.0.0.0:8000/company/profile/66422019-0df5-4de2-bf41-651af15158cf/
-  body: multipartForm
+  body: json
   auth: inherit
+}
+
+body:json {
+  {
+    //   "license": [
+    //     1,
+    //     2
+    //   ],
+    "city": 1,
+    "province": 13
+  //   "tech_field": 2,
+  //   "special_field": 2,
+  //   "capital_providing_method": [
+  //     1
+  //   ]
+  }
 }
 
 body:multipart-form {
   province: 1
   city: 87
-  ~license: 2
+  license: 
   ~insurance_list: 12
   ~province: 2
   ~address: tsettest
