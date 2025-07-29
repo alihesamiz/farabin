@@ -1,12 +1,12 @@
 from django.contrib import admin
 
 from apps.salesdata.models import (
-    ProductDataFile,
-    ProductData,
     CustomerSaleData,
-    ForeignSaleData,
-    DomesticSaleData,
     CustomerSaleFile,
+    ProductData,
+    ProductDataFile,
+    ProductLog,
+    ProductLogFile,
 )
 
 
@@ -33,3 +33,13 @@ class CustomerSaleFileAdmin(admin.ModelAdmin):
 @admin.register(ProductDataFile)
 class ProductDataFileAdmin(admin.ModelAdmin):
     list_display = ["company", "file"]
+
+
+@admin.register(ProductLogFile)
+class ProductLogFileAdmin(admin.ModelAdmin):
+    list_display = ["company", "file"]
+
+
+@admin.register(ProductLog)
+class ProductLogAdmin(admin.ModelAdmin):
+    list_display = ["product", "production_date"]

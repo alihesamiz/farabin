@@ -1,8 +1,9 @@
 from apps.salesdata.models import (
-    ProductData,
     CustomerSaleData,
     CustomerSaleFile,
+    ProductData,
     ProductDataFile,
+    ProductLogFile,
 )
 
 
@@ -27,8 +28,24 @@ class SaleRepository:
         )
 
     @classmethod
+    def get_product_logs_file_of_company(cls, company, is_deleted: bool = True):
+        is_deleted = is_deleted if is_deleted in [True, False] else True
+        return cls.get_company_data(ProductLogFile, company).filter(
+            deleted_at__isnull=is_deleted
+        )
+
+    @classmethod
     def get_products_file_of_company(cls, company, is_deleted: bool = True):
         is_deleted = is_deleted if is_deleted in [True, False] else True
         return cls.get_company_data(ProductDataFile, company).filter(
             deleted_at__isnull=is_deleted
         )
+
+    @classmethod
+    def get_product_logs_of_company(cls, company, show_deleted: bool = False):
+        qs = cls.get_company_data(ProductLogFile, company)
+
+        if show_deleted:
+            return qs.filter(deleted_at__isnull=False)
+
+        return qs.filter(deleted_at__isnull=True)

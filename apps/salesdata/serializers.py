@@ -8,6 +8,8 @@ from apps.salesdata.models import (
     CustomerSaleFile,
     ProductData,
     ProductDataFile,
+    ProductLog,
+    ProductLogFile,
 )
 from constants.errors.api_exception import (
     CustomerAlreadyExistsError,
@@ -168,7 +170,7 @@ class CompanyCustomerFileSerializer(ModelSerializer):
             "deleted_at",
         ]
         read_only_fields = [
-            "deleted_at",
+            # "deleted_at",
             "created_at",
             "updated_at",
         ]
@@ -183,8 +185,12 @@ class CompanyCustomerFileSerializer(ModelSerializer):
         return CustomerSaleFile.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        if validated_data["deleted_at"]:
+        if "deleted_at" in validated_data:
+            validated_data.pop("deleted_at")
             instance.deleted_at = now()
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
 
         instance.save()
         return instance
@@ -201,7 +207,7 @@ class CompanyProductFileSerializer(ModelSerializer):
             "deleted_at",
         ]
         read_only_fields = [
-            "deleted_at",
+            # "deleted_at",
             "created_at",
             "updated_at",
         ]
@@ -216,8 +222,114 @@ class CompanyProductFileSerializer(ModelSerializer):
         return ProductDataFile.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        if validated_data["deleted_at"]:
+        if "deleted_at" in validated_data:
+            validated_data.pop("deleted_at")
             instance.deleted_at = now()
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
 
         instance.save()
         return instance
+
+
+class CompanyProductLogFileSerializer(ModelSerializer):
+    class Meta:
+        model = ProductLogFile
+        fields = [
+            "id",
+            "file",
+            "created_at",
+            "updated_at",
+            "deleted_at",
+        ]
+        read_only_fields = [
+            # "deleted_at",
+            "created_at",
+            "updated_at",
+        ]
+
+    def create(self, validated_data):
+        company = self.context["company"]
+        if not company:
+            raise ValidationError("User has no associated company")
+        validated_data["company"] = company
+
+        return super().create(validated_data)
+
+
+def update(self, instance, validated_data):
+    if "deleted_at" in validated_data:
+        validated_data.pop("deleted_at")
+        instance.deleted_at = now()
+
+    for attr, value in validated_data.items():
+        setattr(instance, attr, value)
+
+    instance.save()
+    return instance
+
+
+class CompanyProductLogBaseSerializer(ModelSerializer):
+    class Meta:
+        model = ProductLog
+        fields = [
+            "id",
+            "product",
+            "production_date",
+            "unit_price",
+        ]
+
+
+class CompanyProductLogListSerializer(CompanyProductLogBaseSerializer): ...
+
+
+class CompanyProductLogSerializer(CompanyProductLogBaseSerializer):
+    class Meta:
+        model = ProductLog
+        fields = [
+            "id",
+            "product",
+            "production_date",
+            "total_produced",
+            "total_returned",
+            "total_rejected",
+            "unit_price",
+            "net_quantity",
+            "total_value",
+        ]
+
+
+class CompanyProductLogCreateSerializer(ModelSerializer):
+    class Meta:
+        model = ProductLog
+        fields = [
+            "product",
+            "production_date",
+            "total_produced",
+            "total_returned",
+            "total_rejected",
+            "unit_price",
+        ]
+
+    def create(self, validated_data):
+        return super().create(validated_data)
+
+
+class CompanyProductLogUpdateSerializer(ModelSerializer):
+    class Meta:
+        model = ProductLog
+        fields = [
+            "product",
+            "production_date",
+            "total_produced",
+            "total_returned",
+            "total_rejected",
+            "unit_price",
+        ]
+
+    def update(self, instance: ProductLog, validated_data: dict):
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return super().update(instance, validated_data)

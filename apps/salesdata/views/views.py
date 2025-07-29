@@ -1,6 +1,6 @@
 from rest_framework.viewsets import ModelViewSet
 
-
+from apps.salesdata.repositories import SaleRepository as _repo
 from apps.salesdata.serializers import (
     CompanyCustomerCreateSerializer,
     CompanyCustomerFileSerializer,
@@ -8,12 +8,16 @@ from apps.salesdata.serializers import (
     CompanyCustomerSerializer,
     CompanyCustomerUpdateSerializer,
     CompanyProductFileSerializer,
+    CompanyProductLogCreateSerializer,
+    CompanyProductLogFileSerializer,
+    CompanyProductLogListSerializer,
+    CompanyProductLogSerializer,
+    CompanyProductLogUpdateSerializer,
+    ProductCreateSerializer,
     ProductListSerializer,
     ProductSerializer,
-    ProductCreateSerializer,
     ProductUpdateSerializer,
 )
-from apps.salesdata.repositories import SaleRepository as _repo
 from apps.salesdata.views.mixin import ViewSetMixin
 
 
@@ -112,3 +116,44 @@ class CompanyCustomerFileViewSet(ViewSetMixin, ModelViewSet):
         company = self.get_company()
         is_deleted = bool(self.request.query_params.get("is_deleted"))
         return _repo.get_customers_file_of_company(company, is_deleted)
+
+
+class CompanyProductLogViewSet(ViewSetMixin, ModelViewSet):
+    action_serializer_class = {
+        "list": CompanyProductLogListSerializer,
+        "retrieve": CompanyProductLogSerializer,
+        "create": CompanyProductLogCreateSerializer,
+        "update": CompanyProductLogUpdateSerializer,
+        "partial_update": CompanyProductLogUpdateSerializer,
+    }
+    search_fields = [
+        "product__name",
+    ]
+    ordering = ["product__name", "production_date"]
+
+    def get_queryset(self):
+        company = self.get_company()
+        return _repo.get_product_logs_of_company(company)
+
+
+class CompanyProductLogFileViewSet(ViewSetMixin, ModelViewSet):
+    http_method_names = ["get", "post", "patch", "put"]
+    action_serializer_class = {
+        "list": CompanyProductLogFileSerializer,
+        "retrieve": CompanyProductLogFileSerializer,
+        "create": CompanyProductLogFileSerializer,
+        "update": CompanyProductLogFileSerializer,
+        "partial_update": CompanyProductLogFileSerializer,
+    }
+    default_serializer_class = CompanyProductLogFileSerializer
+    ordering_fields = [
+        "created_at",
+        "updated_at",
+    ]
+    ordering = ["created_at"]
+
+    def get_queryset(self):
+        company = self.get_company()
+        query_param = self.request.query_params.get("show_deleted", "false").lower()
+        show_deleted = query_param in ["true", "1", "t"]
+        return _repo.get_product_logs_of_company(company, show_deleted=show_deleted)
