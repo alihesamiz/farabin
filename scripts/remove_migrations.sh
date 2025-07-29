@@ -1,0 +1,1 @@
+find . -path '*/migrations/*' -type f \( -name '*.py' -o -name '*.pyc' \) -not -name '__init__.py' -delete
