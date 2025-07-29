@@ -221,9 +221,9 @@ class CompanyProfileUpdateSerializer(ModelSerializer):
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
 
-        if licenses is not None:
+        if any(licenses):
             instance.license.set(licenses)
-        if capital_providing_methods is not None:
+        if any(capital_providing_methods):
             instance.capital_providing_method.set(capital_providing_methods)
 
         instance.save()
