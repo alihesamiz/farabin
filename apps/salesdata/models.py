@@ -280,8 +280,8 @@ class ProductDataFile(TimeStampedModel):
     )
 
     class Meta:
-        verbose_name = _("Product Date File")
-        verbose_name_plural = _("Product Date Files")
+        verbose_name = _("Product/Service Data File")
+        verbose_name_plural = _("Products/Services Data Files")
 
 
 class ProductData(TimeStampedModel):
@@ -319,6 +319,9 @@ class ProductData(TimeStampedModel):
     )
     description = models.TextField(verbose_name=_("Description"))
 
+    def __str__(self):
+        return self.name
+
     class Meta:
         verbose_name = _("Product/Service Data")
         verbose_name_plural = _("Products/Services Data")
@@ -331,3 +334,77 @@ class ProductData(TimeStampedModel):
                 ],
             )
         ]
+
+
+class ProductLog(TimeStampedModel):
+    product = models.ForeignKey(
+        ProductData,
+        related_name="product_log",
+        on_delete=models.CASCADE,
+        verbose_name=_("Product"),
+    )
+    production_date = models.DateField(
+        verbose_name=_("Production Date"), help_text=_("The date of production.")
+    )
+    total_produced = models.PositiveIntegerField(
+        verbose_name=_("Total Production Count"),
+        help_text=_("Total number of units produced on this date."),
+    )
+    total_returned = models.PositiveIntegerField(
+        verbose_name=_("Returned Products Count"),
+        default=0,
+        help_text=_("Number of units returned from customers."),
+    )
+    total_rejected = models.PositiveIntegerField(
+        verbose_name=_("Rejected Products Count"),
+        default=0,
+        help_text=_("Number of units that failed quality control."),
+    )
+    unit_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        verbose_name=_("Unit Price"),
+    )
+
+    @property
+    def net_quantity(self):
+        return self.total_produced - self.total_returned - self.total_rejected
+
+    @property
+    def total_value(self):
+        return self.net_quantity * self.unit_price
+
+    def __str__(self):
+        return f"{self.product.name} on {self.production_date}"
+
+    class Meta:
+        verbose_name = _("Product Log")
+        verbose_name_plural = _("Product Logs")
+
+
+def get_product_logs_file_upload_path(instance, filename):
+    path = GeneralUtils(
+        path="sales_product_logs_files", fields=["company"]
+    ).rename_folder(instance, filename)
+    return path
+
+
+class ProductLogFile(TimeStampedModel):
+    company = models.ForeignKey(
+        "company.CompanyProfile",
+        related_name="product_log_files",
+        verbose_name=_("Company"),
+        on_delete=models.CASCADE,
+    )
+    file = models.FileField(
+        verbose_name=_("File"),
+        upload_to=get_product_logs_file_upload_path,
+        validators=[_validator.excel_file_validator],
+    )
+
+    def __str__(self):
+        return self.company.title
+
+    class Meta:
+        verbose_name = _("Product Log File")
+        verbose_name_plural = _("Product Logs Files")

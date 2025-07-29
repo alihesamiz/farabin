@@ -1,0 +1,15 @@
+meta {
+  name: Get Product Logs file
+  type: http
+  seq: 4
+}
+
+get {
+  url: 0.0.0.0:8000/sales/product-logs-file/
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}
