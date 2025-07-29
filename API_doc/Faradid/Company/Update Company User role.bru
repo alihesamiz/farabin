@@ -5,12 +5,12 @@ meta {
 }
 
 patch {
-  url: 127.0.0.1:8000/company/users/5/
+  url: 127.0.0.1:8000/company/users/2/
   body: multipartForm
   auth: inherit
 }
 
 body:multipart-form {
-  deleted_at: 2025-07-26T23:20:48.275969+03:30
-  ~role: manager
+  role: admin
+  ~deleted_at: 2025-07-26T23:20:48.275969+03:30
 }

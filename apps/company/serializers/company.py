@@ -28,6 +28,7 @@ class UserProfileSerializer(ModelSerializer):
     class Meta:
         model = User
         fields = [
+            "id",
             "first_name",
             "last_name",
             "phone_number",
@@ -83,18 +84,28 @@ class CompanyUserCreateSerializer(ModelSerializer):
 
 
 class CompanyUserUpdateSerializer(ModelSerializer):
+    user = UserProfileSerializer(required=False)
+
     class Meta:
         model = CompanyUser
         fields = [
+            "user",
             "role",
             "updated_at",
             "deleted_at",
         ]
+        read_only_fields = ["updated_at", "deleted_at"]
 
-    def update(self, instance, validated_data):
+    def update(self, instance: CompanyUser, validated_data: dict):
+        user_data = validated_data.pop("user", None)
+        print(user_data)
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
-
+        if user_data:
+            user = instance.user
+            for attr, value in user_data.items():
+                setattr(user, attr, value)
+            user.save()
         instance.save()
 
         return instance
@@ -161,26 +172,14 @@ class CompanyProfileCreateSerializer(ModelSerializer):
             "address",
         ]
 
-    # def validate_email(self, value):
-    #     profile_id = self.instance.id if self.instance else None
-
-    #     if CompanyProfile.objects.filter(email=value).exclude(id=profile_id).exists():
-    #         raise ValidationError(
-    #             "This email is already associated with another company profile."
-    #         )
-    #     return value
-
-
     def validate_social_code(self, value):
         return _validator.validate_social_code(value)
 
     def create(self, validated_data):
         capital_providing_methods = validated_data.pop("capital_providing_method", [])
         licenses = validated_data.pop("license", [])
-        # user = self.context["request"].user
         try:
             company_profile = CompanyProfile.objects.create(**validated_data)
-
             company_profile.capital_providing_method.set(capital_providing_methods)
             company_profile.license.set(licenses)
 
@@ -192,32 +191,6 @@ class CompanyProfileCreateSerializer(ModelSerializer):
                     "email": "A company profile with this email or social code already exists."
                 }
             )
-
-    # def update(self, instance, validated_data):
-    #     capital_providing_methods = validated_data.pop("capital_providing_method", [])
-    #     licenses = validated_data.pop("license", [])
-
-    #     if "email" in validated_data:
-    #         self.validate_email(validated_data["email"])
-
-    #     for attr, value in validated_data.items():
-    #         setattr(instance, attr, value)
-
-    #     try:
-    #         instance.save()
-
-    #         if licenses is not None:
-    #             instance.license.set(licenses)
-
-    #         if capital_providing_methods is not None:
-    #             instance.capital_providing_method.set(capital_providing_methods)
-
-    #         return instance
-
-    #     except IntegrityError:
-    #         raise ValidationError(
-    #             {"email": "A company profile with this email already exists."}
-    #         )
 
 
 class CompanyProfileUpdateSerializer(ModelSerializer):
@@ -242,8 +215,8 @@ class CompanyProfileUpdateSerializer(ModelSerializer):
         read_only_fields = ["id"]
 
     def update(self, instance: CompanyProfile, validated_data):
-        licenses = validated_data.pop("license", None)
-        capital_providing_methods = validated_data.pop("capital_providing_method", None)
+        licenses = validated_data.pop("license", [])
+        capital_providing_methods = validated_data.pop("capital_providing_method", [])
 
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
@@ -256,6 +229,3 @@ class CompanyProfileUpdateSerializer(ModelSerializer):
         instance.save()
 
         return super().update(instance, validated_data)
-
-
-# class CompanyProfileUpdateSerializer(ModelSerializer): ...
