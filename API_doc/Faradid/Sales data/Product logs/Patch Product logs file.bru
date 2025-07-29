@@ -1,0 +1,20 @@
+meta {
+  name: Patch Product logs file
+  type: http
+  seq: 6
+}
+
+patch {
+  url: 0.0.0.0:8000/sales/product-logs-file/2/
+  body: multipartForm
+  auth: inherit
+}
+
+body:multipart-form {
+  deleted_at: 2025-07-29T23:02:46.060731+03:30
+  ~file: @file(/home/madassandd/Downloads/Telegram Desktop/فروش فرادید.xlsx)
+}
+
+settings {
+  encodeUrl: true
+}

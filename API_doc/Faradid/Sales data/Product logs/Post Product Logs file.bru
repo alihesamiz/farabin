@@ -1,0 +1,19 @@
+meta {
+  name: Post Product Logs file
+  type: http
+  seq: 5
+}
+
+post {
+  url: 0.0.0.0:8000/sales/product-logs-file/
+  body: multipartForm
+  auth: inherit
+}
+
+body:multipart-form {
+  file: @file(/home/madassandd/Downloads/Telegram Desktop/فروش فرادید.xlsx)
+}
+
+settings {
+  encodeUrl: true
+}
