@@ -1,0 +1,15 @@
+meta {
+  name: Get Domestic Sales
+  type: http
+  seq: 1
+}
+
+get {
+  url: 0.0.0.0:8000/sales/domestic/
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}
