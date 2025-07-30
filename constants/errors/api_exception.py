@@ -8,6 +8,12 @@ class OTPExistsError(APIException):
     default_code = "otp_exists"
 
 
+class OTPValidationError(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = "Invalid or expired OTP"
+    default_code = "otp_invalid"
+
+
 class OTPCooldownError(APIException):
     status_code = status.HTTP_429_TOO_MANY_REQUESTS
     default_detail = "OTP cooldown period is still active."
