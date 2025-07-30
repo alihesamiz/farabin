@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model  # type: ignore
 from rest_framework import status
 from rest_framework.decorators import action  # type: ignore
 from rest_framework.permissions import AllowAny, IsAuthenticated  # type : ignore
+from rest_framework.request import Request
 from rest_framework.viewsets import ModelViewSet, ViewSet  # type: ignore
 
 from apps.core.models import City, Province
@@ -62,7 +63,7 @@ class AuthViewSet(ViewSet):
         return super().get_serializer_class()
 
     @action(detail=False, methods=["get", "post"], url_path="send", url_name="otp-send")
-    def request_otp(self, request):
+    def request_otp(self, request: Request):
         logger.info("Received OTP send request.", extra={"request_data": request.data})
 
         serializer = OTPSendSerializer(data=request.data)
@@ -98,7 +99,7 @@ class AuthViewSet(ViewSet):
     @action(
         detail=False, methods=["get", "post"], url_path="verify", url_name="otp-verify"
     )
-    def verify_otp(self, request):
+    def verify_otp(self, request: Request):
         logger.info(
             "Received OTP verification request.", extra={"request_data": request.data}
         )
@@ -124,17 +125,12 @@ class AuthViewSet(ViewSet):
             f"OTP for user {user.id} verified successfully.", extra={"user_id": user.id}
         )
 
-        return APIResponse.success(
-            message="OTP verified successfully.",
-            data={
-                "access": access_token,
-                "refresh": refresh_token,
-                "completed_profile": user.is_profile_complete,
-            },
+        return _auth_service.set_http_cookie_returns_access_response(
+            refresh_token, access_token, user.is_profile_complete
         )
 
     @action(detail=False, methods=["post"], url_path="login")
-    def login(self, request):
+    def login(self, request: Request):
         serializer = LoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -150,13 +146,8 @@ class AuthViewSet(ViewSet):
 
         access_token, refresh_token = _auth_service.generate_tokens_for_user(user)
 
-        return APIResponse.success(
-            message="Login successful.",
-            data={
-                "access": access_token,
-                "refresh": refresh_token,
-                "completed_profile": user.is_profile_complete,
-            },
+        return _auth_service.set_http_cookie_returns_access_response(
+            refresh_token, access_token, user.is_profile_complete
         )
 
     @action(
@@ -165,7 +156,7 @@ class AuthViewSet(ViewSet):
         url_path="reset-password",
         permission_classes=[IsAuthenticated],
     )
-    def reset_password(self, request):
+    def reset_password(self, request: Request):
         serializer = PasswordResetSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -180,14 +171,28 @@ class AuthViewSet(ViewSet):
         except InvalidCredentialsError:
             return APIResponse.unauthorized("Current password is incorrect.")
         except PasswordMismatchError:
-            return APIResponse.error(
-                "New passwords do not match.", status_code=status.HTTP_400_BAD_REQUEST
-            )
+            return APIResponse.error("New passwords do not match.")
         except Exception as e:
             logger.exception(f"Unexpected error during password reset: {e}")
             return APIResponse.internal_error("Unable to reset password.")
 
         return APIResponse.success(message="Password reset successfully.")
+
+    @action(detail=False, methods=["post"], url_path="refresh")
+    def gain_access(self, request: Request):
+        refresh_token = request.COOKIES.get("refresh")
+        if refresh_token is None:
+            return APIResponse.error(
+                message="No refresh token provided, proceed to login"
+            )
+
+        try:
+            access = _auth_service.generate_new_access_with_refresh(refresh_token)
+            return APIResponse.success(
+                message="Valid Refresh Token", data={"access": access}
+            )
+        except Exception:
+            return APIResponse.unauthorized(message="Invalid token")
 
 
 class UserProfileViewSet(ModelViewSet):
@@ -205,12 +210,13 @@ class UserProfileViewSet(ModelViewSet):
 
 class CityViewSet(ModelViewSet):
     permission_classes = [AllowAny]
+    http_method_names = ["get"]
     serializer_class = CitySerializer
-
     queryset = City.objects.select_related("province").all()
 
 
 class ProvinceViewSet(ModelViewSet):
     permission_classes = [AllowAny]
+    http_method_names = ["get"]
     serializer_class = ProvinceSerializer
     queryset = Province.objects.all()

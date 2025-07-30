@@ -1,16 +1,14 @@
 from typing import Tuple
 
+from django.conf import settings  # type: ignore
 from django.db.transaction import atomic  # type: ignore
 from django.utils import timezone  # type: ignore
-from django.conf import settings  # type: ignore
-
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from constants.errors.api_exception import OTPCooldownError, OTPExistsError
-
-
-from apps.core.repositories import AuthRepository as _auth_repo
 from apps.core.models import OTP
+from apps.core.repositories import AuthRepository as _auth_repo
+from constants.errors.api_exception import OTPCooldownError, OTPExistsError
+from constants.responses.responses import APIResponse
 
 
 class AuthService:
@@ -22,6 +20,10 @@ class AuthService:
         access_token = str(refresh_token.access_token)  # type: ignore
 
         return (access_token, str(refresh_token))
+    
+    @staticmethod
+    def generate_new_access_with_refresh(refresh:str):
+        return str(RefreshToken(refresh).access_token)
 
     @staticmethod
     def otp_activation_check(otp):
@@ -51,3 +53,24 @@ class AuthService:
         cls.deactivate_otp(otp)
 
         return otp.user
+
+    @classmethod
+    def set_http_cookie_returns_access_response(
+        cls, refresh: str, access: str, user_profile_status: bool
+    ):
+        response = APIResponse.success(
+            message="OTP verified successfully.",
+            data={
+                "access": access,
+                "completed_profile": user_profile_status,
+            },
+        )
+        response.set_cookie(
+            key="refresh",
+            value=refresh,
+            httponly=True,
+            secure=True,
+            samesite="Lax",
+            max_age=7 * 24 * 3600,
+        )
+        return response

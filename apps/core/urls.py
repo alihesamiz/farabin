@@ -1,6 +1,4 @@
-from django.urls import path  # type: ignore
 from rest_framework.routers import DefaultRouter  # type: ignore
-from rest_framework_simplejwt.views import TokenRefreshView
 
 from apps.core.views import (
     AuthViewSet,
@@ -17,8 +15,3 @@ router.register(r"province", ProvinceViewSet, basename="province")
 
 
 urlpatterns = router.urls
-
-
-urlpatterns += [
-    path("refresh/", TokenRefreshView.as_view(), name="token-refresh"),
-]
