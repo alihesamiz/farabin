@@ -100,3 +100,11 @@ venv.bak/
 /notebooks/
 !*/excel_files/*.xlsx
 .qodo
+
+
+# Ignore all migrations folders in apps
+apps/**/migrations/
+apps/**/migrations/*
+
+# But keep __init__.py so Django doesn't break
+!apps/**/migrations/__init__.py
