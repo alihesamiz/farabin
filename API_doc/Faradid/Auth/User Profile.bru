@@ -5,9 +5,13 @@ meta {
 }
 
 get {
-  url: 127.0.0.1:8000/auth/profile/
+  url: 127.0.0.1:8000/auth/profile/4/
   body: json
-  auth: inherit
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUzOTY3NTg0LCJpYXQiOjE3NTM4ODExODQsImp0aSI6IjllM2M4OTMyNjZhNDRjMzViZDRjNzk5ZDFlZGY5YzlkIiwidXNlcl9pZCI6NH0.T3QPeQmeu-qbuXS2Mvo1EaP7SAt3AdkfGgTwjRm1MUU
 }
 
 body:json {

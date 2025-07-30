@@ -7,5 +7,9 @@ meta {
 get {
   url: 127.0.0.1:8000/auth/province/
   body: none
-  auth: inherit
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUzOTY2Njc2LCJpYXQiOjE3NTM4ODAyNzYsImp0aSI6IjJlNDI1ZmZkNzY4MzQ0YzQ4MmNjNTU3NzJhNzMyNWU4IiwidXNlcl9pZCI6M30.8TVNVGAQy8KuoLXSIP8izOPZvqE9Nti2duZYb7XGJhk
 }
