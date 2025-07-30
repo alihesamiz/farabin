@@ -7,6 +7,10 @@ from apps.salesdata.serializers import (
     CompanyCustomerListSerializer,
     CompanyCustomerSerializer,
     CompanyCustomerUpdateSerializer,
+    CompanyDomesticSaleCreateSerializer,
+    CompanyDomesticSaleListSerializer,
+    CompanyDomesticSaleSerializer,
+    CompanyDomesticSaleUpdateSerializer,
     CompanyProductFileSerializer,
     CompanyProductLogCreateSerializer,
     CompanyProductLogFileSerializer,
@@ -157,3 +161,17 @@ class CompanyProductLogFileViewSet(ViewSetMixin, ModelViewSet):
         query_param = self.request.query_params.get("show_deleted", "false").lower()
         show_deleted = query_param in ["true", "1", "t"]
         return _repo.get_product_logs_of_company(company, show_deleted=show_deleted)
+
+
+class CompanyDomesticSaleViewSet(ViewSetMixin, ModelViewSet):
+    action_serializer_class = {
+        "list": CompanyDomesticSaleListSerializer,
+        "retrieve": CompanyDomesticSaleSerializer,
+        "create": CompanyDomesticSaleCreateSerializer,
+        "update": CompanyDomesticSaleUpdateSerializer,
+        "partial_update": CompanyDomesticSaleUpdateSerializer,
+    }
+
+    def get_queryset(self):
+        company = self.get_company()
+        return _repo.get_domestic_sale_of_company(company)

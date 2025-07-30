@@ -1,6 +1,7 @@
 from apps.salesdata.models import (
     CustomerSaleData,
     CustomerSaleFile,
+    DomesticSaleData,
     ProductData,
     ProductDataFile,
     ProductLogFile,
@@ -49,3 +50,7 @@ class SaleRepository:
             return qs.filter(deleted_at__isnull=False)
 
         return qs.filter(deleted_at__isnull=True)
+
+    @classmethod
+    def get_domestic_sale_of_company(cls, company):
+        return cls.get_company_data(DomesticSaleData, company)

@@ -6,6 +6,7 @@ from rest_framework.serializers import ModelSerializer, SlugRelatedField
 from apps.salesdata.models import (
     CustomerSaleData,
     CustomerSaleFile,
+    DomesticSaleData,
     ProductData,
     ProductDataFile,
     ProductLog,
@@ -331,5 +332,77 @@ class CompanyProductLogUpdateSerializer(ModelSerializer):
     def update(self, instance: ProductLog, validated_data: dict):
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
+        instance.save()
+        return super().update(instance, validated_data)
+
+
+class CompanyDomesticSaleListSerializer(ModelSerializer):
+    class Meta:
+        model = DomesticSaleData
+        fields = [
+            "id",
+            "customer_name",
+            "product_code",
+            "sold_amount",
+            "sold_at",
+        ]
+
+
+class CompanyDomesticSaleSerializer(ModelSerializer):
+    class Meta:
+        model = DomesticSaleData
+        fields = [
+            "id",
+            "customer_name",
+            "product_code",
+            "sold_amount",
+            "unit_price",
+            "discount_price",
+            "sale_method",
+            "payment_method",
+            "sold_at",
+        ]
+
+
+class CompanyDomesticSaleCreateSerializer(ModelSerializer):
+    class Meta:
+        model = DomesticSaleData
+        fields = [
+            "customer_name",
+            "product_code",
+            "sold_amount",
+            "unit_price",
+            "discount_price",
+            "sale_method",
+            "payment_method",
+            "sold_at",
+        ]
+
+    def create(self, validated_data):
+        company = self.context["company"]
+        validated_data["company"] = company
+        return super().create(validated_data)
+
+
+class CompanyDomesticSaleUpdateSerializer(ModelSerializer):
+    class Meta:
+        model = DomesticSaleData
+        fields = [
+            "customer_name",
+            "product_code",
+            "sold_amount",
+            "unit_price",
+            "discount_price",
+            "sale_method",
+            "payment_method",
+            "sold_at",
+        ]
+
+    def update(self, instance, validated_data):
+        product = validated_data.pop("product_code", None)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        if product:
+            instance.product_code = product
         instance.save()
         return super().update(instance, validated_data)

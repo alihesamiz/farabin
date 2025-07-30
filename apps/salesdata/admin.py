@@ -3,6 +3,7 @@ from django.contrib import admin
 from apps.salesdata.models import (
     CustomerSaleData,
     CustomerSaleFile,
+    DomesticSaleData,
     ProductData,
     ProductDataFile,
     ProductLog,
@@ -43,3 +44,10 @@ class ProductLogFileAdmin(admin.ModelAdmin):
 @admin.register(ProductLog)
 class ProductLogAdmin(admin.ModelAdmin):
     list_display = ["product", "production_date"]
+
+
+@admin.register(DomesticSaleData)
+class DomesticSaleDataAdmin(admin.ModelAdmin):
+    list_display = [
+        "company",
+    ]

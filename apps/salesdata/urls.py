@@ -3,6 +3,7 @@ from rest_framework.routers import DefaultRouter
 from apps.salesdata.views import CompanyCustomerViewSet, CompanyProductViewSet
 from apps.salesdata.views.views import (
     CompanyCustomerFileViewSet,
+    CompanyDomesticSaleViewSet,
     CompanyProductFileViewSet,
     CompanyProductLogFileViewSet,
     CompanyProductLogViewSet,
@@ -19,4 +20,7 @@ router.register(
 
 router.register("customer/file", CompanyCustomerFileViewSet, basename="customer-file")
 router.register("customer", CompanyCustomerViewSet, basename="customer")
+
+router.register("domestic", CompanyDomesticSaleViewSet, basename="domestic-sale")
+
 urlpatterns = router.urls
