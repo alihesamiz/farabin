@@ -1,12 +1,12 @@
-from apps.core.models import User
-from apps.core.repositories import UserRepository as _user_repo
 from django.db import IntegrityError  # type: ignore
 
+from apps.core.models import User
+from apps.core.repositories import UserRepository as _user_repo
 from constants.errors.api_exception import (
-    PasswordMismatchError,
-    UserNotFoundError,
-    UserAlreadyExistsError,
     InvalidCredentialsError,
+    PasswordMismatchError,
+    UserAlreadyExistsError,
+    UserNotFoundError,
 )
 
 
@@ -34,10 +34,17 @@ class UserService:
         user = cls.check_user_password_returns_user(phone_number, cpwd)
 
         if npwd != npwd1:
-            raise PasswordMismatchError()  # Custom APIException
+            raise PasswordMismatchError()
 
         user.set_password(npwd1)
         user.save()
 
     @staticmethod
     def create_company_user(user): ...
+
+    @staticmethod
+    def create_company_returns_company(user):
+        from apps.company.services import CompanyService
+
+        company = CompanyService.create_profile_for_user(user)
+        return company
