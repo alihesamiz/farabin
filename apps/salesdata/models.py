@@ -25,8 +25,10 @@ class DomesticSaleData(TimeStampedModel):
         max_length=255,
         verbose_name=_("Customer Name"),
     )
-    product_code = models.CharField(
-        max_length=10,
+    product_code = models.ForeignKey(
+        "ProductData",
+        on_delete=models.CASCADE,
+        related_name="domestic_sale",
         verbose_name=_("Product Code"),
     )
     sold_amount = models.PositiveSmallIntegerField(
@@ -56,7 +58,6 @@ class DomesticSaleData(TimeStampedModel):
         verbose_name=_("Payment Method"),
     )
     sold_at = models.DateField(verbose_name=_("Sold At"))
-    updated_at = models.DateField(auto_now_add=True, verbose_name=_("Updated At"))
 
     def __str__(self):
         return f"{self.company.title} Domestic Sale: {self.sold_at}"
@@ -102,10 +103,15 @@ class ForeignSaleData(TimeStampedModel):
         max_length=255,
         verbose_name=_("Customer Name"),
     )
-    product_code = models.CharField(
-        max_length=10,
+    product_code = models.ForeignKey(
+        "ProductData",
+        on_delete=models.CASCADE,
+        related_name="foreign_sale",
         verbose_name=_("Product Code"),
-    )
+    )  # models.CharField(
+    #     max_length=10,
+    #     verbose_name=_("Product Code"),
+    # )
     sold_amount = models.PositiveSmallIntegerField(
         verbose_name=_("Sold Amount"),
         validators=[_validator.min_numeric_value_validator()],
