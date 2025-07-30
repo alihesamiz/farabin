@@ -126,8 +126,8 @@ class CompanyProfileSerializer(ModelSerializer):
     #     many=True,
     # )
     capital_providing_method = SerializerMethodField()
-    province = SlugField()
-    city = SlugField()
+    # province = SlugField()
+    # city = SlugField()
 
     def get_capital_providing_method(self, obj):
         return [item.get_name_display() for item in obj.capital_providing_method.all()]
