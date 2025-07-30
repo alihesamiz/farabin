@@ -1,6 +1,7 @@
 import logging
 
 from django.contrib.auth import get_user_model  # type: ignore
+from rest_framework import status
 from rest_framework.decorators import action  # type: ignore
 from rest_framework.permissions import AllowAny, IsAuthenticated  # type : ignore
 from rest_framework.viewsets import ModelViewSet, ViewSet  # type: ignore
@@ -25,6 +26,13 @@ from apps.core.services import (
     UserService as _user_service,
 )
 from apps.core.tasks import send_otp_task
+from constants.errors.api_exception import (
+    InvalidCredentialsError,
+    OTPValidationError,
+    PasswordMismatchError,
+    UserAlreadyExistsError,
+    UserNotFoundError,
+)
 from constants.responses import APIResponse
 
 User = get_user_model()
@@ -32,10 +40,15 @@ User = get_user_model()
 logger = logging.getLogger("core")
 
 
+logger = logging.getLogger(__name__)
+
+
 class AuthViewSet(ViewSet):
     """
     A ViewSet for sending and verifying OTP.
     """
+
+    permission_classes = [Unautherized]
 
     def get_serializer_class(self):
         if self.action == "request_otp":
@@ -48,8 +61,6 @@ class AuthViewSet(ViewSet):
             return PasswordResetSerializer
         return super().get_serializer_class()
 
-    permission_classes = [Unautherized]
-
     @action(detail=False, methods=["get", "post"], url_path="send", url_name="otp-send")
     def request_otp(self, request):
         logger.info("Received OTP send request.", extra={"request_data": request.data})
@@ -60,15 +71,26 @@ class AuthViewSet(ViewSet):
         phone_number = serializer.validated_data["phone_number"]
         social_code = serializer.validated_data["social_code"]
 
-        user = _user_service.create_user_with_phone_number(phone_number, social_code)
-        _auth_service.otp_expiry_check(user)
-        send_otp_task.delay(user.id, phone_number)
+        try:
+            user = _user_service.create_user_with_phone_number(
+                phone_number, social_code
+            )
+        except UserAlreadyExistsError:
+            return APIResponse.error(
+                "User already exists.", status_code=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            _auth_service.otp_expiry_check(user)
+            send_otp_task.delay(user.id, phone_number)
+            _user_service.create_company_user(user)
+        except Exception as e:
+            logger.exception(f"Failed to send OTP: {e}")
+            return APIResponse.internal_error("Failed to send OTP.")
+
         logger.info(
             f"OTP for user {user.id} sent successfully.", extra={"user_id": user.id}
         )
-
-        _user_service.create_company_user(user)
-
         return APIResponse.success(
             message="OTP sent successfully.", data={"user_id": user.id}
         )
@@ -87,7 +109,15 @@ class AuthViewSet(ViewSet):
         phone_number = serializer.validated_data["phone_number"]
         otp_code = serializer.validated_data["otp_code"]
 
-        user = _auth_service.otp_validation_returns_user(phone_number, otp_code)
+        try:
+            user = _auth_service.otp_validation_returns_user(phone_number, otp_code)
+        except OTPValidationError:
+            return APIResponse.error(
+                "Invalid or expired OTP.", status_code=status.HTTP_400_BAD_REQUEST
+            )
+        finally:
+            _ = _user_service.create_company_returns_company(user)
+
         access_token, refresh_token = _auth_service.generate_tokens_for_user(user)
 
         logger.info(
@@ -103,8 +133,6 @@ class AuthViewSet(ViewSet):
             },
         )
 
-    # TODO: After the user verified its otp, it most be redirected to the company profile page to create a new profile
-
     @action(detail=False, methods=["post"], url_path="login")
     def login(self, request):
         serializer = LoginSerializer(data=request.data)
@@ -113,7 +141,13 @@ class AuthViewSet(ViewSet):
         phone_number = serializer.validated_data["phone_number"]
         password = serializer.validated_data["password"]
 
-        user = _user_service.check_user_password_returns_user(phone_number, password)
+        try:
+            user = _user_service.check_user_password_returns_user(
+                phone_number, password
+            )
+        except (UserNotFoundError, InvalidCredentialsError):
+            return APIResponse.unauthorized("Invalid phone number or password.")
+
         access_token, refresh_token = _auth_service.generate_tokens_for_user(user)
 
         return APIResponse.success(
@@ -125,9 +159,13 @@ class AuthViewSet(ViewSet):
             },
         )
 
-    @action(detail=False, methods=["post"], url_path="reset-password",permission_classes=[IsAuthenticated])
+    @action(
+        detail=False,
+        methods=["post"],
+        url_path="reset-password",
+        permission_classes=[IsAuthenticated],
+    )
     def reset_password(self, request):
-        # self.permission_classes = [IsAuthenticated]
         serializer = PasswordResetSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -135,9 +173,19 @@ class AuthViewSet(ViewSet):
         npwd = serializer.validated_data["new_password"]
         npwd1 = serializer.validated_data["new_password2"]
 
-        phone_number = self.request.user.phone_number
+        phone_number = request.user.phone_number
 
-        _user_service.reset_user_password(phone_number, cpwd, npwd, npwd1)
+        try:
+            _user_service.reset_user_password(phone_number, cpwd, npwd, npwd1)
+        except InvalidCredentialsError:
+            return APIResponse.unauthorized("Current password is incorrect.")
+        except PasswordMismatchError:
+            return APIResponse.error(
+                "New passwords do not match.", status_code=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            logger.exception(f"Unexpected error during password reset: {e}")
+            return APIResponse.internal_error("Unable to reset password.")
 
         return APIResponse.success(message="Password reset successfully.")
 
