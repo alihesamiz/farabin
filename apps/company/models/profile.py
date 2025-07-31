@@ -76,6 +76,7 @@ class CompanyProfile(TimeStampedModel):
     title = models.CharField(
         max_length=255,
         unique=True,
+        null=True,
         verbose_name=_("Company Title"),
     )
     email = models.EmailField(
@@ -88,6 +89,7 @@ class CompanyProfile(TimeStampedModel):
     national_code = models.CharField(
         max_length=11,
         unique=True,
+        null=True,
         verbose_name=_("Company National Registration Code"),
     )
     office_phone_number = models.CharField(
@@ -105,17 +107,20 @@ class CompanyProfile(TimeStampedModel):
     tech_field = models.ForeignKey(
         "TechField",
         default=1,
+        null=True,
         on_delete=models.CASCADE,
         verbose_name=_("Technical Field"),
     )
     special_field = models.ForeignKey(
         "SpecialTech",
         default=1,
+        null=True,
         on_delete=models.CASCADE,
         verbose_name=_("Special Field"),
     )
     insurance_list = models.PositiveSmallIntegerField(
         default=1,
+        null=True,
         verbose_name=_("Insurance List Count"),
     )
     capital_providing_method = models.ManyToManyField(
@@ -126,17 +131,20 @@ class CompanyProfile(TimeStampedModel):
     province = models.ForeignKey(
         "core.Province",
         default=1,
+        null=True,
         on_delete=models.CASCADE,
         verbose_name=_("Province"),
     )
     city = models.ForeignKey(
         "core.City",
         default=1,
+        null=True,
         on_delete=models.CASCADE,
         verbose_name=_("City"),
     )
     address = models.CharField(
         max_length=255,
+        null=True,
         verbose_name=_("Address"),
     )
     is_active = models.BooleanField(
