@@ -1,21 +1,19 @@
+import json
+import logging
+import os
+import re
 from typing import List, Optional, Tuple
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 import requests
-import logging
-import json
-import re
-import os
-
-from django.core.files.storage import default_storage
-from django.utils.deconstruct import deconstructible
-from django.db.models.base import Model
 from django.conf import settings
+from django.core.files.storage import default_storage
 from django.db import models
+from django.db.models.base import Model
+from django.utils.deconstruct import deconstructible
 
 from apps.core.models import User
-
 
 logger = logging.getLogger("core")
 
@@ -118,7 +116,7 @@ class GeneralUtils:
                 )
 
         else:
-            current_slug = "organization_excel_files"
+            current_slug = str(instance._meta.model.__name__)
 
         year = getattr(instance, "year", "")
         month = getattr(instance, "month", "")
