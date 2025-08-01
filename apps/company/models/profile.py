@@ -6,6 +6,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from apps.core.models import TimeStampedModel
+from apps.core.utils import GeneralUtils
 from constants.validators import Validator as _validator
 
 logger = logging.getLogger("company")
@@ -67,6 +68,12 @@ class License(models.Model):
         verbose_name_plural = _("Licenses")
 
 
+def set_company_logo_path(instance, filename) -> str:
+    return GeneralUtils(path="companies_logo", fields=["title"]).rename_folder(
+        instance, filename
+    )
+
+
 class CompanyProfile(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -78,6 +85,11 @@ class CompanyProfile(TimeStampedModel):
         unique=True,
         null=True,
         verbose_name=_("Company Title"),
+    )
+    logo = models.ImageField(
+        _("Logo"),
+        upload_to=set_company_logo_path,
+        validators=[_validator.image_file_validator],
     )
     email = models.EmailField(
         max_length=255,
@@ -151,6 +163,33 @@ class CompanyProfile(TimeStampedModel):
         default=False,
         verbose_name=_("Is Active?"),
     )
+    upstream_industries = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        verbose_name=_("Upstream Industries"),
+    )
+    downstream_industries = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        verbose_name=_("Downstream Industries"),
+    )
+
+    @property
+    def is_profile_complete(self):
+        for field in self._meta.fields:
+            if field.name in [
+                "id",
+                "created_at",
+                "updated_at",
+                "logo",
+            ]:
+                continue
+            value = getattr(self, field.name)
+            if value in [None, "", []]:
+                return False
+        return True
 
     def __str__(self) -> str:
         return f"{self.title!r}"
