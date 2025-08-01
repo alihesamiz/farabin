@@ -1,12 +1,14 @@
-.PHONY: start dev migrations migrate stop status
+.PHONY: start dev migrations migrate stop status venv activate
 
-dev:
+default: dev
+
+dev:activate
 	python manage.py runserver
 
 migrations:
 	python manage.py makemigrations
 
-migrate:
+migrate:migrations
 	python manage.py migrate
 
 start:
@@ -17,3 +19,9 @@ stop:
 
 status:
 	bash scripts/status.sh
+
+venv:
+	uv sync
+
+activate:venv
+	. .venv/bin/activate
