@@ -1,1 +1,1 @@
-from apps.company.services.company_services import *  # noqa: F403
+from apps.company.services.company_service import *  # noqa: F403
