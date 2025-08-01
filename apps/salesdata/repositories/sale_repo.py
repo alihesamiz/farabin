@@ -2,6 +2,7 @@ from apps.salesdata.models import (
     CustomerSaleData,
     CustomerSaleFile,
     DomesticSaleData,
+    DomesticSaleFile,
     ProductData,
     ProductDataFile,
     ProductLogFile,
@@ -54,3 +55,8 @@ class SaleRepository:
     @classmethod
     def get_domestic_sale_of_company(cls, company):
         return cls.get_company_data(DomesticSaleData, company)
+
+    classmethod
+
+    def get_domestic_sale_file_of_company(cls, company):
+        return cls.get_company_data(DomesticSaleFile, company)

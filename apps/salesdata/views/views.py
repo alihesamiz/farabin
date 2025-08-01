@@ -8,6 +8,7 @@ from apps.salesdata.serializers import (
     CompanyCustomerSerializer,
     CompanyCustomerUpdateSerializer,
     CompanyDomesticSaleCreateSerializer,
+    CompanyDomesticSaleFileSerializer,
     CompanyDomesticSaleListSerializer,
     CompanyDomesticSaleSerializer,
     CompanyDomesticSaleUpdateSerializer,
@@ -175,3 +176,12 @@ class CompanyDomesticSaleViewSet(ViewSetMixin, ModelViewSet):
     def get_queryset(self):
         company = self.get_company()
         return _repo.get_domestic_sale_of_company(company)
+
+
+class CompanyDomesticSaleFileViewSet(ViewSetMixin,ModelViewSet):
+    # action_serializer_class
+    default_serializer_class = CompanyDomesticSaleFileSerializer
+    
+    def get_queryset(self):
+        company = self.get_company()
+        return _repo.get_domestic_sale_file_of_company(company)

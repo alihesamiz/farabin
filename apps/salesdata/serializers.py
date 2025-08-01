@@ -7,6 +7,7 @@ from apps.salesdata.models import (
     CustomerSaleData,
     CustomerSaleFile,
     DomesticSaleData,
+    DomesticSaleFile,
     ProductData,
     ProductDataFile,
     ProductLog,
@@ -259,16 +260,16 @@ class CompanyProductLogFileSerializer(ModelSerializer):
         return super().create(validated_data)
 
 
-def update(self, instance, validated_data):
-    if "deleted_at" in validated_data:
-        validated_data.pop("deleted_at")
-        instance.deleted_at = now()
+    def update(self, instance, validated_data):
+        if "deleted_at" in validated_data:
+            validated_data.pop("deleted_at")
+            instance.deleted_at = now()
 
-    for attr, value in validated_data.items():
-        setattr(instance, attr, value)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
 
-    instance.save()
-    return instance
+        instance.save()
+        return instance
 
 
 class CompanyProductLogBaseSerializer(ModelSerializer):
@@ -406,3 +407,39 @@ class CompanyDomesticSaleUpdateSerializer(ModelSerializer):
             instance.product_code = product
         instance.save()
         return super().update(instance, validated_data)
+
+
+class CompanyDomesticSaleFileSerializer(ModelSerializer):
+    class Meta:
+        model = DomesticSaleFile
+        fields = [
+            "id",
+            "file",
+            "created_at",
+            "updated_at",
+            "deleted_at",
+        ]
+        read_only_fields = [
+            "created_at",
+            "updated_at",
+        ]
+
+    def create(self, validated_data):
+        company = self.context["company"]
+        if not company:
+            raise ValidationError("User has no associated company")
+        validated_data["company"] = company
+
+        return super().create(validated_data)
+
+
+    def update(self, instance, validated_data):
+        if "deleted_at" in validated_data:
+            validated_data.pop("deleted_at")
+            instance.deleted_at = now()
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+        return instance

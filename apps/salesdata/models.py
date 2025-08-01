@@ -2,8 +2,29 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from apps.core.models import TimeStampedModel
-from apps.core.utils import GeneralUtils
+from apps.salesdata.services import SaleDataService as _service
 from constants.validators import Validator as _validator
+
+
+class DomesticSaleFile(TimeStampedModel):
+    company = models.ForeignKey(
+        "company.CompanyProfile",
+        on_delete=models.CASCADE,
+        related_name="domestic_sale_files",
+        verbose_name=_("Company"),
+    )
+    file = models.FileField(
+        validators=[_validator.excel_file_validator],
+        upload_to=_service.set_domestic_data_file_upload_path,
+        verbose_name=_("File"),
+    )
+
+    def __str__(self):
+        return self.company
+
+    class Meta:
+        verbose_name = _("Domestic Sale File")
+        verbose_name_plural = _("Domestic Sale Files")
 
 
 class DomesticSaleData(TimeStampedModel):
@@ -167,13 +188,6 @@ class ForeignSaleData(TimeStampedModel):
         verbose_name_plural = _("Foreign Sales")
 
 
-def get_customer_data_file_upload_path(instance, filename):
-    path = GeneralUtils(path="sales_customer_files", fields=["company"]).rename_folder(
-        instance, filename
-    )
-    return path
-
-
 class CustomerSaleFile(TimeStampedModel):
     company = models.ForeignKey(
         "company.CompanyProfile",
@@ -183,7 +197,7 @@ class CustomerSaleFile(TimeStampedModel):
     )
     file = models.FileField(
         verbose_name=_("File"),
-        upload_to=get_customer_data_file_upload_path,
+        upload_to=_service.set_customer_data_file_upload_path,
         validators=[_validator.excel_file_validator],
     )
 
@@ -265,13 +279,6 @@ class CustomerSaleData(TimeStampedModel):
         ]
 
 
-def get_product_data_file_upload_path(instance, filename):
-    path = GeneralUtils(path="sales_customer_files", fields=["company"]).rename_folder(
-        instance, filename
-    )
-    return path
-
-
 class ProductDataFile(TimeStampedModel):
     company = models.ForeignKey(
         "company.CompanyProfile",
@@ -281,7 +288,7 @@ class ProductDataFile(TimeStampedModel):
     )
     file = models.FileField(
         verbose_name=_("File"),
-        upload_to=get_product_data_file_upload_path,
+        upload_to=_service.set_product_data_file_upload_path,
         validators=[_validator.excel_file_validator],
     )
 
@@ -388,13 +395,6 @@ class ProductLog(TimeStampedModel):
         verbose_name_plural = _("Product Logs")
 
 
-def get_product_logs_file_upload_path(instance, filename):
-    path = GeneralUtils(
-        path="sales_product_logs_files", fields=["company"]
-    ).rename_folder(instance, filename)
-    return path
-
-
 class ProductLogFile(TimeStampedModel):
     company = models.ForeignKey(
         "company.CompanyProfile",
@@ -404,7 +404,7 @@ class ProductLogFile(TimeStampedModel):
     )
     file = models.FileField(
         verbose_name=_("File"),
-        upload_to=get_product_logs_file_upload_path,
+        upload_to=_service.set_product_logs_file_upload_path,
         validators=[_validator.excel_file_validator],
     )
 
