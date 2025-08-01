@@ -1,0 +1,380 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-08-01 17:46+0330\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+#: apps/salesdata/apps.py:8
+msgid "Sale Data"
+msgstr "داده فروش"
+
+#: apps/salesdata/apps.py:9
+msgid "Sales Data"
+msgstr "داده‌های فروش"
+
+#: apps/salesdata/models.py:14 apps/salesdata/models.py:43
+#: apps/salesdata/models.py:121 apps/salesdata/models.py:195
+#: apps/salesdata/models.py:230 apps/salesdata/models.py:286
+#: apps/salesdata/models.py:317 apps/salesdata/models.py:402
+msgid "Company"
+msgstr "شرکت"
+
+#: apps/salesdata/models.py:19 apps/salesdata/models.py:199
+#: apps/salesdata/models.py:290 apps/salesdata/models.py:406
+msgid "File"
+msgstr "فایل"
+
+#: apps/salesdata/models.py:26
+msgid "Domestic Sale File"
+msgstr "فایل فروش داختی"
+
+#: apps/salesdata/models.py:27
+msgid "Domestic Sale Files"
+msgstr "فایل‌های فروش داخلی"
+
+#: apps/salesdata/models.py:32 apps/salesdata/models.py:102
+#: apps/salesdata/models.py:219
+msgid "Online"
+msgstr "آنلاین"
+
+#: apps/salesdata/models.py:33
+msgid "Offline"
+msgstr "آفلاین"
+
+#: apps/salesdata/models.py:36
+msgid "Cash"
+msgstr "نقد"
+
+#: apps/salesdata/models.py:37
+msgid "Installment"
+msgstr ""
+
+#: apps/salesdata/models.py:47 apps/salesdata/models.py:125
+msgid "Customer Name"
+msgstr ""
+
+#: apps/salesdata/models.py:53 apps/salesdata/models.py:131
+msgid "Product Code"
+msgstr ""
+
+#: apps/salesdata/models.py:56 apps/salesdata/models.py:137
+msgid "Sold Amount"
+msgstr ""
+
+#: apps/salesdata/models.py:62 apps/salesdata/models.py:143
+#: apps/salesdata/models.py:379
+msgid "Unit Price"
+msgstr ""
+
+#: apps/salesdata/models.py:67
+msgid "Discount Price"
+msgstr ""
+
+#: apps/salesdata/models.py:73 apps/salesdata/models.py:156
+msgid "Sale Method"
+msgstr ""
+
+#: apps/salesdata/models.py:79
+msgid "Payment Method"
+msgstr ""
+
+#: apps/salesdata/models.py:81
+msgid "Sold At"
+msgstr ""
+
+#: apps/salesdata/models.py:87
+msgid "Domestic Sale"
+msgstr ""
+
+#: apps/salesdata/models.py:88
+msgid "Domestic Sales"
+msgstr ""
+
+#: apps/salesdata/models.py:103 apps/salesdata/models.py:223
+msgid "Exhibition"
+msgstr ""
+
+#: apps/salesdata/models.py:106
+msgid "Advance Payment"
+msgstr ""
+
+#: apps/salesdata/models.py:107
+msgid "Open Account"
+msgstr ""
+
+#: apps/salesdata/models.py:108
+msgid "Receivable"
+msgstr ""
+
+#: apps/salesdata/models.py:109
+msgid "Document"
+msgstr ""
+
+#: apps/salesdata/models.py:112
+msgid "Land"
+msgstr ""
+
+#: apps/salesdata/models.py:113
+msgid "Rail"
+msgstr ""
+
+#: apps/salesdata/models.py:114
+msgid "Sea"
+msgstr ""
+
+#: apps/salesdata/models.py:115
+msgid "Air"
+msgstr ""
+
+#: apps/salesdata/models.py:145
+msgid "Contract Date"
+msgstr ""
+
+#: apps/salesdata/models.py:146
+msgid "Delivery Date"
+msgstr ""
+
+#: apps/salesdata/models.py:147
+msgid "Target Country"
+msgstr ""
+
+#: apps/salesdata/models.py:148 apps/salesdata/models.py:253
+msgid "Area"
+msgstr ""
+
+#: apps/salesdata/models.py:150
+msgid "Customer Approval"
+msgstr ""
+
+#: apps/salesdata/models.py:162
+msgid "Payment Status"
+msgstr ""
+
+#: apps/salesdata/models.py:168
+msgid "Transfer Condition"
+msgstr ""
+
+#: apps/salesdata/models.py:172
+msgid "Trading Currency"
+msgstr ""
+
+#: apps/salesdata/models.py:176
+msgid "Exchange Rate"
+msgstr ""
+
+#: apps/salesdata/models.py:180
+msgid "Sale Amount"
+msgstr ""
+
+#: apps/salesdata/models.py:187
+msgid "Foreign Sale"
+msgstr ""
+
+#: apps/salesdata/models.py:188
+msgid "Foreign Sales"
+msgstr ""
+
+#: apps/salesdata/models.py:208
+msgid "Customer Sale File"
+msgstr ""
+
+#: apps/salesdata/models.py:209
+msgid "Customer Sale Files"
+msgstr ""
+
+#: apps/salesdata/models.py:214
+msgid "Domestic"
+msgstr ""
+
+#: apps/salesdata/models.py:215
+msgid "Foreign"
+msgstr ""
+
+#: apps/salesdata/models.py:218
+msgid "Social"
+msgstr ""
+
+#: apps/salesdata/models.py:220
+msgid "Seo"
+msgstr ""
+
+#: apps/salesdata/models.py:221
+msgid "Email"
+msgstr ""
+
+#: apps/salesdata/models.py:222
+msgid "Phone"
+msgstr ""
+
+#: apps/salesdata/models.py:224
+msgid "People"
+msgstr ""
+
+#: apps/salesdata/models.py:225 apps/salesdata/models.py:312
+msgid "Other"
+msgstr ""
+
+#: apps/salesdata/models.py:235
+msgid "Name(Person/Company)"
+msgstr ""
+
+#: apps/salesdata/models.py:238
+msgid "Sale Area"
+msgstr ""
+
+#: apps/salesdata/models.py:248
+msgid "City"
+msgstr ""
+
+#: apps/salesdata/models.py:256
+msgid "First Purchase Date"
+msgstr ""
+
+#: apps/salesdata/models.py:259
+msgid "Last Purchase Date"
+msgstr ""
+
+#: apps/salesdata/models.py:262 apps/salesdata/models.py:333
+msgid "Description"
+msgstr ""
+
+#: apps/salesdata/models.py:269
+msgid "Customer Sale Data"
+msgstr ""
+
+#: apps/salesdata/models.py:270
+msgid "Customers Sale Data"
+msgstr ""
+
+#: apps/salesdata/models.py:296
+msgid "Product/Service Data File"
+msgstr ""
+
+#: apps/salesdata/models.py:297
+msgid "Products/Services Data Files"
+msgstr ""
+
+#: apps/salesdata/models.py:302
+msgid "Metre"
+msgstr ""
+
+#: apps/salesdata/models.py:303
+msgid "Square Metre"
+msgstr ""
+
+#: apps/salesdata/models.py:304
+msgid "Gram"
+msgstr ""
+
+#: apps/salesdata/models.py:305
+msgid "Kilo Gram"
+msgstr ""
+
+#: apps/salesdata/models.py:306
+msgid "Ton"
+msgstr ""
+
+#: apps/salesdata/models.py:307
+msgid "Number"
+msgstr ""
+
+#: apps/salesdata/models.py:308
+msgid "CC"
+msgstr ""
+
+#: apps/salesdata/models.py:309
+msgid "Litre"
+msgstr ""
+
+#: apps/salesdata/models.py:310
+msgid "Hour"
+msgstr ""
+
+#: apps/salesdata/models.py:311
+msgid "Minute"
+msgstr ""
+
+#: apps/salesdata/models.py:322
+msgid "Product/Service Code"
+msgstr ""
+
+#: apps/salesdata/models.py:326
+msgid "Name"
+msgstr ""
+
+#: apps/salesdata/models.py:331
+msgid "Unit"
+msgstr ""
+
+#: apps/salesdata/models.py:339
+msgid "Product/Service Data"
+msgstr ""
+
+#: apps/salesdata/models.py:340
+msgid "Products/Services Data"
+msgstr ""
+
+#: apps/salesdata/models.py:357
+msgid "Product"
+msgstr ""
+
+#: apps/salesdata/models.py:360
+msgid "Production Date"
+msgstr ""
+
+#: apps/salesdata/models.py:360
+msgid "The date of production."
+msgstr ""
+
+#: apps/salesdata/models.py:363
+msgid "Total Production Count"
+msgstr ""
+
+#: apps/salesdata/models.py:364
+msgid "Total number of units produced on this date."
+msgstr ""
+
+#: apps/salesdata/models.py:367
+msgid "Returned Products Count"
+msgstr ""
+
+#: apps/salesdata/models.py:369
+msgid "Number of units returned from customers."
+msgstr ""
+
+#: apps/salesdata/models.py:372
+msgid "Rejected Products Count"
+msgstr ""
+
+#: apps/salesdata/models.py:374
+msgid "Number of units that failed quality control."
+msgstr ""
+
+#: apps/salesdata/models.py:394
+msgid "Product Log"
+msgstr ""
+
+#: apps/salesdata/models.py:395
+msgid "Product Logs"
+msgstr ""
+
+#: apps/salesdata/models.py:415
+msgid "Product Log File"
+msgstr ""
+
+#: apps/salesdata/models.py:416
+msgid "Product Logs Files"
+msgstr ""

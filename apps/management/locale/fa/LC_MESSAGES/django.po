@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-17 09:06+0330\n"
+"POT-Creation-Date: 2025-08-01 17:43+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,8 +26,8 @@ msgstr "عنوان شرکت"
 msgid "Management"
 msgstr "بخش مدیریت"
 
-#: apps/management/models.py:34 apps/management/models.py:217
-#: apps/management/models.py:305
+#: apps/management/models.py:34 apps/management/models.py:225
+#: apps/management/models.py:310
 msgid "شرکت"
 msgstr ""
 
@@ -147,87 +147,91 @@ msgstr ""
 msgid "تهدید"
 msgstr ""
 
-#: apps/management/models.py:199 apps/management/models.py:224
+#: apps/management/models.py:205
+msgid "Company"
+msgstr "شرکت"
+
+#: apps/management/models.py:207 apps/management/models.py:230
 msgid "سوال"
 msgstr ""
 
-#: apps/management/models.py:203 apps/management/models.py:231
+#: apps/management/models.py:211 apps/management/models.py:235
 msgid "دسته‌بندی"
 msgstr ""
 
-#: apps/management/models.py:207
+#: apps/management/models.py:215
 msgid "SWOT سوال"
 msgstr ""
 
-#: apps/management/models.py:208
+#: apps/management/models.py:216
 msgid "SWOT سوالات"
 msgstr ""
 
-#: apps/management/models.py:229
+#: apps/management/models.py:233
 msgid "پاسخ"
 msgstr ""
 
-#: apps/management/models.py:236
+#: apps/management/models.py:240
 msgid "عامل خارجی"
 msgstr ""
 
-#: apps/management/models.py:241
+#: apps/management/models.py:250
 msgid "SWOT گزینه"
 msgstr ""
 
-#: apps/management/models.py:242
+#: apps/management/models.py:251
 msgid "SWOT گزینه‌ها"
 msgstr ""
 
-#: apps/management/models.py:282
+#: apps/management/models.py:287
 msgid "External factor must be specified for Opportunities and Threats."
 msgstr "عامل خارجی باید برای فرصت‌ها و تهدیدها مشخص شود."
 
-#: apps/management/models.py:312
+#: apps/management/models.py:317
 msgid "گزینه‌های SWOT"
 msgstr ""
 
-#: apps/management/models.py:314
+#: apps/management/models.py:319
 msgid "مورد تایید قرار گرفته است"
 msgstr ""
 
-#: apps/management/models.py:317
+#: apps/management/models.py:325
 msgid "SWOT ماتریس"
 msgstr ""
 
-#: apps/management/models.py:318
+#: apps/management/models.py:326
 msgid "SWOT ماتریس‌ها"
 msgstr ""
 
-#: apps/management/models.py:355
+#: apps/management/models.py:360
 msgid "ماتریس"
 msgstr ""
 
-#: apps/management/models.py:360
+#: apps/management/models.py:365
 msgid "تحلیل نقاط قوت و فرصت‌ها"
 msgstr ""
 
-#: apps/management/models.py:361
+#: apps/management/models.py:366
 msgid "تحلیل نقاط قوت و تهدیدات"
 msgstr ""
 
-#: apps/management/models.py:362
+#: apps/management/models.py:367
 msgid "تحلیل نقاط ضعف و فرصت‌ها"
 msgstr ""
 
-#: apps/management/models.py:363
+#: apps/management/models.py:368
 msgid "تحلیل نقاط ضعف و تهدیدات"
 msgstr ""
 
-#: apps/management/models.py:366
+#: apps/management/models.py:374
 msgid "SWOT تحلیل"
 msgstr ""
 
-#: apps/management/models.py:367
+#: apps/management/models.py:375
 msgid "SWOT تحلیل‌ها"
 msgstr ""
 
-#: apps/management/views/views.py:71
+#: apps/management/views/management.py:61
 msgid ""
 "Each company can only have one Human Resource record. To replace, you must "
 "first delete the previous record."
@@ -235,125 +239,14 @@ msgstr ""
 "هر شرکت تنها میتواند یک فایل منابع انسانی را بارگذاری کند. برای جایگزینی "
 "ابتدا فایل قبلی را حذف کنید."
 
-#: apps/management/views/views.py:80
+#: apps/management/views/management.py:70
 msgid "An error occurred while saving the Human Resource record."
 msgstr "هنگام ذخیره فایل منابع انسانی خطایی رخ داد."
 
-#: apps/management/views/views.py:114
+#: apps/management/views/management.py:99
 msgid "Invalid or missing HumanResource record for this company."
 msgstr "رکورد منابع انسانی مناسبی برای شرکت پیدا نشد."
 
-#: apps/management/views/views.py:140
+#: apps/management/views/management.py:121
 msgid "Not found an associated file with your profile"
 msgstr "فایلی متناسب با پروفایل شرکت شما یافت نشد. باپشتیبانی تماس بگیرید."
-
-#~ msgid "Excel File"
-#~ msgstr "فایل اکسل"
-
-#~ msgid "Is Approved"
-#~ msgstr "تایید"
-
-#~ msgid "Created At"
-#~ msgstr "ایجاد شده در"
-
-#~ msgid "Updated At"
-#~ msgstr "بروزرسانی شده در"
-
-#~ msgid "Human Resource"
-#~ msgstr "منبع انسانی"
-
-#~ msgid "Human Resources"
-#~ msgstr "منابع انسانی"
-
-#~ msgid "Full Name"
-#~ msgstr "نام کامل"
-
-#~ msgid "Position"
-#~ msgstr "موقعیت شغلی"
-
-#~ msgid "Reports to (Personnel)"
-#~ msgstr "گزارش میدهد به (شخص)"
-
-#~ msgid "Cooperates with (Personnel)"
-#~ msgstr "همکاری میکند با (شخص)"
-
-#~ msgid "Obligation"
-#~ msgstr "صلاحیت‌ها و مهارت‌ها"
-
-#~ msgid "Is Exist"
-#~ msgstr "وجود دارد"
-
-#~ msgid "Personnel Information"
-#~ msgstr "اطلاعات کارکنان"
-
-#~ msgid "Field"
-#~ msgstr "نام حوزه"
-
-#~ msgid "Position Excel"
-#~ msgstr "اکسل موقعیت‌ها"
-
-#~ msgid "Organization Chart"
-#~ msgstr "فایل چارت سازمانی"
-
-#~ msgid "Organization Charts"
-#~ msgstr "فایل‌های چارت سازمانی"
-
-#~ msgid "Political (e.g., regulations, government policies)"
-#~ msgstr "سیاسی(برای مثال قوانین و سیاست‌های دولت)"
-
-#~ msgid "Economic (e.g., market trends, inflation)"
-#~ msgstr "اقتصادی (برای مثال روند بازار و تورم)"
-
-#~ msgid "Social (e.g., cultural shifts, demographics)"
-#~ msgstr "اجتماعی (برای مثال تغییرات فرهنگی و جمعیت‌شناسی)"
-
-#~ msgid "Technological (e.g., innovation, automation)"
-#~ msgstr "فناوری (برای مثال نوآوری و خودکارسازی)"
-
-#~ msgid "Environmental (e.g., sustainability, climate)"
-#~ msgstr "محیط‌زیست (برای مثال پایداری و تغییرات اقلیمی)"
-
-#~ msgid "Legal (e.g., compliance, laws)"
-#~ msgstr "قانونی (برای مثال رعایت قوانین و مقررات)"
-
-#~ msgid "Strength"
-#~ msgstr "نقاط قوت"
-
-#~ msgid "Weakness"
-#~ msgstr "نقاط ضعف"
-
-#~ msgid "Opportunity"
-#~ msgstr "فرصت"
-
-#~ msgid "Threat"
-#~ msgstr "تهدید"
-
-#~ msgid "Question"
-#~ msgstr "سوال"
-
-#~ msgid "Category"
-#~ msgstr "دسته‌بندی"
-
-#~ msgid "SWOT Question"
-#~ msgstr "SWOT سوال"
-
-#~ msgid "SWOT Questions"
-#~ msgstr "SWOT سوالات"
-
-#~ msgid "Answer"
-#~ msgstr "پاسخ"
-
-#~ msgid "External Factor"
-#~ msgstr "عامل خارجی"
-
-#~ msgid "SWOT Option"
-#~ msgstr "SWOT گزینه"
-
-#~ msgid "SWOT Options"
-#~ msgstr "SWOT گزینه‌ها"
-
-#~ msgid "SWOT Matrix"
-#~ msgstr "SWOT ماتریس"
-
-#~ msgid "SWOT Matrices"
-#~ msgstr "SWOT ماتریس‌ها"

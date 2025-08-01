@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-17 09:06+0330\n"
+"POT-Creation-Date: 2025-08-01 17:43+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,82 +46,76 @@ msgstr "تاریخ ایجاد"
 msgid "Updated At"
 msgstr "تاریخ بروزرسانی"
 
-#: apps/core/models.py:30
+#: apps/core/models.py:23
+msgid "Deleted At"
+msgstr "تاریخ حذف"
+
+#: apps/core/models.py:33
 msgid "First name"
 msgstr "نام"
 
-#: apps/core/models.py:36
+#: apps/core/models.py:39
 msgid "Last name"
 msgstr "نام خانوادگی"
 
-#: apps/core/models.py:44
+#: apps/core/models.py:47
 msgid "Phone Number"
 msgstr "شماره تلفن"
 
-#: apps/core/models.py:47
+#: apps/core/models.py:50
 msgid "Social Code"
 msgstr "کد ملی"
 
-#: apps/core/models.py:55
+#: apps/core/models.py:58
 msgid "groups"
 msgstr "گروه‌ها"
 
-#: apps/core/models.py:58
+#: apps/core/models.py:61
 msgid ""
 "The groups this user belongs to. A user will get all permissions granted to "
 "each of their groups."
 msgstr ""
 
-#: apps/core/models.py:66
+#: apps/core/models.py:69
 msgid "user permissions"
 msgstr "اجازه‌های کاربر"
 
-#: apps/core/models.py:68
+#: apps/core/models.py:71
 msgid "Specific permissions for this user."
 msgstr "اجازه‌های اختاصاصی برای این کاربر"
 
-#: apps/core/models.py:112
+#: apps/core/models.py:115
 msgid "User"
 msgstr "کاربر"
 
-#: apps/core/models.py:113
+#: apps/core/models.py:116
 msgid "Users"
 msgstr "کاربران"
 
-#: apps/core/models.py:132
+#: apps/core/models.py:135
 msgid "OTP"
 msgstr "کد"
 
-#: apps/core/models.py:133
+#: apps/core/models.py:136
 msgid "OTPs"
 msgstr "کدها"
 
-#: apps/core/models.py:137 apps/core/models.py:165
+#: apps/core/models.py:140 apps/core/models.py:168
 msgid "Name"
 msgstr "نام"
 
-#: apps/core/models.py:144 apps/core/models.py:171
+#: apps/core/models.py:147 apps/core/models.py:174
 msgid "Province"
 msgstr "استان"
 
-#: apps/core/models.py:151
+#: apps/core/models.py:154
 msgid "City"
 msgstr "شهر"
 
-#: apps/core/models.py:152
+#: apps/core/models.py:155
 msgid "Cities"
 msgstr "شهرها"
 
-#: apps/core/models.py:172
+#: apps/core/models.py:175
 msgid "Provinces"
 msgstr "استان‌ها"
-
-#~ msgid "Phone number must be in 09XXXXXXXXX format."
-#~ msgstr "شماره تلفن را به صورت صحیح وارد نمایید."
-
-#~ msgid "Invalid_phone_number"
-#~ msgstr "شماره تلفن نامعتبر"
-
-#, python-brace-format
-#~ msgid "File size should be less than {max_file_size}"
-#~ msgstr "حجم فایل باید کمتر از {max_file_size} باشد."
