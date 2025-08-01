@@ -4,7 +4,6 @@ from django.core.management import BaseCommand
 
 from apps.company.models import LifeCycle
 
-
 logger = logging.getLogger("company")
 
 
@@ -14,8 +13,9 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         try:
             logging.info("Loading capital providing methods ...")
-            for choice, _ in LifeCycle.LIFE_CYCLE_CHOICES:
-                LifeCycle.objects.get_or_create(capital_providing=choice)
+
+            for choice, _ in LifeCycle.LifeCycleChoices.choices:
+                LifeCycle.objects.get_or_create(name=choice)
 
             logging.info("Capital providing methods loaded successfully.")
 
