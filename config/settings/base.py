@@ -289,7 +289,7 @@ LOGGING: Dict[str, Any] = {
 # For automatically adding apps into the request type
 
 # For the custom file path exceptions
-FILE_PATH_EXCEPTION_MODELS = ["OrganizationChartBase"]
+FILE_PATH_EXCEPTION_MODELS = ["OrganizationChartBase", "CompanyProfile"]
 
 
 # For retrieving of the files based on the company field
