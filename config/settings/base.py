@@ -41,6 +41,7 @@ PROJECT_APPS = [
     "apps.company",
     "apps.tickets",
     "apps.core",
+    "apps.swot",
 ]
 
 THIRED_PARTY_APPS = [
