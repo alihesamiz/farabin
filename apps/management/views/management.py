@@ -12,12 +12,9 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from apps.management.models import (
     Position,
-    SWOTAnalysis,
 )
 from apps.management.paginations import (
     PersonnelPagination,
-    SWOTOptionPagination,
-    SWOTQuestionPagination,
 )
 from apps.management.repositories import ManagementRepository as _repo
 from apps.management.serializers import (
@@ -29,11 +26,6 @@ from apps.management.serializers import (
     PersonelInformationCreateSerializer,
     PersonelInformationSerializer,
     PersonelInformationUpdateSerializer,
-    SWOTAnalysisSerializer,
-    SWOTMatrixSerializer,
-    SWOTOptionCreateSerializer,
-    SWOTOptionSerializer,
-    SWOTQuestionSerializer,
 )
 from apps.management.views.mixin import ViewSetMixin
 
@@ -182,42 +174,3 @@ class ChartNodeViewSet(ViewSetMixin, ReadOnlyModelViewSet):
             self.get_queryset(), self.get_serializer, positions
         )
         return Response(grouped_data, status=status.HTTP_200_OK)
-
-
-class SWOTQuestionViewSet(ViewSetMixin, ModelViewSet):
-    http_method_names = ["get"]
-    pagination_class = SWOTQuestionPagination
-    default_serializer_class = SWOTQuestionSerializer
-
-    def get_queryset(self):
-        category: str = self.request.query_params.get("category")
-        for_company: bool = bool(self.request.query_params.get("company"))
-        user = self.get_user()
-        return _repo.get_swot_questions(user, for_company, category)
-
-
-class SWOTOptionViewSet(ViewSetMixin, ModelViewSet):
-    action_serializer_class = {"create": SWOTOptionCreateSerializer}
-    default_serializer_class = SWOTOptionSerializer
-    pagination_class = SWOTOptionPagination
-
-    def get_queryset(self):
-        return _repo.get_company_swot_options(self.get_user())
-
-
-class SWOTMatrixViewSet(ViewSetMixin, ModelViewSet):
-    default_serializer_class = SWOTMatrixSerializer
-    http_method_names = ["get"]
-
-    def get_queryset(self):
-        return _repo.get_company_swot_matrix(self.get_user())
-
-
-class SWOTAnalysisViewSet(ViewSetMixin, ModelViewSet):
-    default_serializer_class = SWOTAnalysisSerializer
-
-    def get_queryset(self):
-        company = self.get_company()
-        return SWOTAnalysis.objects.select_related("matrix").filter(
-            matrix__company=company
-        )

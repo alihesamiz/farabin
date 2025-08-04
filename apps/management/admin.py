@@ -1,15 +1,10 @@
 from django.contrib import admin
-from django.utils.translation import gettext_lazy as _
 
 from apps.management.models import (
     HumanResource,
     OrganizationChartBase,
     PersonelInformation,
     Position,
-    SWOTAnalysis,
-    SWOTMatrix,
-    SWOTOption,
-    SWOTQuestion,
 )
 
 
@@ -47,70 +42,3 @@ class OrganizationChartAdmin(admin.ModelAdmin):
     list_display = ["field", "position_excel"]
     search_fields = ["field", "position_excel"]
     list_filter = ["field", "position_excel"]
-
-
-@admin.register(SWOTQuestion)
-class SWOTQuestionAdmin(admin.ModelAdmin):
-    list_display = ["text", "category"]
-    search_fields = ["text", "category"]
-    list_filter = ["company", "category"]
-    list_per_page = 20
-
-
-@admin.register(SWOTOption)
-class SWOTOptionAdmin(admin.ModelAdmin):
-    list_display = [
-        "company_name",
-        "question",
-        "answer",
-        "category",
-        "external_factor",
-        "created_at",
-        "updated_at",
-    ]
-    list_filter = ["company__title", "category"]
-    search_fields = ["company__title", "answer"]
-    list_per_page = 20
-
-    @admin.display(
-        description=_("Company Title"),
-    )
-    def company_name(self, obj):
-        return obj.company.title
-
-
-@admin.register(SWOTMatrix)
-class SWOTMatrixAdmin(admin.ModelAdmin):
-    list_display = ["company_name", "created_at", "updated_at"]
-    filter_horizontal = ["options"]
-    list_per_page = 20
-
-    @admin.display(
-        description=_("Company Title"),
-    )
-    def company_name(self, obj):
-        return obj.company.title
-
-    def formfield_for_manytomany(self, db_field, request, **kwargs):
-        if db_field.name == "options":
-            if request.user.is_superuser:
-                kwargs["queryset"] = SWOTOption.objects.all()
-            else:
-                kwargs["queryset"] = SWOTOption.objects.filter(
-                    company__user=request.user
-                )
-        return super().formfield_for_manytomany(db_field, request, **kwargs)
-
-
-@admin.register(SWOTAnalysis)
-class SWOTAnalysisAdmin(admin.ModelAdmin):
-    list_display = [
-        "__str__",
-        "created_at",
-        "updated_at",
-    ]
-    list_filter = [
-        "created_at",
-        "updated_at",
-    ]
-    list_per_page = 20

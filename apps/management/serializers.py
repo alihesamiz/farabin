@@ -6,10 +6,6 @@ from apps.management.models import (
     HumanResource,
     OrganizationChartBase,
     PersonelInformation,
-    SWOTAnalysis,
-    SWOTMatrix,
-    SWOTOption,
-    SWOTQuestion,
 )
 
 logger = logging.getLogger("management")
@@ -155,84 +151,3 @@ class OrganizationChartFileSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrganizationChartBase
         fields = ["id", "position_excel_url"]
-
-
-class SWOTQuestionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SWOTQuestion
-        fields = ["id", "text", "category"]
-
-
-class SWOTOptionBaseSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SWOTOption
-        fields = [
-            "id",
-            "question",
-            "answer",
-            "category",
-            "external_factor",
-            "created_at",
-            "updated_at",
-        ]
-
-
-class SWOTOptionSerializer(SWOTOptionBaseSerializer):
-    question = serializers.PrimaryKeyRelatedField(queryset=SWOTQuestion.objects.all())
-    question_detail = SWOTQuestionSerializer(source="question", read_only=True)
-
-    class Meta(SWOTOptionBaseSerializer.Meta):
-        fields = SWOTOptionBaseSerializer.Meta.fields + [
-            "question_detail",
-        ]
-
-
-class SWOTOptionCreateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SWOTOption
-        fields = [
-            "question",
-            "answer",
-            # "category",
-            "external_factor",
-        ]
-
-    def create(self, validated_data):
-        company = self.context["company"]
-        validated_data["company"] = company
-        instance = super().create(validated_data)
-
-        return instance
-
-
-class SWOTMatrixSerializer(serializers.ModelSerializer):
-    strengths = SWOTOptionSerializer(many=True, read_only=True)
-    weaknesses = SWOTOptionSerializer(many=True, read_only=True)
-    opportunities = SWOTOptionSerializer(many=True, read_only=True)
-    threats = SWOTOptionSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = SWOTMatrix
-        fields = [
-            "id",
-            "strengths",
-            "weaknesses",
-            "opportunities",
-            "threats",
-            "created_at",
-            "updated_at",
-        ]
-
-
-class SWOTAnalysisSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SWOTAnalysis
-        fields = [
-            "id",
-            "so",
-            "st",
-            "wo",
-            "wt",
-            "created_at",
-            "updated_at",
-        ]
