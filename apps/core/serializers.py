@@ -1,11 +1,8 @@
 from django.contrib.auth import get_user_model  # type: ignore
-
-
 from rest_framework import serializers  # type: ignore
 
 from apps.core.models import City, Province
 from constants.validators import Validator as _validator
-
 
 User = get_user_model()
 
@@ -55,6 +52,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "last_name",
             "phone_number",
             "social_code",
+            "is_profile_complete",
         ]
 
 
