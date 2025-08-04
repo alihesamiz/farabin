@@ -1,0 +1,21 @@
+meta {
+  name: Patch Company SWOT Options
+  type: http
+  seq: 4
+}
+
+patch {
+  url: 0.0.0.0:8000/swot/company/options/3/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "options": [3]
+  }
+}
+
+settings {
+  encodeUrl: true
+}
