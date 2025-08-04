@@ -5,7 +5,6 @@ from rest_framework.serializers import (
     CharField,
     ModelSerializer,
     PrimaryKeyRelatedField,
-    SerializerMethodField,
 )
 
 from apps.company.models import (
@@ -108,11 +107,6 @@ class CompanyUserUpdateSerializer(ModelSerializer):
 
 
 class CompanyProfileSerializer(ModelSerializer):
-    capital_providing_method = SerializerMethodField()
-
-    def get_capital_providing_method(self, obj):
-        return [item.get_name_display() for item in obj.capital_providing_method.all()]
-
     class Meta:
         model = CompanyProfile
         fields = [
