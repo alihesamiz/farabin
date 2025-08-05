@@ -178,7 +178,12 @@ class AuthViewSet(ViewSet):
 
         return APIResponse.success(message="Password reset successfully.")
 
-    @action(detail=False, methods=["post"], url_path="refresh")
+    @action(
+        detail=False,
+        methods=["post"],
+        url_path="refresh",
+        permission_classes=[AllowAny],
+    )
     def gain_access(self, request: Request):
         refresh_token = request.COOKIES.get("refresh")
         if refresh_token is None:
