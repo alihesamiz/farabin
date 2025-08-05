@@ -5,10 +5,6 @@ from apps.management.models import (
     OrganizationChartBase,
     PersonelInformation,
     Position,
-    SWOTCategory,
-    SWOTMatrix,
-    SWOTOption,
-    SWOTQuestion,
 )
 
 
@@ -135,39 +131,3 @@ class ManagementRepository:
         file_field = cls.get_tech_field_file(field)
         qs = OrganizationChartBase.objects.filter(field=file_field)
         return cls.check_query_set_exists(qs)
-
-    @classmethod
-    def get_company_swot_options(cls, user):
-        company = cls.get_company(user)
-        qs = SWOTOption.objects.select_related("company", "question").filter(
-            company=company
-        )
-        return cls.check_query_set_exists(qs)
-
-    @classmethod
-    def get_company_swot_matrix(cls, user):
-        company = cls.get_company(user)
-        qs = (
-            SWOTMatrix.objects.select_related("company")
-            .prefetch_related("options")
-            .filter(company=company)
-        )
-        return cls.check_query_set_exists(qs)
-
-    @classmethod
-    def get_swot_questions(cls, user=None, for_company=False, category=None):
-        qs = SWOTQuestion.objects.all()
-        if for_company:
-            print(for_company)
-            company = cls.get_company(user)
-            qs = qs.select_related("company").filter(company=company)
-        else:
-            qs = qs.filter(company__isnull=True)
-        if category and category.title() in cls.get_swot_question_categories():
-            qs = qs.filter(category=category)
-
-        return cls.check_query_set_exists(qs)
-
-    @staticmethod
-    def get_swot_question_categories():
-        return SWOTCategory.values

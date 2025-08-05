@@ -1,8 +1,7 @@
-from django.urls import path, include, re_path
+from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.conf import settings
-
+from django.urls import include, path, re_path
 from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularRedocView,
@@ -18,6 +17,7 @@ urlpatterns = [
     path("sales/", include("apps.salesdata.urls")),
     path("tickets/", include("apps.tickets.urls")),
     path("auth/", include("apps.core.urls")),
+    path("swot/", include("apps.swot.urls")),
 ]
 if settings.DEBUG:
     from debug_toolbar.toolbar import debug_toolbar_urls

@@ -2,8 +2,7 @@ import json
 
 from django.core.management.base import BaseCommand
 
-
-from apps.management.models import SWOTQuestion
+from apps.swot.models import SWOTQuestion
 
 
 class Command(BaseCommand):

@@ -8,9 +8,3 @@ class BasePageNumberPagination(PageNumberPagination):
 
 
 class PersonnelPagination(BasePageNumberPagination): ...
-
-
-class SWOTQuestionPagination(BasePageNumberPagination): ...
-
-
-class SWOTOptionPagination(BasePageNumberPagination): ...

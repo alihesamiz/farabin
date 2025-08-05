@@ -1,0 +1,19 @@
+meta {
+  name: SWOT Questions
+  type: http
+  seq: 6
+}
+
+get {
+  url: 0.0.0.0:8000/swot/questions/?category=Strength
+  body: none
+  auth: inherit
+}
+
+params:query {
+  category: Strength
+}
+
+settings {
+  encodeUrl: true
+}
