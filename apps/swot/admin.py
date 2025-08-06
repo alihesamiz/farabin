@@ -2,12 +2,13 @@ from django.contrib import admin
 
 from apps.swot.models import (
     CompanySWOTOption,
+    CompanySWOTOptionAnalysis,
     CompanySWOTOptionMatrix,
     CompanySWOTQuestion,
+    CompanySWOTQuestionAnalysis,
     CompanySWOTQuestionMatrix,
     SWOTOption,
     SWOTQuestion,
-    SWOTQuestionAnalysis,
 )
 
 
@@ -19,8 +20,12 @@ class SWOTOptionAdmin(admin.ModelAdmin): ...
 class SWOTQuestionAdmin(admin.ModelAdmin): ...
 
 
-@admin.register(SWOTQuestionAnalysis)
+@admin.register(CompanySWOTQuestionAnalysis)
 class SWOTQuestionAnalysisAdmin(admin.ModelAdmin): ...
+
+
+@admin.register(CompanySWOTOptionAnalysis)
+class SWOTOptionAnalysisAdmin(admin.ModelAdmin): ...
 
 
 @admin.register(CompanySWOTOption)
