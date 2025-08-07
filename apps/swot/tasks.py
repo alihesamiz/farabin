@@ -8,15 +8,15 @@ from openai import OpenAIError
 from pydantic import BaseModel, ValidationError
 
 from apps.swot.models import (
+    CompanySWOTOptionAnalysis,
     CompanySWOTOptionMatrix,
+    CompanySWOTQuestionAnalysis,
     CompanySWOTQuestionMatrix,
-    SWOTOptionAnalysis,
-    SWOTQuestionAnalysis,
 )
 
 logger = logging.getLogger("swot")
 
-
+# TODO, BUG: the analysis generation process needs a total refactor
 @shared_task(bind=True, rate_limit="5/m")
 def generate_swot_analysis(self, type: str, id: int):
     class SWOTResponse(BaseModel):
@@ -29,13 +29,17 @@ def generate_swot_analysis(self, type: str, id: int):
         match type:
             case "question":
                 matrix_instance = CompanySWOTQuestionMatrix.objects.get(id=id)
-                analysis_instance, created = SWOTQuestionAnalysis.objects.get_or_create(
-                    matrix=matrix_instance
+                analysis_instance, created = (
+                    CompanySWOTQuestionAnalysis.objects.get_or_create(
+                        matrix=matrix_instance
+                    )
                 )
             case "option":
                 matrix_instance = CompanySWOTOptionMatrix.objects.get(id=id)
-                analysis_instance, created = SWOTOptionAnalysis.objects.get_or_create(
-                    matrix=matrix_instance
+                analysis_instance, created = (
+                    CompanySWOTOptionAnalysis.objects.get_or_create(
+                        matrix=matrix_instance
+                    )
                 )
             case _:
                 ...

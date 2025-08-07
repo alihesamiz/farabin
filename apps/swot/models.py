@@ -181,101 +181,106 @@ class CompanySWOTQuestion(LifecycleModelMixin, TimeStampedModel):
                 matrix.questions.add(self)
 
 
-class CompanySWOTOptionMatrix(LifecycleModelMixin, TimeStampedModel):
+class BaseSWOTMatrix(LifecycleModelMixin, TimeStampedModel):
     company = models.ForeignKey(
         "company.CompanyProfile",
         verbose_name=_("Company"),
         on_delete=models.CASCADE,
-        related_name="swot_option_matrices",
     )
+    is_approved = models.BooleanField(_("Is approved"), default=False)
+
+    def __str__(self):
+        return f"{self.company.title!r} SWOT"
+
+    def _filter_by_category(self, category):
+        return (
+            self.get_related_items().select_related("company").filter(category=category)
+        )
+
+    @property
+    def strengths(self):
+        return self._filter_by_category(SWOTCategory.STRENGTH)
+
+    @property
+    def weaknesses(self):
+        return self._filter_by_category(SWOTCategory.WEAKNESS)
+
+    @property
+    def opportunities(self):
+        return self._filter_by_category(SWOTCategory.OPPORTUNITY)
+
+    @property
+    def threats(self):
+        return self._filter_by_category(SWOTCategory.THREAT)
+
+    def get_related_items(self):
+        """
+        Override this in subclasses to return the related manager (questions/options)
+        """
+        raise NotImplementedError("Subclasses must implement get_related_items()")
+
+    task_type = None
+
+    @hook(AFTER_UPDATE, condition=WhenFieldValueChangesTo("is_approved", True))
+    def start_analysing_task(self):
+        from apps.swot.tasks import generate_swot_analysis
+
+        if not self.task_type:
+            raise ValueError("Subclasses must define task_type")
+        generate_swot_analysis.delay(self.task_type, self.id)
+
+    class Meta:
+        abstract = True
+
+
+class CompanySWOTOptionMatrix(BaseSWOTMatrix):
     options = models.ManyToManyField(
         CompanySWOTOption,
         verbose_name=_("SWOT options"),
         related_name="swot_option_matrices",
     )
-    is_approved = models.BooleanField(_("Is approved"), default=False)
 
-    def __str__(self):
-        return f"{self.company.title!r} SWOT"
+    def get_related_items(self):
+        return self.options
 
-    @property
-    def strengths(self):
-        return self.options.filter(category=SWOTCategory.STRENGTH)
-
-    @property
-    def weaknesses(self):
-        return self.options.filter(category=SWOTCategory.WEAKNESS)
-
-    @property
-    def opportunities(self):
-        return self.options.filter(category=SWOTCategory.OPPORTUNITY)
-
-    @property
-    def threats(self):
-        return self.options.filter(category=SWOTCategory.THREAT)
+    task_type = "option"
 
     class Meta:
         verbose_name = _("Company SWOT(option) Matrix")
         verbose_name_plural = _("Company SWOT(option) Matrices")
 
-    @hook(AFTER_UPDATE, condition=WhenFieldValueChangesTo("is_approved", True))
-    def start_analysing_task(self):
-        """
-        Hook to start the SWOT analyze process when the matrix 'is_approved'
-        """
-        from apps.swot.tasks import generate_swot_analysis
 
-        generate_swot_analysis.delay("option", self.id)
-
-
-class CompanySWOTQuestionMatrix(LifecycleModelMixin, TimeStampedModel):
-    company = models.ForeignKey(
-        "company.CompanyProfile",
-        verbose_name=_("Company"),
-        on_delete=models.CASCADE,
-        related_name="swot_question_matrices",
-    )
+class CompanySWOTQuestionMatrix(BaseSWOTMatrix):
     questions = models.ManyToManyField(
         CompanySWOTQuestion,
         verbose_name=_("SWOT questions"),
         related_name="swot_question_matrices",
     )
-    is_approved = models.BooleanField(_("Is approved"), default=False)
 
-    def __str__(self):
-        return f"{self.company.title!r} SWOT"
+    def get_related_items(self):
+        return self.questions
 
-    @property
-    def strengths(self):
-        return self.questions.filter(category=SWOTCategory.STRENGTH)
-
-    @property
-    def weaknesses(self):
-        return self.questions.filter(category=SWOTCategory.WEAKNESS)
-
-    @property
-    def opportunities(self):
-        return self.questions.filter(category=SWOTCategory.OPPORTUNITY)
-
-    @property
-    def threats(self):
-        return self.questions.filter(category=SWOTCategory.THREAT)
+    task_type = "question"
 
     class Meta:
         verbose_name = _("Company SWOT(question) Matrix")
         verbose_name_plural = _("Company SWOT(question) Matrices")
 
-    @hook(AFTER_UPDATE, condition=WhenFieldValueChangesTo("is_approved", True))
-    def start_analysing_task(self):
-        """
-        Hook to start the SWOT analyze process when the matrix 'is_approved'
-        """
-        from apps.swot.tasks import generate_swot_analysis
 
-        generate_swot_analysis.delay("question", self.id)
+class BaseSWOTAnalysis(LifecycleModelMixin, TimeStampedModel):
+    so = models.TextField(verbose_name=_("SO Analysis"))
+    st = models.TextField(verbose_name=_("ST Analysis"))
+    wo = models.TextField(verbose_name=_("WO Analysis"))
+    wt = models.TextField(verbose_name=_("WT Analysis"))
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return f"{self.matrix.company.title}"
 
 
-class SWOTQuestionAnalysis(LifecycleModelMixin, TimeStampedModel):
+class CompanySWOTQuestionAnalysis(BaseSWOTAnalysis):
     matrix = models.ForeignKey(
         CompanySWOTQuestionMatrix,
         verbose_name=_("Matrix"),
@@ -283,34 +288,18 @@ class SWOTQuestionAnalysis(LifecycleModelMixin, TimeStampedModel):
         related_name="analysis",
     )
 
-    so = models.TextField(verbose_name=_("SO Analysis"))
-    st = models.TextField(verbose_name=_("ST Analysis"))
-    wo = models.TextField(verbose_name=_("WO Analysis"))
-    wt = models.TextField(verbose_name=_("WT Analysis"))
-
-    def __str__(self):
-        return f"{self.matrix.company.title}"
-
     class Meta:
         verbose_name = _("SWOT Question Analysis")
         verbose_name_plural = _("SWOT Questions Analysis")
 
 
-class SWOTOptionAnalysis(LifecycleModelMixin, TimeStampedModel):
+class CompanySWOTOptionAnalysis(BaseSWOTAnalysis):
     matrix = models.ForeignKey(
         CompanySWOTOptionMatrix,
         verbose_name=_("Matrix"),
         on_delete=models.CASCADE,
         related_name="analysis",
     )
-
-    so = models.TextField(verbose_name=_("SO Analysis"))
-    st = models.TextField(verbose_name=_("ST Analysis"))
-    wo = models.TextField(verbose_name=_("WO Analysis"))
-    wt = models.TextField(verbose_name=_("WT Analysis"))
-
-    def __str__(self):
-        return f"{self.matrix.company.title}"
 
     class Meta:
         verbose_name = _("SWOT Option Analysis")
