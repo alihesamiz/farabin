@@ -6,10 +6,11 @@ from apps.management.models import (
     PersonelInformation,
     Position,
 )
+from constants.typing import CompanyProfileType, UserType
 
 
 class ManagementRepository:
-    def get_company(user):
+    def get_company(user: UserType):
         return user.company_user.company
 
     def check_query_set_exists(qs):
@@ -36,14 +37,12 @@ class ManagementRepository:
         return file_field
 
     @classmethod
-    def get_human_resource_record(cls, user):
-        company = cls.get_company(user)
+    def get_human_resource_record_of_company(cls, company: CompanyProfileType):
         qs = HumanResource.objects.select_related("company").filter(company=company)
         return cls.check_query_set_exists(qs)
 
     @classmethod
-    def get_personnel_info(cls, user):
-        company = cls.get_company(user)
+    def get_personnel_info_of_company(cls, company: CompanyProfileType):
         qs = (
             PersonelInformation.objects.select_related("human_resource")
             .prefetch_related(
@@ -56,12 +55,12 @@ class ManagementRepository:
         return cls.check_query_set_exists(qs)
 
     @classmethod
-    def get_personnel_info_grouped_chart_data(cls, user):
+    def get_personnel_info_grouped_chart_data(cls, company: CompanyProfileType):
         """
         This functions gather the data for each person with the aggregated
         'reports-to' and 'cooperates-with' values
         """
-        queryset = cls.get_personnel_info(user)
+        queryset = cls.get_personnel_info_of_company(company)
         grouped_data = {}
 
         for person in queryset:
@@ -126,8 +125,8 @@ class ManagementRepository:
             raise Exception(f"No position found with the given code {code}")
 
     @classmethod
-    def get_company_base_chart_file(cls, user):
-        field = cls.get_company(user).tech_field  # user.company_user.company.tech_field
+    def get_base_chart_file_of_company(cls, company: CompanyProfileType):
+        field = company.tech_field
         file_field = cls.get_tech_field_file(field)
         qs = OrganizationChartBase.objects.filter(field=file_field)
         return cls.check_query_set_exists(qs)

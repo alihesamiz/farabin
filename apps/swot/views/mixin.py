@@ -1,6 +1,6 @@
 from apps.company.models import CompanyUserServicePermission
 from apps.core.permissions import HasAccessToService
-from constants.typing import CompanyModelQuery, ModelType
+from constants.typing import CompanyProfileType, UserType
 
 
 class ViewSetMixin:
@@ -15,10 +15,10 @@ class ViewSetMixin:
     }
     default_serializer_class = None
 
-    def get_company(self) -> CompanyModelQuery:
+    def get_company(self) -> CompanyProfileType:
         return self.request.user.company_user.company
 
-    def get_user(self) -> ModelType:
+    def get_user(self) -> UserType:
         return self.request.user
 
     def get_serializer_context(self):

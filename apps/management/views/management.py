@@ -41,7 +41,7 @@ class HumanResourceViewSet(ViewSetMixin, ModelViewSet):
     }
 
     def get_queryset(self):
-        return _repo.get_human_resource_record(self.get_user())
+        return _repo.get_human_resource_record_of_company(company=self.get_company())
 
     def perform_create(self, serializer):
         try:
@@ -75,8 +75,7 @@ class PersonnelInformationViewSet(ViewSetMixin, ModelViewSet):
     }
 
     def get_queryset(self):
-        user = self.get_user()
-        return _repo.get_personnel_info(user)
+        return _repo.get_personnel_info_of_company(company=self.get_company())
 
     def perform_create(self, serializer):
         company = self.get_company()
@@ -100,7 +99,7 @@ class OrganizationChartFileViewSet(ViewSetMixin, ReadOnlyModelViewSet):
     http_method_names = ["get"]
 
     def get_queryset(self):
-        return _repo.get_company_base_chart_file(self.get_user())
+        return _repo.get_base_chart_file_of_company(company=self.get_company())
 
     @action(detail=False, methods=["GET"], url_name="download", url_path="download")
     def download(self, request):
@@ -127,10 +126,10 @@ class ChartNodeViewSet(ViewSetMixin, ReadOnlyModelViewSet):
     default_serializer_class = ChartNodeSerializer
 
     def get_queryset(self):
-        return _repo.get_personnel_info(self.get_user())
+        return _repo.get_personnel_info_of_company(company=self.get_company())
 
     def list(self, request, *args, **kwargs):
-        data = _repo.get_personnel_info_grouped_chart_data(self.get_user())
+        data = _repo.get_personnel_info_grouped_chart_data(company=self.get_company())
         return Response(data)
 
     @action(detail=False, methods=["get"], url_name="positions", url_path="positions")

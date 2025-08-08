@@ -5,11 +5,12 @@ from apps.finance.models.finance import (
     FinanceExcelFile,
     FinancialData,
 )
+from constants.typing import CompanyProfileType, ModelType
 
 
 class FinanceRepository:
     @staticmethod
-    def get_tax_files_for_company(company):
+    def get_tax_files_for_company(company: CompanyProfileType) -> ModelType:
         return (
             TaxDeclarationFile.objects.filter(company=company)
             .select_related("company")
@@ -17,7 +18,7 @@ class FinanceRepository:
         )
 
     @staticmethod
-    def get_balance_report_files_for_company(company):
+    def get_balance_report_files_for_company(company: CompanyProfileType) -> ModelType:
         return (
             BalanceReportFile.objects.filter(company=company)
             .order_by("-year", "month")
@@ -25,13 +26,13 @@ class FinanceRepository:
         )
 
     @staticmethod
-    def get_financial_excel_files_for_company(company):
+    def get_financial_excel_files_for_company(company: CompanyProfileType) -> ModelType:
         return FinanceExcelFile.objects.select_related("company").filter(
             company=company
         )
 
     @staticmethod
-    def get_financial_data_for_company(company):
+    def get_financial_data_for_company(company: CompanyProfileType) -> ModelType:
         return (
             FinancialData.objects.select_related("financial_asset")
             .prefetch_related("financial_asset__company")
@@ -44,7 +45,7 @@ class FinanceRepository:
         )
 
     @staticmethod
-    def get_financial_analysis_for_company(company):
+    def get_financial_analysis_for_company(company: CompanyProfileType) -> ModelType:
         return (
             AnalysisReport.objects.select_related("calculated_data")
             .prefetch_related("calculated_data__financial_asset")
@@ -62,7 +63,9 @@ class FinanceRepository:
         )
 
     @staticmethod
-    def get_financial_charts_for_company(company, yearly: bool = True):
+    def get_financial_charts_for_company(
+        company: CompanyProfileType, yearly: bool = True
+    ) -> ModelType:
         return (
             FinancialData.objects.select_related("financial_asset")
             .filter(
