@@ -8,11 +8,12 @@ from constants.errors.api_exception import (
     UserAlreadyExistsError,
     UserNotFoundError,
 )
+from constants.typing import CompanyProfileType, UserType
 
 
 class UserService:
     @staticmethod
-    def create_user_with_phone_number(phone_number: str, social_code: str):
+    def create_user_with_phone_number(phone_number: str, social_code: str) -> UserType:
         try:
             return User.objects.create_user(
                 phone_number=phone_number, social_code=social_code, password=None
@@ -21,7 +22,7 @@ class UserService:
             raise UserAlreadyExistsError()
 
     @staticmethod
-    def check_user_password_returns_user(phone_number: str, password: str):
+    def check_user_password_returns_user(phone_number: str, password: str) -> UserType:
         user = _user_repo.get_user_by_phone_number(phone_number)
         if not user:
             raise UserNotFoundError()
@@ -43,7 +44,7 @@ class UserService:
     def create_company_user(user): ...
 
     @staticmethod
-    def create_company_returns_company(user):
+    def create_company_returns_company(user) -> CompanyProfileType:
         from apps.company.services import CompanyService
 
         company = CompanyService.create_profile_for_user(user)

@@ -1,10 +1,13 @@
 from apps.company.models import CompanyProfile, CompanyUser
 from apps.company.repositories import CompanyRepository as _repo
+from constants.typing import CompanyProfileType, CompanyUserType, UserType
 
 
 class CompanyService:
     @staticmethod
-    def create_company_user(user, company, role: str = CompanyUser.Role.STAFF):
+    def create_company_user(
+        user: UserType, company: CompanyProfileType, role: str = CompanyUser.Role.STAFF
+    ) -> CompanyUserType:
         """
         Create a CompanyUser entry linking user to company.
         """
@@ -12,8 +15,11 @@ class CompanyService:
 
     @classmethod
     def add_user_to_company(
-        cls, company, validated_data: dict, role: str = CompanyUser.Role.STAFF
-    ):
+        cls,
+        company: CompanyProfileType,
+        validated_data: dict,
+        role: str = CompanyUser.Role.STAFF,
+    ) -> CompanyUserType:
         """
         Add a user to the given company. Creates a user if one does not exist.
         """
@@ -28,7 +34,7 @@ class CompanyService:
         return company_user
 
     @classmethod
-    def create_profile_for_user(cls, user):
+    def create_profile_for_user(cls, user: UserType) -> CompanyProfileType:
         company = CompanyProfile.objects.create()
         cls.create_company_user(user, company, CompanyUser.Role.MANAGER)
         return company
