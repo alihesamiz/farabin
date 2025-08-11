@@ -5,35 +5,38 @@ meta {
 }
 
 patch {
-  url: 0.0.0.0:8000/company/profile/42f0412f-a941-403d-aad0-05edefdba76b/
+  url: 0.0.0.0:8000/company/profile/8dd84472-fc7b-41f5-b6a8-915598d3f776/
   body: json
   auth: inherit
 }
 
 body:json {
   {
-  //     "license": [
-  //       1,
-  //       2
-  //     ],
-  //   "city": 1,
-  //   "province": 13,
-  //   "tech_field": 2,
-  //   "special_field": 2,
-  //   "capital_providing_method": [
-  //     1
-  //   ],
-  //   "email":"test3@gmail.com",
-  //   "office_phone_number":"03111111411"
-  //   "address":"test"
-    "is_active": true
+    "id": "8dd84472-fc7b-41f5-b6a8-915598d3f776",
+    "title": "test",
+    "logo": "",
+    "email": "test@gmail.ccom",
+    "national_code": "14007969290",
+    "office_phone_number": "02122222222",
+    "license": [
+      1
+    ],
+    "tech_field": 1,
+    "special_field": 1,
+    "insurance_list": 12,
+    "capital_providing_method": [1],
+    "province": 1,
+    "city": 87,
+    "address": "tsettest"
+  //   "is_active": false
   }
 }
 
 body:multipart-form {
-  province: 1
-  city: 87
-  license: 
+  : 
+  ~province: 1
+  ~city: 87
+  ~license: 1
   ~insurance_list: 12
   ~province: 2
   ~address: tsettest
