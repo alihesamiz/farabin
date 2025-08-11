@@ -4,6 +4,7 @@ from apps.salesdata.models import (
     CustomerSaleData,
     CustomerSaleFile,
     DomesticSaleData,
+    DomesticSaleFile,
     ProductData,
     ProductDataFile,
     ProductLog,
@@ -43,7 +44,7 @@ class ProductLogFileAdmin(admin.ModelAdmin):
 
 @admin.register(ProductLog)
 class ProductLogAdmin(admin.ModelAdmin):
-    list_display = ["product", "production_date"]
+    list_display = ["product_name", "production_date"]
 
 
 @admin.register(DomesticSaleData)
@@ -51,3 +52,10 @@ class DomesticSaleDataAdmin(admin.ModelAdmin):
     list_display = [
         "company",
     ]
+
+
+@admin.register(DomesticSaleFile)
+class DomesticSaleFileAdmin(admin.ModelAdmin):
+    """Admin View for DomesticSaleFile"""
+
+    list_display = ("file", "company")
