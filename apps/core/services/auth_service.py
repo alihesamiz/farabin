@@ -72,7 +72,7 @@ class AuthService:
             value=refresh,
             httponly=True,
             secure=True,
-            samesite="None",
+            samesite="Lax",
             max_age=7 * 24 * 3600,
         )
         return response
