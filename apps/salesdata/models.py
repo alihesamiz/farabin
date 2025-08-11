@@ -1,12 +1,16 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django_lifecycle.decorators import hook
+from django_lifecycle.hooks import AFTER_CREATE
+from django_lifecycle.models import LifecycleModelMixin
 
 from apps.core.models import TimeStampedModel
 from apps.salesdata.services import SaleDataService as _service
+from apps.salesdata.services.excel_reader_service import Reader as _reader
 from constants.validators import Validator as _validator
 
 
-class DomesticSaleFile(TimeStampedModel):
+class DomesticSaleFile(LifecycleModelMixin, TimeStampedModel):
     company = models.ForeignKey(
         "company.CompanyProfile",
         on_delete=models.CASCADE,
@@ -20,7 +24,11 @@ class DomesticSaleFile(TimeStampedModel):
     )
 
     def __str__(self):
-        return self.company
+        return self.company.title
+
+    @hook(AFTER_CREATE)
+    def read_file(self):
+        _reader.process_domestic_file(self.pk)
 
     class Meta:
         verbose_name = _("Domestic Sale File")
@@ -42,16 +50,15 @@ class DomesticSaleData(TimeStampedModel):
         related_name="domestic_sales",
         verbose_name=_("Company"),
     )
+    factor_number = models.PositiveSmallIntegerField(verbose_name=_("Factor Number"))
     customer_name = models.CharField(
         max_length=255,
         verbose_name=_("Customer Name"),
     )
-    product_code = models.ForeignKey(
-        "ProductData",
-        on_delete=models.CASCADE,
-        related_name="domestic_sale",
+    product_code = models.PositiveSmallIntegerField(
         verbose_name=_("Product Code"),
     )
+    product_name = models.CharField(verbose_name=_("Product Name"), max_length=50)
     sold_amount = models.PositiveSmallIntegerField(
         verbose_name=_("Sold Amount"),
         validators=[_validator.min_numeric_value_validator()],
@@ -86,15 +93,6 @@ class DomesticSaleData(TimeStampedModel):
     class Meta:
         verbose_name = _("Domestic Sale")
         verbose_name_plural = _("Domestic Sales")
-        constraints = [
-            models.UniqueConstraint(
-                name="unique_company_sale_date",
-                fields=[
-                    "company",
-                    "sold_at",
-                ],
-            )
-        ]
 
 
 class ForeignSaleData(TimeStampedModel):
@@ -129,10 +127,7 @@ class ForeignSaleData(TimeStampedModel):
         on_delete=models.CASCADE,
         related_name="foreign_sale",
         verbose_name=_("Product Code"),
-    )  # models.CharField(
-    #     max_length=10,
-    #     verbose_name=_("Product Code"),
-    # )
+    )
     sold_amount = models.PositiveSmallIntegerField(
         verbose_name=_("Sold Amount"),
         validators=[_validator.min_numeric_value_validator()],
@@ -188,7 +183,7 @@ class ForeignSaleData(TimeStampedModel):
         verbose_name_plural = _("Foreign Sales")
 
 
-class CustomerSaleFile(TimeStampedModel):
+class CustomerSaleFile(LifecycleModelMixin, TimeStampedModel):
     company = models.ForeignKey(
         "company.CompanyProfile",
         related_name="customer_data_files",
@@ -203,6 +198,10 @@ class CustomerSaleFile(TimeStampedModel):
 
     def __str__(self):
         return self.company.title
+
+    @hook(AFTER_CREATE)
+    def read_file(self):
+        _reader.process_customer_list_file(self.pk)
 
     class Meta:
         verbose_name = _("Customer Sale File")
@@ -243,14 +242,9 @@ class CustomerSaleData(TimeStampedModel):
         max_length=20,
         choices=CustomerChannel.choices,
     )
-    city = models.ForeignKey(
-        "core.City",
+    city = models.CharField(
+        max_length=20,
         verbose_name=_("City"),
-        on_delete=models.DO_NOTHING,
-    )
-    area = models.CharField(
-        max_length=50,
-        verbose_name=_("Area"),
     )
     first_purchase_date = models.DateField(
         verbose_name=_("First Purchase Date"),
@@ -268,18 +262,9 @@ class CustomerSaleData(TimeStampedModel):
     class Meta:
         verbose_name = _("Customer Sale Data")
         verbose_name_plural = _("Customers Sale Data")
-        constraints = [
-            models.UniqueConstraint(
-                name="unique_company_customer",
-                fields=[
-                    "company",
-                    "name",
-                ],
-            )
-        ]
 
 
-class ProductDataFile(TimeStampedModel):
+class ProductDataFile(LifecycleModelMixin,TimeStampedModel):
     company = models.ForeignKey(
         "company.CompanyProfile",
         related_name="product_data_files",
@@ -292,6 +277,9 @@ class ProductDataFile(TimeStampedModel):
         validators=[_validator.excel_file_validator],
     )
 
+    @hook(AFTER_CREATE)
+    def read_file(self):
+        _reader.process_product_data_file(self.pk)
     class Meta:
         verbose_name = _("Product/Service Data File")
         verbose_name_plural = _("Products/Services Data Files")
@@ -338,22 +326,26 @@ class ProductData(TimeStampedModel):
     class Meta:
         verbose_name = _("Product/Service Data")
         verbose_name_plural = _("Products/Services Data")
-        constraints = [
-            models.UniqueConstraint(
-                name="unique_company_product",
-                fields=[
-                    "company",
-                    "code",
-                ],
-            )
-        ]
+        # constraints = [
+        #     models.UniqueConstraint(
+        #         name="unique_company_product",
+        #         fields=[
+        #             "company",
+        #             "code",
+        #         ],
+        #     )
+        # ]
 
 
 class ProductLog(TimeStampedModel):
-    product = models.ForeignKey(
-        ProductData,
-        related_name="product_log",
+    company = models.ForeignKey(
+        "company.CompanyProfile",
+        related_name="products_log",
+        verbose_name=_("Company"),
         on_delete=models.CASCADE,
+    )
+    product_name = models.CharField(
+        max_length=120,
         verbose_name=_("Product"),
     )
     production_date = models.DateField(
@@ -388,14 +380,14 @@ class ProductLog(TimeStampedModel):
         return self.net_quantity * self.unit_price
 
     def __str__(self):
-        return f"{self.product.name} on {self.production_date}"
+        return f"{self.product_name} on {self.production_date}"
 
     class Meta:
         verbose_name = _("Product Log")
         verbose_name_plural = _("Product Logs")
 
 
-class ProductLogFile(TimeStampedModel):
+class ProductLogFile(LifecycleModelMixin, TimeStampedModel):
     company = models.ForeignKey(
         "company.CompanyProfile",
         related_name="product_log_files",
@@ -407,6 +399,10 @@ class ProductLogFile(TimeStampedModel):
         upload_to=_service.set_product_logs_file_upload_path,
         validators=[_validator.excel_file_validator],
     )
+
+    @hook(AFTER_CREATE)
+    def read_file(self):
+        _reader.process_product_log_file(self.pk)
 
     def __str__(self):
         return self.company.title
