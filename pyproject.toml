@@ -106,6 +106,7 @@ dependencies = [
     "celery[redis]>=5.4.0",
     "django==5.1.10",
     "django-filter>=25.1",
+    "jdatetime>=5.2.0",
 ]
 
 [tool.ruff]

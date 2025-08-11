@@ -53,14 +53,14 @@ class CompanyProductViewSet(ViewSetMixin, ModelViewSet):
 
 
 class CompanyProductFileViewSet(ViewSetMixin, ModelViewSet):
-    http_method_names = ["get", "post", "patch", "put"]
-    action_serializer_class = {
-        "list": CompanyProductFileSerializer,
-        "retrieve": CompanyProductFileSerializer,
-        "create": CompanyProductFileSerializer,
-        "update": CompanyProductFileSerializer,
-        "partial_update": CompanyProductFileSerializer,
-    }
+    # http_method_names = ["get", "post", "patch", "put"]
+    # action_serializer_class = {
+    #     "list": CompanyProductFileSerializer,
+    #     "retrieve": CompanyProductFileSerializer,
+    #     "create": CompanyProductFileSerializer,
+    #     "update": CompanyProductFileSerializer,
+    #     "partial_update": CompanyProductFileSerializer,
+    # }
     default_serializer_class = CompanyProductFileSerializer
     ordering_fields = [
         "created_at",
@@ -102,14 +102,14 @@ class CompanyCustomerViewSet(ViewSetMixin, ModelViewSet):
 
 
 class CompanyCustomerFileViewSet(ViewSetMixin, ModelViewSet):
-    http_method_names = ["get", "post", "patch", "put"]
-    action_serializer_class = {
-        "list": CompanyCustomerFileSerializer,
-        "retrieve": CompanyCustomerFileSerializer,
-        "create": CompanyCustomerFileSerializer,
-        "update": CompanyCustomerFileSerializer,
-        "partial_update": CompanyCustomerFileSerializer,
-    }
+    # http_method_names = ["get", "post", "patch", "put"]
+    # action_serializer_class = {
+    #     "list": CompanyCustomerFileSerializer,
+    #     "retrieve": CompanyCustomerFileSerializer,
+    #     "create": CompanyCustomerFileSerializer,
+    #     "update": CompanyCustomerFileSerializer,
+    #     "partial_update": CompanyCustomerFileSerializer,
+    # }
     default_serializer_class = CompanyCustomerFileSerializer
     ordering_fields = [
         "created_at",
@@ -138,18 +138,19 @@ class CompanyProductLogViewSet(ViewSetMixin, ModelViewSet):
 
     def get_queryset(self):
         company = self.get_company()
-        return _repo.get_product_logs_of_company(company)
+        query_param = self.request.query_params.get("show_deleted", "false").lower()
+        show_deleted = query_param in ["true", "1", "t"]
+        return _repo.get_product_logs_of_company(company, show_deleted)
 
 
 class CompanyProductLogFileViewSet(ViewSetMixin, ModelViewSet):
-    http_method_names = ["get", "post", "patch", "put"]
-    action_serializer_class = {
-        "list": CompanyProductLogFileSerializer,
-        "retrieve": CompanyProductLogFileSerializer,
-        "create": CompanyProductLogFileSerializer,
-        "update": CompanyProductLogFileSerializer,
-        "partial_update": CompanyProductLogFileSerializer,
-    }
+    # action_serializer_class = {
+    #     "list": CompanyProductLogFileSerializer,
+    #     "retrieve": CompanyProductLogFileSerializer,
+    #     "create": CompanyProductLogFileSerializer,
+    #     "update": CompanyProductLogFileSerializer,
+    #     "partial_update": CompanyProductLogFileSerializer,
+    # }
     default_serializer_class = CompanyProductLogFileSerializer
     ordering_fields = [
         "created_at",
@@ -161,7 +162,9 @@ class CompanyProductLogFileViewSet(ViewSetMixin, ModelViewSet):
         company = self.get_company()
         query_param = self.request.query_params.get("show_deleted", "false").lower()
         show_deleted = query_param in ["true", "1", "t"]
-        return _repo.get_product_logs_of_company(company, show_deleted=show_deleted)
+        return _repo.get_product_logs_file_of_company(
+            company, show_deleted=show_deleted
+        )
 
 
 class CompanyDomesticSaleViewSet(ViewSetMixin, ModelViewSet):
@@ -178,10 +181,10 @@ class CompanyDomesticSaleViewSet(ViewSetMixin, ModelViewSet):
         return _repo.get_domestic_sale_of_company(company)
 
 
-class CompanyDomesticSaleFileViewSet(ViewSetMixin,ModelViewSet):
+class CompanyDomesticSaleFileViewSet(ViewSetMixin, ModelViewSet):
     # action_serializer_class
     default_serializer_class = CompanyDomesticSaleFileSerializer
-    
+
     def get_queryset(self):
         company = self.get_company()
         return _repo.get_domestic_sale_file_of_company(company)

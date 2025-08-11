@@ -11,11 +11,11 @@ class ViewSetMixin:
     service_attr = CompanyUserServicePermission.ServiceName.MARKETING
     permission_classes = [HasAccessToService | IsManagerOrReadOnly]
     action_serializer_class = {
-        "list": r"Serializer Class Here",
-        "retrieve": r"Serializer Class Here",
-        "create": r"Serializer Class Here",
-        "update": r"Serializer Class Here",
-        "partial_update": r"Serializer Class Here",
+        "list": None,
+        "retrieve": None,
+        "create": None,
+        "update": None,
+        "partial_update": None,
     }
     default_serializer_class = Serializer
     pagination_class = BasePagination
