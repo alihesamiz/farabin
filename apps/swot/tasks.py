@@ -1,5 +1,4 @@
 import logging
-from collections import defaultdict
 
 from celery import shared_task
 from django.conf import settings
@@ -7,18 +6,16 @@ from google import genai
 from openai import OpenAIError
 from pydantic import BaseModel, ValidationError
 
-from apps.swot.models import (
-    CompanySWOTOptionAnalysis,
-    CompanySWOTOptionMatrix,
-    CompanySWOTQuestionAnalysis,
-    CompanySWOTQuestionMatrix,
-)
-
 logger = logging.getLogger("swot")
 
-# TODO, BUG: the analysis generation process needs a total refactor
+
 @shared_task(bind=True, rate_limit="5/m")
-def generate_swot_analysis(self, type: str, id: int):
+def generate_swot_analysis(self, instance_pk: int) -> None:
+    from apps.swot.models import (  # noqa: F401
+        SWOTAnalysis,
+        SWOTMatrix,
+    )
+
     class SWOTResponse(BaseModel):
         so: str
         st: str
@@ -26,92 +23,124 @@ def generate_swot_analysis(self, type: str, id: int):
         wt: str
 
     try:
-        match type:
-            case "question":
-                matrix_instance = CompanySWOTQuestionMatrix.objects.get(id=id)
-                analysis_instance, created = (
-                    CompanySWOTQuestionAnalysis.objects.get_or_create(
-                        matrix=matrix_instance
-                    )
-                )
-            case "option":
-                matrix_instance = CompanySWOTOptionMatrix.objects.get(id=id)
-                analysis_instance, created = (
-                    CompanySWOTOptionAnalysis.objects.get_or_create(
-                        matrix=matrix_instance
-                    )
-                )
-            case _:
-                ...
-        logger.info(f"Creating SWOT analysis for {matrix_instance}")
+        instance = SWOTMatrix.objects.select_related("company").get(pk=instance_pk)
 
-        analysis_groups = defaultdict(list)
+        result = {
+            "strength": {"key": [], "answers": []},
+            "weakness": {"key": [], "answers": []},
+            "opportunity": {"key": [], "answers": []},
+            "threat": {"key": [], "answers": []},
+        }
+        swot_fields = ["strength", "weakness", "opportunity", "threat"]
 
-        for option in matrix_instance.options.all():
-            category = option.category[0].lower()
-            index = len(analysis_groups[category])
-            analysis_groups[category].append(
-                f"{category.upper()}{index}: {option.answer}"
-            )
+        for field_name in swot_fields:
+            json_data = getattr(instance, field_name)
+
+            if not json_data:
+                continue
+
+            question_ids = []
+            answers = []
+
+            for key, value in json_data.items():
+                try:
+                    question_id = int(key)
+                    question_ids.append(question_id)
+                    answers.append(value)
+                except (ValueError, TypeError):
+                    continue
+            result[field_name]["key"].extend(question_ids)
+            result[field_name]["answers"].extend(answers)
+
+            # match analysis_type:
+            #     case "q":
+            #         for id in question_ids:
+            #             new_key = SWOTQuestion.objects.get(pk=id).text
+            #             result[field_name]["key"] = new_key
+
+            #     case "e":
+            #         for id in question_ids:
+            #             new_key = SWOTOption.objects.get(pk=id).option
+            #             result[field_name]["key"] = new_key
+            #     case _:
+            #         ...
+
+        logger.info(f"Creating SWOT analysis for {instance}")
 
         combinations_dict = {
-            "so": analysis_groups["s"] + analysis_groups["o"],
-            "st": analysis_groups["s"] + analysis_groups["t"],
-            "wo": analysis_groups["w"] + analysis_groups["o"],
-            "wt": analysis_groups["w"] + analysis_groups["t"],
+            "so": result["strength"]["answers"] + result["opportunity"]["answers"],
+            "st": result["strength"]["answers"] + result["threat"]["answers"],
+            "wo": result["weakness"]["answers"] + result["opportunity"]["answers"],
+            "wt": result["weakness"]["answers"] + result["threat"]["answers"],
         }
 
         prompt = f"""
-    Create a detailed SWOT analysis in Persian language based on the following parameters provided. Present the output in a well-organized format with headings for each section.
-        SWOT Parameters:
-        Strengths,Opportunities: {combinations_dict["so"]}
-        Strengths,Threats: {combinations_dict["st"]}
-        Weaknesses,Opportunities: {combinations_dict["wo"]}
-        Weaknesses,Threats: {combinations_dict["wt"]}
+            # تحلیل جامع SWOT به زبان فارسی
 
-        Output Requirements:
+            بر اساس پارامترهای ارائه شده، یک تحلیل SWOT دقیق ایجاد کنید و خروجی را در قالب سازمان‌یافته با سرفصل‌های مربوطه ارائه دهید.
 
-        SWOT Matrix: Summarize the provided Strengths, Weaknesses, Opportunities, and Threats in a concise analysis.
+            ## پارامترهای SWOT:
+            - **نقاط قوت و فرصت‌ها **(Strengths,Opportunities): {combinations_dict["so"]}
+            - **نقاط قوت و تهدیدها **(Strengths,Threats): {combinations_dict["st"]}
+            - **نقاط ضعف و فرصت‌ها **(Weaknesses,Opportunities): {combinations_dict["wo"]}
+            - **نقاط ضعف و تهدیدها **(Weaknesses,Threats): {combinations_dict["wt"]}
 
-        SO Strategies: Develop strategies that leverage Strengths to capitalize on Opportunities.
-        ST Strategies: Develop strategies that use Strengths to mitigate Threats.
-        WO Strategies: Develop strategies that address Weaknesses by taking advantage of Opportunities.
-        WT Strategies: Develop strategies that minimize Weaknesses and avoid Threats.
-        Ensure each strategy is specific, realistic, and tailored to the provided context.
+            ## الزامات خروجی:
 
-        Use bullet points for clarity and include a brief explanation for each strategy.
-    """
+            ### **ماتریس SWOT**
+            **خلاصه‌ای جامع از نقاط قوت، نقاط ضعف، فرصت‌ها و تهدیدها در قالب تحلیلی مختصر و مفید.**
 
-        try:
-            client = genai.Client(api_key=settings.FARABIN_GEMINI_API_KEY)
-            response = client.models.generate_content(
-                model="gemini-2.0-flash",
-                contents=prompt,
-                config={
-                    "response_mime_type": "application/json",
-                    "response_schema": SWOTResponse,
-                },
-            )
-        except OpenAIError as genai_error:
-            logger.error(f"LLM Error during content generation: {str(genai_error)}")
-            raise genai_error
+            ### **استراتژی‌های SO **(نقاط قوت × فرصت‌ها)
+            **توسعه استراتژی‌هایی که از نقاط قوت برای بهره‌برداری از فرصت‌ها استفاده می‌کنند.**
+            - ⚫ هر استراتژی را با **نقطه سیاه** شروع کنید
+            - ⚫ هر استراتژی باید **مشخص، واقع‌بینانه و متناسب با زمینه ارائه شده** باشد
+            - ⚫ برای هر استراتژی یک **توضیح مختصر** ارائه دهید
 
-        try:
-            analysis: SWOTResponse = response.parsed
-        except ValidationError as val_err:
-            logger.error(f"Response schema validation error: {val_err}")
-            raise val_err
+            ### **استراتژی‌های ST **(نقاط قوت × تهدیدها)
+            **توسعه استراتژی‌هایی که از نقاط قوت برای کاهش اثرات تهدیدها استفاده می‌کنند.**
+            - ⚫ هر استراتژی را با **نقطه سیاه** شروع کنید
+            - ⚫ هر استراتژی باید **مشخص، واقع‌بینانه و متناسب با زمینه ارائه شده** باشد
+            - ⚫ برای هر استراتژی یک **توضیح مختصر** ارائه دهید
 
-        # Populate the analysis instance safely
+            ### **استراتژی‌های WO **(نقاط ضعف × فرصت‌ها)
+            **توسعه استراتژی‌هایی که نقاط ضعف را با بهره‌برداری از فرصت‌ها برطرف می‌کنند.**
+            - ⚫ هر استراتژی را با **نقطه سیاه** شروع کنید
+            - ⚫ هر استراتژی باید **مشخص، واقع‌بینانه و متناسب با زمینه ارائه شده** باشد
+            - ⚫ برای هر استراتژی یک **توضیح مختصر** ارائه دهید
+
+            ### **استراتژی‌های WT **(نقاط ضعف × تهدیدها)
+            **توسعه استراتژی‌هایی که نقاط ضعف را به حداقل رسانده و از تهدیدها اجتناب می‌کنند.**
+            - ⚫ هر استراتژی را با **نقطه سیاه** شروع کنید
+            - ⚫ هر استراتژی باید **مشخص، واقع‌بینانه و متناسب با زمینه ارائه شده** باشد
+            - ⚫ برای هر استراتژی یک **توضیح مختصر** ارائه دهید
+
+            **نکات مهم**:
+            - ⚠️ **حتماً از فرمت نقطه‌گذاری (Bullet Points) برای شفافیت بیشتر استفاده کنید**
+            - ⚠️ **متن‌های مهم را با Bold مشخص کنید**
+            - ⚠️ **تمام خروجی‌ها باید به زبان فارسی و در قالب Markdown باشند**
+            - ⚠️ **هر بخش را با سرفصل مناسب و سازمان‌یافته ارائه دهید**
+            """
+        client = genai.Client(api_key=settings.FARABIN_GEMINI_API_KEY)
+        response = client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=prompt,
+            config={
+                "response_mime_type": "application/json",
+                "response_schema": SWOTResponse,
+            },
+        )
+        analysis: SWOTResponse = response.parsed
+        analysis_instance, _ = SWOTAnalysis.objects.get_or_create(matrix=instance)
+
         analysis_instance.so = analysis.so or "N/A"
         analysis_instance.st = analysis.st or "N/A"
         analysis_instance.wo = analysis.wo or "N/A"
         analysis_instance.wt = analysis.wt or "N/A"
         analysis_instance.save()
 
-        logger.info(f"SWOT analysis created for {matrix_instance}")
+        logger.info(f"SWOT analysis created for {instance}")
 
-    except CompanySWOTQuestionMatrix.DoesNotExist:
+    except SWOTMatrix.DoesNotExist:
         error_msg = f"CompanySWOTQuestionMatrix with id {id} does not exist."
         logger.error(error_msg)
         return error_msg
@@ -120,3 +149,9 @@ def generate_swot_analysis(self, type: str, id: int):
             f"Unexpected error while creating SWOT analysis for {id}: {str(e)}"
         )
         return str(e)
+    except OpenAIError as genai_error:
+        logger.error(f"LLM Error during content generation: {str(genai_error)}")
+        raise genai_error
+    except ValidationError as val_err:
+        logger.error(f"Response schema validation error: {val_err}")
+        raise val_err
