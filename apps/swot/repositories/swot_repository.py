@@ -1,8 +1,9 @@
 from typing import Type
 
 from apps.swot.models import (
+    SWOTAnalysis,
     SWOTCategory,
-    SWOTModelMatrix,
+    SWOTMatrix,
     SWOTOption,
     SWOTQuestion,
 )
@@ -29,5 +30,15 @@ class SWOTRepository:
         return SWOTQuestion.objects.all()
 
     @classmethod
-    def get_swot_matrix(cls, company: CompanyModelQuery) -> QuerySet[SWOTModelMatrix]:
-        return cls.get_company_data(SWOTModelMatrix, company).order_by("-created_at")
+    def get_swot_matrix_of_company(
+        cls, company: CompanyModelQuery
+    ) -> QuerySet[SWOTMatrix]:
+        return cls.get_company_data(SWOTMatrix, company).order_by("-created_at")
+
+    @classmethod
+    def get_swot_analysis_of_company(
+        cls, company: CompanyModelQuery
+    ) -> QuerySet[SWOTAnalysis]:
+        return SWOTAnalysis.objects.select_related("matrix").filter(
+            matrix__company=company
+        )
