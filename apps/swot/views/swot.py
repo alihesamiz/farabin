@@ -1,13 +1,15 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from apps.swot.repositories import SWOTRepository as _repo
 from apps.swot.serializers import (
+    SWOTAnalysisListSerializer,
+    SWOTAnalysisSerializer,
     SWOTMatrixSerialiezr,
+    SWOTMatrixTypeSerializer,
     SWOTOptionSerializer,
     SWOTQuestionSerializer,
-    SWOTTypeMatrixSerializer,
 )
 from apps.swot.views import BasePagination, ViewSetMixin
 from constants.responses import APIResponse
@@ -31,16 +33,16 @@ class SWOTQuestionViewSet(ViewSetMixin, ModelViewSet):
 
 class SWOTMatrixViweSet(ViewSetMixin, ModelViewSet):
     action_serializer_class = {
-        "questionnaire_matrix": SWOTTypeMatrixSerializer,
-        "inferential_matrix": SWOTTypeMatrixSerializer,
-        "elective_matrix": SWOTTypeMatrixSerializer,
+        "questionnaire_matrix": SWOTMatrixTypeSerializer,
+        "inferential_matrix": SWOTMatrixTypeSerializer,
+        "elective_matrix": SWOTMatrixTypeSerializer,
     }
     default_serializer_class = SWOTMatrixSerialiezr
     pagination_class = BasePagination
 
     def get_queryset(self):
         company = self.get_company()
-        return _repo.get_swot_matrix(company)
+        return _repo.get_swot_matrix_of_company(company)
 
     def handle_matrix_action(self, request, matrix_type, serializer_class):
         if request.method.lower() == "get":
@@ -64,16 +66,26 @@ class SWOTMatrixViweSet(ViewSetMixin, ModelViewSet):
         methods=["get", "post"], detail=False, url_path="q-matrix", url_name="q_matrix"
     )
     def questionnaire_matrix(self, request):
-        return self.handle_matrix_action(request, "q", SWOTTypeMatrixSerializer)
+        return self.handle_matrix_action(request, "q", SWOTMatrixTypeSerializer)
 
     @action(
         methods=["get", "post"], detail=False, url_path="i-matrix", url_name="i_matrix"
     )
     def inferential_matrix(self, request):
-        return self.handle_matrix_action(request, "i", SWOTTypeMatrixSerializer)
+        return self.handle_matrix_action(request, "i", SWOTMatrixTypeSerializer)
 
     @action(
         methods=["get", "post"], detail=False, url_path="e-matrix", url_name="e_matrix"
     )
     def elective_matrix(self, request):
-        return self.handle_matrix_action(request, "e", SWOTTypeMatrixSerializer)
+        return self.handle_matrix_action(request, "e", SWOTMatrixTypeSerializer)
+
+
+class SWOTAnalysisViewSet(ViewSetMixin, ReadOnlyModelViewSet):
+    action_serializer_class = {
+        "list": SWOTAnalysisListSerializer,
+        "retrieve": SWOTAnalysisSerializer,
+    }
+
+    def get_queryset(self):
+        return _repo.get_swot_analysis_of_company(self.get_company())
