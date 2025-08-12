@@ -337,4 +337,4 @@ LOGGING["handlers"]["rotating_file"] = {  # type: ignore
 }
 
 
-COOLDOWN_PERIOD = timedelta(minutes=3)
+COOLDOWN_PERIOD = timedelta(minutes=1, seconds=30)
