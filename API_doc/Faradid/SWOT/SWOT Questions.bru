@@ -1,17 +1,17 @@
 meta {
   name: SWOT Questions
   type: http
-  seq: 8
+  seq: 2
 }
 
 get {
-  url: 0.0.0.0:8000/swot/questions/?category=Strength
+  url: 0.0.0.0:8000/swot/questions/
   body: none
   auth: inherit
 }
 
 params:query {
-  category: Strength
+  ~category: Strength
 }
 
 settings {
