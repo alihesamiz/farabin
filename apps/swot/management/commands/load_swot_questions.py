@@ -7,7 +7,7 @@ from apps.swot.models import SWOTQuestion
 
 class Command(BaseCommand):
     help = "Load SWOT options from the database"
-    path = "apps/management/management/commands/fixtures/swot_questions.json"
+    path = "apps/swot/management/commands/fixtures/swot_questions.json"
 
     def handle(self, *args, **options):
         self.__load_swot_options()
