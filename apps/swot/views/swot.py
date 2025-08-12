@@ -1,22 +1,16 @@
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.decorators import action
 from rest_framework.viewsets import ModelViewSet
 
 from apps.swot.repositories import SWOTRepository as _repo
 from apps.swot.serializers import (
-    CompanySWOTOptionAnalysisSerializer,
-    CompanySWOTOptionManageSerializer,
-    CompanySWOTOptionMatrixManageSerializer,
-    CompanySWOTOptionMatrixSerializer,
-    CompanySWOTOptionSerializer,
-    CompanySWOTQuestionAnalysisSerializer,
-    CompanySWOTQuestionManageSerializer,
-    CompanySWOTQuestionMatrixManageSerializer,
-    CompanySWOTQuestionMatrixSerializer,
-    CompanySWOTQuestionSerializer,
+    SWOTMatrixSerialiezr,
     SWOTOptionSerializer,
     SWOTQuestionSerializer,
+    SWOTTypeMatrixSerializer,
 )
-from apps.swot.views import ViewSetMixin
+from apps.swot.views import BasePagination, ViewSetMixin
+from constants.responses import APIResponse
 
 
 class SWOTOptionViewSet(ViewSetMixin, ModelViewSet):
@@ -35,79 +29,51 @@ class SWOTQuestionViewSet(ViewSetMixin, ModelViewSet):
     filterset_fields = ["category"]
 
 
-class CompanySWOTOptionViewSet(ViewSetMixin, ModelViewSet):
+class SWOTMatrixViweSet(ViewSetMixin, ModelViewSet):
     action_serializer_class = {
-        "list": CompanySWOTOptionSerializer,
-        "retrieve": CompanySWOTOptionSerializer,
-        "create": CompanySWOTOptionManageSerializer,
-        "update": CompanySWOTOptionManageSerializer,
-        "partial_update": CompanySWOTOptionManageSerializer,
+        "questionnaire_matrix": SWOTTypeMatrixSerializer,
+        "inferential_matrix": SWOTTypeMatrixSerializer,
+        "elective_matrix": SWOTTypeMatrixSerializer,
     }
-
-    def get_queryset(self):
-        query_param = self.request.query_params.get("category")
-        company = self.get_company()
-        return _repo.get_swot_options_of_company(company, query_param)
-
-
-class CompanySWOTQuestionViewSet(ViewSetMixin, ModelViewSet):
-    action_serializer_class = {
-        "list": CompanySWOTQuestionSerializer,
-        "retrieve": CompanySWOTQuestionSerializer,
-        "create": CompanySWOTQuestionManageSerializer,
-        "update": CompanySWOTQuestionManageSerializer,
-        "partial_update": CompanySWOTQuestionManageSerializer,
-    }
-
-    def get_queryset(self):
-        query_param = self.request.query_params.get("category")
-        company = self.get_company()
-        return _repo.get_swot_questions_of_company(company, query_param)
-
-
-class CompanySWOTQuestionMatrixViweSet(ViewSetMixin, ModelViewSet):
-    action_serializer_class = {
-        "list": CompanySWOTQuestionMatrixSerializer,
-        "retrieve": CompanySWOTQuestionMatrixSerializer,
-        "create": CompanySWOTQuestionMatrixManageSerializer,
-        "update": CompanySWOTQuestionMatrixManageSerializer,
-        "partial_update": CompanySWOTQuestionMatrixManageSerializer,
-    }
-
-    def get_queryset(self):
-        query_param = self.request.query_params.get("category")
-        company = self.get_company()
-        return _repo.get_swot_questions_matrix_of_company(company, query_param)
-
-
-class CompanySWOTOptionMatrixViweSet(ViewSetMixin, ModelViewSet):
-    action_serializer_class = {
-        "list": CompanySWOTOptionMatrixSerializer,
-        "retrieve": CompanySWOTOptionMatrixSerializer,
-        "create": CompanySWOTOptionMatrixManageSerializer,
-        "update": CompanySWOTOptionMatrixManageSerializer,
-        "partial_update": CompanySWOTOptionMatrixManageSerializer,
-    }
-
-    def get_queryset(self):
-        query_param = self.request.query_params.get("category")
-        company = self.get_company()
-        return _repo.get_swot_options_matrix_of_company(company, query_param)
-
-
-class CompanySWOTQuestionAnalysisViewSet(ViewSetMixin, ModelViewSet):
-    http_method_names = ["get"]
-    default_serializer_class = CompanySWOTQuestionAnalysisSerializer
+    default_serializer_class = SWOTMatrixSerialiezr
+    pagination_class = BasePagination
 
     def get_queryset(self):
         company = self.get_company()
-        return _repo.get_swot_question_analysis_of_company(company)
+        return _repo.get_swot_matrix(company)
 
+    def handle_matrix_action(self, request, matrix_type, serializer_class):
+        if request.method.lower() == "get":
+            qs = self.get_queryset().filter(matrix_type=matrix_type)
+            serializer = serializer_class(
+                qs, many=True, context=self.get_serializer_context()
+            )
+            return APIResponse.success(data=serializer.data)
 
-class CompanySWOTOptionAnalysisViewSet(ViewSetMixin, ModelViewSet):
-    http_method_names = ["get"]
-    default_serializer_class = CompanySWOTOptionAnalysisSerializer
+        elif request.method.lower() == "post":
+            data = request.data.copy()
+            data["matrix_type"] = matrix_type
+            serializer = serializer_class(
+                data=data, context=self.get_serializer_context()
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save(company=self.get_company())
+            return APIResponse.success(data=serializer.data)
 
-    def get_queryset(self):
-        company = self.get_company()
-        return _repo.get_swot_option_analysis_of_company(company)
+    @action(
+        methods=["get", "post"], detail=False, url_path="q-matrix", url_name="q_matrix"
+    )
+    def questionnaire_matrix(self, request):
+        return self.handle_matrix_action(request, "q", SWOTTypeMatrixSerializer)
+
+    @action(
+        methods=["get", "post"], detail=False, url_path="i-matrix", url_name="i_matrix"
+    )
+    def inferential_matrix(self, request):
+        return self.handle_matrix_action(request, "i", SWOTTypeMatrixSerializer)
+
+    @action(
+        methods=["get", "post"], detail=False, url_path="e-matrix", url_name="e_matrix"
+    )
+    def elective_matrix(self, request):
+        return self.handle_matrix_action(request, "e", SWOTTypeMatrixSerializer)
