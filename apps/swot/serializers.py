@@ -1,7 +1,8 @@
 from rest_framework.serializers import ModelSerializer
 
 from apps.swot.models import (
-    SWOTModelMatrix,
+    SWOTAnalysis,
+    SWOTMatrix,
     SWOTOption,
     SWOTQuestion,
 )
@@ -29,7 +30,7 @@ class SWOTQuestionSerializer(ModelSerializer):
 
 class SWOTMatrixSerialiezr(ModelSerializer):
     class Meta:
-        model = SWOTModelMatrix
+        model = SWOTMatrix
         fields = [
             "id",
             "matrix_type",
@@ -41,9 +42,9 @@ class SWOTMatrixSerialiezr(ModelSerializer):
         ]
 
 
-class SWOTTypeMatrixSerializer(ModelSerializer):
+class SWOTMatrixTypeSerializer(ModelSerializer):
     class Meta:
-        model = SWOTModelMatrix
+        model = SWOTMatrix
         fields = [
             "id",
             "opportunity",
@@ -58,3 +59,30 @@ class SWOTTypeMatrixSerializer(ModelSerializer):
     def create(self, validated_data):
         validated_data["company"] = self.context["company"]
         return super().create(validated_data)
+
+
+class SWOTAnalysisListSerializer(ModelSerializer):
+    class Meta:
+        model = SWOTAnalysis
+        fields = [
+            "id",
+            "so",
+            "st",
+            "wo",
+            "wt",
+            "created_at",
+        ]
+
+
+class SWOTAnalysisSerializer(ModelSerializer):
+    class Meta:
+        model = SWOTAnalysis
+        fields = [
+            "so",
+            "st",
+            "wo",
+            "wt",
+            "created_at",
+            "updated_at",
+            "deleted_at",
+        ]
