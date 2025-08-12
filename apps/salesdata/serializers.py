@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.utils.timezone import now
-from rest_framework.serializers import ModelSerializer, SlugRelatedField
+from rest_framework.serializers import ModelSerializer
 
 from apps.salesdata.models import (
     CustomerSaleData,
@@ -30,7 +30,15 @@ class ProductBaseSerializer(ModelSerializer):
         ]
 
 
-class ProductListSerializer(ProductBaseSerializer): ...
+class ProductListSerializer(ModelSerializer):
+    class Meta:
+        model = ProductData
+        fields = [
+            "id",
+            "name",
+            "code",
+            "updated_at",
+        ]
 
 
 class ProductSerializer(ModelSerializer):
@@ -81,8 +89,6 @@ class ProductUpdateSerializer(ModelSerializer):
 
 
 class CompanyCustomerListSerializer(ModelSerializer):
-    city = SlugRelatedField(slug_field="name", read_only=True)
-
     class Meta:
         model = CustomerSaleData
         fields = [
@@ -96,8 +102,6 @@ class CompanyCustomerListSerializer(ModelSerializer):
 
 
 class CompanyCustomerSerializer(ModelSerializer):
-    city = SlugRelatedField(slug_field="name", read_only=True)
-
     class Meta:
         model = CustomerSaleData
         fields = [
@@ -106,7 +110,6 @@ class CompanyCustomerSerializer(ModelSerializer):
             "sale_area",
             "channel",
             "city",
-            "area",
             "description",
             "first_purchase_date",
             "last_purchase_date",
@@ -124,15 +127,13 @@ class CompanyCustomerCreateSerializer(ModelSerializer):
             "sale_area",
             "channel",
             "city",
-            "area",
             "first_purchase_date",
             "last_purchase_date",
             "description",
         ]
 
     def create(self, validated_data):
-        user = self.context["request"].user
-        validated_data["company"] = getattr(user.company_user, "company", None)
+        validated_data["company"] = self.context["company"]
 
         try:
             return super().create(validated_data)
@@ -148,7 +149,6 @@ class CompanyCustomerUpdateSerializer(ModelSerializer):
             "sale_area",
             "channel",
             "city",
-            "area",
             "first_purchase_date",
             "last_purchase_date",
             "description",
@@ -259,7 +259,6 @@ class CompanyProductLogFileSerializer(ModelSerializer):
 
         return super().create(validated_data)
 
-
     def update(self, instance, validated_data):
         if "deleted_at" in validated_data:
             validated_data.pop("deleted_at")
@@ -272,26 +271,23 @@ class CompanyProductLogFileSerializer(ModelSerializer):
         return instance
 
 
-class CompanyProductLogBaseSerializer(ModelSerializer):
+class CompanyProductLogListSerializer(ModelSerializer):
     class Meta:
         model = ProductLog
         fields = [
             "id",
-            "product",
+            "product_name",
             "production_date",
             "unit_price",
         ]
 
 
-class CompanyProductLogListSerializer(CompanyProductLogBaseSerializer): ...
-
-
-class CompanyProductLogSerializer(CompanyProductLogBaseSerializer):
+class CompanyProductLogSerializer(ModelSerializer):
     class Meta:
         model = ProductLog
         fields = [
             "id",
-            "product",
+            "product_name",
             "production_date",
             "total_produced",
             "total_returned",
@@ -306,7 +302,7 @@ class CompanyProductLogCreateSerializer(ModelSerializer):
     class Meta:
         model = ProductLog
         fields = [
-            "product",
+            "product_name",
             "production_date",
             "total_produced",
             "total_returned",
@@ -322,7 +318,7 @@ class CompanyProductLogUpdateSerializer(ModelSerializer):
     class Meta:
         model = ProductLog
         fields = [
-            "product",
+            "product_name",
             "production_date",
             "total_produced",
             "total_returned",
@@ -356,6 +352,7 @@ class CompanyDomesticSaleSerializer(ModelSerializer):
             "id",
             "customer_name",
             "product_code",
+            "product_name",
             "sold_amount",
             "unit_price",
             "discount_price",
@@ -431,7 +428,6 @@ class CompanyDomesticSaleFileSerializer(ModelSerializer):
         validated_data["company"] = company
 
         return super().create(validated_data)
-
 
     def update(self, instance, validated_data):
         if "deleted_at" in validated_data:

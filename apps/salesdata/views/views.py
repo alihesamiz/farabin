@@ -53,14 +53,8 @@ class CompanyProductViewSet(ViewSetMixin, ModelViewSet):
 
 
 class CompanyProductFileViewSet(ViewSetMixin, ModelViewSet):
-    # http_method_names = ["get", "post", "patch", "put"]
-    # action_serializer_class = {
-    #     "list": CompanyProductFileSerializer,
-    #     "retrieve": CompanyProductFileSerializer,
-    #     "create": CompanyProductFileSerializer,
-    #     "update": CompanyProductFileSerializer,
-    #     "partial_update": CompanyProductFileSerializer,
-    # }
+    action_serializer_class = {}
+
     default_serializer_class = CompanyProductFileSerializer
     ordering_fields = [
         "created_at",
@@ -103,13 +97,7 @@ class CompanyCustomerViewSet(ViewSetMixin, ModelViewSet):
 
 class CompanyCustomerFileViewSet(ViewSetMixin, ModelViewSet):
     # http_method_names = ["get", "post", "patch", "put"]
-    # action_serializer_class = {
-    #     "list": CompanyCustomerFileSerializer,
-    #     "retrieve": CompanyCustomerFileSerializer,
-    #     "create": CompanyCustomerFileSerializer,
-    #     "update": CompanyCustomerFileSerializer,
-    #     "partial_update": CompanyCustomerFileSerializer,
-    # }
+    action_serializer_class = {}
     default_serializer_class = CompanyCustomerFileSerializer
     ordering_fields = [
         "created_at",
@@ -144,13 +132,8 @@ class CompanyProductLogViewSet(ViewSetMixin, ModelViewSet):
 
 
 class CompanyProductLogFileViewSet(ViewSetMixin, ModelViewSet):
-    # action_serializer_class = {
-    #     "list": CompanyProductLogFileSerializer,
-    #     "retrieve": CompanyProductLogFileSerializer,
-    #     "create": CompanyProductLogFileSerializer,
-    #     "update": CompanyProductLogFileSerializer,
-    #     "partial_update": CompanyProductLogFileSerializer,
-    # }
+    action_serializer_class = {}
+
     default_serializer_class = CompanyProductLogFileSerializer
     ordering_fields = [
         "created_at",
@@ -183,6 +166,8 @@ class CompanyDomesticSaleViewSet(ViewSetMixin, ModelViewSet):
 
 class CompanyDomesticSaleFileViewSet(ViewSetMixin, ModelViewSet):
     # action_serializer_class
+    action_serializer_class = {}
+
     default_serializer_class = CompanyDomesticSaleFileSerializer
 
     def get_queryset(self):
