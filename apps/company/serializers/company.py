@@ -125,6 +125,8 @@ class CompanyProfileSerializer(ModelSerializer):
             "city",
             "address",
             "is_profile_complete",
+            "upstream_industries",
+            "downstream_industries",
         ]
 
 
@@ -148,6 +150,8 @@ class CompanyProfileCreateSerializer(ModelSerializer):
             "province",
             "city",
             "address",
+            "upstream_industries",
+            "downstream_industries",
         ]
 
     def validate_social_code(self, value):
@@ -189,7 +193,8 @@ class CompanyProfileUpdateSerializer(ModelSerializer):
             "province",
             "city",
             "address",
-            "is_active",
+            "upstream_industries",
+            "downstream_industries",
         ]
         read_only_fields = ["id"]
 
