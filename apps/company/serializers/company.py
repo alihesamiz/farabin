@@ -5,12 +5,17 @@ from rest_framework.serializers import (
     CharField,
     ModelSerializer,
     PrimaryKeyRelatedField,
+    SerializerMethodField,
+    SlugField,
+    SlugRelatedField,
 )
 
 from apps.company.models import (
     CompanyProfile,
     CompanyUser,
     License,
+    SpecialTech,
+    TechField,
 )
 from constants.validators import Validator as _validator
 
@@ -107,6 +112,26 @@ class CompanyUserUpdateSerializer(ModelSerializer):
 
 
 class CompanyProfileSerializer(ModelSerializer):
+    tech_field = SlugRelatedField(
+        slug_field="name",
+        queryset=TechField.objects.all(),
+    )
+    special_field = SlugRelatedField(
+        slug_field="name",
+        queryset=SpecialTech.objects.all(),
+    )
+    license = SlugRelatedField(
+        slug_field="name",
+        queryset=License.objects.all(),
+        many=True,
+    )
+    capital_providing_method = SerializerMethodField()
+    province = SlugField()
+    city = SlugField()
+
+    def get_capital_providing_method(self, obj):
+        return [item.get_name_display() for item in obj.capital_providing_method.all()]
+
     class Meta:
         model = CompanyProfile
         fields = [
