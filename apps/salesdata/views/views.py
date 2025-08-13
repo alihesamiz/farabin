@@ -1,3 +1,4 @@
+from rest_framework.filters import SearchFilter
 from rest_framework.viewsets import ModelViewSet
 
 from apps.salesdata.repositories import SaleRepository as _repo
@@ -158,6 +159,20 @@ class CompanyDomesticSaleViewSet(ViewSetMixin, ModelViewSet):
         "update": CompanyDomesticSaleUpdateSerializer,
         "partial_update": CompanyDomesticSaleUpdateSerializer,
     }
+
+    filter_backends = [SearchFilter]
+    search_fields = [
+        "factor_number",
+        "customer_name",
+        "product_code",
+        "product_name",
+        "sold_amount",
+        "unit_price",
+        "discount_price",
+        "sale_method",
+        "payment_method",
+        "sold_at",
+    ]
 
     def get_queryset(self):
         company = self.get_company()
