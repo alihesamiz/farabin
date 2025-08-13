@@ -55,9 +55,9 @@ class SaleRepository:
         cls, company: CompanyProfileType, show_deleted: bool = False
     ):
         return (
-            ProductLog.objects.select_related("product")
-            .prefetch_related("product__company")
-            .filter(product__company=company)
+            ProductLog.objects.prefetch_related("product__company").filter(
+                product__company=company
+            )
         ).filter(deleted_at__isnull=not show_deleted)
 
     @classmethod
