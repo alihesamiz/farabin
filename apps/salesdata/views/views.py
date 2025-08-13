@@ -52,7 +52,9 @@ class CompanyProductViewSet(ViewSetMixin, ModelViewSet):
 
     def get_queryset(self):
         company = self.get_company()
-        return _repo.get_product_for_company(company)
+        query_param = self.request.query_params.get("show_deleted", "false").lower()
+        show_deleted = query_param in ["true", "1", "t"]
+        return _repo.get_product_for_company(company, show_deleted=show_deleted)
 
 
 class CompanyProductFileViewSet(ViewSetMixin, ModelViewSet):
@@ -67,8 +69,9 @@ class CompanyProductFileViewSet(ViewSetMixin, ModelViewSet):
 
     def get_queryset(self):
         company = self.get_company()
-        is_deleted = bool(self.request.query_params.get("is_deleted"))
-        return _repo.get_products_file_of_company(company, is_deleted)
+        query_param = self.request.query_params.get("show_deleted", "false").lower()
+        show_deleted = query_param in ["true", "1", "t"]
+        return _repo.get_products_file_of_company(company, show_deleted=show_deleted)
 
 
 class CompanyCustomerViewSet(ViewSetMixin, ModelViewSet):
@@ -95,7 +98,9 @@ class CompanyCustomerViewSet(ViewSetMixin, ModelViewSet):
 
     def get_queryset(self):
         company = self.get_company()
-        return _repo.get_customers_of_company(company)
+        query_param = self.request.query_params.get("show_deleted", "false").lower()
+        show_deleted = query_param in ["true", "1", "t"]
+        return _repo.get_customers_of_company(company, show_deleted=show_deleted)
 
 
 class CompanyCustomerFileViewSet(ViewSetMixin, ModelViewSet):
@@ -110,8 +115,9 @@ class CompanyCustomerFileViewSet(ViewSetMixin, ModelViewSet):
 
     def get_queryset(self):
         company = self.get_company()
-        is_deleted = bool(self.request.query_params.get("is_deleted"))
-        return _repo.get_customers_file_of_company(company, is_deleted)
+        query_param = self.request.query_params.get("show_deleted", "false").lower()
+        show_deleted = query_param in ["true", "1", "t"]
+        return _repo.get_customers_file_of_company(company, show_deleted=show_deleted)
 
 
 class CompanyProductLogViewSet(ViewSetMixin, ModelViewSet):
@@ -176,7 +182,9 @@ class CompanyDomesticSaleViewSet(ViewSetMixin, ModelViewSet):
 
     def get_queryset(self):
         company = self.get_company()
-        return _repo.get_domestic_sale_of_company(company)
+        query_param = self.request.query_params.get("show_deleted", "false").lower()
+        show_deleted = query_param in ["true", "1", "t"]
+        return _repo.get_domestic_sale_of_company(company, show_deleted=show_deleted)
 
 
 class CompanyDomesticSaleFileViewSet(ViewSetMixin, ModelViewSet):
@@ -186,4 +194,8 @@ class CompanyDomesticSaleFileViewSet(ViewSetMixin, ModelViewSet):
 
     def get_queryset(self):
         company = self.get_company()
-        return _repo.get_domestic_sale_file_of_company(company)
+        query_param = self.request.query_params.get("show_deleted", "false").lower()
+        show_deleted = query_param in ["true", "1", "t"]
+        return _repo.get_domestic_sale_file_of_company(
+            company, show_deleted=show_deleted
+        )
