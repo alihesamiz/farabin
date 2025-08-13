@@ -54,11 +54,9 @@ class SaleRepository:
     def get_product_logs_of_company(
         cls, company: CompanyProfileType, show_deleted: bool = False
     ):
-        return (
-            ProductLog.objects.prefetch_related("product__company").filter(
-                product__company=company
-            )
-        ).filter(deleted_at__isnull=not show_deleted)
+        return ProductLog.objects.filter(company=company).filter(
+            deleted_at__isnull=not show_deleted
+        )
 
     @classmethod
     def get_domestic_sale_of_company(cls, company: CompanyProfileType):

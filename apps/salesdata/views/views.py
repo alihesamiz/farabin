@@ -123,9 +123,9 @@ class CompanyProductLogViewSet(ViewSetMixin, ModelViewSet):
         "partial_update": CompanyProductLogUpdateSerializer,
     }
     search_fields = [
-        "product__name",
+        "product_name",
     ]
-    ordering = ["product__name", "production_date"]
+    ordering = ["product_name", "production_date"]
 
     def get_queryset(self):
         company = self.get_company()
