@@ -1,3 +1,4 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
 from rest_framework.viewsets import ModelViewSet
 
@@ -24,6 +25,7 @@ from apps.salesdata.serializers import (
     ProductSerializer,
     ProductUpdateSerializer,
 )
+from apps.salesdata.views.filters import CompanyDomesticSaleFilter
 from apps.salesdata.views.mixin import ViewSetMixin
 
 
@@ -160,19 +162,17 @@ class CompanyDomesticSaleViewSet(ViewSetMixin, ModelViewSet):
         "partial_update": CompanyDomesticSaleUpdateSerializer,
     }
 
-    filter_backends = [SearchFilter]
+    filter_backends = [SearchFilter, DjangoFilterBackend]
     search_fields = [
         "factor_number",
         "customer_name",
         "product_code",
         "product_name",
         "sold_amount",
-        "unit_price",
-        "discount_price",
         "sale_method",
         "payment_method",
-        "sold_at",
     ]
+    filterset_class = CompanyDomesticSaleFilter
 
     def get_queryset(self):
         company = self.get_company()
@@ -180,7 +180,6 @@ class CompanyDomesticSaleViewSet(ViewSetMixin, ModelViewSet):
 
 
 class CompanyDomesticSaleFileViewSet(ViewSetMixin, ModelViewSet):
-    # action_serializer_class
     action_serializer_class = {}
 
     default_serializer_class = CompanyDomesticSaleFileSerializer
