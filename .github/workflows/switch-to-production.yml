@@ -3,7 +3,7 @@ name: Switch to Production
 on:
   push:
     branches:
-      - release
+      - main
 
 
 jobs:
