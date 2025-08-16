@@ -1,17 +1,17 @@
 meta {
-  name: Post Product Logs file
+  name: Post Customer file
   type: http
   seq: 5
 }
 
 post {
-  url: 0.0.0.0:8000/sales/product-logs/file/
+  url: 0.0.0.0:8000/sales/customer/file/
   body: multipartForm
   auth: inherit
 }
 
 body:multipart-form {
-  file: @file(/home/madassandd/Desktop/product logs.xlsx)
+  file: @file(/home/madassandd/Desktop/customer_list.xlsx)
 }
 
 settings {

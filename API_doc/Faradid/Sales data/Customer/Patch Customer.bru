@@ -1,0 +1,21 @@
+meta {
+  name: Patch Customer
+  type: http
+  seq: 1
+}
+
+patch {
+  url: 0.0.0.0:8000/sales/customer/1/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "channel": "ex"
+  }
+}
+
+settings {
+  encodeUrl: true
+}

@@ -1,0 +1,27 @@
+meta {
+  name: Post Customer
+  type: http
+  seq: 1
+}
+
+post {
+  url: 0.0.0.0:8000/sales/customer/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "test",
+    "sale_area": "f",
+    "channel": "so",
+    "city": "iran",
+    "first_purchase_date": "2020-12-02",
+    "last_purchase_date": "2020-12-02",
+    "description": "test"
+  }
+}
+
+settings {
+  encodeUrl: true
+}
