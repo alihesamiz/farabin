@@ -311,6 +311,7 @@ class CompanyProductLogCreateSerializer(ModelSerializer):
         ]
 
     def create(self, validated_data):
+        validated_data["company"] = self.context["company"]
         return super().create(validated_data)
 
 
