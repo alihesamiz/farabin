@@ -27,7 +27,7 @@ from apps.core.services import (
     UserService as _user_service,
 )
 from apps.core.tasks import send_otp_task
-from constants.errors.api_exception import (
+from constants.errors import (
     InvalidCredentialsError,
     OTPValidationError,
     PasswordMismatchError,
@@ -141,9 +141,10 @@ class AuthViewSet(ViewSet):
             user = _user_service.check_user_password_returns_user(
                 phone_number, password
             )
-        except (UserNotFoundError, InvalidCredentialsError):
+        except InvalidCredentialsError:
             return APIResponse.unauthorized("Invalid phone number or password.")
-
+        except UserNotFoundError:
+            return APIResponse.not_found("No User found with this credentials")
         access_token, refresh_token = _auth_service.generate_tokens_for_user(user)
 
         return _auth_service.set_http_cookie_returns_access_response(
