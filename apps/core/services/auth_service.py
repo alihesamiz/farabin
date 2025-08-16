@@ -63,7 +63,7 @@ class AuthService:
         response = APIResponse.success(
             message="OTP verified successfully.",
             data={
-                "access": access,
+                # "access": access,
                 "completed_profile": user_profile_status,
             },
         )
@@ -74,5 +74,13 @@ class AuthService:
             secure=True,
             samesite="Lax",
             max_age=7 * 24 * 3600,
+        )
+        response.set_cookie(
+            key="access",
+            value=access,
+            httponly=True,
+            secure=True,
+            samesite="Lax",
+            max_age=1 * 3600,
         )
         return response

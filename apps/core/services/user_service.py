@@ -23,8 +23,9 @@ class UserService:
 
     @staticmethod
     def check_user_password_returns_user(phone_number: str, password: str) -> UserType:
-        user = _user_repo.get_user_by_phone_number(phone_number)
-        if not user:
+        try:
+            user = _user_repo.get_user_by_phone_number(phone_number)
+        except User.DoesNotExist:
             raise UserNotFoundError()
         if not user.check_password(password):
             raise InvalidCredentialsError()
