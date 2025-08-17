@@ -63,7 +63,7 @@ class AuthService:
         response = APIResponse.success(
             message="OTP verified successfully.",
             data={
-                # "access": access,
+                "access": access,
                 "completed_profile": user_profile_status,
             },
         )
