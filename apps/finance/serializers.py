@@ -1,5 +1,5 @@
+from django.db import IntegrityError
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
 
 from apps.finance.models import (
     AnalysisReport,
@@ -9,54 +9,7 @@ from apps.finance.models import (
     FinancialData,
     TaxDeclarationFile,
 )
-
-
-class BalanceReportCreateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = BalanceReportFile
-        fields = [
-            "year",
-            "month",
-            "balance_report_file",
-            "profit_loss_file",
-            "sold_product_file",
-            "account_turnover_file",
-            "is_saved",
-            "is_sent",
-        ]
-
-    def create(self, validated_data):
-        user = self.context["request"].user
-        company = user.company_user.company
-        validated_data["company"] = company
-
-        year = validated_data.get("year")
-        month = validated_data.get("month")
-        existing_report = BalanceReportFile.objects.filter(
-            company=company, year=year, month=month
-        ).first()
-
-        if existing_report:
-            raise ValidationError({"error": "This months' file already exists"})
-
-        return super().create(validated_data)
-
-    def update(self, instance, validated_data):
-        # Handle file updates
-        for field in [
-            "balance_report_file",
-            "profit_loss_file",
-            "sold_product_file",
-            "account_turnover_file",
-        ]:
-            new_file = validated_data.get(field)
-            if new_file and getattr(instance, field) != new_file:
-                # Delete old file before saving the new one
-                old_file = getattr(instance, field)
-                if old_file:
-                    old_file.delete()  # Delete the old file
-
-        return super().update(instance, validated_data)
+from constants.errors import FileYearAlreadyExists
 
 
 class BalanceReportSerializer(serializers.ModelSerializer):
@@ -74,52 +27,73 @@ class BalanceReportSerializer(serializers.ModelSerializer):
             "is_sent",
         ]
 
+    def create(self, validated_data):
+        try:
+            company = self.context["company"]
+            validated_data["company"] = company
+            return super().create(validated_data)
+        except IntegrityError:
+            raise FileExistsError
 
-class SimpleBalanceReportSerializer(serializers.ModelSerializer):
+    def update(self, instance, validated_data):
+        try:
+            return super().update(instance, validated_data)
+        except IntegrityError:
+            raise FileExistsError
+
+
+class BalanceReportRetrieveSerializer(serializers.ModelSerializer):
     class Meta:
         model = BalanceReportFile
         fields = [
             "id",
             "year",
             "month",
+            "balance_report_file",
+            "profit_loss_file",
+            "sold_product_file",
+            "account_turnover_file",
+            "is_saved",
+            "is_sent",
+            "created_at",
+            "updated_at",
+            "deleted_at",
         ]
-
-
-class TaxDeclarationCreateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TaxDeclarationFile
-        fields = ["year", "file"]
-
-    def create(self, validated_data):
-        user = self.context["request"].user
-        company = user.company_user.company
-        validated_data["company"] = company
-
-        year = validated_data.get("year")
-        existing_report = TaxDeclarationFile.objects.filter(
-            company=company, year=year
-        ).first()
-
-        if existing_report:
-            raise ValidationError({"error": "This years' file already exists"})
-        return super().create(validated_data)
-
-    def update(self, instance, validated_data):
-        # Handle file update
-        file = validated_data.get("file", None)
-        if file and instance.file != file:
-            # Optionally, you can handle file replacement here too
-            old_file = instance.file
-            if old_file:
-                old_file.delete()  # Delete the old file before saving the new one
-
-        return super().update(instance, validated_data)
 
 
 class TaxDeclarationSerializer(serializers.ModelSerializer):
     class Meta:
         model = TaxDeclarationFile
         fields = ["id", "year", "file", "is_saved", "is_sent"]
+
+    def create(self, validated_data):
+        try:
+            company = self.context["company"]
+            validated_data["company"] = company
+            return super().create(validated_data)
+        except IntegrityError:
+            raise FileYearAlreadyExists
+
+    def update(self, instance, validated_data):
+        try:
+            return super().update(instance, validated_data)
+        except IntegrityError:
+            raise FileYearAlreadyExists
+
+
+class TaxDeclarationRetrieveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TaxDeclarationFile
+        fields = [
+            "id",
+            "year",
+            "file",
+            "is_saved",
+            "is_sent",
+            "created_at",
+            "updated_at",
+            "deleted_at",
+        ]
 
 
 class SimpleTaxDeclarationSerializer(serializers.ModelSerializer):
@@ -176,9 +150,7 @@ class SaleChartSerializer(BaseChartSerializer):
 
 class EquityChartSerializer(BaseChartSerializer):
     total_equity = serializers.DecimalField(max_digits=20, decimal_places=2)
-
     total_debt = serializers.DecimalField(max_digits=20, decimal_places=2)
-
     total_sum_equity_debt = serializers.DecimalField(max_digits=20, decimal_places=2)
 
     def __init__(self, *args, **kwargs):
@@ -194,17 +166,11 @@ class BankrupsyChartSerializer(BaseChartSerializer):
 
 class ProfitibilityChartSerializer(BaseChartSerializer):
     roa = serializers.DecimalField(max_digits=20, decimal_places=2)
-
     roab = serializers.DecimalField(max_digits=20, decimal_places=2)
-
     usability = serializers.DecimalField(max_digits=20, decimal_places=2)
-
     efficiency = serializers.DecimalField(max_digits=20, decimal_places=2)
-
     gross_profit_margin = serializers.DecimalField(max_digits=20, decimal_places=2)
-
     profit_margin_ratio = serializers.DecimalField(max_digits=20, decimal_places=2)
-
     roe = serializers.DecimalField(max_digits=20, decimal_places=2)
 
     def __init__(self, *args, **kwargs):
@@ -220,7 +186,6 @@ class InventoryChartSerializer(BaseChartSerializer):
 
 class AgilityChartSerializer(BaseChartSerializer):
     instant_ratio = serializers.DecimalField(max_digits=20, decimal_places=2)
-
     stock_turnover = serializers.DecimalField(max_digits=20, decimal_places=2)
 
     def __init__(self, *args, **kwargs):
@@ -229,9 +194,7 @@ class AgilityChartSerializer(BaseChartSerializer):
 
 class DebtChartSerializer(BaseChartSerializer):
     current_debt = serializers.DecimalField(max_digits=20, decimal_places=2)
-
     non_current_debt = serializers.DecimalField(max_digits=20, decimal_places=2)
-
     total_debt = serializers.DecimalField(max_digits=20, decimal_places=2)
 
     def __init__(self, *args, **kwargs):
@@ -249,15 +212,11 @@ class SalaryChartSerializer(BaseChartSerializer):
 
 class LeverageChartSerializer(BaseChartSerializer):
     debt_ratio = serializers.DecimalField(max_digits=20, decimal_places=2)
-
     capital_ratio = serializers.DecimalField(max_digits=20, decimal_places=2)
-
     proprietary_ratio = serializers.DecimalField(max_digits=20, decimal_places=2)
-
     equity_per_total_debt_ratio = serializers.DecimalField(
         max_digits=20, decimal_places=2
     )
-
     equity_per_total_non_current_asset_ratio = serializers.DecimalField(
         max_digits=20, decimal_places=2
     )
@@ -268,7 +227,6 @@ class LeverageChartSerializer(BaseChartSerializer):
 
 class LiquidityChartSerializer(BaseChartSerializer):
     current_ratio = serializers.DecimalField(max_digits=20, decimal_places=2)
-
     instant_ratio = serializers.DecimalField(max_digits=20, decimal_places=2)
 
     def __init__(self, *args, **kwargs):
@@ -277,11 +235,8 @@ class LiquidityChartSerializer(BaseChartSerializer):
 
 class CostChartSerializer(BaseChartSerializer):
     consuming_material = serializers.DecimalField(max_digits=20, decimal_places=2)
-
     production_fee = serializers.DecimalField(max_digits=20, decimal_places=2)
-
     construction_overhead = serializers.DecimalField(max_digits=20, decimal_places=2)
-
     production_total_price = serializers.DecimalField(max_digits=20, decimal_places=2)
 
     def __init__(self, *args, **kwargs):
@@ -290,13 +245,9 @@ class CostChartSerializer(BaseChartSerializer):
 
 class ProfitChartSerializer(BaseChartSerializer):
     gross_profit = serializers.DecimalField(max_digits=20, decimal_places=2)
-
     net_sale = serializers.DecimalField(max_digits=20, decimal_places=2)
-
     operational_profit = serializers.DecimalField(max_digits=20, decimal_places=2)
-
     proceed_profit = serializers.DecimalField(max_digits=20, decimal_places=2)
-
     net_profit = serializers.DecimalField(max_digits=20, decimal_places=2)
 
     def __init__(self, *args, **kwargs):
@@ -333,6 +284,7 @@ class FinancialDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = FinancialData
         fields = [
+            "id",
             "financial_asset",
             "current_asset",
             "non_current_asset",
@@ -379,107 +331,3 @@ class FinancialDataSerializer(serializers.ModelSerializer):
                 instance.financial_asset.month if instance.financial_asset.month else ""
             ),
         }
-
-
-class MonthlyFinancialDataSerializer(serializers.ModelSerializer):
-    financial_asset = FinancialAssetSerializer(read_only=True)
-
-    class Meta:
-        model = FinancialData
-        fields = [
-            "financial_asset",
-            "current_asset",
-            "non_current_asset",
-            "total_asset",
-            "current_debt",
-            "non_current_debt",
-            "total_debt",
-            "total_equity",
-            "total_sum_equity_debt",
-            "gross_profit",
-            "net_sale",
-            "inventory_average",
-            "operational_profit",
-            "proceed_profit",
-            "net_profit",
-            "consuming_material",
-            "production_fee",
-            "construction_overhead",
-            "production_total_price",
-            "salary_fee",
-            "salary_production_fee",
-            "usability",
-            "efficiency",
-            "roa",
-            "roab",
-            "roe",
-            "gross_profit_margin",
-            "profit_margin_ratio",
-            "debt_ratio",
-            "capital_ratio",
-            "proprietary_ratio",
-            "equity_per_total_debt_ratio",
-            "equity_per_total_non_current_asset_ratio",
-            "current_ratio",
-            "instant_ratio",
-            "stock_turnover",
-            "altman_bankrupsy_ratio",
-        ]
-
-    def get_financial_asset(self, instance):
-        return {
-            "year": instance.calculated_data.year,
-            "month": (
-                instance.financial_asset.month if instance.financial_asset.month else ""
-            ),
-        }
-
-
-class MonthDataSerializer(serializers.ModelSerializer):
-    month = serializers.IntegerField(source="financial_asset.month")
-
-    class Meta:
-        model = FinancialData
-        fields = [
-            "month",
-            "current_asset",
-            "non_current_asset",
-            "total_asset",
-            "current_debt",
-            "non_current_debt",
-            "total_debt",
-            "total_equity",
-            "gross_profit",
-            "net_sale",
-            "inventory_average",
-            "operational_profit",
-            "proceed_profit",
-            "net_profit",
-            "consuming_material",
-            "production_fee",
-            "construction_overhead",
-            "production_total_price",
-            "salary_fee",
-            "salary_production_fee",
-            "usability",
-            "efficiency",
-            "roa",
-            "roab",
-            "roe",
-            "gross_profit_margin",
-            "profit_margin_ratio",
-            "debt_ratio",
-            "capital_ratio",
-            "proprietary_ratio",
-            "equity_per_total_debt_ratio",
-            "equity_per_total_non_current_asset_ratio",
-            "current_ratio",
-            "instant_ratio",
-            "stock_turnover",
-            "altman_bankrupsy_ratio",
-        ]
-
-
-class YearlyFinanceDataSerializer(serializers.Serializer):
-    year = serializers.IntegerField()
-    months = serializers.ListField(child=MonthDataSerializer())
