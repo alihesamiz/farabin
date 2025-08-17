@@ -25,7 +25,6 @@ from apps.salesdata.serializers import (
     ProductSerializer,
     ProductUpdateSerializer,
 )
-from apps.salesdata.views.filters import CompanyDomesticSaleFilter
 from apps.salesdata.views.mixin import ViewSetMixin
 
 
@@ -61,10 +60,12 @@ class CompanyProductFileViewSet(ViewSetMixin, ModelViewSet):
     action_serializer_class = {}
 
     default_serializer_class = CompanyProductFileSerializer
+    filter_backends = [SearchFilter, DjangoFilterBackend]
     ordering_fields = [
         "created_at",
         "updated_at",
     ]
+
     ordering = ["created_at"]
 
     def get_queryset(self):
@@ -82,6 +83,7 @@ class CompanyCustomerViewSet(ViewSetMixin, ModelViewSet):
         "update": CompanyCustomerUpdateSerializer,
         "partial_update": CompanyCustomerUpdateSerializer,
     }
+    filter_backends = [SearchFilter, DjangoFilterBackend]
     ordering_fields = [
         "name",
         "sale_area",
@@ -92,6 +94,8 @@ class CompanyCustomerViewSet(ViewSetMixin, ModelViewSet):
         "last_purchase_date",
     ]
     search_fields = [
+        "first_purchase_date",
+        "last_purchase_date",
         "name",
     ]
     ordering = ["name"]
@@ -107,6 +111,7 @@ class CompanyCustomerFileViewSet(ViewSetMixin, ModelViewSet):
     # http_method_names = ["get", "post", "patch", "put"]
     action_serializer_class = {}
     default_serializer_class = CompanyCustomerFileSerializer
+    filter_backends = [SearchFilter, DjangoFilterBackend]
     ordering_fields = [
         "created_at",
         "updated_at",
@@ -128,10 +133,18 @@ class CompanyProductLogViewSet(ViewSetMixin, ModelViewSet):
         "update": CompanyProductLogUpdateSerializer,
         "partial_update": CompanyProductLogUpdateSerializer,
     }
+    filter_backends = [SearchFilter, DjangoFilterBackend]
     search_fields = [
         "product_name",
     ]
-    ordering = ["product_name", "production_date"]
+    ordering = [
+        "product_name",
+        "production_date",
+        "total_produced",
+        "total_returned",
+        "total_rejected",
+        "unit_price",
+    ]
 
     def get_queryset(self):
         company = self.get_company()
@@ -144,6 +157,7 @@ class CompanyProductLogFileViewSet(ViewSetMixin, ModelViewSet):
     action_serializer_class = {}
 
     default_serializer_class = CompanyProductLogFileSerializer
+    filter_backends = [SearchFilter, DjangoFilterBackend]
     ordering_fields = [
         "created_at",
         "updated_at",
@@ -178,7 +192,8 @@ class CompanyDomesticSaleViewSet(ViewSetMixin, ModelViewSet):
         "sale_method",
         "payment_method",
     ]
-    filterset_class = CompanyDomesticSaleFilter
+    ordering_fields = ["sold_at", "unit_price", "sold_amount"]
+    # filterset_class = CompanyDomesticSaleFilter
 
     def get_queryset(self):
         company = self.get_company()
