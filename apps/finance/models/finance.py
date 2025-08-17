@@ -7,11 +7,12 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from apps.company.models import CompanyProfile
+from apps.core.models import TimeStampedModel
 from apps.core.utils import GeneralUtils
 from constants.validators import Validator as _validator
 
 
-class FileAbstract(models.Model):
+class FileAbstract(TimeStampedModel):
     company = models.ForeignKey(
         CompanyProfile, on_delete=models.SET_NULL, null=True, verbose_name=_("Company")
     )
