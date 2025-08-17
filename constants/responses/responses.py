@@ -55,6 +55,15 @@ class APIResponse:
         )
 
     @staticmethod
+    def no_content(message="Object softly deleted", data=None, errors=None):
+        return APIResponse.error(
+            message=message,
+            data=data,
+            status_code=status.HTTP_204_NO_CONTENT,
+            errors=errors,
+        )
+
+    @staticmethod
     def internal_error(message="An internal error occurred", data=None, errors=None):
         return APIResponse.error(
             message=message,
