@@ -64,6 +64,7 @@ class AuthService:
             message="OTP verified successfully.",
             data={
                 "access": access,
+                "refresh": refresh,
                 "completed_profile": user_profile_status,
             },
         )
