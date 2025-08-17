@@ -36,6 +36,7 @@ class CompanyProductViewSet(ViewSetMixin, ModelViewSet):
         "update": ProductUpdateSerializer,
         "partial_update": ProductUpdateSerializer,
     }
+    # filter_backends = [SearchFilter, DjangoFilterBackend]
     ordering_fields = [
         "name",
         "code",
@@ -60,7 +61,7 @@ class CompanyProductFileViewSet(ViewSetMixin, ModelViewSet):
     action_serializer_class = {}
 
     default_serializer_class = CompanyProductFileSerializer
-    filter_backends = [SearchFilter, DjangoFilterBackend]
+    # filter_backends = [SearchFilter, DjangoFilterBackend]
     ordering_fields = [
         "created_at",
         "updated_at",
@@ -83,7 +84,7 @@ class CompanyCustomerViewSet(ViewSetMixin, ModelViewSet):
         "update": CompanyCustomerUpdateSerializer,
         "partial_update": CompanyCustomerUpdateSerializer,
     }
-    filter_backends = [SearchFilter, DjangoFilterBackend]
+    # filter_backends = [SearchFilter, DjangoFilterBackend]
     ordering_fields = [
         "name",
         "sale_area",
@@ -111,7 +112,7 @@ class CompanyCustomerFileViewSet(ViewSetMixin, ModelViewSet):
     # http_method_names = ["get", "post", "patch", "put"]
     action_serializer_class = {}
     default_serializer_class = CompanyCustomerFileSerializer
-    filter_backends = [SearchFilter, DjangoFilterBackend]
+    # filter_backends = [SearchFilter, DjangoFilterBackend]
     ordering_fields = [
         "created_at",
         "updated_at",
@@ -133,7 +134,7 @@ class CompanyProductLogViewSet(ViewSetMixin, ModelViewSet):
         "update": CompanyProductLogUpdateSerializer,
         "partial_update": CompanyProductLogUpdateSerializer,
     }
-    filter_backends = [SearchFilter, DjangoFilterBackend]
+    # filter_backends = [SearchFilter, DjangoFilterBackend]
     search_fields = [
         "product_name",
     ]
@@ -157,7 +158,7 @@ class CompanyProductLogFileViewSet(ViewSetMixin, ModelViewSet):
     action_serializer_class = {}
 
     default_serializer_class = CompanyProductLogFileSerializer
-    filter_backends = [SearchFilter, DjangoFilterBackend]
+    # filter_backends = [SearchFilter, DjangoFilterBackend]
     ordering_fields = [
         "created_at",
         "updated_at",
@@ -182,7 +183,7 @@ class CompanyDomesticSaleViewSet(ViewSetMixin, ModelViewSet):
         "partial_update": CompanyDomesticSaleUpdateSerializer,
     }
 
-    filter_backends = [SearchFilter, DjangoFilterBackend]
+    # filter_backends = [SearchFilter, DjangoFilterBackend]
     search_fields = [
         "factor_number",
         "customer_name",
