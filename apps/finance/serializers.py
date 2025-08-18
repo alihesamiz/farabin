@@ -268,7 +268,7 @@ class AnalysisReportListSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         # Limit the 'text' field to 20 characters
-        representation["text"] = instance.text[:15]
+        representation["text"] = instance.text[:50]
         return representation
 
 
