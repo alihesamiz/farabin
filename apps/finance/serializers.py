@@ -33,13 +33,13 @@ class BalanceReportSerializer(serializers.ModelSerializer):
             validated_data["company"] = company
             return super().create(validated_data)
         except IntegrityError:
-            raise FileExistsError
+            raise FileYearAlreadyExists
 
     def update(self, instance, validated_data):
         try:
             return super().update(instance, validated_data)
         except IntegrityError:
-            raise FileExistsError
+            raise FileYearAlreadyExists
 
 
 class BalanceReportRetrieveSerializer(serializers.ModelSerializer):

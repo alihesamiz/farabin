@@ -62,6 +62,7 @@ class TaxDeclarationFile(FileAbstract):
                     "company",
                     "year",
                 ],
+                condition=models.Q(deleted_at__isnull=True),
             ),
         ]
 
@@ -137,12 +138,9 @@ class BalanceReportFile(FileAbstract):
         verbose_name_plural = _("Finance Balance Reports File")
         constraints = [
             models.UniqueConstraint(
+                fields=["company", "year", "month"],
                 name="unique_company_balance_report_per_year",
-                fields=[
-                    "company",
-                    "year",
-                    "month",
-                ],
+                condition=models.Q(deleted_at__isnull=True),
             )
         ]
 

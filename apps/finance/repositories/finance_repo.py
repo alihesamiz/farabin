@@ -1,6 +1,5 @@
-from apps.finance.models import TaxDeclarationFile
-from apps.finance.models.finance import (
-    AnalysisReport,
+from apps.finance.models import (
+    AnalysisReport,TaxDeclarationFile,
     BalanceReportFile,
     FinanceExcelFile,
     FinancialData,
@@ -29,15 +28,16 @@ class FinanceRepository:
     @staticmethod
     def get_tax_files_for_company(company: CompanyProfileType) -> ModelType:
         return (
-            TaxDeclarationFile.objects.filter(company=company)
-            .select_related("company")
+            TaxDeclarationFile.objects.select_related("company")
             .order_by("-year")
+            .filter(company=company, deleted_at__isnull=True)
         )
 
     @staticmethod
     def get_balance_report_files_for_company(company: CompanyProfileType) -> ModelType:
         return (
-            BalanceReportFile.objects.filter(company=company)
+            BalanceReportFile.objects.select_related("company")
+            .filter(company=company, deleted_at__isnull=True)
             .order_by("-year", "month")
             .all()
         )
