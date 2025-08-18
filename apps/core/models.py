@@ -1,19 +1,20 @@
-from datetime import timedelta
 import random
-
+from datetime import timedelta
 
 from django.contrib.auth.models import (  # type: ignore
     AbstractBaseUser as BaseUser,
-    PermissionsMixin,
-    Group,
 )
-from django.utils.translation import gettext_lazy as _  # type: ignore
-from django.utils import timezone  # type: ignore
+from django.contrib.auth.models import (
+    Group,
+    PermissionsMixin,
+)
 from django.db import models  # type: ignore
+from django.utils import timezone  # type: ignore
+from django.utils.translation import gettext_lazy as _  # type: ignore
 
-
-from constants.validators import Validator as _validator
 from apps.core.managers import UserManager
+from apps.core.utils import GeneralUtils
+from constants.validators import Validator as _validator
 
 
 class TimeStampedModel(models.Model):
@@ -25,6 +26,12 @@ class TimeStampedModel(models.Model):
 
     class Meta:
         abstract = True
+
+
+def get_user_avatar_path(instance, filename) -> str:
+    return GeneralUtils(
+        path="avatars", fields=["last_name", "first_name", "social_code"]
+    ).rename_folder(instance, filename)
 
 
 class User(BaseUser, PermissionsMixin):
@@ -48,6 +55,11 @@ class User(BaseUser, PermissionsMixin):
     )
     social_code = models.CharField(
         max_length=10, unique=True, verbose_name=_("Social Code")
+    )
+    avatar = models.ImageField(
+        _("Avatar"),
+        upload_to=get_user_avatar_path,
+        validators=[_validator.image_file_validator],
     )
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)

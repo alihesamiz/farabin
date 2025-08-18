@@ -34,6 +34,7 @@ class UserAdmin(BaseUserAdmin):
                 "fields": [
                     "first_name",
                     "last_name",
+                    "avatar",
                     "social_code",
                     "phone_number",
                     "password",
@@ -80,4 +81,3 @@ class UserAdmin(BaseUserAdmin):
     filter_horizontal = ("groups", "user_permissions")
 
     list_filter = ("is_active", "is_staff", "is_superuser")
-

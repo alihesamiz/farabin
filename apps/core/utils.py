@@ -10,8 +10,6 @@ from django.core.files.storage import default_storage
 from django.db import models
 from django.utils.deconstruct import deconstructible
 
-from apps.core.models import User
-
 logger = logging.getLogger("core")
 
 
@@ -168,6 +166,8 @@ class GeneralUtils:
         return final_path
 
     def send_sms(self, instance, message):
+        from apps.core.models import User
+
         editors = User.objects.filter(groups=1).values_list("phone_number", flat=True)
         phone_numbers = list(editors)
 

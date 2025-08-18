@@ -52,6 +52,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "last_name",
             "phone_number",
             "social_code",
+            "avatar",
             "is_profile_complete",
         ]
 
@@ -63,18 +64,19 @@ class UserProfileUpdateSerializer(serializers.ModelSerializer):
             "id",
             "first_name",
             "last_name",
-            "phone_number",
-            "social_code",
+            "avatar",
+            # "phone_number",
+            # "social_code",
         ]
         read_only_filelds = [
             "id",
         ]
 
-    def validate_phone_number(self, value):
-        return _validator.validate_phone_number(value)
+    # def validate_phone_number(self, value):
+    #     return _validator.validate_phone_number(value)
 
-    def validate_social_code(self, value):
-        return _validator.validate_social_code(value)
+    # def validate_social_code(self, value):
+    #     return _validator.validate_social_code(value)
 
 
 class ProvinceSerializer(serializers.ModelSerializer):
