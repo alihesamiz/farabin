@@ -1,0 +1,18 @@
+meta {
+  name: User Profile
+  type: http
+  seq: 3
+}
+
+get {
+  url: 127.0.0.1:8000/auth/profile/2/
+  body: none
+  auth: inherit
+}
+
+body:json {
+  {
+    "first_name": "newUser",
+    "last_name": "newUser"
+  }
+}

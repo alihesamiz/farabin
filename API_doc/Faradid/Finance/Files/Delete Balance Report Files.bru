@@ -1,0 +1,15 @@
+meta {
+  name: Delete Balance Report Files
+  type: http
+  seq: 5
+}
+
+delete {
+  url: 0.0.0.0:8000/finance/balance-reports/3/
+  body: multipartForm
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

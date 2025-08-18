@@ -1,0 +1,28 @@
+meta {
+  name: Post User for Company
+  type: http
+  seq: 4
+}
+
+post {
+  url: 127.0.0.1:8000/company/users/add/
+  body: multipartForm
+  auth: inherit
+}
+
+body:json {
+  {
+    "first_name": "test",
+    "last_name": "test",
+    "phone_number": "09138038123",
+    "social_code": "1273670029"
+  }
+}
+
+body:multipart-form {
+  first_name: Mammad
+  last_name: Mammadi
+  social_code: 1273670030
+  phone_number: 09138038125
+  avatar: @file(/home/madassandd/Downloads/Telegram Desktop/photo_2025-08-10_18-46-29.jpg)
+}

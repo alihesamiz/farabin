@@ -1,0 +1,20 @@
+meta {
+  name: Post Tax Declaration Files
+  type: http
+  seq: 7
+}
+
+post {
+  url: 0.0.0.0:8000/finance/tax-declarations/
+  body: multipartForm
+  auth: inherit
+}
+
+body:multipart-form {
+  year: 1401
+  file: @file(/home/madassandd/Downloads/resume(fa) go.pdf)
+}
+
+settings {
+  encodeUrl: true
+}

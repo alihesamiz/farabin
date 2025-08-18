@@ -1,0 +1,19 @@
+meta {
+  name: Get Each Chart Yearly
+  type: http
+  seq: 5
+}
+
+get {
+  url: 0.0.0.0:8000/finance/chart/debt/?yearly=true
+  body: none
+  auth: inherit
+}
+
+params:query {
+  yearly: true
+}
+
+settings {
+  encodeUrl: true
+}

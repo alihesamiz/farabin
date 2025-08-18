@@ -1,0 +1,20 @@
+meta {
+  name: Taken years
+  type: http
+  seq: 1
+}
+
+get {
+  url: 0.0.0.0:8000/finance/taken-years/
+  body: none
+  auth: inherit
+}
+
+params:query {
+  ~file: tax
+  ~file: balance
+}
+
+settings {
+  encodeUrl: true
+}

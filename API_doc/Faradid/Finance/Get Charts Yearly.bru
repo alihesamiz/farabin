@@ -1,0 +1,19 @@
+meta {
+  name: Get Charts Yearly
+  type: http
+  seq: 2
+}
+
+get {
+  url: 0.0.0.0:8000/finance/data/?yearly=true
+  body: none
+  auth: inherit
+}
+
+params:query {
+  yearly: true
+}
+
+settings {
+  encodeUrl: true
+}

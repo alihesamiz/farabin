@@ -1,0 +1,15 @@
+meta {
+  name: Get Each Chart Monthly
+  type: http
+  seq: 5
+}
+
+get {
+  url: 0.0.0.0:8000/finance/chart/debt/
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

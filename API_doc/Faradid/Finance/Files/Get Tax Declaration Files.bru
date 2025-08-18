@@ -1,11 +1,11 @@
 meta {
-  name: Create a Company
+  name: Get Tax Declaration Files
   type: http
   seq: 6
 }
 
-post {
-  url: 0.0.0.0:8000/company/profile/
+get {
+  url: 0.0.0.0:8000/finance/tax-declarations/
   body: none
   auth: inherit
 }

@@ -1,0 +1,24 @@
+meta {
+  name: Post Balance Report Files
+  type: http
+  seq: 3
+}
+
+post {
+  url: 0.0.0.0:8000/finance/balance-reports/
+  body: multipartForm
+  auth: inherit
+}
+
+body:multipart-form {
+  year: 1401
+  month: 2
+  balance_report_file: @file(/home/madassandd/Downloads/resume(fa) go.pdf)
+  profit_loss_file: @file(/home/madassandd/Downloads/resume(fa) go.pdf)
+  sold_product_file: @file(/home/madassandd/Downloads/resume(fa) go.pdf)
+  account_turnover_file: @file(/home/madassandd/Downloads/resume(fa) go.pdf)
+}
+
+settings {
+  encodeUrl: true
+}

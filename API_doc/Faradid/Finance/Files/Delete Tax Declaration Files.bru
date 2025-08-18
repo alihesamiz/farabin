@@ -1,0 +1,15 @@
+meta {
+  name: Delete Tax Declaration Files
+  type: http
+  seq: 9
+}
+
+delete {
+  url: 0.0.0.0:8000/finance/tax-declarations/4/
+  body: multipartForm
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

@@ -1,12 +1,12 @@
 meta {
   name: Patch Company User
   type: http
-  seq: 7
+  seq: 5
 }
 
 patch {
-  url: 0.0.0.0:8000/company/users/1/
-  body: json
+  url: 0.0.0.0:8000/company/users/3/
+  body: multipartForm
   auth: inherit
 }
 
@@ -19,6 +19,15 @@ body:json {
   //     "social_code": "1273670027"
     }
   }
+}
+
+body:multipart-form {
+  user.first_name: Hamed
+  user.last_name: Ahmadi
+  user.phone_number: 09138038124
+  user.social_code: 1273670029
+  user.avatar: @file(/home/madassandd/Downloads/Telegram Desktop/photo_2025-08-10_18-46-29.jpg)
+  role: admin
 }
 
 settings {

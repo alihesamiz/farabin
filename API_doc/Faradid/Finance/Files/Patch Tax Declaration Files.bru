@@ -1,0 +1,20 @@
+meta {
+  name: Patch Tax Declaration Files
+  type: http
+  seq: 8
+}
+
+patch {
+  url: 0.0.0.0:8000/finance/tax-declarations/4/
+  body: multipartForm
+  auth: inherit
+}
+
+body:multipart-form {
+  year: 1400
+  file: @file(/home/madassandd/Downloads/resume(fa) go.pdf)
+}
+
+settings {
+  encodeUrl: true
+}

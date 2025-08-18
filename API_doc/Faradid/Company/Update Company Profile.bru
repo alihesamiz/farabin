@@ -1,12 +1,12 @@
 meta {
   name: Update Company Profile
   type: http
-  seq: 5
+  seq: 2
 }
 
 patch {
-  url: 0.0.0.0:8000/company/profile/8dd84472-fc7b-41f5-b6a8-915598d3f776/
-  body: json
+  url: 0.0.0.0:8000/company/profile/495f7cc4-dae9-48de-9e13-59a395c42fdb/
+  body: multipartForm
   auth: inherit
 }
 
@@ -33,11 +33,21 @@ body:json {
 }
 
 body:multipart-form {
-  : 
-  ~province: 1
-  ~city: 87
-  ~license: 1
-  ~insurance_list: 12
-  ~province: 2
-  ~address: tsettest
+  title: Company
+  logo: @file(/home/madassandd/Downloads/Telegram Desktop/photo_2025-08-10_18-46-29.jpg)
+  email: company@gmail.com
+  national_code: 14007969290
+  office_phone_number: 03111111112
+  license: 1
+  license: 2
+  tech_field: 4
+  special_field: 5
+  insurance_list: 12
+  capital_providing_method: 1
+  capital_providing_method: 2
+  province: 5
+  city: 24
+  address: some place
+  upstream_industries: some induesteries
+  downstream_industries: another industeries
 }

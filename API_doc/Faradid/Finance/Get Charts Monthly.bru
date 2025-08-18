@@ -1,0 +1,15 @@
+meta {
+  name: Get Charts Monthly
+  type: http
+  seq: 2
+}
+
+get {
+  url: 0.0.0.0:8000/finance/data/
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

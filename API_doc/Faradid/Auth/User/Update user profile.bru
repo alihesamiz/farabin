@@ -1,0 +1,26 @@
+meta {
+  name: Update user profile
+  type: http
+  seq: 3
+}
+
+patch {
+  url: 127.0.0.1:8000/auth/profile/2/
+  body: multipartForm
+  auth: inherit
+}
+
+body:json {
+  {
+    "first_name": "newUser",
+    "last_name": "newUser"
+  }
+}
+
+body:multipart-form {
+  first_name: Ahmad
+  last_name: Asadi
+  social_code: 1234567890
+  phone_number: 09138038123
+  avatar: @file(/home/madassandd/Downloads/Telegram Desktop/photo_2025-08-10_18-46-29.jpg)
+}
