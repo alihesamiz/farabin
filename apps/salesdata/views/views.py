@@ -1,7 +1,6 @@
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.filters import SearchFilter
 from rest_framework.viewsets import ModelViewSet
 
+# from apps.salesdata.views.mixin import ViewSetMixin
 from apps.salesdata.repositories import SaleRepository as _repo
 from apps.salesdata.serializers import (
     CompanyCustomerCreateSerializer,
@@ -59,7 +58,6 @@ class CompanyProductViewSet(ViewSetMixin, ModelViewSet):
 
 class CompanyProductFileViewSet(ViewSetMixin, ModelViewSet):
     action_serializer_class = {}
-
     default_serializer_class = CompanyProductFileSerializer
     # filter_backends = [SearchFilter, DjangoFilterBackend]
     ordering_fields = [
@@ -182,7 +180,6 @@ class CompanyDomesticSaleViewSet(ViewSetMixin, ModelViewSet):
         "update": CompanyDomesticSaleUpdateSerializer,
         "partial_update": CompanyDomesticSaleUpdateSerializer,
     }
-
     # filter_backends = [SearchFilter, DjangoFilterBackend]
     search_fields = [
         "factor_number",
@@ -205,7 +202,6 @@ class CompanyDomesticSaleViewSet(ViewSetMixin, ModelViewSet):
 
 class CompanyDomesticSaleFileViewSet(ViewSetMixin, ModelViewSet):
     action_serializer_class = {}
-
     default_serializer_class = CompanyDomesticSaleFileSerializer
 
     def get_queryset(self):
