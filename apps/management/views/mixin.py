@@ -1,10 +1,10 @@
-from apps.company.models.profile import CompanyUserServicePermission
+from apps.company.models.company import ServiceName
 from apps.core.permissions import HasAccessToService
 from constants.typing import CompanyProfileType, UserType
 
 
 class ViewSetMixin:
-    service_attr = CompanyUserServicePermission.ServiceName.MANAGEMENT
+    service_attr = ServiceName.FINANCIAL
     action_serializer_class = {
         "list": None,
         "retrieve": None,

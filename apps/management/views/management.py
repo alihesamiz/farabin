@@ -10,9 +10,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
-from apps.management.models import (
-    Position,
-)
+from apps.company.models import ServiceName
 from apps.management.paginations import (
     PersonnelPagination,
 )
@@ -27,12 +25,14 @@ from apps.management.serializers import (
     PersonelInformationSerializer,
     PersonelInformationUpdateSerializer,
 )
-from apps.management.views.mixin import ViewSetMixin
+from common import ViewSetMixin
+from constants.errors import ObjectNotFoundError
 
 logger = logging.getLogger("management")
 
 
 class HumanResourceViewSet(ViewSetMixin, ModelViewSet):
+    service_attr = ServiceName.MANAGEMENT
     default_serializer_class = HumanResourceSerializer
     action_serializer_class = {
         "create": HumanResourceCreateSerializer,
@@ -67,6 +67,8 @@ class HumanResourceViewSet(ViewSetMixin, ModelViewSet):
 
 class PersonnelInformationViewSet(ViewSetMixin, ModelViewSet):
     pagination_class = PersonnelPagination
+    service_attr = ServiceName.MANAGEMENT
+
     default_serializer_class = PersonelInformationSerializer
     action_serializer_class = {
         "create": PersonelInformationCreateSerializer,
@@ -96,6 +98,8 @@ class PersonnelInformationViewSet(ViewSetMixin, ModelViewSet):
 
 class OrganizationChartFileViewSet(ViewSetMixin, ReadOnlyModelViewSet):
     default_serializer_class = OrganizationChartFileSerializer
+    service_attr = ServiceName.MANAGEMENT
+
     http_method_names = ["get"]
 
     def get_queryset(self):
@@ -124,6 +128,7 @@ class OrganizationChartFileViewSet(ViewSetMixin, ReadOnlyModelViewSet):
 
 class ChartNodeViewSet(ViewSetMixin, ReadOnlyModelViewSet):
     default_serializer_class = ChartNodeSerializer
+    service_attr = ServiceName.MANAGEMENT
 
     def get_queryset(self):
         return _repo.get_personnel_info_of_company(company=self.get_company())
@@ -154,7 +159,7 @@ class ChartNodeViewSet(ViewSetMixin, ReadOnlyModelViewSet):
         if pos_param.isdigit():
             try:
                 pos_param = _repo.get_position_by_code(int(pos_param))
-            except Position.DoesNotExist:
+            except ObjectNotFoundError:
                 return Response(
                     {"detail": f"No position found with code {pos_param}."},
                     status=status.HTTP_404_NOT_FOUND,
