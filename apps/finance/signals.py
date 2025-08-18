@@ -11,7 +11,7 @@ from apps.finance.models import (
     FinancialData,
     FinanceExcelFile,
 )
-from apps.finance.utils import FinancialCalculations
+from apps.finance.services.utils import FinancialCalculations
 from apps.finance.tasks import generate_analysis, generate_financial_asset
 
 

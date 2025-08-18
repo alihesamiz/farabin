@@ -1,23 +1,23 @@
+import logging
 from pathlib import Path
 from typing import List, Union
-from celery import shared_task
-import logging
-import cohere
 
-from django.core.exceptions import ObjectDoesNotExist
+import cohere
+from celery import shared_task
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 
 from apps.company.models import CompanyProfile
 from apps.finance.models import (
-    AnalysisReport,
-    FinancialData,
-    BalanceReport,
     AccountTurnOver,
-    SoldProductFee,
+    AnalysisReport,
+    BalanceReport,
     FinancialAsset,
+    FinancialData,
     ProfitLossStatement,
+    SoldProductFee,
 )
-from apps.finance.utils import ReadExcel
+from apps.finance.services.utils import ReadExcel
 
 logger = logging.getLogger("finance")
 

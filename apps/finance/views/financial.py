@@ -9,7 +9,6 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet, ViewSet
 
-from apps.company.models import ServiceName
 from apps.finance.models import (
     BalanceReportFile,
     TaxDeclarationFile,
@@ -38,8 +37,8 @@ from apps.finance.serializers import (
     TaxDeclarationSerializer,
 )
 from apps.finance.services.finance_service import FinanceService
+from apps.finance.views.mixin import ViewSetMixin
 from apps.finance.views.paginations import BasePagination
-from common import ViewSetMixin
 from constants.errors import (
     FinancialChartNameError,
     FinancialDataNotFoundError,
@@ -51,8 +50,6 @@ logger = logging.getLogger("finance")
 
 
 class TakenFileDateViewSet(ViewSetMixin, ViewSet):
-    service_attr = ServiceName.FINANCIAL
-
     def list(self, request, *args, **kwargs):
         try:
             company = self.get_company()
@@ -78,7 +75,6 @@ class TaxDeclarationViewSet(ViewSetMixin, ModelViewSet):
     action_serializer_class = {"retrieve": TaxDeclarationRetrieveSerializer}
     default_serializer_class = TaxDeclarationSerializer
     pagination_class = BasePagination
-    service_attr = ServiceName.FINANCIAL
 
     def get_queryset(self):
         return _repo.get_tax_files_for_company(self.get_company())
@@ -144,7 +140,6 @@ class BalanceReportViewSet(ViewSetMixin, ModelViewSet):
     action_serializer_class = {"retrieve": BalanceReportRetrieveSerializer}
     default_serializer_class = BalanceReportSerializer
     pagination_class = BasePagination
-    service_attr = ServiceName.FINANCIAL
 
     def get_queryset(self):
         return _repo.get_balance_report_files_for_company(self.get_company())
@@ -211,7 +206,6 @@ class BalanceReportViewSet(ViewSetMixin, ModelViewSet):
 class FinanceExcelViewSet(ViewSetMixin, ModelViewSet):
     default_serializer_class = FinanceExcelFileSerializer
     pagination_class = BasePagination
-    service_attr = ServiceName.FINANCIAL
 
     def get_queryset(self):
         company = self.get_company()
@@ -220,7 +214,6 @@ class FinanceExcelViewSet(ViewSetMixin, ModelViewSet):
 
 class FinancialDataViewSet(ViewSetMixin, ReadOnlyModelViewSet):
     default_serializer_class = FinancialDataSerializer
-    service_attr = ServiceName.FINANCIAL
 
     def get_queryset(self):
         company = self.get_company()
@@ -234,7 +227,6 @@ class FinancialDataViewSet(ViewSetMixin, ReadOnlyModelViewSet):
 
 class FinancialChartViewSet(ViewSetMixin, ReadOnlyModelViewSet):
     lookup_field = "slug"
-    service_attr = ServiceName.FINANCIAL
 
     CHART_SERIALIZER_MAP = {
         "debt": DebtChartSerializer,
@@ -303,7 +295,6 @@ class FinanceAnalysisSummaryViewSet(ViewSetMixin, ViewSet):
         "profit": ProfitChartSerializer,
         "salary": SalaryChartSerializer,
     }
-    service_attr = ServiceName.FINANCIAL
 
     def list(self, request, *args, **kwargs):
         service = FinanceService(self.get_company())
