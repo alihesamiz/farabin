@@ -150,15 +150,6 @@ REST_FRAMEWORK = {
     ],
 }
 
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=20),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
-    "ROTATE_REFRESH_TOKENS": False,
-    "BLACKLIST_AFTER_ROTATION": True,
-    "UPDATE_LAST_LOGIN": True,
-    "AUTH_HEADER_TYPES": ("Bearer",),
-}
-
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "Farabin API",
@@ -290,7 +281,7 @@ LOGGING: Dict[str, Any] = {
 # For automatically adding apps into the request type
 
 # For the custom file path exceptions
-FILE_PATH_EXCEPTION_MODELS = ["OrganizationChartBase", "CompanyProfile"]
+FILE_PATH_EXCEPTION_MODELS = ["OrganizationChartBase", "CompanyProfile", "User"]
 
 
 # For retrieving of the files based on the company field

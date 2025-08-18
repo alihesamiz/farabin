@@ -1,3 +1,5 @@
+from django.utils.timezone import timedelta
+
 from config.settings.base import *  # noqa: F403
 
 DEBUG = env.bool("FARABIN_DEBUG", default=False)  # noqa: F405
@@ -10,6 +12,14 @@ ALLOWED_HOSTS = env.list(  # noqa: F405
 
 INTERNAL_IPS = None
 
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=20),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "UPDATE_LAST_LOGIN": True,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+}
 
 DATABASES = {
     "default": {
