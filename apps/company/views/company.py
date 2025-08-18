@@ -1,12 +1,10 @@
 import logging
 
 from django.contrib.auth import get_user_model
-from django.db.models import Count
 from rest_framework.decorators import action
-from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
-from apps.company.models.profile import CompanyUser
+from apps.company.models.company import CompanyUser
 from apps.company.pagination import BasePagination
 from apps.company.repositories import CompanyRepository as _repo
 from apps.company.serializers import (
@@ -20,8 +18,6 @@ from apps.company.serializers import (
 )
 from apps.company.services import CompanyService as _service
 from apps.company.views import ViewSetMixin
-from apps.finance.models.finance import BalanceReportFile, TaxDeclarationFile
-from apps.management.models import HumanResource
 from constants.responses import APIResponse
 
 logger = logging.getLogger("company")
@@ -76,40 +72,3 @@ class CompanyUserViewSet(ViewSetMixin, ModelViewSet):
         return APIResponse.created(
             data=CompanyUserSerializer(company_user).data, message="Company User added"
         )
-
-
-class DashboardViewSet(ViewSetMixin, APIView):
-    http_method_names = ["get"]
-
-    def get(self, request, *args, **kwargs):
-        company = self.get_company()
-
-        if not company:
-            return APIResponse.not_found(message="Company Profile not found")
-
-        tax_file_count = TaxDeclarationFile.objects.filter(company=company).aggregate(
-            tax_files_count=Count("id")
-        )
-        report_file_count = BalanceReportFile.objects.filter(company=company).aggregate(
-            report_files_count=Count("id")
-        )
-        human_resource_count = HumanResource.objects.filter(company=company).aggregate(
-            human_resource_files_count=Count("id")
-        )
-
-        # tickets_count = Ticket.objects.filter(issuer=company).count()
-
-        total_uploaded_files_count = (
-            tax_file_count["tax_files_count"]
-            + report_file_count["report_files_count"]
-            + human_resource_count["human_resource_files_count"]
-        )
-
-        response_data = {
-            "all_uploaded_files_count": total_uploaded_files_count,
-            "report_files_count": report_file_count["report_files_count"],
-            "tax_files_count": tax_file_count["tax_files_count"],
-            # "tickets_count": tickets_count,
-        }
-
-        return APIResponse.success(data=response_data)

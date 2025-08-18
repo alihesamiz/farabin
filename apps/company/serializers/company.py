@@ -26,6 +26,7 @@ class UserProfileSerializer(ModelSerializer):
             "last_name",
             "phone_number",
             "social_code",
+            "avatar",
             "role",
         ]
 
@@ -84,10 +85,7 @@ class CompanyUserUpdateSerializer(ModelSerializer):
         fields = [
             "user",
             "role",
-            "updated_at",
-            "deleted_at",
         ]
-        read_only_fields = ["updated_at", "deleted_at"]
 
     def update(self, instance: CompanyUser, validated_data: dict):
         user_data = validated_data.pop("user", None)
@@ -97,7 +95,9 @@ class CompanyUserUpdateSerializer(ModelSerializer):
         if user_data:
             user = instance.user
             for attr, value in user_data.items():
-                setattr(user, attr, value)
+                print(attr)
+                if attr not in ["phone_number", "social_code"]:
+                    setattr(user, attr, value)
             user.save()
         instance.save()
 

@@ -58,6 +58,6 @@ class CompanyRepository:
         Get a user by phone number, or create one if it does not exist.
         Returns a tuple of (user_object, created_boolean).
         """
-        return UserType.objects.get_or_create(
+        return User.objects.get_or_create(
             phone_number=phone_number, defaults=defaults
         )

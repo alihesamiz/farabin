@@ -1,12 +1,8 @@
-from django.urls import path
-
-
 from rest_framework.routers import DefaultRouter
-
 
 from apps.company.views import (
     CompanyProfileViewSet,
-    DashboardViewSet,
+    CompanyUserViewSet,
     LifeCycleDeclineViewSet,
     LifeCycleFeatureViewSet,
     LifeCycleGrowthViewSet,
@@ -14,8 +10,6 @@ from apps.company.views import (
     LifeCycleMaturityViewSet,
     LifeCycleStateViewSet,
 )
-from apps.company.views.company import CompanyUserViewSet
-
 
 router = DefaultRouter()
 
@@ -30,5 +24,3 @@ router.register(
 )
 router.register(r"places", LifeCycleStateViewSet, basename="lifecycleplace")
 urlpatterns = router.urls
-
-urlpatterns += [path("dashboard/", DashboardViewSet.as_view(), name="dashboard")]

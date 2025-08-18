@@ -295,15 +295,16 @@ class CompanyService(models.Model):
         ]
 
 
-class CompanyUserServicePermission(TimeStampedModel):
-    class ServiceName(models.TextChoices):
-        FINANCIAL = "financial", _("Financial")
-        MANAGEMENT = "management", _("Management")
-        MIS = "mis", _("MIS")
-        RAD = "rad", _("R&D")
-        MARKETING = "marketing", _("Marketing")
-        PRODUCTION = "production", _("Production")
+class ServiceName(models.TextChoices):
+    FINANCIAL = "financial", _("Financial")
+    MANAGEMENT = "management", _("Management")
+    MIS = "mis", _("MIS")
+    RAD = "rad", _("R&D")
+    MARKETING = "marketing", _("Marketing")
+    PRODUCTION = "production", _("Production")
 
+
+class CompanyUserServicePermission(TimeStampedModel):
     company_user = models.ForeignKey(
         CompanyUser,
         on_delete=models.CASCADE,
