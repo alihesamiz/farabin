@@ -57,7 +57,9 @@ class User(BaseUser, PermissionsMixin):
         max_length=10, unique=True, verbose_name=_("Social Code")
     )
     avatar = models.ImageField(
-        _("Avatar"),
+        null=True,
+        blank=True,
+        verbose_name=_("Avatar"),
         upload_to=get_user_avatar_path,
         validators=[_validator.image_file_validator],
     )
@@ -185,29 +187,3 @@ class Province(models.Model):
     class Meta:
         verbose_name = _("Province")
         verbose_name_plural = _("Provinces")
-
-
-# class Service(models.Model):
-#     name = models.CharField(
-#         max_length=120,
-#         verbose_name=_("Service Name"),
-#     )
-#     description = models.TextField(
-#         verbose_name=_("Service Description"),
-#     )
-#     price = models.DecimalField(
-#         decimal_places=2,
-#         max_digits=20,
-#         verbose_name=_("Price"),
-#     )
-#     service_active = models.BooleanField(
-#         default=False,
-#         verbose_name=_("Service Active"),
-#     )
-
-#     def __str__(self) -> str:
-#         return self.name
-
-#     class Meta:
-#         verbose_name = _("Service")
-#         verbose_name_plural = _("Services")

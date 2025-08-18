@@ -19,16 +19,16 @@ class UserService:
                 phone_number=phone_number, social_code=social_code, password=None
             )
         except IntegrityError:
-            raise UserAlreadyExistsError()
+            raise UserAlreadyExistsError
 
     @staticmethod
     def check_user_password_returns_user(phone_number: str, password: str) -> UserType:
         try:
             user = _user_repo.get_user_by_phone_number(phone_number)
         except User.DoesNotExist:
-            raise UserNotFoundError()
+            raise UserNotFoundError
         if not user.check_password(password):
-            raise InvalidCredentialsError()
+            raise InvalidCredentialsError
         return user
 
     @classmethod
@@ -36,7 +36,7 @@ class UserService:
         user = cls.check_user_password_returns_user(phone_number, cpwd)
 
         if npwd != npwd1:
-            raise PasswordMismatchError()
+            raise PasswordMismatchError
 
         user.set_password(npwd1)
         user.save()
