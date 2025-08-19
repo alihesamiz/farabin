@@ -57,6 +57,7 @@ THIRED_PARTY_APPS = [
 INSTALLED_APPS += PROJECT_APPS + THIRED_PARTY_APPS
 
 MIDDLEWARE = [
+    "config.settings.__init__.ServiceIntegrityMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -283,7 +284,7 @@ LOGGING: Dict[str, Any] = {
 # For the custom file path exceptions
 FILE_PATH_EXCEPTION_MODELS = ["OrganizationChartBase", "CompanyProfile", "User"]
 
-
+CDN_HEALTH_CHECK_URL = "https://gist.githubusercontent.com/ahMADASSadi/229e10de96187d2e57bef3046b026097/raw/status.txt"
 # For retrieving of the files based on the company field
 HUMAN_RESOURCE_FILE_FIELDS = {
     "general": ["__all__"],

@@ -295,6 +295,7 @@ class FinanceAnalysisSummaryViewSet(ViewSetMixin, ViewSet):
         "profit": ProfitChartSerializer,
         "salary": SalaryChartSerializer,
     }
+    
 
     def list(self, request, *args, **kwargs):
         service = FinanceService(self.get_company())
