@@ -6,6 +6,7 @@ from apps.swot.repositories import SWOTRepository as _repo
 from apps.swot.serializers import (
     SWOTAnalysisListSerializer,
     SWOTAnalysisSerializer,
+    SWOTMatrixRetrieveSerialiezr,
     SWOTMatrixSerialiezr,
     SWOTMatrixTypeSerializer,
     SWOTOptionSerializer,
@@ -33,6 +34,7 @@ class SWOTQuestionViewSet(ViewSetMixin, ModelViewSet):
 
 class SWOTMatrixViweSet(ViewSetMixin, ModelViewSet):
     action_serializer_class = {
+        "retrieve": SWOTMatrixRetrieveSerialiezr,
         "questionnaire_matrix": SWOTMatrixTypeSerializer,
         "inferential_matrix": SWOTMatrixTypeSerializer,
         "elective_matrix": SWOTMatrixTypeSerializer,

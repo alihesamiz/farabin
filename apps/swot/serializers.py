@@ -41,16 +41,52 @@ class SWOTMatrixSerialiezr(ModelSerializer):
             "created_at",
         ]
 
+        read_only_fields = [
+            "created_at",
+        ]
+
+    def create(self, validated_data):
+        validated_data["company"] = self.context["company"]
+        return super().create(validated_data)
+
+
+class SWOTMatrixRetrieveSerialiezr(ModelSerializer):
+    class Meta:
+        model = SWOTMatrix
+        fields = [
+            "id",
+            "matrix_type",
+            "opportunity",
+            "threat",
+            "weakness",
+            "strength",
+            "created_at",
+            "updated_at",
+            "deleted_at",
+        ]
+        read_only_fields = [
+            "created_at",
+            "updated_at",
+            "deleted_at",
+        ]
+
 
 class SWOTMatrixTypeSerializer(ModelSerializer):
     class Meta:
         model = SWOTMatrix
         fields = [
             "id",
+            "matrix_type",
             "opportunity",
             "threat",
             "weakness",
             "strength",
+            "created_at",
+            "updated_at",
+            "deleted_at",
+        ]
+        read_only_fields = [
+            "id",
             "created_at",
             "updated_at",
             "deleted_at",
@@ -65,6 +101,7 @@ class SWOTAnalysisListSerializer(ModelSerializer):
     class Meta:
         model = SWOTAnalysis
         fields = [
+            "matrix",
             "id",
             "so",
             "st",
@@ -73,15 +110,26 @@ class SWOTAnalysisListSerializer(ModelSerializer):
             "created_at",
         ]
 
+        read_only_fields = [
+            "created_at",
+        ]
+
 
 class SWOTAnalysisSerializer(ModelSerializer):
     class Meta:
         model = SWOTAnalysis
         fields = [
+            "matrix",
             "so",
             "st",
             "wo",
             "wt",
+            "created_at",
+            "updated_at",
+            "deleted_at",
+        ]
+        read_only_fields = [
+            "id",
             "created_at",
             "updated_at",
             "deleted_at",
