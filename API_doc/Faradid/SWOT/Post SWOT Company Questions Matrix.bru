@@ -1,0 +1,37 @@
+meta {
+  name: Post SWOT Company Questions Matrix
+  type: http
+  seq: 7
+}
+
+post {
+  url: 0.0.0.0:8000/swot/matrix/q-matrix/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "matrix_type": "q",
+    "opportunity": {
+      "30": "test",
+      "31": "test31"
+    },
+    "threat": {
+      "40": "test40",
+      "41": "test41"
+    },
+    "weakness": {
+      "17": "test17",
+      "18": "test18"
+    },
+    "strength": {
+      "1": "test1",
+      "2": "test2"
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+}

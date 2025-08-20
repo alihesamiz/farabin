@@ -1,0 +1,36 @@
+meta {
+  name: Get SWOT Company Questions Matrix
+  type: http
+  seq: 6
+}
+
+get {
+  url: 0.0.0.0:8000/swot/matrix/q-matrix/
+  body: none
+  auth: inherit
+}
+
+body:json {
+  {
+    "opportunity": [
+      30,
+      31
+    ],
+    "threat": [
+      40,
+      41
+    ],
+    "weakness": [
+      17,
+      18
+    ],
+    "strength": [
+      1,
+      2
+    ]
+  }
+}
+
+settings {
+  encodeUrl: true
+}

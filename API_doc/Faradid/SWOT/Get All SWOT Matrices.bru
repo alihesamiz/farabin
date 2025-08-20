@@ -1,0 +1,15 @@
+meta {
+  name: Get All SWOT Matrices
+  type: http
+  seq: 4
+}
+
+get {
+  url: 0.0.0.0:8000/swot/matrix/
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

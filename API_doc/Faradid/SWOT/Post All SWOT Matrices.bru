@@ -1,0 +1,60 @@
+meta {
+  name: Post All SWOT Matrices
+  type: http
+  seq: 5
+}
+
+post {
+  url: 0.0.0.0:8000/swot/matrix/
+  body: json
+  auth: inherit
+}
+
+params:query {
+  ~category: Strength
+  ~category: Weakness
+  ~category: Opportunity
+  ~category: Threat
+}
+
+body:json {
+  // {
+  //   "matrix_type": "q",
+  //   "opportunity": {
+  //     "30": "test",
+  //     "31": "test31"
+  //   },
+  //   "threat": {
+  //     "40": "test40",
+  //     "41": "test41"
+  //   },
+  //   "weakness": {
+  //     "17": "test17",
+  //     "18": "test18"
+  //   },
+  //   "strength": {
+  //     "1": "test1",
+  //     "2": "test2"
+  //   }
+  // }
+  
+  // {
+  //   "matrix_type": "e",
+  //   "opportunity": {
+  //     "3": "3"
+  //   },
+  //   "threat": {
+  //     "4": "4"
+  //   },
+  //   "weakness": {
+  //     "2": "2"
+  //   },
+  //   "strength": {
+  //     "1": "1"
+  //   }
+  // }
+}
+
+settings {
+  encodeUrl: true
+}

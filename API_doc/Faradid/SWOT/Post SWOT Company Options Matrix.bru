@@ -1,0 +1,33 @@
+meta {
+  name: Post SWOT Company Options Matrix
+  type: http
+  seq: 9
+}
+
+post {
+  url: 0.0.0.0:8000/swot/matrix/e-matrix/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "matrix_type": "e",
+    "opportunity": {
+      "3": 3
+    },
+    "threat": {
+      "4": 4
+    },
+    "weakness": {
+      "2": 2
+    },
+    "strength": {
+      "1": 1
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+}

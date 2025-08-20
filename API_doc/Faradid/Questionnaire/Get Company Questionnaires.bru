@@ -1,0 +1,15 @@
+meta {
+  name: Get Company Questionnaires
+  type: http
+  seq: 1
+}
+
+get {
+  url: 0.0.0.0:8000/questionnaire/2/
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

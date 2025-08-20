@@ -1,0 +1,30 @@
+meta {
+  name: Patch Questionnair answer
+  type: http
+  seq: 3
+}
+
+post {
+  url: 0.0.0.0:8000/questionnaire/2/submit-answers/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  [
+    {
+      "question_id": 1,
+      "selected_choice_id": 2
+    }
+  ]
+}
+
+body:multipart-form {
+  questionnaire_id: 1
+  question_id: 1
+  selected_choice_id: 3
+}
+
+settings {
+  encodeUrl: true
+}
