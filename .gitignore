@@ -102,9 +102,9 @@ venv.bak/
 .qodo
 
 
-# Ignore all migrations folders in apps
-apps/**/migrations/
-apps/**/migrations/*
+# # Ignore all migrations folders in apps
+# apps/**/migrations/
+# apps/**/migrations/*
 
-# But keep __init__.py so Django doesn't break
-!apps/**/migrations/__init__.py
+# # But keep __init__.py so Django doesn't break
+# !apps/**/migrations/__init__.py
