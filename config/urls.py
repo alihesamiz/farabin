@@ -18,6 +18,7 @@ urlpatterns = [
     path("tickets/", include("apps.tickets.urls")),
     path("auth/", include("apps.core.urls")),
     path("swot/", include("apps.swot.urls")),
+    path("questionnaire/", include("apps.questionnaire.urls")),
 ]
 if settings.DEBUG:
     from debug_toolbar.toolbar import debug_toolbar_urls
