@@ -19,8 +19,6 @@ from apps.company.models import (
     LifeCycleIntroduction,
     LifeCycleMaturity,
     LifeCycleFeature,
-    CompanyQuestionnaire,
-    CompanyAnswer,
 )
 
 
@@ -189,24 +187,6 @@ class LifeCycleQuantitaticeAdmin(admin.ModelAdmin):
     def company__title(self, obj: LifeCycleQuantitative):
         return obj.company.title
 
-
-@admin.register(CompanyQuestionnaire)
-class CompanyQuestionnaireAdmin(admin.ModelAdmin):
-    list_display = ("company", "questionnaire", "submitted_at")
-    list_filter = ("questionnaire", "submitted_at")
-    search_fields = ("company__name",)
-
-
-@admin.register(CompanyAnswer)
-class CompanyAnswerAdmin(admin.ModelAdmin):
-    list_display = (
-        "company_questionnaire",
-        "question",
-        "selected_choice",
-        "answered_at",
-    )
-    list_filter = ("question",)
-    autocomplete_fields = ("company_questionnaire", "question", "selected_choice")
 
 
 @admin.register(CompanyService)
