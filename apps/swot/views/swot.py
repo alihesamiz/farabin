@@ -17,19 +17,27 @@ from constants.responses import APIResponse
 
 
 class SWOTOptionViewSet(ViewSetMixin, ModelViewSet):
+    action_serializer_class = {}
     http_method_names = ["get"]
     default_serializer_class = SWOTOptionSerializer
-    queryset = _repo.get_swot_options()
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["category"]
+
+    def get_queryset(self):
+        return _repo.get_swot_options()
 
 
 class SWOTQuestionViewSet(ViewSetMixin, ModelViewSet):
+    action_serializer_class = {}
     http_method_names = ["get"]
-    queryset = _repo.get_swot_questions()
     default_serializer_class = SWOTQuestionSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["category"]
+
+    def get_queryset(self):
+        print(_repo.get_swot_questions())
+
+        return _repo.get_swot_questions()
 
 
 class SWOTMatrixViweSet(ViewSetMixin, ModelViewSet):

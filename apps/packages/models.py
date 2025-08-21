@@ -274,11 +274,6 @@ class Subscription(LifecycleModelMixin, models.Model):
                 raise ValueError("Invalid period")
 
 class ServiceIntegrity:
-    """
-    This middleware checks the integrity of external services.
-    It uses a cached endpoint status to avoid performance degradation.
-    """
-
     def __init__(self, get_response):
         self.get_response = get_response
 
