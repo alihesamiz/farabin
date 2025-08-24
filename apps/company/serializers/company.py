@@ -89,13 +89,11 @@ class CompanyUserUpdateSerializer(ModelSerializer):
 
     def update(self, instance: CompanyUser, validated_data: dict):
         user_data = validated_data.pop("user", None)
-        print(user_data)
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         if user_data:
             user = instance.user
             for attr, value in user_data.items():
-                print(attr)
                 if attr not in ["phone_number", "social_code"]:
                     setattr(user, attr, value)
             user.save()

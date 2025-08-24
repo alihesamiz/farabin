@@ -57,7 +57,7 @@ THIRED_PARTY_APPS = [
 INSTALLED_APPS += PROJECT_APPS + THIRED_PARTY_APPS
 
 MIDDLEWARE = [
-    "apps.packages.models.ServiceIntegrity",
+    "apps.core.utils.ServiceIntegrity",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",

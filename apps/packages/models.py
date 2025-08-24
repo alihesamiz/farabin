@@ -1,12 +1,9 @@
 import decimal
 
-import requests
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.transaction import atomic
-from django.http import HttpResponseServerError
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django_lifecycle.conditions import WhenFieldValueChangesTo, WhenFieldValueIs
@@ -272,30 +269,6 @@ class Subscription(LifecycleModelMixin, models.Model):
                 return timezone.timedelta(days=365)
             case _:
                 raise ValueError("Invalid period")
-
-class ServiceIntegrity:
-    def __init__(self, get_response):
-        self.get_response = get_response
-
-    def __call__(self, request):
-        status = None
-        if status is None:
-            try:
-                response = requests.get(settings.CDN_HEALTH_CHECK_URL, timeout=1.5)
-                if response.status_code == 200:
-                    status = response.text.strip()
-                else:
-                    status = "online"
-            except requests.RequestException:
-                status = "online"
-        if status == "online":
-            return HttpResponseServerError(
-                "Service temporarily unavailable.", content_type="text/plain"
-            )
-
-        response = self.get_response(request)
-        return response
-
 
 
 class Promotion(LifecycleModelMixin, models.Model):

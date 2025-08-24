@@ -40,7 +40,6 @@ class HasAccessToService(BasePermission):
         company_has_service = company_user.company.services.filter(
             service__name=service_name, is_active=True, deleted_at__isnull=True
         ).exists()
-        print(company_user.role)
         if not company_has_service:
             return False
         if company_user.role == CompanyUser.Role.MANAGER:
