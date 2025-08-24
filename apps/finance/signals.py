@@ -180,6 +180,7 @@ def populating_reports(sender, instance, **kwargs):
     logger.info(
         "FinancialData published, generating analysis reports for company %d.", company
     )
+    print("dadasda")
 
     if instance.is_published:
         for chart_name, _ in AnalysisReport.CHART_CHOICES:

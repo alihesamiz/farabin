@@ -2,10 +2,10 @@ import logging
 from pathlib import Path
 from typing import List, Union
 
-import cohere
 from celery import shared_task
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from openai import OpenAI
 
 from apps.company.models import CompanyProfile
 from apps.finance.models import (
@@ -25,8 +25,10 @@ logger = logging.getLogger("finance")
 @shared_task(rate_limit="5/m")
 def generate_analysis(company, chart_name, *args, **kwargs):
     logger.info(f"Starting analysis task for company {company}, chart {chart_name}")
-
-    generator = cohere.ClientV2(settings.FARABIN_COHERE_API_KEY)
+    client = OpenAI(
+        api_key=settings.FARABIN_GEMINI_API_KEY,
+        base_url="https://api.metisai.ir/openai/v1",
+    )
 
     charts: dict[str, dict[Union[str, List[float]]]] = {
         "sale": {
@@ -155,28 +157,31 @@ def generate_analysis(company, chart_name, *args, **kwargs):
         logger.info(
             f"Sending request to Cohere API for company {company}, chart {chart_name}"
         )
-
         response = (
-            generator.chat(
-                model="command-r-plus",
-                messages=[{"role": "user", "content": f"{formatted_prompt}"}],
+            client.chat.completions.create(
+                model="gpt-4o",
+                messages=[
+                    {"role": "system", "content": "You are a helpful assistant."},
+                    {"role": "user", "content": formatted_prompt},
+                ],
             )
-            .message.content[0]
-            .text
+            .choices[0]
+            .message
         )
 
         response = (
-            generator.chat(
-                model="command-r-plus",
+            client.chat.completions.create(
+                model="gpt-4o",
                 messages=[
+                    {"role": "system", "content": "You are a helpful assistant."},
                     {
                         "role": "user",
                         "content": f"fix any issues in the following persian text. also check and fix if there are any grammaricall issues: {response}",
-                    }
+                    },
                 ],
             )
-            .message.content[0]
-            .text
+            .choices[0]
+            .message
         )
 
         logger.info(f"Received AI response for company {company}, chart {chart_name}")
@@ -203,7 +208,7 @@ def generate_analysis(company, chart_name, *args, **kwargs):
         logger.error(
             f"Unexpected error in analysis task for company {company}, chart {chart_name}: {e}"
         )
-        return "Error: An unexpected issue occurred during analysis."
+        return f"Error: An unexpected issue occurred during analysis.{e}"
 
 
 @shared_task
