@@ -200,13 +200,31 @@ class CompanyServiceAdmin(admin.ModelAdmin):
     ]
 
 
+
 @admin.register(CompanyUser)
 class CompanyUserAdmin(admin.ModelAdmin):
     list_display = [
+        "id",
         "user",
         "company",
         "role",
+        
     ]
+    list_filter = ["company", "role"]
+    search_fields = ["user__username", "user__name", "company"]
+    ordering = ["company"]
+
+    # Custom display methods for better readability
+    def get_username(self, obj):
+        return obj.user.username
+    get_username.admin_order_field = "user__username"
+    get_username.short_description = "Username"
+
+    def get_email(self, obj):
+        return obj.user.email
+    get_email.admin_order_field = "user__email"
+    get_email.short_description = "Email"
+
 
 
 @admin.register(CompanyUserServicePermission)

@@ -118,7 +118,7 @@ class QuestionWithAnswerSerializer(QuestionRetrieveSerializer):
 class QuestionnaireSerializer(ModelSerializer):
     class Meta:
         model = Questionnaire
-        fields = ["id", "name", "created_at"]
+        fields = ["id", "name", "created_at", "counter"]
 
     def create(self, validated_data):
         validated_data["company"] = self.context["company"]
@@ -130,7 +130,7 @@ class QuestionnaireWithAnswersSerializer(ModelSerializer):
 
     class Meta:
         model = Questionnaire
-        fields = ["id", "name", "questions", "created_at", "updated_at"]
+        fields = ["id", "name", "counter", "questions", "created_at", "updated_at"]
 
     def create(self, validated_data):
         validated_data["company"] = self.context["company"]
@@ -145,7 +145,8 @@ class CompanyQuestionnaireSerializer(ModelSerializer):
 
     class Meta:
         model = CompanyQuestionnaire
-        fields = ["id", "questionnaire", "questionnaire_id", "submitted_at"]
+        #fields = ["id", "questionnaire", "questionnaire_id",  "question_counter", "submitted_at"]
+        fields = ["id", "questionnaire", "questionnaire_id",  "submitted_at"]
         read_only_fields = [
             "id",
             "submitted_at",

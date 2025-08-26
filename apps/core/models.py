@@ -33,7 +33,7 @@ def get_user_avatar_path(instance, filename) -> str:
         path="avatars", fields=["last_name", "first_name", "social_code"]
     ).rename_folder(instance, filename)
 
-
+ 
 class User(BaseUser, PermissionsMixin):
     first_name = models.CharField(
         max_length=120,

@@ -31,7 +31,7 @@ class GeneralUtils:
         self.fields = fields
 
     def generate_otp(self):
-        """Generate a 6-digit OTP."""
+        """Generate a 6-digit OTP.""" 
         otp = str(np.random.randint(100000, 999999))
         logger.info(f"Generated OTP: {otp}")
         return otp

@@ -54,7 +54,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "social_code",
             "avatar",
             "is_profile_complete",
-        ]
+        ]   
 
 
 class UserProfileUpdateSerializer(serializers.ModelSerializer):

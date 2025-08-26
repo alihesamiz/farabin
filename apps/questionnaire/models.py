@@ -63,13 +63,21 @@ class Questionnaire(TimeStampedModel):
     questions = models.ManyToManyField(
         Question, through="QuestionnaireQuestion", verbose_name=_("سوالات")
     )
-
+    counter = models.IntegerField(default=0, verbose_name=_("Number of Questions"))
     class Meta:
         verbose_name = _("پرسشنامه")
         verbose_name_plural = _("پرسشنامه‌ها")
 
     def __str__(self):
         return f"{self.name!s}"
+
+    # add a save def to count all the questions and add to the counter field
+    def save(self, *args, **kwargs):
+       
+        super().save(*args, **kwargs)  # save first to saving the m to m 
+        self.counter = self.questions.count()
+        super().save(update_fields=["counter"])
+
 
 
 class QuestionnaireQuestion(TimeStampedModel):
@@ -102,16 +110,25 @@ class CompanyQuestionnaire(models.Model):
         on_delete=models.CASCADE,
         verbose_name=_("Questionnaire"),
     )
+    question_counter = models.IntegerField(null=True, blank=True)
+
     submitted_at = models.DateTimeField(
-        auto_now_add=True, verbose_name=_("Submitted At")
+        auto_now_add=False, verbose_name=_("Submitted At"), null=True, blank=True
     )
 
     def __str__(self):
         return f"{self.company!s} - {self.questionnaire!s}"
+    
+    def save(self, *args, **kwargs):
+        # Set question_counter based on the related questionnaire's counter
+        self.question_counter = self.questionnaire.counter
+        super().save(*args, **kwargs)  # Call the parent save method
 
     class Meta:
         verbose_name = _("Company Questionnaire")
         verbose_name_plural = _("Company Questionnaires")
+
+
 
 
 class CompanyAnswer(models.Model):

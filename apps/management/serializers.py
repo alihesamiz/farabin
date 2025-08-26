@@ -57,15 +57,16 @@ class HumanResourceSerializer(serializers.ModelSerializer):
         read_only_fields = ["id", "created_at", "updated_at"]
 
 
+
+
+
+
 class PersonelInformationSerializer(serializers.ModelSerializer):
-    human_resource_id = serializers.PrimaryKeyRelatedField(
-        source="human_resource", read_only=True
-    )
-
+    reports_to = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    cooperates_with = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     reports_relation = serializers.SerializerMethodField()
-
     coops_relation = serializers.SerializerMethodField()
-
+    
     class Meta:
         model = PersonelInformation
         fields = [
@@ -79,21 +80,56 @@ class PersonelInformationSerializer(serializers.ModelSerializer):
             "reports_relation",
             "coops_relation",
         ]
-        read_only_fields = ["id", "human_resource_id"]
 
     def get_reports_relation(self, obj):
-        logger.info(f"Fetching reports_relation for PersonelInformation ID: {obj.id}")
-        if not obj.reports_to.exists():
-            return []
-        return [f"{obj.position}-{person.position}" for person in obj.reports_to.all()]
+        # Build human-readable relations for reports_to
+        return [f"{obj.position}-{p.position}" for p in obj.reports_to.all()]
 
     def get_coops_relation(self, obj):
-        logger.info(f"Fetching coops_relation for PersonelInformation ID: {obj.id}")
-        if not obj.cooperates_with.exists():
-            return []
-        return [
-            f"{obj.position}-{person.position}" for person in obj.cooperates_with.all()
-        ]
+        # Build human-readable relations for cooperates_with
+        return [f"{obj.position}-{p.position}" for p in obj.cooperates_with.all()]
+    
+
+
+    
+
+# class PersonelInformationSerializer(serializers.ModelSerializer):
+#     human_resource_id = serializers.PrimaryKeyRelatedField(
+#         source="human_resource", read_only=True
+#     )
+
+#     reports_relation = serializers.SerializerMethodField()
+
+#     coops_relation = serializers.SerializerMethodField()
+
+#     class Meta:
+#         model = PersonelInformation
+#         fields = [
+#             "id",
+#             "human_resource_id",
+#             "name",
+#             "position",
+#             "reports_to",
+#             "cooperates_with",
+#             "obligations",
+#             "reports_relation",
+#             "coops_relation",
+#         ]
+#         read_only_fields = ["id", "human_resource_id"]
+
+#     def get_reports_relation(self, obj):
+#         logger.info(f"Fetching reports_relation for PersonelInformation ID: {obj.id}")
+#         if not obj.reports_to.exists():
+#             return []
+#         return [f"{obj.position}-{person.position}" for person in obj.reports_to.all()]
+
+#     def get_coops_relation(self, obj):
+#         logger.info(f"Fetching coops_relation for PersonelInformation ID: {obj.id}")
+#         if not obj.cooperates_with.exists():
+#             return []
+#         return [
+#             f"{obj.position}-{person.position}" for person in obj.cooperates_with.all()
+#         ]
 
 
 class ChartNodeSerializer(serializers.ModelSerializer):

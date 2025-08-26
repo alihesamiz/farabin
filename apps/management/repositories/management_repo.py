@@ -126,7 +126,15 @@ class ManagementRepository:
 
     @classmethod
     def get_base_chart_file_of_company(cls, company: CompanyProfileType):
-        field = company.tech_field
+        
+        if not company:
+            return OrganizationChartBase.objects.none()
+
+        field = getattr(company, "tech_field", None)
+        if not field:
+            return OrganizationChartBase.objects.none()
+
         file_field = cls.get_tech_field_file(field)
-        qs = OrganizationChartBase.objects.filter(field=file_field)
-        return cls.check_query_set_exists(qs)
+        if not file_field:
+            return OrganizationChartBase.objects.none()
+            

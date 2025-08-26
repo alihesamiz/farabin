@@ -4,7 +4,7 @@ from apps.management.views import (
     ChartNodeViewSet,
     HumanResourceViewSet,
     OrganizationChartFileViewSet,
-    PersonnelInformationViewSet,
+    PersonelInformationViewSet,
 )
 
 router = DefaultRouter()
@@ -22,7 +22,7 @@ router.register(
 )
 router.register(
     r"personnel",
-    PersonnelInformationViewSet,
+    PersonelInformationViewSet,
     basename="personnel",
 )
 

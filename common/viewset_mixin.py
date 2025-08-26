@@ -10,7 +10,7 @@ from constants.errors import (
 from constants.responses import APIResponse
 from constants.typing import CompanyProfileType, UserType
 
-
+ 
 class ViewSetMixin:
     service_attr = None  # Based on the viewset you are using, you should name the company user service permission choice in here
     permission_classes = [HasAccessToService]
@@ -37,7 +37,7 @@ class ViewSetMixin:
 
     def destroy(self, request, *args, **kwargs):
         """Implements a soft delete by setting the `deleted_at` field."""
-        try:
+        try: 
             instance = self.get_object()
             instance.deleted_at = timezone.now()
             instance.save()

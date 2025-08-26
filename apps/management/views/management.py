@@ -25,8 +25,15 @@ from apps.management.serializers import (
     PersonelInformationSerializer,
     PersonelInformationUpdateSerializer,
 )
+
+
 from common import ViewSetMixin
 from constants.errors import ObjectNotFoundError
+from apps.management.models import PersonelInformation
+from rest_framework import viewsets
+
+
+
 
 logger = logging.getLogger("management")
 
@@ -65,35 +72,42 @@ class HumanResourceViewSet(ViewSetMixin, ModelViewSet):
             )
 
 
-class PersonnelInformationViewSet(ViewSetMixin, ModelViewSet):
-    pagination_class = PersonnelPagination
-    service_attr = ServiceName.MANAGEMENT
 
-    default_serializer_class = PersonelInformationSerializer
-    action_serializer_class = {
-        "create": PersonelInformationCreateSerializer,
-        "update": PersonelInformationUpdateSerializer,
-        "partial_update": PersonelInformationUpdateSerializer,
-    }
+class PersonelInformationViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = PersonelInformation.objects.all()
+    serializer_class = PersonelInformationSerializer
 
-    def get_queryset(self):
-        return _repo.get_personnel_info_of_company(company=self.get_company())
 
-    def perform_create(self, serializer):
-        company = self.get_company()
 
-        human_resource_id = self.kwargs.get("human_resource_pk")
-        human_resource = company.hrfiles.filter(id=human_resource_id).first()
+# class PersonnelInformationViewSet(ViewSetMixin, ModelViewSet):
+#     pagination_class = PersonnelPagination
+#     service_attr = ServiceName.MANAGEMENT
 
-        if not human_resource:
-            raise ValidationError(
-                {
-                    "human_resource": _(
-                        "Invalid or missing HumanResource record for this company."
-                    )
-                }
-            )
-        serializer.save(human_resource=human_resource)
+#     default_serializer_class = PersonelInformationSerializer
+#     action_serializer_class = {
+#         "create": PersonelInformationCreateSerializer,
+#         "update": PersonelInformationUpdateSerializer,
+#         "partial_update": PersonelInformationUpdateSerializer,
+#     }
+
+#     def get_queryset(self):
+#         return _repo.get_personnel_info_of_company(company=self.get_company())
+
+#     def perform_create(self, serializer):
+#         company = self.get_company()
+
+#         human_resource_id = self.kwargs.get("human_resource_pk")
+#         human_resource = company.hrfiles.filter(id=human_resource_id).first()
+
+#         if not human_resource:
+#             raise ValidationError(
+#                 {
+#                     "human_resource": _(
+#                         "Invalid or missing HumanResource record for this company."
+#                     )
+#                 }
+#             )
+#         serializer.save(human_resource=human_resource)
 
 
 class OrganizationChartFileViewSet(ViewSetMixin, ReadOnlyModelViewSet):
@@ -102,8 +116,33 @@ class OrganizationChartFileViewSet(ViewSetMixin, ReadOnlyModelViewSet):
 
     http_method_names = ["get"]
 
+    # def get_queryset(self):
+    #     return _repo.get_base_chart_file_of_company(company=self.get_company())
     def get_queryset(self):
-        return _repo.get_base_chart_file_of_company(company=self.get_company())
+        """
+        Return all organization chart files for the current user's company.
+        Safe handling for users with no company.
+        """
+        try:
+            company = self.get_company()
+        except: 
+            logger.warning("User %s has no company associated", self.request.user)
+            return Response(
+                {"error": "user is associated with no company"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        return _repo.get_base_chart_file_of_company(company=company)
+
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        if not queryset.exists():
+            return Response(
+                {"error": "No organization chart file found for your company."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        return super().list(request, *args, **kwargs)
+                        
 
     @action(detail=False, methods=["GET"], url_name="download", url_path="download")
     def download(self, request):

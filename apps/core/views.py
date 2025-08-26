@@ -41,7 +41,7 @@ User = get_user_model()
 logger = logging.getLogger("core")
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__) 
 
 
 class AuthViewSet(ViewSet):

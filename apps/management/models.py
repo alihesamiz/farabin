@@ -27,7 +27,7 @@ class HumanResource(LifecycleModelMixin, TimeStampedModel):
     company = models.ForeignKey(
         "company.CompanyProfile",
         verbose_name=_("شرکت"),
-        null=False,
+        null=False, 
         blank=False,
         on_delete=models.CASCADE,
         related_name="hrfiles",
@@ -114,7 +114,7 @@ class PersonelInformation(models.Model):
     )
 
     reports_to = models.ManyToManyField(
-        "self", verbose_name=_("گزارش به (پرسنل)"), blank=True
+        "self", verbose_name=_("گزارش به (پرسنل)"), blank=True,symmetrical=False, related_name="subordinates",
     )
 
     cooperates_with = models.ManyToManyField(
@@ -131,6 +131,9 @@ class PersonelInformation(models.Model):
 
     def __str__(self):
         return f"{self.name}"
+
+
+
 
 
 def get_chart_excel_file_upload_path(instance, filename):

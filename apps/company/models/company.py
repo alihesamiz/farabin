@@ -73,7 +73,7 @@ def set_company_logo_path(instance, filename) -> str:
         instance, filename
     )
 
-
+ 
 class CompanyProfile(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,

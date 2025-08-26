@@ -43,7 +43,7 @@ PROJECT_APPS = [
     "apps.core",
     "apps.swot",
 ]
-
+ 
 THIRED_PARTY_APPS = [
     "rest_framework_simplejwt",
     "django_lifecycle_checks",

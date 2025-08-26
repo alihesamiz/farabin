@@ -35,7 +35,7 @@ def process_personnel_excel(self, id: int):
         # Stores (person, reports_to_positions, cooperates_with_positions)
         person_relations = []
 
-        for row in sheet.iter_rows(min_row=4, values_only=True):
+        for row in sheet.iter_rows(min_row=4, values_only=True): 
             if not any(row):
                 continue
 
