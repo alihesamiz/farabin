@@ -2,9 +2,12 @@ import logging
 from pathlib import Path
 from typing import List, Union
 
+import requests
 from celery import shared_task
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+
+
 from openai import OpenAI
 
 from apps.company.models import CompanyProfile
@@ -22,24 +25,52 @@ from apps.finance.services.utils import ReadExcel
 logger = logging.getLogger("finance")
 
 
+class CustomGenAIClient:
+    def __init__(self, api_key, base_url):
+        self.api_key = api_key
+        self.base_url = base_url.rstrip("/")
+
+    def chat(self, model, messages):
+        url = f"{self.base_url}/chat/completions"
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+        }
+        payload = {
+            "model": model,
+            "messages": messages,
+        }
+        response = requests.post(url, headers=headers, json=payload, timeout=60)
+        response.raise_for_status()
+        return response.json()
+
+
 @shared_task(rate_limit="5/m")
 def generate_analysis(company, chart_name, *args, **kwargs):
     logger.info(f"Starting analysis task for company {company}, chart {chart_name}")
-    client = OpenAI(
+    client = CustomGenAIClient(
         api_key=settings.FARABIN_GEMINI_API_KEY,
         base_url="https://api.metisai.ir/openai/v1",
     )
 
     charts: dict[str, dict[Union[str, List[float]]]] = {
         "sale": {
-            "prompt": "Using the provided net sales, gross profit,operational income expense and marketing fee values, provide a comprehensive analysis of the company's sales performance.Ensure the analysis is detailed, insightful, and highlights key trends and observations then translate the results to persian",
+            "prompt": (
+                "You are a senior financial analyst. Analyze the company's sales performance using the provided values for net sales, gross profit, operational income/expense, and marketing fee. "
+                "Deliver a thorough, insightful, and data-driven assessment, highlighting key trends, strengths, weaknesses, and actionable recommendations. "
+                "Present your analysis in clear, structured Persian markdown."
+            ),
             "net_sale": [],
             "gross_profit": [],
             "operational_income_expense": [],
             "marketing_fee": [],
         },
         "debt": {
-            "prompt": "Using the provided trade payable ,advance payment, reserves, long term payable, employee termination benefit reserve  values, provide a comprehensive analysis of the company's debts performance.Ensure the analysis is detailed, insightful, and highlights key trends and observations then translate the results to persian",
+            "prompt": (
+                "You are a senior financial analyst. Using the provided data for trade payables, advance payments, reserves, long-term payables, and employee termination benefit reserves, "
+                "provide a comprehensive and insightful analysis of the company's debt situation. Discuss trends, risk factors, and offer actionable recommendations. "
+                "Present your findings in clear, structured Persian markdown."
+            ),
             "trade_payable": [],
             "advance": [],
             "reserves": [],
@@ -48,8 +79,11 @@ def generate_analysis(company, chart_name, *args, **kwargs):
             "employee_termination_benefit_reserve": [],
         },
         "asset": {
-            # "prompt": "Using the provided cash balance ,trade receivable, inventory, property investment, intangible asset, long term investment values, provide a comprehensive analysis of the company's assets performance.Ensure the analysis is detailed, insightful, and highlights key trends and observations then translate the results to persian",
-            "prompt": "Using the provided current asset ,non-current asset, inventory average, total assetvalues, provide a comprehensive analysis of the company's assets performance.Ensure the analysis is detailed, insightful, and highlights key trends and observations then translate the results to persian",
+            "prompt": (
+                "You are a senior financial analyst. Analyze the company's asset performance using the provided values for current assets, non-current assets, inventory average, and total assets. "
+                "Deliver a detailed, insightful, and data-driven assessment, highlighting key trends, strengths, weaknesses, and actionable recommendations. "
+                "Present your analysis in clear, structured Persian markdown."
+            ),
             # "cash_balance": [],
             # "trade_receivable": [],
             # "property_investment": [],
@@ -61,14 +95,22 @@ def generate_analysis(company, chart_name, *args, **kwargs):
             "total_asset": [],
         },
         "profit": {
-            "prompt": "Using the provided gross_profit operational profit, proceed profit, net profit values, provide a comprehensive analysis of the company's profit performance.Ensure the analysis is detailed, insightful, and highlights key trends and observations then translate the results to persian",
+            "prompt": (
+                "You are a senior financial analyst. Using the provided values for gross profit, operational profit, proceed profit, and net profit, "
+                "provide a comprehensive, insightful, and data-driven analysis of the company's profitability. Highlight key trends, strengths, weaknesses, and offer actionable recommendations. "
+                "Present your findings in clear, structured Persian markdown."
+            ),
             "gross_profit": [],
             "operational_profit": [],
             "proceed_profit": [],
             "net_profit": [],
         },
         "cost": {
-            "prompt": "Using the provided consuming_material ,production fee ,construction overhead ,production total price ,salary fee ,salary production fee values, provide a comprehensive analysis of the company's cost performance.Ensure the analysis is detailed, insightful, and highlights key trends and observations then translate the results to persian",
+            "prompt": (
+                "You are a senior financial analyst. Analyze the company's cost structure using the provided data for consuming material, production fee, construction overhead, production total price, salary fee, and salary production fee. "
+                "Deliver a detailed, insightful, and data-driven assessment, highlighting cost trends, efficiency, and areas for improvement. "
+                "Present your analysis in clear, structured Persian markdown."
+            ),
             "consuming_material": [],
             "production_fee": [],
             "construction_overhead": [],
@@ -77,17 +119,29 @@ def generate_analysis(company, chart_name, *args, **kwargs):
             "salary_production_fee": [],
         },
         "equity": {
-            "prompt": "Using the provided total debt ,total equity ,total sum equity debt values, provide a comprehensive analysis of the company's equity performance.Ensure the analysis is detailed, insightful, and highlights key trends and observations then translate the results to persian",
+            "prompt": (
+                "You are a senior financial analyst. Using the provided values for total debt, total equity, and total sum of equity and debt, "
+                "provide a comprehensive, insightful, and data-driven analysis of the company's equity position. Discuss trends, capital structure, and offer actionable recommendations. "
+                "Present your findings in clear, structured Persian markdown."
+            ),
             "total_debt": [],
             "total_equity": [],
             "total_sum_equity_debt": [],
         },
         "bankrupsy": {
-            "prompt": "Using the provided altman bankrupsy ratio values, provide a comprehensive analysis of the company's bankruptcy rate performance.Ensure the analysis is detailed, insightful, and highlights key trends and observations then translate the results to persian",
+            "prompt": (
+                "You are a senior financial analyst. Analyze the company's bankruptcy risk using the provided Altman bankruptcy ratio values. "
+                "Deliver a thorough, insightful, and data-driven assessment, highlighting risk factors, trends, and recommendations for risk mitigation. "
+                "Present your analysis in clear, structured Persian markdown."
+            ),
             "altman_bankrupsy_ratio": [],
         },
         "profitability": {
-            "prompt": "Using the provided efficiency ,roa ,roab ,roe ,gross profit margin ,profit margin ratio values, provide a comprehensive analysis of the company's profitability performance.Ensure the analysis is detailed, insightful, and highlights key trends and observations then translate the results to persian",
+            "prompt": (
+                "You are a senior financial analyst. Using the provided values for efficiency, ROA, ROAB, ROE, gross profit margin, and profit margin ratio, "
+                "provide a comprehensive, insightful, and data-driven analysis of the company's profitability. Highlight key trends, strengths, weaknesses, and offer actionable recommendations. "
+                "Present your findings in clear, structured Persian markdown."
+            ),
             "efficiency": [],
             "roa": [],
             "roab": [],
@@ -96,28 +150,48 @@ def generate_analysis(company, chart_name, *args, **kwargs):
             "profit_margin_ratio": [],
         },
         "salary": {
-            "prompt": "Using the provided construction overhead ,production total price ,salary fee ,salary production fee values, provide a comprehensive analysis of the company's salary performance.Ensure the analysis is detailed, insightful, and highlights key trends and observations then translate the results to persian",
+            "prompt": (
+                "You are a senior financial analyst. Analyze the company's salary and wage performance using the provided data for construction overhead, production total price, salary fee, and salary production fee. "
+                "Deliver a detailed, insightful, and data-driven assessment, highlighting trends, efficiency, and areas for improvement. "
+                "Present your analysis in clear, structured Persian markdown."
+            ),
             "construction_overhead": [],
             "production_total_price": [],
             "salary_fee": [],
             "salary_production_fee": [],
         },
         "inventory": {
-            "prompt": "Using the provided invenrotry average values, provide a comprehensive analysis of the company's inventory performance.Ensure the analysis is detailed, insightful, and highlights key trends and observations then translate the results to persian",
+            "prompt": (
+                "You are a senior financial analyst. Using the provided inventory average values, provide a comprehensive, insightful, and data-driven analysis of the company's inventory management and performance. "
+                "Highlight key trends, strengths, weaknesses, and offer actionable recommendations. "
+                "Present your findings in clear, structured Persian markdown."
+            ),
             "inventory_average": [],
         },
         "agility": {
-            "prompt": "Using the provided instant ratio, stock turnover values, provide a comprehensive analysis of the company's agility rate performance.Ensure the analysis is detailed, insightful, and highlights key trends and observations then translate the results to persian",
+            "prompt": (
+                "You are a senior financial analyst. Analyze the company's agility using the provided instant ratio and stock turnover values. "
+                "Deliver a thorough, insightful, and data-driven assessment, highlighting operational flexibility, trends, and recommendations for improvement. "
+                "Present your analysis in clear, structured Persian markdown."
+            ),
             "instant_ratio": [],
             "stock_turnover": [],
         },
         "liquidity": {
-            "prompt": "Using the provided instant ratio, current ratio values, provide a comprehensive analysis of the company's liquidity rate performance.Ensure the analysis is detailed, insightful, and highlights key trends and observations then translate the results to persian",
+            "prompt": (
+                "You are a senior financial analyst. Using the provided instant ratio and current ratio values, provide a comprehensive, insightful, and data-driven analysis of the company's liquidity position. "
+                "Highlight key trends, strengths, weaknesses, and offer actionable recommendations. "
+                "Present your findings in clear, structured Persian markdown."
+            ),
             "instant_ratio": [],
             "current_ratio": [],
         },
         "leverage": {
-            "prompt": "Using the provided debt_ratio ,capital ratio ,proprietary ratio ,equity per total debt ratio ,equity per total non current asset ratio values, provide a comprehensive analysis of the company's leverage rate performance.Ensure the analysis is detailed, insightful, and highlights key trends and observations then translate the results to persian",
+            "prompt": (
+                "You are a senior financial analyst. Analyze the company's leverage using the provided values for debt ratio, capital ratio, proprietary ratio, equity per total debt ratio, and equity per total non-current asset ratio. "
+                "Deliver a detailed, insightful, and data-driven assessment, highlighting risk, capital structure, and recommendations for improvement. "
+                "Present your analysis in clear, structured Persian markdown."
+            ),
             "debt_ratio": [],
             "capital_ratio": [],
             "proprietary_ratio": [],
@@ -144,10 +218,7 @@ def generate_analysis(company, chart_name, *args, **kwargs):
             if field != "prompt":
                 for values in data:
                     charts[chart_name][field].append(float(getattr(values, field)))
-        formatted_prompt = (
-            "act as a professional financial management and analyst and"
-            + charts[chart_name]["prompt"]
-        )
+        formatted_prompt = charts[chart_name]["prompt"]
         for field in charts[chart_name]:
             if field != "prompt":
                 formatted_prompt += "\n\nData:\n" + (
@@ -158,30 +229,18 @@ def generate_analysis(company, chart_name, *args, **kwargs):
             f"Sending request to Cohere API for company {company}, chart {chart_name}"
         )
         response = (
-            client.chat.completions.create(
+            client.chat(
                 model="gpt-4o",
                 messages=[
-                    {"role": "system", "content": "You are a helpful assistant."},
+                    {
+                        "role": "system",
+                        "content": "You are a helpful, expert financial analyst, you only response in persian structured markdown",
+                    },
                     {"role": "user", "content": formatted_prompt},
                 ],
             )
-            .choices[0]
-            .message
-        )
-
-        response = (
-            client.chat.completions.create(
-                model="gpt-4o",
-                messages=[
-                    {"role": "system", "content": "You are a helpful assistant."},
-                    {
-                        "role": "user",
-                        "content": f"fix any issues in the following persian text. also check and fix if there are any grammaricall issues: {response}",
-                    },
-                ],
-            )
-            .choices[0]
-            .message
+            .get("choices", [{}])[0]
+            .get("message", "")["content"]
         )
 
         logger.info(f"Received AI response for company {company}, chart {chart_name}")
