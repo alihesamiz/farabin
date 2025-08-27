@@ -62,7 +62,6 @@ class SaleRepository:
     def get_domestic_sale_of_company(
         cls, company: CompanyProfileType, show_deleted: bool = False
     ):
-        print(show_deleted)
         return cls.get_company_data(DomesticSaleData, company, show_deleted)
 
     classmethod

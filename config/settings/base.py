@@ -15,7 +15,6 @@ environ.Env.read_env(BASE_DIR / ".env")
 
 SECRET_KEY = env.get_value("FARABIN_SECRET_KEY")
 
-FARABIN_COHERE_API_KEY = env.get_value("FARABIN_COHERE_API_KEY")
 FARABIN_GEMINI_API_KEY = env.get_value("FARABIN_GEMINI_API_KEY")
 
 
@@ -57,7 +56,8 @@ THIRED_PARTY_APPS = [
 INSTALLED_APPS += PROJECT_APPS + THIRED_PARTY_APPS
 
 MIDDLEWARE = [
-    #"apps.packages.models.ServiceIntegrity",
+
+    "apps.core.utils.ServiceIntegrity",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -188,6 +188,7 @@ CELERY_BROKER_URL = f"redis://{env.get_value('FARABIN_REDIS_HOST')}:{
     env.get_value('FARABIN_REDIS_PORT')
 }/{env.get_value('FARABIN_REDIS_ASYNC_DATABASE')}"
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+CDN_HEALTH_CHECK_URL = env.get_value("FARABIN_CDN")
 CELERY_TASK_REJECT_ON_WORKER_LOST = True
 CELERY_TASK_RESULT_EXPIRES = 3600
 CELERY_TASK_ACKS_LATE = True
@@ -284,7 +285,6 @@ LOGGING: Dict[str, Any] = {
 # For the custom file path exceptions
 FILE_PATH_EXCEPTION_MODELS = ["OrganizationChartBase", "CompanyProfile", "User"]
 
-CDN_HEALTH_CHECK_URL = "https://gist.githubusercontent.com/ahMADASSadi/229e10de96187d2e57bef3046b026097/raw/status.txt"
 # For retrieving of the files based on the company field
 HUMAN_RESOURCE_FILE_FIELDS = {
     "general": ["__all__"],

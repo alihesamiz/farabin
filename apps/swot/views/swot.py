@@ -35,7 +35,6 @@ class SWOTQuestionViewSet(ViewSetMixin, ModelViewSet):
     filterset_fields = ["category"]
 
     def get_queryset(self):
-        print(_repo.get_swot_questions())
 
         return _repo.get_swot_questions()
 

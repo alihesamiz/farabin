@@ -1,0 +1,20 @@
+meta {
+  name: test
+  type: http
+  seq: 1
+}
+
+get {
+  url: https://api.metisai.ir/api/v1/meta
+  body: none
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer YOUR_API_KEY_HERE
+  Content-Type: application/json
+}
+
+settings {
+  encodeUrl: false
+}

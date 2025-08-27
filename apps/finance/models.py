@@ -5,6 +5,7 @@ from django.core.files.storage import default_storage
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django_lifecycle import AFTER_SAVE, LifecycleModelMixin, hook
 
 from apps.company.models import CompanyProfile
 from apps.core.models import TimeStampedModel
@@ -849,7 +850,7 @@ class FinancialAsset(models.Model):
         return f"{self.company.title} › {self.year}"
 
 
-class FinancialData(models.Model):
+class FinancialData(LifecycleModelMixin, models.Model):
     is_published = models.BooleanField(
         default=False,
         help_text=_(
@@ -1046,6 +1047,17 @@ class FinancialData(models.Model):
         if self.financial_asset.month:
             return f"{self.financial_asset.company.title} › {self.financial_asset.year} › {self.financial_asset.month}"
         return f"{self.financial_asset.company.title} › {self.financial_asset.year}"
+
+    @hook(hook=AFTER_SAVE)
+    def generator(self):
+        from apps.finance.tasks import generate_analysis
+
+        print("sdasd")
+        company = self.financial_asset.company.pk
+        if self.is_published:
+            for chart_name, _ in AnalysisReport.CHART_CHOICES:
+                if chart_name != "life_cycle":
+                    generate_analysis.delay(company, chart_name)
 
     class Meta:
         verbose_name = _("Financial Data")
