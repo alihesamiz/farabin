@@ -110,7 +110,7 @@ class CompanyQuestionnaire(models.Model):
         on_delete=models.CASCADE,
         verbose_name=_("Questionnaire"),
     )
-    question_counter = models.IntegerField(null=True, blank=True)
+    question_counter = models.IntegerField(default=0)
 
     submitted_at = models.DateTimeField(
         auto_now_add=False, verbose_name=_("Submitted At"), null=True, blank=True
