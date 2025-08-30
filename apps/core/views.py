@@ -80,7 +80,7 @@ class AuthViewSet(ViewSet):
         serializer.is_valid(raise_exception=True)
 
         phone_number = serializer.validated_data["phone_number"]
-        social_code = serializer.validated_data["social_code"]
+        social_code = serializer.validated_data["social_code"]                        
 
         try:
             user = _user_service.create_user_with_phone_number(
