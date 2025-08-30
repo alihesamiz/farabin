@@ -7,23 +7,44 @@ from apps.management.models import (
     OrganizationChartBase,
     PersonelInformation,
 )
-
+ 
 logger = logging.getLogger("management")
+
+ 
+# class HumanResourceCreateSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = HumanResource
+#         fields = ["excel_file"]  # , 'company']
+
+#     def validate_company(self, value):
+#         logger.info(f"Validating company: {value}")
+#         if HumanResource.objects.filter(company=value).exists():
+#             logger.warning(f"Company {value} already has a Human Resource record.")
+#             raise serializers.ValidationError(
+#                 "Each company can only have one Human Resource record."
+#             )
+#         logger.info("Company validation passed.")
+#         return value
+
+#     def create(self, validated_data):
+#         company = self.context["company"]
+#         validated_data["company"] = company
+#         instance = super().create(validated_data)
+
+#         return instance
+
 
 
 class HumanResourceCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = HumanResource
-        fields = ["excel_file"]  # , 'company']
+        fields = ["excel_file"]
 
     def validate_company(self, value):
-        logger.info(f"Validating company: {value}")
         if HumanResource.objects.filter(company=value).exists():
-            logger.warning(f"Company {value} already has a Human Resource record.")
             raise serializers.ValidationError(
                 "Each company can only have one Human Resource record."
             )
-        logger.info("Company validation passed.")
         return value
 
     def create(self, validated_data):
@@ -31,7 +52,18 @@ class HumanResourceCreateSerializer(serializers.ModelSerializer):
         validated_data["company"] = company
         instance = super().create(validated_data)
 
+        # 🔹 Call your processing util
+        from .tasks import process_personnel_excel
+        process_personnel_excel(instance.id)
+        logger.info(f"process_personnel_excel have been called")
         return instance
+
+
+
+
+
+
+
 
 
 class HumanResourceUpdateSerializer(serializers.ModelSerializer):

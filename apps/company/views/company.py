@@ -14,7 +14,7 @@ from apps.company.serializers import (
     CompanyUserCreateSerializer,
     CompanyUserSerializer,
     CompanyUserUpdateSerializer,
-    UserProfileSerializer,
+    CompanyUserProfileSerializer,
 )
 from apps.company.services import CompanyService as _service
 from apps.company.views import ViewSetMixin
@@ -46,7 +46,7 @@ class CompanyUserViewSet(ViewSetMixin, ModelViewSet):
         "create": CompanyUserCreateSerializer,
         "update": CompanyUserUpdateSerializer,
         "partial_update": CompanyUserUpdateSerializer,
-        "add_user": UserProfileSerializer,
+        "add_user": CompanyUserProfileSerializer,
         "_": CompanyUserSerializer,
     }
     pagination_class = BasePagination
@@ -56,7 +56,7 @@ class CompanyUserViewSet(ViewSetMixin, ModelViewSet):
 
     @action(detail=False, methods=["post"], url_path="add")
     def add_user(self, request, *args, **kwargs):
-        serializer = UserProfileSerializer(data=request.data)
+        serializer = CompanyUserProfileSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         role = request.data.get("role", CompanyUser.Role.STAFF)

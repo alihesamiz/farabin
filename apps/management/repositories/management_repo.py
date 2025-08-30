@@ -7,7 +7,7 @@ from apps.management.models import (
     Position,
 )
 from constants.typing import CompanyProfileType, UserType
-
+from django.db.models import QuerySet
 
 class ManagementRepository:
     def get_company(user: UserType):
@@ -124,9 +124,12 @@ class ManagementRepository:
         except Exception:
             raise Exception(f"No position found with the given code {code}")
 
+class CompanyRepository:
     @classmethod
-    def get_base_chart_file_of_company(cls, company: CompanyProfileType):
-        
+    def get_base_chart_file_of_company(cls, company: 'CompanyProfileType') -> QuerySet:
+        """
+        Return a QuerySet of OrganizationChartBase objects for the given company.
+        """
         if not company:
             return OrganizationChartBase.objects.none()
 
@@ -137,4 +140,13 @@ class ManagementRepository:
         file_field = cls.get_tech_field_file(field)
         if not file_field:
             return OrganizationChartBase.objects.none()
-            
+
+        # Assume file_field is a file path or ID; query OrganizationChartBase
+        try:
+            queryset = OrganizationChartBase.objects.filter(position_excel=file_field)
+            if not queryset.exists():
+                print("FOUND YOU MF")
+            return queryset     
+        except Exception as e:
+            print("ALMOST FOUND YOU MF", e)
+            return OrganizationChartBase.objects.none()

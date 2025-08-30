@@ -49,8 +49,10 @@ THIRED_PARTY_APPS = [
     "django_celery_beat",
     "drf_spectacular",
     "rest_framework",
+    'rest_framework.authtoken',
     "nested_admin",
     "corsheaders",
+   
 ]
 
 INSTALLED_APPS += PROJECT_APPS + THIRED_PARTY_APPS
@@ -144,11 +146,25 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "core.User"
 
+# REST_FRAMEWORK = {
+#     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+#     "DEFAULT_AUTHENTICATION_CLASSES": [
+#         "rest_framework_simplejwt.authentication.JWTAuthentication",
+#     ],
+# }
+
+# settings.py
 REST_FRAMEWORK = {
-    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
     ],
+}
+
+SIMPLE_JWT = {
+    'AUTH_COOKIE': 'access_token',  # cookie name
+    'AUTH_COOKIE_HTTP_ONLY': True,  # frontend JS can't read it
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
 }
 
 
@@ -170,6 +186,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://192.168.1.4:3000",
     "http://localhost:8000",
+    "https://localhost:8000",
     "http://127.0.0.1:8000",
     "https://192.168.1.2:3000",
     "https://192.168.1.4:3000",

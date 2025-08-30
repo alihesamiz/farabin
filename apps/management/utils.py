@@ -12,7 +12,7 @@ from rest_framework import response, status
 
 from apps.company.models import TechField
 
-
+ 
 logger = logging.getLogger("management")
 
 

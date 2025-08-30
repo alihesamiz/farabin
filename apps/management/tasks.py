@@ -16,6 +16,7 @@ logger = logging.getLogger("management")
 @shared_task(
     bind=True,
 )
+
 def process_personnel_excel(self, id: int):
     try:
         hr_instance = HumanResource.objects.get(id=id)
@@ -37,7 +38,7 @@ def process_personnel_excel(self, id: int):
 
         for row in sheet.iter_rows(min_row=4, values_only=True): 
             if not any(row):
-                continue
+                continue    
 
             (
                 name,

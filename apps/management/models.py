@@ -53,20 +53,20 @@ class HumanResource(LifecycleModelMixin, TimeStampedModel):
     def __str__(self):
         return f"{self.company.title}"  # › {self.excel_file}"
 
-    @hook(AFTER_CREATE, condition=WhenFieldValueChangesTo("is_approved", True))
-    def start_process_personnel_excel(self):
-        """
-        Hook to start the celery task of proccessing the human reources file
-        """
-        from management.tasks import process_personnel_excel
+    # @hook(AFTER_CREATE, condition=WhenFieldValueChangesTo("is_approved", True))
+    # def start_process_personnel_excel(self):
+    #     """
+    #     Hook to start the celery task of proccessing the human reources file
+    #     """
+    #     from management.tasks import process_personnel_excel
 
-        logger.info(
-            f"Starting the process of creating personnel information with the id:{self.pk}"
-        )
-        process_personnel_excel.delay(self.pk)
+    #     logger.info(
+    #         f"Starting the process of creating personnel information with the id:{self.pk}"
+    #     )
+    #     process_personnel_excel.delay(self.pk)
 
-        logger.info("Process of creating personnel information started successfully.")
-        return
+    #     logger.info("Process of creating personnel information started successfully.")
+    #     return
 
     @hook(AFTER_DELETE)
     def delete_hr_file(self):

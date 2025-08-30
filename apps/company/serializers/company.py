@@ -15,7 +15,7 @@ from constants.validators import Validator as _validator
 User = get_user_model()
 
 
-class UserProfileSerializer(ModelSerializer):
+class CompanyUserProfileSerializer(ModelSerializer):
     role = CharField(max_length=11, required=False)
 
     class Meta:
@@ -36,7 +36,7 @@ class UserProfileSerializer(ModelSerializer):
 
 
 class CompanyUserSerializer(ModelSerializer):
-    user = UserProfileSerializer(read_only=True)
+    user = CompanyUserProfileSerializer(read_only=True)
     role = CharField(source="get_role_display", read_only=True)
 
     class Meta:
@@ -78,7 +78,7 @@ class CompanyUserCreateSerializer(ModelSerializer):
 
 
 class CompanyUserUpdateSerializer(ModelSerializer):
-    user = UserProfileSerializer(required=False)
+    user = CompanyUserProfileSerializer(required=False)
 
     class Meta:
         model = CompanyUser

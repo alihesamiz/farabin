@@ -1,5 +1,5 @@
 import logging
-
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import get_user_model  # type: ignore
 from rest_framework import status
 from rest_framework.decorators import action  # type: ignore
@@ -42,6 +42,16 @@ logger = logging.getLogger("core")
 
 
 logger = logging.getLogger(__name__) 
+
+
+
+from rest_framework.authtoken.models import Token
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from django.contrib.auth import authenticate
+
+
+
 
 
 class AuthViewSet(ViewSet):
@@ -129,6 +139,10 @@ class AuthViewSet(ViewSet):
             refresh_token, access_token, user.is_profile_complete
         )
 
+
+
+
+    @csrf_exempt
     @action(detail=False, methods=["post"], url_path="login")
     def login(self, request: Request):
         serializer = LoginSerializer(data=request.data)
@@ -137,19 +151,41 @@ class AuthViewSet(ViewSet):
         phone_number = serializer.validated_data["phone_number"]
         password = serializer.validated_data["password"]
 
-        try:
-            user = _user_service.check_user_password_returns_user(
-                phone_number, password
-            )
-        except InvalidCredentialsError:
-            return APIResponse.unauthorized("Invalid phone number or password.")
-        except UserNotFoundError:
-            return APIResponse.not_found("No User found with this credentials")
-        access_token, refresh_token = _auth_service.generate_tokens_for_user(user)
+        user = authenticate(username=phone_number, password=password)
+        if user:
+            token, created = Token.objects.get_or_create(user=user)
+            # Instead of sending token to frontend, store it in server session
+            request.session['auth_token'] = token.key
+            return Response({"success": True})
+        return Response({"error": "Invalid credentials"}, status=400)
 
-        return _auth_service.set_http_cookie_returns_access_response(
-            refresh_token, access_token, user.is_profile_complete
-        )
+
+
+
+
+
+    # @action(detail=False, methods=["post"], url_path="login")
+    # def login(self, request: Request):
+    #     serializer = LoginSerializer(data=request.data)
+    #     serializer.is_valid(raise_exception=True)
+
+    #     phone_number = serializer.validated_data["phone_number"]
+    #     password = serializer.validated_data["password"]
+
+    #     try:
+    #         user = _user_service.check_user_password_returns_user(
+    #             phone_number, password
+    #         )
+    #     except InvalidCredentialsError:
+    #         return APIResponse.unauthorized("Invalid phone number or password.")
+    #     except UserNotFoundError:
+    #         return APIResponse.not_found("No User found with this credentials")
+    #     access_token, refresh_token = _auth_service.generate_tokens_for_user(user)
+
+    #     return _auth_service.set_http_cookie_returns_access_response(
+    #         refresh_token, access_token, user.is_profile_complete
+    #     )
+
 
     @action(
         detail=False,
