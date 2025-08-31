@@ -52,11 +52,12 @@ THIRED_PARTY_APPS = [
     'rest_framework.authtoken',
     "nested_admin",
     "corsheaders",
+    'rest_framework_simplejwt.token_blacklist',
    
 ]
 
 INSTALLED_APPS += PROJECT_APPS + THIRED_PARTY_APPS
-
+    
 MIDDLEWARE = [
 
     "apps.core.utils.ServiceIntegrity",
@@ -146,33 +147,35 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "core.User"
 
-# REST_FRAMEWORK = {
-#     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-#     "DEFAULT_AUTHENTICATION_CLASSES": [
-#         "rest_framework_simplejwt.authentication.JWTAuthentication",
-#     ],
-# }
-
-# settings.py
 REST_FRAMEWORK = {
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
 }
 
 SIMPLE_JWT = {
-    'AUTH_COOKIE': 'access_token',  # cookie name
-    'AUTH_COOKIE_HTTP_ONLY': True,  # frontend JS can't read it
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),  # Short-lived for security
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),     # Longer for user convenience
+    'ROTATE_REFRESH_TOKENS': True,                   # Issue new refresh token on refresh
+    'BLACKLIST_AFTER_ROTATION': True,                # Blacklist old refresh tokens (requires db)
+    'UPDATE_LAST_LOGIN': False,
+    'ALGORITHM': 'HS256',                            # Or 'RS256' for asymmetric keys
+    'SIGNING_KEY': 'your-secret-key-here',           # Change to a strong secret (use env vars in prod)
+    'AUTH_HEADER_TYPES': ('Bearer',),                # For header-based auth (fallback if not using cookies)
+    'AUTH_COOKIE': 'access_token',                   # Cookie name for access token
+    'AUTH_COOKIE_HTTP_ONLY': True,
+    'AUTH_COOKIE_SECURE': True,                      # True in production (HTTPS)
+    'AUTH_COOKIE_SAMESITE': 'Lax',                   # Or 'Strict' for max security
+    'REFRESH_COOKIE': 'refresh_token',               # Cookie name for refresh token
 }
 
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "Farabin API",
-    "DESCRIPTION": "API Documentation for Farabin Saramad",
+    "DESCRIPTION": "API Documentation for Farabin",
     "VERSION": "1.0.0",
-    "CONTACT": {"name": "Ahmad Asadi", "email": "madassandd@gmail.com"},
+    "CONTACT": {"name": "", "email": ""},
     "SERVE_INCLUDE_SCHEMA": True,
 }
 
@@ -347,3 +350,5 @@ LOGGING["handlers"]["rotating_file"] = {  # type: ignore
 
 
 COOLDOWN_PERIOD = timedelta(minutes=1, seconds=30)
+
+CORS_ALLOW_CREDENTIALS = True   
