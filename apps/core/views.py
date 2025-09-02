@@ -56,8 +56,8 @@ from django.conf import settings
 from datetime import timedelta
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),  # Short-lived for security
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),     # Longer for user convenience
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1),  # Short-lived for security
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),     # Longer for user convenience
     'ROTATE_REFRESH_TOKENS': True,                   # Issue new refresh token on refresh
     'BLACKLIST_AFTER_ROTATION': True,                # Blacklist old refresh tokens (requires db)
     'UPDATE_LAST_LOGIN': False,
@@ -66,7 +66,7 @@ SIMPLE_JWT = {
     'AUTH_COOKIE': 'access_token',                   # Cookie name for access token
     'AUTH_COOKIE_HTTP_ONLY': True,
     'AUTH_COOKIE_SECURE': True,                      # True in production (HTTPS)
-    'AUTH_COOKIE_SAMESITE': 'Lax',                   # Or 'Strict' for max security
+    'AUTH_COOKIE_SAMESITE': "None",                   # Or 'Strict' for max security
     'REFRESH_COOKIE': 'refresh_token',               # Cookie name for refresh token
 }
 
@@ -85,23 +85,25 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             refresh_token = response.data.get('refresh')
             if access_token and refresh_token:
                 # Set access token cookie
-                response.set_cookie(
-                    key=SIMPLE_JWT['AUTH_COOKIE'],
-                    value=access_token,
-                    max_age=SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds(),
-                    httponly=SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
-                    secure=SIMPLE_JWT['AUTH_COOKIE_SECURE'],
-                )
+                # response.set_cookie(
+                #     key=SIMPLE_JWT['AUTH_COOKIE'],
+                #     value=access_token,
+                #     max_age=SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds(),
+                #     httponly=SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
+                #     secure=SIMPLE_JWT['AUTH_COOKIE_SECURE'],
+                #     samesite= 'None'
+                # )
                 # Set refresh token cookie
                 response.set_cookie(
                     key="refresh_token",
                     value=refresh_token,
-                    max_age=SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds(),
+                    max_age=SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds(),
                     httponly=SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
                     secure=SIMPLE_JWT['AUTH_COOKIE_SECURE'],
+                    samesite="None"
                 )
-                # Remove tokens from response body for security
-                response.data = {'message': 'Login successful'}
+                
+                response.data = {'message': 'Login successful', 'access':access_token}
         return response
     
 
@@ -120,11 +122,16 @@ class CustomTokenRefreshView(TokenRefreshView):
         if not refresh_token:
             return Response({'error': 'Refresh token not provided'}, status=status.HTTP_400_BAD_REQUEST)
         
-        # Copy request.data and inject refresh token
-        request.data._mutable = True  # in case it's a QueryDict
-        request.data['refresh'] = refresh_token
+    # Make a mutable copy of request.data
+        data = request.data.copy()
+        data['refresh'] = refresh_token
+
+        data = request.data.copy()
+        data['refresh'] = refresh_token
+        request._full_data = data  # inject into request
 
         response = super().post(request, *args, **kwargs)
+
 
         if response.status_code == 200:
             access_token = response.data.get('access')
@@ -137,23 +144,26 @@ class CustomTokenRefreshView(TokenRefreshView):
                     max_age=SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds(),
                     httponly=SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
                     secure=SIMPLE_JWT['AUTH_COOKIE_SECURE'],
-                    samesite=SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
+                    samesite=SIMPLE_JWT['AUTH_COOKIE_SAMESITE'],
+                    
                 )
-                # Update refresh token if rotated
-                if new_refresh_token:
-                    response.set_cookie(
-                        key=SIMPLE_JWT['REFRESH_COOKIE'],
-                        value=new_refresh_token,
-                        max_age=SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds(),
-                        httponly=SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
-                        secure=SIMPLE_JWT['AUTH_COOKIE_SECURE'],
-                        samesite=SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
-                    )
-                # Remove tokens from response body
-                response.data = {'message': 'Token refreshed'}
+                
+                # # Update refresh token if rotated
+                # if new_refresh_token:
+                #     response.set_cookie(
+                #         key=SIMPLE_JWT['REFRESH_COOKIE'],
+                #         value=new_refresh_token,
+                #         max_age=SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds(),
+                #         httponly=SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
+                #         secure=SIMPLE_JWT['AUTH_COOKIE_SECURE'],
+                #         samesite=SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
+                #     )
+          
+
+                response.data = {'message': 'Token refreshed', 'access': access_token}
         return response
 
-
+ 
 @extend_schema(
     summary="Logout",
     description="Logout user / revoke tokens"

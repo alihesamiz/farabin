@@ -99,7 +99,7 @@ class PersonelInformationSerializer(serializers.ModelSerializer):
     reports_relation = serializers.SerializerMethodField()
     coops_relation = serializers.SerializerMethodField()
     
-    class Meta:
+    class Meta: 
         model = PersonelInformation
         fields = [
             "id",
