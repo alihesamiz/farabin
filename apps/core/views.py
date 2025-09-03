@@ -103,9 +103,8 @@ class CustomTokenObtainPairView(TokenObtainPairView):
                     samesite="None"
                 )
                 
+
                 response.data = {'message': 'Login successful', 'access':access_token}
-        return response
-    
 
 
  
@@ -147,7 +146,7 @@ class CustomTokenRefreshView(TokenRefreshView):
                     samesite=SIMPLE_JWT['AUTH_COOKIE_SAMESITE'],
                     
                 )
-                
+
                 # # Update refresh token if rotated
                 # if new_refresh_token:
                 #     response.set_cookie(
@@ -158,7 +157,9 @@ class CustomTokenRefreshView(TokenRefreshView):
                 #         secure=SIMPLE_JWT['AUTH_COOKIE_SECURE'],
                 #         samesite=SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
                 #     )
-          
+
+
+
 
                 response.data = {'message': 'Token refreshed', 'access': access_token}
         return response
