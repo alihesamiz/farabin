@@ -16,6 +16,7 @@ class OtpAdmin(admin.ModelAdmin):
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
     list_display = (
+        "unique_id",
         "phone_number",
         "social_code",
         "is_active",
@@ -23,7 +24,7 @@ class UserAdmin(BaseUserAdmin):
         "is_superuser",
     )
 
-    search_fields = ("phone_number", "social_code")
+    search_fields = ("unique_id", "phone_number", "social_code")
 
     ordering = ("phone_number",)
 

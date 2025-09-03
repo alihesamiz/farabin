@@ -222,7 +222,7 @@ class CompanyUser(TimeStampedModel):
     )
     role = models.CharField(
         choices=Role.choices,
-        default=Role.STAFF,
+        default=Role.MANAGER,
         max_length=7,
         verbose_name=_("Role"),
     )

@@ -15,6 +15,12 @@ from django.utils.translation import gettext_lazy as _  # type: ignore
 from apps.core.managers import UserManager
 from apps.core.utils import GeneralUtils
 from constants.validators import Validator as _validator
+import uuid
+import hashlib
+from django.db import models
+from django.contrib.auth.models import PermissionsMixin
+from django.utils.translation import gettext_lazy as _
+
 
 
 class TimeStampedModel(models.Model):
@@ -35,6 +41,17 @@ def get_user_avatar_path(instance, filename) -> str:
 
  
 class User(BaseUser, PermissionsMixin):
+        # your existing fields ...
+
+    unique_id = models.CharField(
+        default= None,
+        max_length=64, 
+        unique=True, 
+        editable=False, 
+        db_index=True,
+        verbose_name=_("Unique ID")
+    )
+
     first_name = models.CharField(
         max_length=120,
         verbose_name=_("First name"),
@@ -128,6 +145,15 @@ class User(BaseUser, PermissionsMixin):
     class Meta:
         verbose_name = _("User")
         verbose_name_plural = _("Users")
+
+
+    def save(self, *args, **kwargs):
+        if not self.unique_id:
+            # Example: hash of a UUID4
+            self.unique_id = hashlib.sha256(uuid.uuid4().hex.encode()).hexdigest()[:32]
+            
+        super().save(*args, **kwargs)
+
 
 
 class OTP(models.Model):

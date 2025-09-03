@@ -36,6 +36,19 @@ from constants.errors import (
 )
 from constants.responses import APIResponse
 from drf_spectacular.utils import extend_schema
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from django.conf import settings
+from datetime import timedelta
+
+
+
+
+
 
 User = get_user_model()
 
@@ -46,14 +59,6 @@ logger = logging.getLogger(__name__)
 
 
 
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from django.conf import settings
-from datetime import timedelta
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1),  # Short-lived for security
@@ -71,43 +76,46 @@ SIMPLE_JWT = {
 }
 
 
+
 @extend_schema(
     summary="Login",
     description="Obtain JWT token pair"
 )
+
+
 class CustomTokenObtainPairView(TokenObtainPairView):
     permission_classes = [AllowAny]  # Allow unauthenticated access to login
 
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
+
         if response.status_code == 200:
             access_token = response.data.get('access')
             refresh_token = response.data.get('refresh')
+
             if access_token and refresh_token:
-                # Set access token cookie
-                # response.set_cookie(
-                #     key=SIMPLE_JWT['AUTH_COOKIE'],
-                #     value=access_token,
-                #     max_age=SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds(),
-                #     httponly=SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
-                #     secure=SIMPLE_JWT['AUTH_COOKIE_SECURE'],
-                #     samesite= 'None'
-                # )
-                # Set refresh token cookie
+                # Set refresh token cookie (secure, httponly, samesite)
                 response.set_cookie(
                     key="refresh_token",
                     value=refresh_token,
-                    max_age=SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds(),
+                    max_age=int(SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds()),
                     httponly=SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
                     secure=SIMPLE_JWT['AUTH_COOKIE_SECURE'],
                     samesite="None"
                 )
-                
 
-                response.data = {'message': 'Login successful', 'access':access_token}
+                # Optionally, remove refresh from body
+                response.data = {
+                    "message": "Login successful",
+                    "access": access_token
+                }
+                return response
+
+            return Response({'message': 'Failed to get tokens'}, status=status.HTTP_400_BAD_REQUEST)
+
+        return response
 
 
- 
 @extend_schema(
     summary="Refresh Token",
     description="Refresh access token using refresh token"
@@ -137,15 +145,15 @@ class CustomTokenRefreshView(TokenRefreshView):
             new_refresh_token = response.data.get('refresh')  # If rotation enabled
             if access_token:
                 # Update access token cookie
-                response.set_cookie(
-                    key=SIMPLE_JWT['AUTH_COOKIE'],
-                    value=access_token,
-                    max_age=SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds(),
-                    httponly=SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
-                    secure=SIMPLE_JWT['AUTH_COOKIE_SECURE'],
-                    samesite=SIMPLE_JWT['AUTH_COOKIE_SAMESITE'],
+                # response.set_cookie(
+                #     key=SIMPLE_JWT['AUTH_COOKIE'],
+                #     value=access_token,
+                #     max_age=SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds(),
+                #     httponly=SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
+                #     secure=SIMPLE_JWT['AUTH_COOKIE_SECURE'],
+                #     samesite=SIMPLE_JWT['AUTH_COOKIE_SAMESITE'],
                     
-                )
+                # )
 
                 # # Update refresh token if rotated
                 # if new_refresh_token:
@@ -178,11 +186,15 @@ class LogoutView(APIView):
             if refresh_token:
                 token = RefreshToken(refresh_token)
                 token.blacklist()  # Blacklist the refresh token
-            response = Response({'message': 'Logged out successfully'}, status=status.HTTP_200_OK)
-            # Delete cookies
-            response.delete_cookie(SIMPLE_JWT['AUTH_COOKIE'])
-            response.delete_cookie(SIMPLE_JWT['REFRESH_COOKIE'])
-            return response
+                response = Response({'message': 'Logged out successfully'}, status=status.HTTP_200_OK)
+                # Delete cookies
+                response.delete_cookie(SIMPLE_JWT['AUTH_COOKIE'])
+                response.delete_cookie(SIMPLE_JWT['REFRESH_COOKIE'])
+
+                return response
+            else:
+                return Response({'error': 'Refresh token not provided'}, status=status.HTTP_400_BAD_REQUEST)
+            
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -195,8 +207,14 @@ class ProtectedView(APIView):
 
 
 
+from rest_framework_simplejwt.tokens import RefreshToken
 
-
+def get_tokens_for_user(user):
+    refresh = RefreshToken.for_user(user)
+    return {
+        "access": str(refresh.access_token),
+        "refresh": str(refresh),
+    }
 
 
 
@@ -218,6 +236,7 @@ class AuthViewSet(ViewSet):
             return PasswordResetSerializer
         return super().get_serializer_class()
 
+
     @action(detail=False, methods=["get", "post"], url_path="send", url_name="otp-send")
     def request_otp(self, request: Request):
         logger.info("Received OTP send request.", extra={"request_data": request.data})
@@ -232,9 +251,9 @@ class AuthViewSet(ViewSet):
             user = _user_service.create_user_with_phone_number(
                 phone_number, social_code
             )
-        except UserAlreadyExistsError:
+        except Exception as e:
             return APIResponse.error(
-                "User already exists.", status_code=status.HTTP_400_BAD_REQUEST
+                f"User already exists. : {e}", status_code=status.HTTP_400_BAD_REQUEST
             )
 
         try:
@@ -272,18 +291,44 @@ class AuthViewSet(ViewSet):
             return APIResponse.error(
                 "Invalid or expired OTP.", status_code=status.HTTP_400_BAD_REQUEST
             )
-        finally:
-            _ = _user_service.create_company_returns_company(user)
+        # finally:
+        #     _ = _user_service.create_company_returns_company(user)
+        # Usage anywhere in your project
 
-        access_token, refresh_token = _auth_service.generate_tokens_for_user(user)
+
+        # Generate tokens
+        try : 
+            tokens = get_tokens_for_user(user)
+            access_token = tokens["access"]
+            refresh_token = tokens["refresh"]
+        except Exception as e:
+            return Response({'error': 'Token generation failed : {e}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        # Create the response
+        response = Response(
+            {
+                "message": "Login successful",
+                "access": access_token
+            },
+            status=status.HTTP_200_OK
+        )
+
+        # Set refresh token cookie
+        response.set_cookie(
+            key="refresh_token",
+            value=refresh_token,
+            max_age=int(SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds()),
+            httponly=SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
+            secure=SIMPLE_JWT['AUTH_COOKIE_SECURE'],
+            samesite="None"
+        )
 
         logger.info(
             f"OTP for user {user.id} verified successfully.", extra={"user_id": user.id}
         )
 
-        return _auth_service.set_http_cookie_returns_access_response(
-            refresh_token, access_token, user.is_profile_complete
-        )
+        return response
+            
 
 
 

@@ -1,6 +1,7 @@
 from django.db import IntegrityError  # type: ignore
 
 from apps.core.models import User
+from apps.company.models import CompanyUser, CompanyProfile
 from apps.core.repositories import UserRepository as _user_repo
 from constants.errors.api_exception import (
     InvalidCredentialsError,
@@ -15,9 +16,23 @@ class UserService:
     @staticmethod
     def create_user_with_phone_number(phone_number: str, social_code: str) -> UserType:
         try:
-            return User.objects.create_user(
+            user =  User.objects.create_user(
                 phone_number=phone_number, social_code=social_code, password=None
             )
+
+            company_profile = CompanyProfile.objects.create()
+
+            company_user = CompanyUser.objects.create(
+                user=user,
+                company=company_profile,  # Assuming company can be null initially
+            )   
+
+            user.save()
+            company_profile.save()
+            company_user.save()
+            
+            return user
+        
         except IntegrityError:
             raise UserAlreadyExistsError
 
