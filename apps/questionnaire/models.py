@@ -59,6 +59,7 @@ class Question(TimeStampedModel):
 
 # No changes to Questionnaire or QuestionnaireQuestion, they are well-designed.
 class Questionnaire(TimeStampedModel):
+    id = models.CharField(max_length=20, unique=True, verbose_name=_(" آیدی - شناسه یکتا"), primary_key=True)
     name = models.CharField(max_length=255, verbose_name=_("عنوان"))
     questions = models.ManyToManyField(
         Question, through="QuestionnaireQuestion", verbose_name=_("سوالات")

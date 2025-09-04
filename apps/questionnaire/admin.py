@@ -62,7 +62,7 @@ class QuestionnaireQuestionInline(admin.TabularInline):
 
 @admin.register(Questionnaire)
 class QuestionnaireAdmin(admin.ModelAdmin):
-    list_display = ("name", "question_count", "created_at", "updated_at")
+    list_display = ('id', "name", "question_count", "created_at", "updated_at")
     search_fields = ("name",)
     inlines = [QuestionnaireQuestionInline]
 

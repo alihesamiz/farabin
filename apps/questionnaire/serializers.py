@@ -5,6 +5,7 @@ from rest_framework.serializers import (
     Serializer,
     SerializerMethodField,
 )
+from rest_framework import serializers
 
 from apps.questionnaire.models import (
     CompanyAnswer,
@@ -159,7 +160,7 @@ class CompanyQuestionnaireSerializer(ModelSerializer):
 
 class CompanyQuestionnaireRetrieveSerializer(ModelSerializer):
     questionnaire = QuestionnaireWithAnswersSerializer(read_only=True)
-
+    
     class Meta:
         model = CompanyQuestionnaire
         fields = ["id", "questionnaire", "submitted_at"]
