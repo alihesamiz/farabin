@@ -41,12 +41,13 @@ def get_user_avatar_path(instance, filename) -> str:
 
  
 class User(BaseUser, PermissionsMixin):
-        # your existing fields ...
 
     unique_id = models.CharField(
-        default= None,
+        #default=uuid.uuid4,
+        null=True,
+        blank= True,
         max_length=64, 
-        unique=True, 
+        #unique=True, 
         editable=False, 
         db_index=True,
         verbose_name=_("Unique ID")

@@ -192,6 +192,12 @@ class CompanyProfile(TimeStampedModel):
                 return False
         return True
 
+    @property
+    def company_title(self):
+        return self.title
+    
+
+    
     def __str__(self) -> str:
         return f"{self.title!r}"
 

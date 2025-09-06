@@ -300,6 +300,12 @@ LOGGING: Dict[str, Any] = {
     },
 }
 
+
+# /tmp/saramad_logs/django.log
+# /tmp/saramad_logs/errors.log
+# /tmp/saramad_logs/log.json
+
+
 # For automatically adding apps into the request type
 
 # For the custom file path exceptions

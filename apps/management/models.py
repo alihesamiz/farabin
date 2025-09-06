@@ -77,7 +77,23 @@ class HumanResource(LifecycleModelMixin, TimeStampedModel):
         if os.path.exists(file_path):
             os.remove(file_path)
 
+    def save(self, *args, **kwargs):
+        try:
+            old_instance = HumanResource.objects.get(pk=self.pk)
+        except HumanResource.DoesNotExist:
+            old_instance = None
 
+        super().save(*args, **kwargs)
+
+        # Delete old file if updated
+        if old_instance and old_instance.excel_file != self.excel_file:
+            if old_instance.excel_file and os.path.exists(old_instance.excel_file.path):
+                os.remove(old_instance.excel_file.path)
+                logger.info(f"Deleted old Excel file for {self.company.title}")
+
+
+
+                
 class Position(models.Model):
     code = models.PositiveIntegerField(verbose_name=_("کد موقعیت"), unique=True)
     position = models.CharField(verbose_name=_("موقعیت"), max_length=150, unique=True)

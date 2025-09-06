@@ -49,8 +49,14 @@ class HumanResourceViewSet(ViewSetMixin, ModelViewSet):
     }
 
     def get_queryset(self):
-        return _repo.get_human_resource_record_of_company(company=self.get_company())
+        company = self.get_company()
+        queryset = _repo.get_human_resource_record_of_company(company=company)
 
+        # If there is an existing record, delete it
+        if queryset.exists():
+            queryset.delete()
+
+        return queryset
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -59,6 +65,20 @@ class HumanResourceViewSet(ViewSetMixin, ModelViewSet):
 
 
     def perform_create(self, serializer):
+        company = self.get_company()
+
+        # Delete old Human Resource record(s) and their Excel files
+        existing_records = _repo.get_human_resource_record_of_company(company=company)
+        for record in existing_records:
+            # Loop through all FileField fields dynamically
+            for field in record._meta.fields:
+                if field.get_internal_type() == "FileField":
+                    file_field = getattr(record, field.name)
+                    if file_field and file_field.path and os.path.isfile(file_field.path):
+                        os.remove(file_field.path)
+            # Delete the old record
+            record.delete()
+
         try:
             serializer.save()
         except IntegrityError:

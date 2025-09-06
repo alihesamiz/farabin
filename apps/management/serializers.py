@@ -7,7 +7,9 @@ from apps.management.models import (
     OrganizationChartBase,
     PersonelInformation,
 )
- 
+import os
+
+
 logger = logging.getLogger("management")
 
  
@@ -40,26 +42,53 @@ class HumanResourceCreateSerializer(serializers.ModelSerializer):
         model = HumanResource
         fields = ["excel_file"]
 
+    # def validate_company(self, value):
+    #     if HumanResource.objects.filter(company=value).exists():
+    #         raise serializers.ValidationError(
+    #             "Each company can only have one Human Resource record."
+    #         )
+    #     return value
+
+
     def validate_company(self, value):
-        if HumanResource.objects.filter(company=value).exists():
-            raise serializers.ValidationError(
-                "Each company can only have one Human Resource record."
-            )
+        human_resource = HumanResource.objects.filter(company=value)
+        if human_resource.exists():
+            human_resource.delete()
+            logger.info(f"Existing HumanResource for company {value} deleted.")
+
         return value
+
+
 
     def create(self, validated_data):
         company = self.context["company"]
+
+        # Check if there's an existing HR record
+        existing_hr = HumanResource.objects.filter(company=company).first()
+        if existing_hr:
+            # Delete the old file
+            if existing_hr.excel_file and os.path.exists(existing_hr.excel_file.path):
+                os.remove(existing_hr.excel_file.path)
+                logger.info(f"Deleted old Excel file for company {company.title}")
+            
+            # Update the instance with new file instead of creating a new one
+            existing_hr.excel_file = validated_data["excel_file"]
+            existing_hr.save()
+            
+            # Trigger processing
+            from .tasks import process_personnel_excel
+            process_personnel_excel.delay(existing_hr.id)
+            logger.info(f"process_personnel_excel called for updated HR file")
+            return existing_hr
+
+        # No existing record, create new
         validated_data["company"] = company
         instance = super().create(validated_data)
 
-        # 🔹 Call your processing util
         from .tasks import process_personnel_excel
-        process_personnel_excel(instance.id)
-        logger.info(f"process_personnel_excel have been called")
+        process_personnel_excel.delay(instance.id)
+        logger.info(f"process_personnel_excel called for new HR file")
         return instance
-
-
-
 
 
 

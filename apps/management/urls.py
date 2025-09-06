@@ -22,7 +22,7 @@ router.register(
 )
 router.register(
     r"personnel",
-    PersonelInformationViewSet,
+    PersonelInformationViewSet,     
     basename="personnel",
 )
 

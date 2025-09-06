@@ -36,6 +36,7 @@ class ManagementRepository:
 
         return file_field
 
+
     @classmethod
     def get_human_resource_record_of_company(cls, company: CompanyProfileType):
         qs = HumanResource.objects.select_related("company").filter(company=company)

@@ -36,39 +36,37 @@ def process_personnel_excel(self, id: int):
         # Stores (person, reports_to_positions, cooperates_with_positions)
         person_relations = []
 
+
+
+
         for row in sheet.iter_rows(min_row=4, values_only=True): 
             if not any(row):
                 continue    
 
-            (
-                name,
-                position,
-                reports_to_position,
-                cooperates_with_position,
-                obligations,
-            ) = row[:5]
+            (name, position, reports_to_position, cooperates_with_position) = (
+                (list(row) + [None]*4)[:4]
+            )
 
-            if not (name and obligations and position):
+            obligations = ""  # No column exists in this Excel
+
+            if not (name and position):
                 logger.warning(
-                    f"Skipped invalid record: {name}, {obligations}, {position}. "
+                    f"Skipped invalid record: {name}, {position}. "
                     f"Missing reports_to {reports_to_position} or cooperates_with {cooperates_with_position}"
                 )
                 continue
 
-            # Normalize data
+            # Normalize
             name = name.strip().title()
             position = position.strip().upper()
             is_exist = Position.objects.filter(position=position).exists()
-            obligations = obligations.strip()
             reports_to_positions = (
-                [p.strip().upper() for p in reports_to_position.strip().split(",")]
-                if reports_to_position
-                else []
+                [p.strip().upper() for p in reports_to_position.split(",")]
+                if reports_to_position else []
             )
             cooperates_with_positions = (
-                [p.strip().upper() for p in cooperates_with_position.strip().split(",")]
-                if cooperates_with_position
-                else []
+                [p.strip().upper() for p in cooperates_with_position.split(",")]
+                if cooperates_with_position else []
             )
 
             person = PersonelInformation(
@@ -78,6 +76,11 @@ def process_personnel_excel(self, id: int):
                 position=position,
                 is_exist=is_exist,
             )
+            
+
+
+
+
             personnel_list.append(person)
 
             # Store person in position_map (as a list)
@@ -95,7 +98,7 @@ def process_personnel_excel(self, id: int):
             created_personnel = PersonelInformation.objects.bulk_create(personnel_list)
 
             # Set many-to-many relationships
-            for (
+            for ( 
                 person,
                 reports_to_positions,
                 cooperates_with_positions,

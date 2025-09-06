@@ -5,9 +5,13 @@ meta {
 }
 
 post {
-  url: https://orleans-relying-singer-mg.trycloudflare.com
-  body: none
+  url: 127.0.0.1:8000/management/human-resources/
+  body: multipartForm
   auth: inherit
+}
+
+body:multipart-form {
+  excel_file: @file(/home/madassandd/Downloads/Chart.xlsx)
 }
 
 settings {
