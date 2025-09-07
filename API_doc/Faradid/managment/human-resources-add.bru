@@ -1,0 +1,29 @@
+meta {
+  name: human-resources/add
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{url}}/management/personnel/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "id": 281,
+    "human_resource": 45,
+    "name": "خانم حق‌شناس",
+    "position": "manager",
+    "reports_to": [],
+    "cooperates_with": [],
+    "obligations": "test",
+    "reports_relation": [],
+    "coops_relation": []
+  }
+}
+
+settings {
+  encodeUrl: true
+}

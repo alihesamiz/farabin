@@ -212,7 +212,7 @@ class CompanyUser(TimeStampedModel):
         ADMIN = "admin", _("Admin")
         STAFF = "staff", _("Staff")
 
-    user = models.OneToOneField(
+    user = models.OneToOneField( 
         User,
         on_delete=models.CASCADE,
         related_name="company_user",

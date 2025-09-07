@@ -12,43 +12,12 @@ import os
 
 logger = logging.getLogger("management")
 
- 
-# class HumanResourceCreateSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = HumanResource
-#         fields = ["excel_file"]  # , 'company']
-
-#     def validate_company(self, value):
-#         logger.info(f"Validating company: {value}")
-#         if HumanResource.objects.filter(company=value).exists():
-#             logger.warning(f"Company {value} already has a Human Resource record.")
-#             raise serializers.ValidationError(
-#                 "Each company can only have one Human Resource record."
-#             )
-#         logger.info("Company validation passed.")
-#         return value
-
-#     def create(self, validated_data):
-#         company = self.context["company"]
-#         validated_data["company"] = company
-#         instance = super().create(validated_data)
-
-#         return instance
-
 
 
 class HumanResourceCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = HumanResource
         fields = ["excel_file"]
-
-    # def validate_company(self, value):
-    #     if HumanResource.objects.filter(company=value).exists():
-    #         raise serializers.ValidationError(
-    #             "Each company can only have one Human Resource record."
-    #         )
-    #     return value
-
 
     def validate_company(self, value):
         human_resource = HumanResource.objects.filter(company=value)
@@ -92,9 +61,6 @@ class HumanResourceCreateSerializer(serializers.ModelSerializer):
 
 
 
-
-
-
 class HumanResourceUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = HumanResource
@@ -119,78 +85,70 @@ class HumanResourceSerializer(serializers.ModelSerializer):
 
 
 
-
-
-
 class PersonelInformationSerializer(serializers.ModelSerializer):
-    reports_to = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    cooperates_with = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    reports_to = serializers.PrimaryKeyRelatedField(
+        queryset=PersonelInformation.objects.all(), many=True, required=False
+    )
+    cooperates_with = serializers.PrimaryKeyRelatedField(
+        queryset=PersonelInformation.objects.all(), many=True, required=False
+    )
     reports_relation = serializers.SerializerMethodField()
     coops_relation = serializers.SerializerMethodField()
-    
-    class Meta: 
+
+    class Meta:
         model = PersonelInformation
         fields = [
-            "id",
-            "human_resource_id",
-            "name",
-            "position",
-            "reports_to",
-            "cooperates_with",
-            "obligations",
-            "reports_relation",
-            "coops_relation",
+            'id', 'human_resource', 'name', 'position', 'reports_to',
+            'cooperates_with', 'obligations', 'reports_relation', 'coops_relation'
+        ]
+        read_only_fields = ['id', 'human_resource', 'reports_relation', 'coops_relation']
+
+    def validate(self, data):
+        if not data.get('name'):
+            raise serializers.ValidationError({"name": "Name is required."})
+        if not data.get('position'):
+            raise serializers.ValidationError({"position": "Position is required."})
+        return data
+
+    def validate_reports_to(self, value):
+        company = self.context.get('company')
+        if company and value:
+            invalid_ids = [
+                pid for pid in value
+                if not isinstance(pid, int) or not PersonelInformation.objects.filter(id=pid, human_resource__company=company).exists()
+            ]
+            if invalid_ids:
+                raise serializers.ValidationError(f"Invalid reports_to IDs: {invalid_ids}. Must be valid integer IDs.")
+        return value
+
+    def validate_cooperates_with(self, value):
+        company = self.context.get('company')
+        if company and value:
+            invalid_ids = [
+                pid for pid in value
+                if not isinstance(pid, int) or not PersonelInformation.objects.filter(id=pid, human_resource__company=company).exists()
+            ]
+            if invalid_ids:
+                raise serializers.ValidationError(f"Invalid cooperates_with IDs: {invalid_ids}. Must be valid integer IDs.")
+        return value
+
+    def create(self, validated_data):
+        instance = super().create(validated_data)
+        return instance
+
+    def get_reports_relation(self, instance):
+        return [
+            f"{instance.position}-{reports_to_person.position}"
+            for reports_to_person in instance.reports_to.all()
         ]
 
-    def get_reports_relation(self, obj):
-        # Build human-readable relations for reports_to
-        return [f"{obj.position}-{p.position}" for p in obj.reports_to.all()]
-
-    def get_coops_relation(self, obj):
-        # Build human-readable relations for cooperates_with
-        return [f"{obj.position}-{p.position}" for p in obj.cooperates_with.all()]
-    
+    def get_coops_relation(self, instance):
+        return [
+            f"{instance.position}-{coop_person.position}"
+            for coop_person in instance.cooperates_with.all()
+        ]
 
 
-    
-
-# class PersonelInformationSerializer(serializers.ModelSerializer):
-#     human_resource_id = serializers.PrimaryKeyRelatedField(
-#         source="human_resource", read_only=True
-#     )
-
-#     reports_relation = serializers.SerializerMethodField()
-
-#     coops_relation = serializers.SerializerMethodField()
-
-#     class Meta:
-#         model = PersonelInformation
-#         fields = [
-#             "id",
-#             "human_resource_id",
-#             "name",
-#             "position",
-#             "reports_to",
-#             "cooperates_with",
-#             "obligations",
-#             "reports_relation",
-#             "coops_relation",
-#         ]
-#         read_only_fields = ["id", "human_resource_id"]
-
-#     def get_reports_relation(self, obj):
-#         logger.info(f"Fetching reports_relation for PersonelInformation ID: {obj.id}")
-#         if not obj.reports_to.exists():
-#             return []
-#         return [f"{obj.position}-{person.position}" for person in obj.reports_to.all()]
-
-#     def get_coops_relation(self, obj):
-#         logger.info(f"Fetching coops_relation for PersonelInformation ID: {obj.id}")
-#         if not obj.cooperates_with.exists():
-#             return []
-#         return [
-#             f"{obj.position}-{person.position}" for person in obj.cooperates_with.all()
-#         ]
 
 
 class ChartNodeSerializer(serializers.ModelSerializer):
