@@ -158,20 +158,44 @@ class CompanyQuestionnaireSerializer(ModelSerializer):
         return super().create(validated_data)
 
 
-class CompanyQuestionnaireRetrieveSerializer(ModelSerializer):
+
+class CompanyQuestionnaireRetrieveSerializer(serializers.ModelSerializer):
     questionnaire = QuestionnaireWithAnswersSerializer(read_only=True)
-    
+    questionnaire_id = serializers.CharField(source="questionnaire.id", read_only=True)  
+
     class Meta:
         model = CompanyQuestionnaire
-        fields = ["id", "questionnaire", "submitted_at"]
+        fields = ["id", "questionnaire", "questionnaire_id", "submitted_at"]
 
     def to_representation(self, instance):
         self.context["company_questionnaire"] = instance
         return super().to_representation(instance)
 
     def create(self, validated_data):
+        if "company" not in self.context:
+            raise serializers.ValidationError("Company context is required.")
         validated_data["company"] = self.context["company"]
         return super().create(validated_data)
+    
+
+
+ 
+# class CompanyQuestionnaireRetrieveSerializer(ModelSerializer):
+#     questionnaire = QuestionnaireWithAnswersSerializer(read_only=True)
+
+#     # it is using CompanyQuestionnaire model but this model doesnt have id field -> get the wuestion aire id from companyquestionaire and retreive it
+#     class Meta:
+#         model = CompanyQuestionnaire
+#         fields = ["id", "questionnaire", "submitted_at"]
+
+#     def to_representation(self, instance):
+#         self.context["company_questionnaire"] = instance
+#         return super().to_representation(instance)
+
+#     def create(self, validated_data):
+#         validated_data["company"] = self.context["company"]
+#         return super().create(validated_data)
+
 
 
 class AnswerSubmissionSerializer(Serializer):

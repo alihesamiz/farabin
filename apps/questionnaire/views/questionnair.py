@@ -6,26 +6,23 @@ from rest_framework.viewsets import ModelViewSet
 from apps.questionnaire.repository.questionnaire_repo import (
     QuestionnaireRepository as _repo,
 )
+
 from apps.questionnaire.serializers import (
     AnswerSubmissionSerializer,
     CompanyAnswerSerializer,
-    CompanyQuestionnaireRetrieveSerializer,
+    CompanyQuestionnaireRetrieveSerializer, 
     CompanyQuestionnaireSerializer,
 )
 from apps.questionnaire.views.mixin import ViewSetMixin
 from django.utils import timezone
 
-# class CompanyQuestionnaireViewSet(ViewSetMixin, ModelViewSet):
-#     action_serializer_class = {"retrieve": CompanyQuestionnaireRetrieveSerializer}
-#     default_serializer_class = CompanyQuestionnaireSerializer
-
-
-#     def get_queryset(self):
-#         return _repo.get_company_questionnaire(company=self.get_company())
 
 
 class CompanyQuestionnaireViewSet(ViewSetMixin, ModelViewSet):
-    # Use the more specific serializer for the retrieve action
+    lookup_field = "questionnaire__id"   # lookup on related Questionnaire.id
+    lookup_url_kwarg = "pk"              # URL: /questionnaire/qs-01/
+    lookup_value_regex = "[\w-]+"        # allow letters, numbers, underscore, hyphen
+
     action_serializer_class = {
         "retrieve": CompanyQuestionnaireRetrieveSerializer,
         "submit_answers": AnswerSubmissionSerializer,
@@ -37,9 +34,50 @@ class CompanyQuestionnaireViewSet(ViewSetMixin, ModelViewSet):
         return _repo.get_company_questionnaires(company=company)
 
     def get_object(self):
-        obj = _repo.get_company_questionnaire_detail(pk=self.kwargs["pk"])
+        identifier = self.kwargs[self.lookup_url_kwarg]
+        obj = _repo.get_company_questionnaire_detail(identifier=identifier)
         self.check_object_permissions(self.request, obj)
         return obj
+
+
+# class CompanyQuestionnaireViewSet(ViewSetMixin, ModelViewSet):
+#     lookup_field = "pk"  # keep default, but we’ll handle lookup manually
+
+#     action_serializer_class = {
+#         "retrieve": CompanyQuestionnaireRetrieveSerializer,
+#         "submit_answers": AnswerSubmissionSerializer,
+#     }
+#     default_serializer_class = CompanyQuestionnaireSerializer
+
+#     def get_queryset(self):
+#         company = self.get_company()
+#         return _repo.get_company_questionnaires(company=company)
+
+#     def get_object(self):
+#         identifier = self.kwargs[self.lookup_field]
+#         obj = _repo.get_company_questionnaire_detail(identifier=identifier)
+#         self.check_object_permissions(self.request, obj)
+#         return obj
+
+
+
+
+# class CompanyQuestionnaireViewSet(ViewSetMixin, ModelViewSet):
+#     # Use the more specific serializer for the retrieve action
+#     action_serializer_class = {
+#         "retrieve": CompanyQuestionnaireRetrieveSerializer,
+#         "submit_answers": AnswerSubmissionSerializer,
+#     }
+#     default_serializer_class = CompanyQuestionnaireSerializer
+
+#     def get_queryset(self):
+#         company = self.get_company()
+#         return _repo.get_company_questionnaires(company=company)
+
+#     def get_object(self):
+#         obj = _repo.get_company_questionnaire_detail(pk=self.kwargs["pk"])
+#         self.check_object_permissions(self.request, obj)
+#         return obj
 
 
 

@@ -10,6 +10,7 @@ from django.contrib.auth import login as auth_login
 from apps.core.models import City, Province
 from apps.core.permissions import Unautherized
 from apps.core.repositories import UserRepository as _user_repo
+
 from apps.core.serializers import (
     CitySerializer,
     LoginSerializer,
@@ -101,8 +102,11 @@ class CustomTokenObtainPairView(TokenObtainPairView):
                     max_age=int(SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds()),
                     httponly=SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
                     secure=SIMPLE_JWT['AUTH_COOKIE_SECURE'],
-                    samesite="None"
+                    path="/",
+                    samesite="None",
+                    domain=None
                 )
+            
 
                 # Optionally, remove refresh from body
                 response.data = {
@@ -155,15 +159,17 @@ class CustomTokenRefreshView(TokenRefreshView):
                     
                 # )
 
-                # # Update refresh token if rotated
+                # Update refresh token if rotated
                 # if new_refresh_token:
                 #     response.set_cookie(
-                #         key=SIMPLE_JWT['REFRESH_COOKIE'],
-                #         value=new_refresh_token,
-                #         max_age=SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds(),
+                #         key="refresh_token",
+                #         value=refresh_token,
+                #         max_age=int(SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds()),
                 #         httponly=SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
                 #         secure=SIMPLE_JWT['AUTH_COOKIE_SECURE'],
-                #         samesite=SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
+                #         path="/",
+                #         samesite="None",
+                #         domain=None
                 #     )
 
 
@@ -173,6 +179,9 @@ class CustomTokenRefreshView(TokenRefreshView):
         return response
 
  
+
+
+
 @extend_schema(
     summary="Logout",
     description="Logout user / revoke tokens"
@@ -185,18 +194,27 @@ class LogoutView(APIView):
             refresh_token = request.COOKIES.get(SIMPLE_JWT['REFRESH_COOKIE'])
             if refresh_token:
                 token = RefreshToken(refresh_token)
-                token.blacklist()  # Blacklist the refresh token
-                response = Response({'message': 'Logged out successfully'}, status=status.HTTP_200_OK)
-                # Delete cookies
-                response.delete_cookie(SIMPLE_JWT['AUTH_COOKIE'])
-                response.delete_cookie(SIMPLE_JWT['REFRESH_COOKIE'])
+                token.blacklist()  # requires BLACKLIST app enabled
 
-                return response
-            else:
-                return Response({'error': 'Refresh token not provided'}, status=status.HTTP_400_BAD_REQUEST)
-            
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception:
+            pass
+
+        response = Response(
+            {'message': 'Logged out successfully'},
+            status=status.HTTP_200_OK
+        )
+
+        response.delete_cookie(
+                key="refresh_token",
+                path="/",
+                samesite="None",
+                domain=None
+                )
+        return response
+
+
+
+
 
 # Example protected view
 class ProtectedView(APIView):
@@ -320,8 +338,9 @@ class AuthViewSet(ViewSet):
             max_age=int(SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds()),
             httponly=SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
             secure=SIMPLE_JWT['AUTH_COOKIE_SECURE'],
-            samesite="None"
-        )
+            path="/",
+            samesite="None",
+            domain=None)
 
         logger.info(
             f"OTP for user {user.id} verified successfully.", extra={"user_id": user.id}

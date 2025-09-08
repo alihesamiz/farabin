@@ -102,6 +102,7 @@ class QuestionnaireQuestion(TimeStampedModel):
         ordering = ["order"]
 
 
+
 class CompanyQuestionnaire(models.Model):
     company = models.ForeignKey(
         "company.CompanyProfile", on_delete=models.CASCADE, verbose_name=_("Company")
