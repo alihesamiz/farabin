@@ -277,7 +277,7 @@ class FinancialAssetSerializer(serializers.ModelSerializer):
         model = FinancialAsset
         fields = ["year", "month"]
 
-
+ 
 class FinancialDataSerializer(serializers.ModelSerializer):
     financial_asset = FinancialAssetSerializer(read_only=True)
 

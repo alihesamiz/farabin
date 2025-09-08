@@ -212,17 +212,48 @@ class FinanceExcelViewSet(ViewSetMixin, ModelViewSet):
         return _repo.get_financial_excel_files_for_company(company)
 
 
+# class FinancialDataViewSet(ViewSetMixin, ReadOnlyModelViewSet):
+#     default_serializer_class = FinancialDataSerializer
+
+#     def get_queryset(self):
+#         company = self.get_company()
+#         qs = _repo.get_financial_data_for_company
+#         yearly = self.request.query_params.get("yearly")
+#         qs = qs(company, False) if not yearly else qs(company, True)
+#         if qs.exists():
+#             return qs
+#         raise FinancialDataNotFoundError
+
+
+
 class FinancialDataViewSet(ViewSetMixin, ReadOnlyModelViewSet):
     default_serializer_class = FinancialDataSerializer
 
-    def get_queryset(self):
-        company = self.get_company()
-        qs = _repo.get_financial_data_for_company
-        yearly = self.request.query_params.get("yearly")
-        qs = qs(company, False) if not yearly else qs(company, True)
-        if qs.exists():
-            return qs
-        raise FinancialDataNotFoundError
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        
+        if not queryset.exists():
+            return APIResponse.success(
+                code=status.HTTP_404_NOT_FOUND,
+                message="No Financial Data found for this period",
+                data=[]
+            )
+
+        return APIResponse.success(data=serializer.data)
+    
+
+
+# class FinancialDataViewSet(ViewSetMixin, ReadOnlyModelViewSet):
+#     default_serializer_class = FinancialDataSerializer
+
+#     def get_queryset(self):
+#         company = self.get_company()
+#         yearly = self.request.query_params.get("yearly")
+#         qs = _repo.get_financial_data_for_company(company, bool(yearly))
+#         return qs  # return even if empty
+
+
 
 
 class FinancialChartViewSet(ViewSetMixin, ReadOnlyModelViewSet):
@@ -241,42 +272,80 @@ class FinancialChartViewSet(ViewSetMixin, ReadOnlyModelViewSet):
         "leverage": LeverageChartSerializer,
         "cost": CostChartSerializer,
         "profit": ProfitChartSerializer,
-        "salary": SalaryChartSerializer,
+        "salary": SalaryChartSerializer, 
     }
     serializer_class = FinancialDataSerializer
 
     def get_serializer_class(self):
-        match self.action:
-            case "retrieve":
-                slug = self.kwargs.get(self.lookup_field)
-                serializer_class = self.CHART_SERIALIZER_MAP.get(slug)
-
-                if serializer_class:
-                    return serializer_class
-                else:
-                    raise FinancialChartNameError
-
-            case _:
-                return super().get_serializer_class()
+        if self.action == "retrieve":
+            slug = self.kwargs.get(self.lookup_field)
+            serializer_class = self.CHART_SERIALIZER_MAP.get(slug)
+            if serializer_class:
+                return serializer_class
+            return self.serializer_class  # fallback
+        return super().get_serializer_class()
 
     def get_queryset(self):
         company = self.get_company()
-        qs = _repo.get_financial_charts_for_company
         yearly = self.request.query_params.get("yearly")
-        qs = qs(company, False) if not yearly else qs(company, True)
-        if qs.exists():
-            return qs
-        raise FinancialDataNotFoundError
+        qs = _repo.get_financial_charts_for_company(company, bool(yearly))
+        return qs
 
     def retrieve(self, request, *args, **kwargs):
+        slug = kwargs.get(self.lookup_field)  # 'slug'
         queryset = self.get_queryset()
-
         serializer_class = self.get_serializer_class()
-        serializer = serializer_class(
-            queryset, many=True, context=self.get_serializer_context()
-        )
+        serializer = serializer_class(queryset, many=True, context=self.get_serializer_context())
 
-        return APIResponse.success(data=serializer.data)
+        if not queryset.exists():
+            return APIResponse.success(
+                data={
+                    "code": 404,
+                    "message": f"No data found for chart '{slug}'",
+                    "data": []
+                }
+            )
+
+        return APIResponse.success(
+            data={
+                "code": 200,
+                "message": "success",
+                "data": serializer.data
+            }
+        )
+        
+    # def get_serializer_class(self):
+    #     match self.action:
+    #         case "retrieve":
+    #             slug = self.kwargs.get(self.lookup_field)
+    #             serializer_class = self.CHART_SERIALIZER_MAP.get(slug)
+
+    #             if serializer_class:
+    #                 return serializer_class
+    #             else:
+    #                 raise FinancialChartNameError
+
+    #         case _:
+    #             return super().get_serializer_class()
+
+    # def get_queryset(self):
+    #     company = self.get_company()
+    #     qs = _repo.get_financial_charts_for_company
+    #     yearly = self.request.query_params.get("yearly")
+    #     qs = qs(company, False) if not yearly else qs(company, True)
+    #     if qs.exists():
+    #         return qs
+    #     raise FinancialDataNotFoundError
+
+    # def retrieve(self, request, *args, **kwargs):
+    #     queryset = self.get_queryset()
+
+    #     serializer_class = self.get_serializer_class()
+    #     serializer = serializer_class(
+    #         queryset, many=True, context=self.get_serializer_context()
+    #     )
+
+    #     return APIResponse.success(data=serializer.data)
 
 
 class FinanceAnalysisSummaryViewSet(ViewSetMixin, ViewSet):
