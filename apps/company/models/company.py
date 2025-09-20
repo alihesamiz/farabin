@@ -176,6 +176,41 @@ class CompanyProfile(TimeStampedModel):
         verbose_name=_("Downstream Industries"),
     )
 
+    
+    ceo_name = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        verbose_name=_("CEO Name"),
+    )
+    ceo_phone_number = models.CharField(
+        max_length=20,
+        null=True,
+        blank=True,
+        verbose_name=_("CEO Phone Number"),
+    )
+    website = models.URLField(
+        max_length=255,
+        null=True,
+        blank=True,
+        verbose_name=_("Website"),
+    )
+    personnel_count = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        verbose_name=_("Personnel Count"),
+    )
+    founding_year = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+        verbose_name=_("Founding Year"),
+    )
+    establishment_year = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+        verbose_name=_("Establishment Year"),
+    )
+
     @property
     def is_profile_complete(self):
         for field in self._meta.fields:

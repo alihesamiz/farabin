@@ -212,19 +212,6 @@ class FinanceExcelViewSet(ViewSetMixin, ModelViewSet):
         return _repo.get_financial_excel_files_for_company(company)
 
 
-# class FinancialDataViewSet(ViewSetMixin, ReadOnlyModelViewSet):
-#     default_serializer_class = FinancialDataSerializer
-
-#     def get_queryset(self):
-#         company = self.get_company()
-#         qs = _repo.get_financial_data_for_company
-#         yearly = self.request.query_params.get("yearly")
-#         qs = qs(company, False) if not yearly else qs(company, True)
-#         if qs.exists():
-#             return qs
-#         raise FinancialDataNotFoundError
-
-
 
 class FinancialDataViewSet(ViewSetMixin, ReadOnlyModelViewSet):
     default_serializer_class = FinancialDataSerializer
@@ -244,16 +231,6 @@ class FinancialDataViewSet(ViewSetMixin, ReadOnlyModelViewSet):
     
 
 
-# class FinancialDataViewSet(ViewSetMixin, ReadOnlyModelViewSet):
-#     default_serializer_class = FinancialDataSerializer
-
-#     def get_queryset(self):
-#         company = self.get_company()
-#         yearly = self.request.query_params.get("yearly")
-#         qs = _repo.get_financial_data_for_company(company, bool(yearly))
-#         return qs  # return even if empty
-
-
 
 
 class FinancialChartViewSet(ViewSetMixin, ReadOnlyModelViewSet):
@@ -264,6 +241,7 @@ class FinancialChartViewSet(ViewSetMixin, ReadOnlyModelViewSet):
         "asset": AssetChartSerializer,
         "sale": SaleChartSerializer,
         "equity": EquityChartSerializer,
+        "bankruptcy": BankrupsyChartSerializer,
         "bankrupsy": BankrupsyChartSerializer,
         "profitability": ProfitibilityChartSerializer,
         "inventory": InventoryChartSerializer,
@@ -314,39 +292,6 @@ class FinancialChartViewSet(ViewSetMixin, ReadOnlyModelViewSet):
             }
         )
         
-    # def get_serializer_class(self):
-    #     match self.action:
-    #         case "retrieve":
-    #             slug = self.kwargs.get(self.lookup_field)
-    #             serializer_class = self.CHART_SERIALIZER_MAP.get(slug)
-
-    #             if serializer_class:
-    #                 return serializer_class
-    #             else:
-    #                 raise FinancialChartNameError
-
-    #         case _:
-    #             return super().get_serializer_class()
-
-    # def get_queryset(self):
-    #     company = self.get_company()
-    #     qs = _repo.get_financial_charts_for_company
-    #     yearly = self.request.query_params.get("yearly")
-    #     qs = qs(company, False) if not yearly else qs(company, True)
-    #     if qs.exists():
-    #         return qs
-    #     raise FinancialDataNotFoundError
-
-    # def retrieve(self, request, *args, **kwargs):
-    #     queryset = self.get_queryset()
-
-    #     serializer_class = self.get_serializer_class()
-    #     serializer = serializer_class(
-    #         queryset, many=True, context=self.get_serializer_context()
-    #     )
-
-    #     return APIResponse.success(data=serializer.data)
-
 
 class FinanceAnalysisSummaryViewSet(ViewSetMixin, ViewSet):
     CHART_SERIALIZER_MAP = {

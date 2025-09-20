@@ -1,0 +1,742 @@
+{
+    "BalanceSheet": {
+        "CurrentAsset": {
+            "Cash": {
+                "cash_in_hand": {
+                    "type": "debit",
+                    "amount": 1.0
+                },
+                "bank_balances": {
+                    "type": "debit",
+                    "amount": 1.0
+                },
+                "petty_cash": {
+                    "type": "debit",
+                    "amount": 3.0
+                },
+                "cash_in_transit": {
+                    "type": "debit",
+                    "amount": 4.0
+                }
+            },
+            "ShortTermInvestment": {
+                "short_term_deposits": {
+                    "type": "debit",
+                    "amount": 5.0
+                },
+                "tradable_stocks": {
+                    "type": "debit",
+                    "amount": 6.0
+                },
+                "participation_bonds": {
+                    "type": "debit",
+                    "amount": 7.0
+                },
+                "etf_investment_fund": {
+                    "type": "debit",
+                    "amount": 8.0
+                },
+                "other_short_term_investments": {
+                    "type": "debit",
+                    "amount": 9.0
+                },
+                "short_term_investment_impairment": {
+                    "type": "credit",
+                    "amount": 10.0
+                }
+            },
+            "TradeReceivable": {
+                "trade_accounts_receivable": {
+                    "type": "debit",
+                    "amount": 11.0
+                },
+                "trade_notes_receivable": {
+                    "type": "debit",
+                    "amount": 12.0
+                },
+                "receivables_in_litigation": {
+                    "type": "debit",
+                    "amount": 13.0
+                },
+                "notes_in_collection": {
+                    "type": "debit",
+                    "amount": 14.0
+                },
+                "returned_cheques": {
+                    "type": "debit",
+                    "amount": 15.0
+                },
+                "doubtful_receivables_provision": {
+                    "type": "debit",
+                    "amount": 16.0
+                }
+            },
+            "NonTradeReceivable": {
+                "non_trade_accounts_receivable": {
+                    "type": "debit",
+                    "amount": 17.0
+                },
+                "non_trade_notes_receivable": {
+                    "type": "debit",
+                    "amount": 18.0
+                },
+                "employee_receivables": {
+                    "type": "debit",
+                    "amount": 19.0
+                },
+                "director_receivables": {
+                    "type": "debit",
+                    "amount": 20.0
+                },
+                "related_companies_receivables": {
+                    "type": "debit",
+                    "amount": 21.0
+                },
+                "vat_receivable": {
+                    "type": "debit",
+                    "amount": 22.0
+                },
+                "deposits_with_others": {
+                    "type": "debit",
+                    "amount": 23.0
+                },
+                "dividends_receivable": {
+                    "type": "debit",
+                    "amount": 24.0
+                }
+            },
+            "ShareholderReceivable": {
+                "shareholder_payables": {
+                    "type": "debit",
+                    "amount": 25.0
+                }
+            },
+            "Inventory": {
+                "raw_materials": {
+                    "type": "debit",
+                    "amount": 26.0
+                },
+                "work_in_progress": {
+                    "type": "debit",
+                    "amount": 27.0
+                },
+                "finished_goods": {
+                    "type": "debit",
+                    "amount": 28.0
+                },
+                "purchased_goods_for_sale": {
+                    "type": "debit",
+                    "amount": 29.0
+                },
+                "spare_parts": {
+                    "type": "debit",
+                    "amount": 30.0
+                },
+                "packaging_materials": {
+                    "type": "debit",
+                    "amount": 31.0
+                },
+                "consignment_goods_with_others": {
+                    "type": "debit",
+                    "amount": 32.0
+                },
+                "idle_items": {
+                    "type": "debit",
+                    "amount": 33.0
+                },
+                "scrap_raw_materials": {
+                    "type": "debit",
+                    "amount": 34.0
+                },
+                "inventory_impairment": {
+                    "type": "debit",
+                    "amount": 35.0
+                }
+            },
+            "OrdersAndPrepayments": {
+                "prepaid_goods_and_services": {
+                    "type": "debit",
+                    "amount": 36.0
+                },
+                "prepaid_income_tax": {
+                    "type": "debit",
+                    "amount": 37.0
+                },
+                "prepaid_rent": {
+                    "type": "debit",
+                    "amount": 38.0
+                },
+                "prepaid_insurance": {
+                    "type": "debit",
+                    "amount": 39.0
+                },
+                "orders_in_transit": {
+                    "type": "debit",
+                    "amount": 40.0
+                },
+                "prepaid_loans": {
+                    "type": "debit",
+                    "amount": 41.0
+                },
+                "prepaid_interest_on_loans": {
+                    "type": "debit",
+                    "amount": 42.0
+                },
+                "other_prepayments": {
+                    "type": "debit",
+                    "amount": 43.0
+                }
+            },
+            "AssetsHeldForSale": {
+                "assets_held_for_sale": {
+                    "type": "debit",
+                    "amount": 44.0
+                },
+                "impairment_reserve": {
+                    "type": "credit",
+                    "amount": 45.0
+                }
+            }
+        },
+        "FixedAsset": {
+            "IntangibleAsset": {
+                "software": {
+                    "type": "debit",
+                    "amount": 46.0
+                },
+                "royalty": {
+                    "type": "debit",
+                    "amount": 47.0
+                },
+                "goodwill": {
+                    "type": "debit",
+                    "amount": 48.0
+                },
+                "patent": {
+                    "type": "debit",
+                    "amount": 49.0
+                },
+                "trademark": {
+                    "type": "debit",
+                    "amount": 50.0
+                },
+                "copyright": {
+                    "type": "debit",
+                    "amount": 51.0
+                },
+                "pre_operating_expenses": {
+                    "type": "debit",
+                    "amount": 52.0
+                }
+            },
+            "TangibleFixedAsset": {
+                "land": {
+                    "type": "debit",
+                    "amount": 53.0
+                },
+                "building": {
+                    "type": "debit",
+                    "amount": 54.0
+                },
+                "installations": {
+                    "type": "debit",
+                    "amount": 55.0
+                },
+                "machinery_and_equipment": {
+                    "type": "debit",
+                    "amount": 56.0
+                },
+                "vehicles": {
+                    "type": "debit",
+                    "amount": 57.0
+                },
+                "office_furniture": {
+                    "type": "debit",
+                    "amount": 58.0
+                },
+                "accumulated_depreciation": {
+                    "type": "debit",
+                    "amount": 59.0
+                }
+            },
+            "AssetsInProgress": {
+                "assets_in_progress": {
+                    "type": "debit",
+                    "amount": 60.0
+                }
+            },
+            "LongTermInvestment": {
+                "investment_in_affiliates": {
+                    "type": "debit",
+                    "amount": 69.0
+                },
+                "investment_in_subsidiaries": {
+                    "type": "debit",
+                    "amount": 70.0
+                },
+                "investment_in_private_companies": {
+                    "type": "debit",
+                    "amount": 63.0
+                },
+                "long_term_bonds": {
+                    "type": "debit",
+                    "amount": 64.0
+                },
+                "property_investment": {
+                    "type": "debit",
+                    "amount": 65.0
+                },
+                "long_term_deposits": {
+                    "type": "debit",
+                    "amount": 66.0
+                },
+                "long_term_participation_in_projects": {
+                    "type": "debit",
+                    "amount": 67.0
+                },
+                "long_term_treasury_investment": {
+                    "type": "debit",
+                    "amount": 68.0
+                },
+                "long_term_investment_impairment": {
+                    "type": "debit",
+                    "amount": 0
+                }
+            },
+            "OtherNonCurrentAsset": {
+                "other_non_current_assets": {
+                    "type": "debit",
+                    "amount": 72.0
+                }
+            }
+        },
+        "CurrentLiability": {
+            "TradeAccountsPayable": {
+                "domestic_suppliers": {
+                    "type": "credit",
+                    "amount": 73.0
+                },
+                "foreign_suppliers": {
+                    "type": "credit",
+                    "amount": 74.0
+                }
+            },
+            "NonTradeAccountsPayable": {
+                "non_trade_accounts_payable": {
+                    "type": "credit",
+                    "amount": 76.0
+                },
+                "salaries_payable": {
+                    "type": "credit",
+                    "amount": 77.0
+                },
+                "social_security_payable": {
+                    "type": "credit",
+                    "amount": 78.0
+                },
+                "deposits_from_entities": {
+                    "type": "credit",
+                    "amount": 79.0
+                },
+                "deposits_from_individuals": {
+                    "type": "credit",
+                    "amount": 80.0
+                },
+                "accrued_unpaid_expenses_provision": {
+                    "type": "credit",
+                    "amount": 81.0
+                }
+            },
+            "ShareholderPayables": {
+                "shareholder_payables": {
+                    "type": "credit",
+                    "amount": 82.0
+                }
+            },
+            "DividendsPayable": {
+                "dividends_payable_to_individuals": {
+                    "type": "credit",
+                    "amount": 83.0
+                },
+                "dividends_payable_to_shareholders": {
+                    "type": "credit",
+                    "amount": 84.0
+                },
+                "dividends_payable_from_previous_years": {
+                    "type": "credit",
+                    "amount": 85.0
+                }
+            },
+            "ShortTermLoans": {
+                "loans_from_banks": {
+                    "type": "credit",
+                    "amount": 86.0
+                },
+                "loans_from_individuals": {
+                    "type": "credit",
+                    "amount": 87.0
+                }
+            },
+            "AdvancesAndDeposits": {
+                "advances_for_goods_sales": {
+                    "type": "credit",
+                    "amount": 88.0
+                },
+                "advances_for_services": {
+                    "type": "credit",
+                    "amount": 89.0
+                },
+                "advances_for_contracts": {
+                    "type": "credit",
+                    "amount": 90.0
+                },
+                "deposits_from_others": {
+                    "type": "credit",
+                    "amount": 91.0
+                }
+            },
+            "LiabilitiesRelatedToAssetsHeldForSale": {
+                "related_loans": {
+                    "type": "debit",
+                    "amount": 0
+                },
+                "related_major_repairs_liability": {
+                    "type": "credit",
+                    "amount": 4535434.0
+                },
+                "related_deferred_tax": {
+                    "type": "debit",
+                    "amount": 0
+                },
+                "related_expert_fees_payable": {
+                    "type": "debit",
+                    "amount": 0
+                }
+            },
+            "TaxProvision": {
+                "tax_provision": {
+                    "type": "debit",
+                    "amount": 0
+                }
+            },
+            "TaxPayable": {
+                "payroll_tax": {
+                    "type": "credit",
+                    "amount": 453453.0
+                },
+                "withholding_tax": {
+                    "type": "debit",
+                    "amount": 0
+                },
+                "vat_payable": {
+                    "type": "debit",
+                    "amount": 0
+                },
+                "income_tax_payable": {
+                    "type": "debit",
+                    "amount": 0
+                }
+            }
+        },
+        "LongTermLiability": {
+            "LongTermAccountsPayable": {
+                "long_term_notes_payable": {
+                    "type": "credit",
+                    "amount": 453.0
+                },
+                "long_term_accounts_payable": {
+                    "type": "credit",
+                    "amount": 453543.0
+                }
+            },
+            "LongTermLoans": {
+                "loans_from_banks": {
+                    "type": "debit",
+                    "amount": 0
+                }
+            },
+            "LongTermProvisions": {
+                "Employee Termination Benefit Reserve": {
+                    "type": "debit",
+                    "amount": 0
+                }
+            }
+        },
+        "Equity": {
+            "InitialCapital": {
+                "initial_capital": {
+                    "type": "credit",
+                    "amount": 345354.0
+                }
+            },
+            "CapitalIncreaseDecrease": {
+                "capital_increase_decrease": {
+                    "type": "debit",
+                    "amount": 453.0
+                }
+            },
+            "SharePremiumReserve": {
+                "share_premium_reserve": {
+                    "type": "credit",
+                    "amount": 53543.0
+                }
+            },
+            "ShareDiscountReserve": {
+                "share_discount_reserve": {
+                    "type": "debit",
+                    "amount": 34.0
+                }
+            },
+            "LegalReserve": {
+                "legal_reserve": {
+                    "type": "credit",
+                    "amount": 435434.0
+                }
+            },
+            "OtherReserves": {
+                "other_reserves": {
+                    "type": "credit",
+                    "amount": 3543.0
+                }
+            },
+            "RevaluationSurplus": {
+                "revaluation_surplus": {
+                    "type": "credit",
+                    "amount": 45345.0
+                }
+            },
+            "ForeignCurrencyTranslationDifference": {
+                "foreign_currency_translation_difference": {
+                    "type": "credit",
+                    "amount": 453543.0
+                }
+            },
+            "RetainedEarnings": {
+                "retained_earnings": {
+                    "type": "debit",
+                    "amount": 0
+                }
+            }
+        },
+        "Revenue": {
+            "NetSales": {
+                "net_sales": {
+                    "type": "debit",
+                    "amount": 0
+                }
+            },
+            "ServiceRevenue": {
+                "service_revenue": {
+                    "type": "debit",
+                    "amount": 0
+                }
+            },
+            "ForeignCurrencyRevenue": {
+                "foreign_currency_revenue": {
+                    "type": "debit",
+                    "amount": 0
+                }
+            },
+            "OtherOperatingRevenue": {
+                "other_operating_revenue": {
+                    "type": "debit",
+                    "amount": 0
+                },
+                "rental_income": {
+                    "type": "debit",
+                    "amount": 0
+                },
+                "incidental_revenue": {
+                    "type": "debit",
+                    "amount": 0
+                },
+                "non_operating_revenue": {
+                    "type": "debit",
+                    "amount": 0
+                }
+            }
+        },
+        "Expense": {
+            "ProductionCosts": {
+                "direct_materials": {
+                    "type": "debit",
+                    "amount": 54354.0
+                },
+                "direct_labor": {
+                    "type": "debit",
+                    "amount": 543.0
+                },
+                "machinery_depreciation": {
+                    "type": "debit",
+                    "amount": 45354.0
+                },
+                "production_line_insurance": {
+                    "type": "debit",
+                    "amount": 354.0
+                },
+                "energy_and_fuel": {
+                    "type": "debit",
+                    "amount": 0
+                },
+                "equipment_maintenance": {
+                    "type": "debit",
+                    "amount": 45.0
+                },
+                "production_consumables": {
+                    "type": "debit",
+                    "amount": 34.0
+                },
+                "production_rent": {
+                    "type": "debit",
+                    "amount": 3453.0
+                },
+                "raw_material_transport": {
+                    "type": "debit",
+                    "amount": 54.0
+                }
+            },
+            "DistributionAndMarketingCosts": {
+                "marketing_salaries": {
+                    "type": "debit",
+                    "amount": 35.0
+                },
+                "advertising_and_exhibitions": {
+                    "type": "debit",
+                    "amount": 34.0
+                },
+                "warehousing_costs": {
+                    "type": "debit",
+                    "amount": 3.0
+                },
+                "transportation_to_customers": {
+                    "type": "debit",
+                    "amount": 543434343.0
+                },
+                "after_sales_services": {
+                    "type": "debit",
+                    "amount": 543.0
+                },
+                "sales_commissions": {
+                    "type": "debit",
+                    "amount": 0
+                },
+                "packaging_and_labeling": {
+                    "type": "debit",
+                    "amount": 1.0
+                }
+            },
+            "GeneralAndAdministrativeCosts": {
+                "administrative_salaries_payable": {
+                    "type": "debit",
+                    "amount": 0
+                },
+                "head_office_rent": {
+                    "type": "debit",
+                    "amount": 0
+                },
+                "utility_bills": {
+                    "type": "debit",
+                    "amount": 312.0
+                },
+                "office_supplies": {
+                    "type": "debit",
+                    "amount": 3.0
+                },
+                "administrative_assets_depreciation": {
+                    "type": "debit",
+                    "amount": 0
+                },
+                "general_insurance": {
+                    "type": "debit",
+                    "amount": 31.0
+                },
+                "audit_and_accounting_fees": {
+                    "type": "debit",
+                    "amount": 0
+                },
+                "consulting_fees": {
+                    "type": "debit",
+                    "amount": 0
+                },
+                "hospitality_and_transport": {
+                    "type": "debit",
+                    "amount": 0
+                }
+            },
+            "FinancialCosts": {
+                "bank_interest_and_fees": {
+                    "type": "debit",
+                    "amount": 0
+                },
+                "loan_late_penalties": {
+                    "type": "debit",
+                    "amount": 0
+                },
+                "guarantee_fees": {
+                    "type": "debit",
+                    "amount": 0
+                },
+                "discounting_expenses_on_receivables": {
+                    "type": "debit",
+                    "amount": 0
+                },
+                "fund_transfer_and_bank_services": {
+                    "type": "debit",
+                    "amount": 0
+                }
+            },
+            "OtherOperatingCosts": {
+                "bad_debts_and_written_off_expense": {
+                    "type": "debit",
+                    "amount": 0
+                },
+                "fx_non_operating_gain_loss": {
+                    "type": "debit",
+                    "amount": 0
+                },
+                "impairment_short_term_investments": {
+                    "type": "debit",
+                    "amount": 0
+                },
+                "inventory_write_down": {
+                    "type": "debit",
+                    "amount": 0
+                },
+                "asset_impairment": {
+                    "type": "debit",
+                    "amount": 0
+                },
+                "impairment_long_term_investments": {
+                    "type": "debit",
+                    "amount": 0
+                },
+                "fx_operating_gain_loss": {
+                    "type": "debit",
+                    "amount": 0
+                },
+                "non_operating_expenses": {
+                    "type": "debit",
+                    "amount": 0
+                }
+            }
+        },
+        "ContingentAccount": {
+            "ContingentAccounts": {
+                "our_accounts_with_others": {
+                    "type": "debit",
+                    "amount": 0
+                },
+                "others_accounts_with_us": {
+                    "type": "debit",
+                    "amount": 0
+                }
+            },
+            "ContingentCounterparties": {
+                "our_counterparties_with_others": {
+                    "type": "debit",
+                    "amount": 0
+                }
+            }
+        }
+    }
+}

@@ -12,7 +12,7 @@ class QuestionMetric(TimeStampedModel):
     )
     title = models.CharField(verbose_name=_("Title"), max_length=128)
     weight = models.DecimalField(
-        verbose_name=_("Weight"), max_digits=4, decimal_places=2
+        verbose_name=_("Weight"), max_digits=4, decimal_places=4
     )
 
     class Meta:

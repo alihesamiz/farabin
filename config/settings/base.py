@@ -41,6 +41,7 @@ PROJECT_APPS = [
     "apps.tickets",
     "apps.core",
     "apps.swot",
+    'apps.balancesheet',
 ]
  
 THIRED_PARTY_APPS = [
@@ -358,3 +359,5 @@ LOGGING["handlers"]["rotating_file"] = {  # type: ignore
 COOLDOWN_PERIOD = timedelta(minutes=1, seconds=30)
 
 CORS_ALLOW_CREDENTIALS = True   
+
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000  

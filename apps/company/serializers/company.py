@@ -123,6 +123,12 @@ class CompanyProfileSerializer(ModelSerializer):
             "is_profile_complete",
             "upstream_industries",
             "downstream_industries",
+            "ceo_name",
+            "ceo_phone_number",
+            "website",
+            "personnel_count",
+            "founding_year",
+            "establishment_year",
         ]
 
 

@@ -1,176 +1,3 @@
-import pandas as pd
-import json
-import unicodedata
-import re
-
-# Enhanced normalization function
-def normalize_farsi(text):
-    if not text:
-        return text
-    text = text.strip()
-    # Replace common variations
-    text = text.replace('\u200c', '')  # Zero-width non-joiner
-    text = text.replace('\u2019', '')  # Right single quotation mark
-    text = text.replace('\u2018', '')  # Left single quotation mark
-    text = text.replace('\u200e', '')  # Left-to-right mark
-    text = text.replace('\u200f', '')  # Right-to-left mark
-    # Normalize slashes and spaces
-    text = re.sub(r'\s*/\s*', '/', text)  # Standardize slashes
-    text = re.sub(r'\s+', '', text)       # Remove all spaces
-    # Normalize parentheses
-    text = text.replace('(', '').replace(')', '')
-    # Normalize Persian/Arabic characters
-    text = text.replace('ي', 'ی')  # Arabic Yeh to Persian Yeh
-    text = text.replace('ك', 'ک')  # Arabic Kaf to Persian Kaf
-    # Normalize Unicode form
-    text = unicodedata.normalize('NFKC', text)
-    return text
-
-# Define the JSON template
-balance_sheet = {
-    "BalanceSheet": {
-        "CurrentAsset": {
-            "Cash": {},
-            "ShortTermInvestment": {},
-            "TradeReceivable": {},
-            "NonTradeReceivable": {},
-            "ShareholderReceivable": {},
-            "Inventory": {},
-            "OrdersAndPrepayments": {},
-            "AssetsHeldForSale": {}
-        },
-        "FixedAsset": {
-            "IntangibleAsset": {},
-            "TangibleFixedAsset": {},
-            "AssetsInProgress": {},
-            "LongTermInvestment": {},
-            "OtherNonCurrentAsset": {}
-        },
-        "CurrentLiability": {
-            "TradeAccountsPayable": {},
-            "NonTradeAccountsPayable": {},
-            "ShareholderPayables": {},
-            "DividendsPayable": {},
-            "ShortTermLoans": {},
-            "AdvancesAndDeposits": {},
-            "LiabilitiesRelatedToAssetsHeldForSale": {},
-            "TaxProvision": {},
-            "TaxPayable": {}
-        },
-        "LongTermLiability": {
-            "LongTermAccountsPayable": {},
-            "LongTermLoans": {},
-            "LongTermProvisions": {}
-        },
-        "Equity": {
-            "InitialCapital": {},
-            "CapitalIncreaseDecrease": {},
-            "SharePremiumReserve": {},
-            "ShareDiscountReserve": {},
-            "LegalReserve": {},
-            "OtherReserves": {},
-            "RevaluationSurplus": {},
-            "ForeignCurrencyTranslationDifference": {},
-            "RetainedEarnings": {}
-        },
-        "Revenue": {
-            "NetSales": {},
-            "ServiceRevenue": {},
-            "ForeignCurrencyRevenue": {},
-            "OtherOperatingRevenue": {}
-        },
-        "Expense": {
-            "ProductionCosts": {},
-            "DistributionAndMarketingCosts": {},
-            "GeneralAndAdministrativeCosts": {},
-            "FinancialCosts": {},
-            "OtherOperatingCosts": {}
-        },
-        "ContingentAccount": {
-            "ContingentAccounts": {},
-            "ContingentCounterparties": {}
-        }
-    }
-}
-
-# Main section mappings
-main_mappings = {
-    'دارایی‌های جاری': 'CurrentAsset',
-    'دارایی های غیر جاری': 'FixedAsset',
-    'بدهی‌های جاری': 'CurrentLiability',
-    'بدهی‌های بلندمدت': 'LongTermLiability',
-    'حقوق صاحبان سهام': 'Equity',
-    'درآمدها': 'Revenue',
-    'هزینه ها': 'Expense',
-    'حساب‌های انتظامی': 'ContingentAccount'
-}
-
-# Sub-section mappings
-sub_mappings = {
-    'CurrentAsset': {
-        'موجودی نقد': 'Cash',
-        'سرمایه‌گذاری‌های کوتاه‌مدت': 'ShortTermInvestment',
-        'حساب‌ها و اسناد دریافتنی تجاری': 'TradeReceivable',
-        'حسابها و اسناد دریافتنی غیرتجاری': 'NonTradeReceivable',
-        'جاری شرکا/سهامداران': 'ShareholderReceivable',
-        'موجودی مواد و کالا': 'Inventory',
-        'سفارش‌ها و پیش‌پرداخت‌ها': 'OrdersAndPrepayments',
-        'دارایی نگهداری شده برای فروش': 'AssetsHeldForSale'
-    },
-    'FixedAsset': {
-        'دارایی‌های نامشهود': 'IntangibleAsset',
-        'دارایی‌های ثابت مشهود': 'TangibleFixedAsset',
-        'دارایی در جریان تکمیل': 'AssetsInProgress',
-        'سرمایه‌گذاری بلندمدت': 'LongTermInvestment',
-        'سایر دارایی های غیر جاری': 'OtherNonCurrentAsset'
-    },
-    'CurrentLiability': {
-        'حساب ها و اسناد پرداختنی تجاری': 'TradeAccountsPayable',
-        'حساب‌ها و اسناد پرداختنی غیرتجاری': 'NonTradeAccountsPayable',
-        'جاری شرکا/سهامداران': 'ShareholderPayables',
-        'سود سهام پرداختنی': 'DividendsPayable',
-        'تسهیلات مالی دریافتی کوتاه‌مدت': 'ShortTermLoans',
-        'پیش‌دریافت‌ها و سپرده‌ها': 'AdvancesAndDeposits',
-        'بدهی‌های مرتبط با دارایی‌های نگهداری‌شده برای فروش': 'LiabilitiesRelatedToAssetsHeldForSale',
-        'ذخیره مالیات': 'TaxProvision',
-        'مالیات پرداختنی': 'TaxPayable'
-    },
-    'LongTermLiability': {
-        'حساب ها و اسناد پرداختنی بلندمدت': 'LongTermAccountsPayable',
-        'تسهیلات مالی دریافتی بلندمدت': 'LongTermLoans',
-        'ذخایر بلند مدت': 'LongTermProvisions'
-    },
-    'Equity': {
-        'سرمایه اولیه': 'InitialCapital',
-        'افزایش /کاهش سرمایه': 'CapitalIncreaseDecrease',
-        'اندوخته‌ی صرف سهام': 'SharePremiumReserve',
-        'اندوخته کسر سهام': 'ShareDiscountReserve',
-        'اندوخته‌ی قانونی': 'LegalReserve',
-        'سایر اندوخته‌ها': 'OtherReserves',
-        'مازاد تجدید ارزیابی دارایی‌ها': 'RevaluationSurplus',
-        'تفاوت تسعیر ارز': 'ForeignCurrencyTranslationDifference',
-        'سود (زیان)انباشته': 'RetainedEarnings'
-    },
-    'Revenue': {
-        'خالص فروش': 'NetSales',
-        'درامد ارائه خدمات': 'ServiceRevenue',
-        'درآمد تسعیر ارز': 'ForeignCurrencyRevenue',
-        'سایر درآمدهای عملیاتی': 'OtherOperatingRevenue'
-    },
-    'Expense': {
-        'هزینه های تولید': 'ProductionCosts',
-        'هزینه‌های توزیع و فروش و بازاریابی': 'DistributionAndMarketingCosts',
-        'هزینه های عمومی و اداری': 'GeneralAndAdministrativeCosts',
-        'هزینه‌های مالی': 'FinancialCosts',
-        'سایر هزینه های عملیاتی': 'OtherOperatingCosts'
-    },
-    'ContingentAccount': {
-        'حساب‌های انتظامی': 'ContingentAccounts',
-        'طرف حساب‌های انتظامی': 'ContingentCounterparties'
-    }
-}
-
-# Extended FIELD_FARSI_MAP
 FIELD_FARSI_MAP = {
     "BalanceSheet": {
         "date": "تاریخ",
@@ -227,7 +54,6 @@ FIELD_FARSI_MAP = {
     "ShareholderReceivable": {
         "current_asset": "دارایی جاری",
         "amount": "مبلغ",
-        "shareholder_receivables": "جاری شرکا/سهامداران",
     },
     "Inventory": {
         "current_asset": "دارایی جاری",
@@ -255,7 +81,7 @@ FIELD_FARSI_MAP = {
     },
     "AssetsHeldForSale": {
         "current_asset": "دارایی جاری",
-        "assets_held_for_sale": "دارایی نگهداری شده برای فروش",
+        "assets_held_for_sale": "ارزش دارایی نگهداری شده برای فروش",
         "impairment_reserve": "ذخیره کاهش ارزش دارایی",
     },
     "FixedAsset": {
@@ -283,7 +109,6 @@ FIELD_FARSI_MAP = {
     },
     "AssetsInProgress": {
         "fixed_asset": "دارایی ثابت",
-        "assets_in_progress": "دارایی‌های در جریان تکمیل",
         "amount": "مبلغ",
     },
     "LongTermInvestment": {
@@ -300,7 +125,6 @@ FIELD_FARSI_MAP = {
     },
     "OtherNonCurrentAsset": {
         "fixed_asset": "دارایی ثابت",
-        "other_non_current_assets": "سایر دارایی های غیرجاری",
         "amount": "مبلغ",
     },
     "CurrentLiability": {
@@ -313,7 +137,6 @@ FIELD_FARSI_MAP = {
     },
     "NonTradeAccountsPayable": {
         "current_liability": "بدهی جاری",
-        "non_trade_accounts_payable": "حسابها و اسناد پرداختنی غیر تجاری",
         "salaries_payable": "حقوق و دستمزد پرداختنی",
         "social_security_payable": "سازمان تامین اجتماعی (حق بیمه‌ی کارکنان)",
         "deposits_from_entities": "سپرده دریافتی از اشخاص حقیقی و حقوقی",
@@ -322,7 +145,6 @@ FIELD_FARSI_MAP = {
     },
     "ShareholderPayables": {
         "current_liability": "بدهی جاری",
-        "shareholder_payables": "جاری شرکا/سهامداران",
         "amount": "مبلغ",
     },
     "DividendsPayable": {
@@ -352,7 +174,6 @@ FIELD_FARSI_MAP = {
     },
     "TaxProvision": {
         "current_liability": "بدهی جاری",
-        "tax_provision": "ذخیره مالیات",
         "amount": "مبلغ",
     },
     "TaxPayable": {
@@ -377,29 +198,64 @@ FIELD_FARSI_MAP = {
     "LongTermProvisions": {
         "long_term_liability": "بدهی بلندمدت",
         "employee_end_of_service_benefits": "ذخیره‌ی مزایای پایان خدمت کارکنان",
-        "Employee Termination Benefit Reserve": "ذخیره‌ی مزایای پایان خدمت کارکنان",
     },
     "Equity": {
         "balance_sheet": "ترازنامه",
-        "initial_capital": "سرمایه اولیه",
-        "capital_increase_decrease": "افزایش/کاهش سرمایه",
-        "share_premium_reserve": "اندوخته‌ی صرف سهام",
-        "share_discount_reserve": "اندوخته کسر سهام",
-        "legal_reserve": "اندوخته‌ی قانونی",
-        "other_reserves": "سایر اندوخته‌ها",
-        "revaluation_surplus": "مازاد تجدید ارزیابی دارایی‌ها",
-        "foreign_currency_translation_difference": "تفاوت تسعیر ارز",
-        "retained_earnings": "سود (زیان)انباشته",
+    },
+    "InitialCapital": {
+        "equity": "حقوق صاحبان سهام",
+        "amount": "مبلغ",
+    },
+    "CapitalIncreaseDecrease": {
+        "equity": "حقوق صاحبان سهام",
+        "amount": "مبلغ",
+    },
+    "SharePremiumReserve": {
+        "equity": "حقوق صاحبان سهام",
+        "amount": "مبلغ",
+    },
+    "ShareDiscountReserve": {
+        "equity": "حقوق صاحبان سهام",
+        "amount": "مبلغ",
+    },
+    "LegalReserve": {
+        "equity": "حقوق صاحبان سهام",
+        "amount": "مبلغ",
+    },
+    "OtherReserves": {
+        "equity": "حقوق صاحبان سهام",
+        "amount": "مبلغ",
+    },
+    "RevaluationSurplus": {
+        "equity": "حقوق صاحبان سهام",
+        "amount": "مبلغ",
+    },
+    "ForeignCurrencyTranslationDifference": {
+        "equity": "حقوق صاحبان سهام",
+        "amount": "مبلغ",
+    },
+    "RetainedEarnings": {
+        "equity": "حقوق صاحبان سهام",
+        "amount": "مبلغ",
     },
     "Revenue": {
         "balance_sheet": "ترازنامه",
-        "net_sales": "خالص فروش",
-        "service_revenue": "درامد ارائه خدمات",
-        "foreign_currency_revenue": "درآمد تسعیر ارز",
-        "other_operating_revenue": "سایر درآمدهای عملیاتی",
-        "incidental_revenue": "درآمد اتفاقی",
-        "non_operating_revenue": "درآمدهای غیرعملیاتی",
-        "rental_income": "درآمد اجاره",
+    },
+    "NetSales": {
+        "revenue": "درآمد",
+        "amount": "مبلغ",
+    },
+    "ServiceRevenue": {
+        "revenue": "درآمد",
+        "amount": "مبلغ",
+    },
+    "ForeignCurrencyRevenue": {
+        "revenue": "درآمد",
+        "amount": "مبلغ",
+    },
+    "OtherOperatingRevenue": {
+        "revenue": "درآمد",
+        "amount": "مبلغ",
     },
     "Expense": {
         "balance_sheet": "ترازنامه",
@@ -420,7 +276,6 @@ FIELD_FARSI_MAP = {
         "expense": "هزینه",
         "marketing_salaries": "هزینه حقوق و دستمزد - بازاریابی و فروش",
         "advertising_and_promotions": "هزینه‌های تبلیغات، بازاریابی، کاتالوگ و بروشور",
-        "advertising_and_exhibitions": "هزینه‌های تبلیغات، بازاریابی، کاتالوگ و بروشور و نمایشگاه ها",
         "warehousing_costs": "هزینه‌ی انبارداری",
         "transportation_to_customers": "حمل و نقل کالا به مشتری",
         "after_sales_services": "هزینه خدمات پس از فروش",
@@ -437,8 +292,6 @@ FIELD_FARSI_MAP = {
         "administrative_assets_depreciation": "استهلاک دارایی های اداری",
         "general_insurance": "بیمه های عمومی",
         "audit_and_consulting_fees": "هزینه حسابرسی و مشاوره",
-        "audit_and_accounting_fees": "هزینه حسابرسی و حسابداری",
-        "consulting_fees": "هزینه مشاوره",
         "hospitality_and_transport": "پذیرایی و ایاب و ذهاب",
     },
     "FinancialCosts": {
@@ -458,7 +311,6 @@ FIELD_FARSI_MAP = {
         "asset_impairment": "هزینه کاهش ارزش دارایی",
         "impairment_long_term_investments": "هزینه کاهش ارزش سرمایه گذاری های بلند مدت",
         "fx_operating_gain_loss": "سود و زیان ناشی از تسعیر دارایی‌ها و بدهی‌های ارزی عملیاتی",
-        "non_operating_expenses": "هزینه‌های غیرعملیاتی",
     },
     "ContingentAccount": {
         "balance_sheet": "ترازنامه",
@@ -475,89 +327,3 @@ FIELD_FARSI_MAP = {
         "amount": "مبلغ",
     },
 }
-
-# Create normalized reverse mapping for account names
-normalized_account_mappings = {}
-unmapped_names = []  # To track untranslated names with context
-
-for section, mappings in FIELD_FARSI_MAP.items():
-    if section not in ["BalanceSheet", "CurrentAsset"]:  # Skip top-level and generic
-        for english_key, farsi_name in mappings.items():
-            if english_key not in ["current_asset", "fixed_asset", "current_liability", 
-                                   "long_term_liability", "equity", "revenue", "expense", 
-                                   "contingent_account", "balance_sheet", "amount"]:
-                normalized_key = normalize_farsi(farsi_name)
-                normalized_account_mappings[normalized_key] = english_key
-
-# Load the Excel file
-file_path = 'تراز.xlsx'  # Use the actual file path
-sheet_name = 'تراز آزمایشی'
-df = pd.read_excel(file_path, sheet_name=sheet_name, header=None)
-
-# Parsing logic
-current_main = None
-current_sub = None
-
-for _, row in df.iterrows():
-    # Set main section if applicable
-    if pd.notna(row.get(1, pd.NA)) and str(row[1]).strip() in main_mappings:
-        current_main = main_mappings[str(row[1]).strip()]
-        current_sub = None  # Reset sub
-    
-    # Set sub section if applicable
-    if current_main and pd.notna(row.get(3, pd.NA)) and str(row[3]).strip() in sub_mappings.get(current_main, {}):
-        current_sub = sub_mappings[current_main][str(row[3]).strip()]
-    
-    # Add account if applicable
-    if current_main and current_sub and pd.notna(row.get(4, pd.NA)):
-        code = str(row[4]).strip()
-        name = str(row[5]).strip() if pd.notna(row.get(5, pd.NA)) else ''
-        debit = float(row[6]) if pd.notna(row.get(6, pd.NA)) else 0.0
-        credit = float(row[7]) if pd.notna(row.get(7, pd.NA)) else 0.0
-        if name:  # Avoid adding empty names
-            # Normalize the name from Excel
-            normalized_name = normalize_farsi(name)
-            # Get translated name
-            translated_name = normalized_account_mappings.get(normalized_name, name)
-            # Log untranslated names with context
-            if translated_name == name:
-                unmapped_names.append({
-                    'name': name,
-                    'normalized_name': normalized_name,
-                    'main_section': current_main,
-                    'sub_section': current_sub
-                })
-            # New structure: assign type and amount based on debit/credit
-            if debit != 0:
-                balance_sheet['BalanceSheet'][current_main][current_sub][translated_name] = {
-                    # 'code': code,
-                    'type': 'debit',
-                    'amount': debit
-                }
-            elif credit != 0:
-                balance_sheet['BalanceSheet'][current_main][current_sub][translated_name] = {
-                    # 'code': code,
-                    'type': 'credit',
-                    'amount': credit
-                }
-            else:
-                # Default case when both debit and credit are zero
-                balance_sheet['BalanceSheet'][current_main][current_sub][translated_name] = {
-                    # 'code': code,
-                    'type': 'debit',
-                    'amount': 0
-                }
-
-# Write the populated JSON to a file
-output_file = 'balance_sheet.json'
-with open(output_file, 'w', encoding='utf-8') as f:
-    json.dump(balance_sheet, f, ensure_ascii=False, indent=4)
-
-# Print unmapped names with context for debugging
-if unmapped_names:
-    print("Untranslated account names found in Excel:")
-    for item in unmapped_names:
-        print(f"- Name: {item['name']}, Normalized: {item['normalized_name']}, "
-              f"Main Section: {item['main_section']}, Sub Section: {item['sub_section']}")
-else:
-    print("All account names were successfully translated.")
