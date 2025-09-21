@@ -6,7 +6,7 @@ from celery import Celery  # type: ignore
 from celery.schedules import crontab  # type: ignore
 from django.conf import settings  # type: ignore
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.development")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.production")
 
 app = Celery("config")
 
