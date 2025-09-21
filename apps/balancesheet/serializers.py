@@ -79,9 +79,15 @@ from apps.balancesheet.models.revenue import (
 from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ValidationError
 
+
 class BalanceSheetFileUploadSerializer(serializers.Serializer):
+    model = BalanceSheet
+    
     file = serializers.FileField()
     company_name = serializers.CharField(max_length=255, required=False, allow_blank=True)
+    year = serializers.IntegerField()
+    file_path = serializers.CharField(max_length=500, required=False, allow_blank=True)
+
 
     permission_classes = [IsAuthenticated]  # Require authenticated user
 

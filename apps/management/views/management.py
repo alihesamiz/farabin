@@ -38,14 +38,7 @@ from apps.management.models import OrganizationChartBase, HumanResource
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema
 
-
-
-
-
-logger = logging.getLogger("management")
-
-
-
+from apps.company.models import CompanyProfile
 from ..models import PersonelInformation
 from apps.company.models import CompanyUser
 from ..serializers import PersonelInformationSerializer
@@ -54,8 +47,7 @@ from apps.management.repositories import ManagementRepository as _repo
 
 
 
-
-
+logger = logging.getLogger("management")
 
 
 class PersonelInformationViewSet(viewsets.ModelViewSet):
@@ -127,6 +119,43 @@ class PersonelInformationViewSet(viewsets.ModelViewSet):
             },
             status=status.HTTP_200_OK
         )
+
+
+
+class PersonelUploadHistoryViewSet(viewsets.ReadOnlyModelViewSet):
+
+    # reru
+    # def list(self, request, *args, **kwargs):
+    #     company = CompanyUser.objects.get(user=self.request.user).company
+    #     hr_files = HumanResource.objects.filter(company=company)
+
+
+    #     company_file_path = f'media/hr-files/{company.id}/'
+
+    #     if not os.path.exists(company_file_path):
+    #         return Response({"files": []}, status=status.HTTP_200_OK)
+
+    #     files = [
+    #         f for f in os.listdir(company_file_path)
+    #         if os.path.isfile(os.path.join(company_file_path, f))
+    #     ]
+    #     return Response({"files": files}, status=status.HTTP_200_OK)
+
+
+    permission_classes = [IsAuthenticated]  # Require authentication
+
+    def list(self, request, *args, **kwargs):
+        company = CompanyUser.objects.get(user=self.request.user).company
+        hr_files = HumanResource.objects.filter(company=company)
+        files_data = [
+            {
+                "created_at": hr.created_at,
+                "file_path": hr.excel_file.url if hr.excel_file else None
+            }
+            for hr in hr_files
+        ]
+        return Response({"files": files_data}, status=status.HTTP_200_OK)
+
 
 
 

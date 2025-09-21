@@ -22,7 +22,7 @@ def get_hr_file_upload_path(instance, filename):
     path = GeneralUtils(path="hr_files", fields=[""]).rename_folder(instance, filename)
     return path
 
-
+ 
 class HumanResource(LifecycleModelMixin, TimeStampedModel):
     company = models.ForeignKey(
         "company.CompanyProfile",

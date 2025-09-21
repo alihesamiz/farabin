@@ -5,6 +5,7 @@ from apps.management.views import (
     HumanResourceViewSet,
     OrganizationChartFileViewSet,
     PersonelInformationViewSet,
+    PersonelUploadHistoryViewSet,
 )
 
 router = DefaultRouter()
@@ -26,11 +27,17 @@ router.register(
     basename="personnel",
 )
 
+router.register(
+    r"personnel-upload-history",
+    PersonelUploadHistoryViewSet,     
+    basename="personnel-upload-history",
+)
+
 
 # Nested Routes
 hr_nested_router = NestedDefaultRouter(
     router,
-    r"human-resources",
+    r"human-resources", 
     lookup="human_resource",
 )
 hr_nested_router.register(

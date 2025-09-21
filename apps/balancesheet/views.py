@@ -166,7 +166,7 @@ from rest_framework.response import Response
 from .serializers import BalanceSheetFileUploadSerializer
 from .tasks import analyze_balance_sheet
 from apps.company.models.company import CompanyUser
-
+from rest_framework.permissions import IsAuthenticated
 
 import logging
 logger = logging.getLogger(__name__)
@@ -176,66 +176,65 @@ logger = logging.getLogger(__name__)
 
 
 class BalanceSheetFileUploadViewSet(viewsets.ViewSet):
-    """
-    A simple ViewSet for uploading a file and passing it to Celery
-    """
-
+    permission_classes = [IsAuthenticated]
 
     @action(detail=False, methods=['post'])
     def upload(self, request):
         serializer = BalanceSheetFileUploadSerializer(data=request.data)
-        if serializer.is_valid():
-            
-            file_obj = serializer.validated_data['file']
-            try : 
-                company_id = CompanyUser.objects.get(user=request.user).company.id
-                company_name = CompanyUser.objects.get(user=request.user).company.title
-               
-            except :
-                return Response({
-                    "errors": "User is not associated with any company.",
-                }, status=status.HTTP_400_BAD_REQUEST)
-          
+        if not serializer.is_valid():
+            return Response({"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
+        file_obj = serializer.validated_data['file']
+        year = serializer.validated_data['year']
 
-            today_date = datetime.now().strftime('%Y-%m-%d')  # Format: YYYY-MM-DD
+        try:
+            company = CompanyUser.objects.get(user=request.user).company
+        except CompanyUser.DoesNotExist:
+            return Response({"errors": "User is not associated with any company."},
+                            status=status.HTTP_400_BAD_REQUEST)
 
-            # Construct the dynamic folder path
-            folder_path = os.path.join('balance_sheet', f"{company_name}_{today_date}")
-            full_folder_path = os.path.join(settings.MEDIA_ROOT, folder_path)
-            
-            # Ensure the directory exists
-            os.makedirs(full_folder_path, exist_ok=True)
+        # Create or update BalanceSheet record
+        balance_sheet, created = BalanceSheet.objects.update_or_create(
+            company=company,
+            year=year,
+            defaults={"excel_file": file_obj},
+        )
 
-            # Construct the full file path
-            file_path = os.path.join(full_folder_path, file_obj.name)
-
-            # Save file to the constructed path
-            with open(file_path, 'wb+') as f:
-                for chunk in file_obj.chunks():
-                    f.write(chunk)
-
-            # Call Celery task
-            #analyze_balance_sheet.delay(file_path)
-            response = analyze_balance_sheet(file_path, company_id=company_id, year=1404)  # Synchronous call for now
-            #
-
-            return Response({
-                "message": f"File uploaded successfully. -> {response}",
-                "file_path": file_path,
-                "company": company_name,
-                "date": today_date
-            }, status=status.HTTP_201_CREATED)
-
+        # Call Celery task (sync for now)
+        response = analyze_balance_sheet(balance_sheet.excel_file.path,
+                                         company_id=company.id,
+                                         year=year)
 
         return Response({
-            "errors": serializer.errors,
-        }, status=status.HTTP_400_BAD_REQUEST)
+            "message": "File uploaded successfully",
+            "file_url": balance_sheet.excel_file.url,
+            "company": company.title,
+            "year": balance_sheet.year,
+            "created_at": balance_sheet.created_at,
+            "year": balance_sheet.year,
+            "task_response": response,
+        }, status=status.HTTP_201_CREATED)
 
 
 
 
 
+
+class BalanceSheetUploadHistoryViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = [IsAuthenticated]  
+
+    def list(self, request, *args, **kwargs):
+        company = CompanyUser.objects.get(user=self.request.user).company
+        bs_files = BalanceSheet.objects.filter(company=company)
+
+        files_data = [
+            {
+                "created_at": bs.created_at,
+                "file_path": bs.excel_file.url if bs.excel_file else None
+            }
+            for bs in bs_files
+        ]
+        return Response({"files": files_data}, status=status.HTTP_200_OK)
 
 
 
@@ -247,9 +246,6 @@ class BalanceSheetFileUploadViewSet(viewsets.ViewSet):
 # NOT NEEDED NOW
 
 class BalanceSheetViewSet(viewsets.ModelViewSet):
-    """
-    A viewset for viewing and editing balance sheet instances.
-    """
     queryset = BalanceSheet.objects.all()      
     serializer_class = BalanceSheetSerializer
 

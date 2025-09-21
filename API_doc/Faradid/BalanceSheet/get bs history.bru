@@ -1,0 +1,15 @@
+meta {
+  name: get bs history
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{url}}/balancesheet/balancesheet-file-upload-history/
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

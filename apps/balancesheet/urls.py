@@ -58,12 +58,16 @@ from apps.balancesheet.views import (
     ServiceRevenueViewSet,
     ForeignCurrencyRevenueViewSet,
     OtherOperatingRevenueViewSet,
+
+
+    BalanceSheetUploadHistoryViewSet
 )
 
 
 # Create a router and register our viewsets
 router = DefaultRouter()
 router.register(r'balancesheet-file-upload', BalanceSheetFileUploadViewSet, basename='balancesheet-file-upload')
+router.register(r'balancesheet-file-upload-history', BalanceSheetUploadHistoryViewSet, basename='balancesheet-file-upload-history')
 
 
 
